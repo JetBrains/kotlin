@@ -131,3 +131,23 @@ internal fun Configuration.addSecondaryOutgoingJvmClassesVariant(
         }
     }
 }
+
+internal const val UNPACKED_KLIB_VARIANT_NAME = "unpacked-klib"
+
+internal const val PACKED_KLIB_ATTRIBUTE = "packed-klib"
+internal const val UNPACKED_KLIB_ATTRIBUTE = "unpacked-klib"
+
+internal fun Project.packedKlibLibraryElements() = objects.named(LibraryElements::class.java, PACKED_KLIB_ATTRIBUTE)
+
+internal fun Project.unpackedKlibLibraryElements() = objects.named(LibraryElements::class.java, UNPACKED_KLIB_ATTRIBUTE)
+
+internal fun Configuration.addUnpackedKlibSecondaryOutgoingVariant(
+    project: Project,
+    primaryVariantAttribute: LibraryElements = project.packedKlibLibraryElements(),
+    secondaryVariantAttribute: LibraryElements = project.unpackedKlibLibraryElements(),
+) {
+    attributes.setAttribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, primaryVariantAttribute)
+    outgoing.variants.create(UNPACKED_KLIB_VARIANT_NAME) { variant ->
+        variant.attributes.setAttribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, secondaryVariantAttribute)
+    }
+}

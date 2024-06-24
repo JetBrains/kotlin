@@ -9,10 +9,12 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.*
 import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.gradle.artifacts.maybeCreateKlibPackingTask
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinNativeTargetConfigurator.NativeArtifactFormat
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseDsl
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.internal.artifactTypeAttribute
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
@@ -20,24 +22,37 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
 import org.jetbrains.kotlin.gradle.targets.KotlinTargetSideEffect
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropKlibLibraryElements.cinteropKlibLibraryElements
+import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropKlibLibraryElements.unpackedCinteropKlibLibraryElements
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.createConsumable
 import org.jetbrains.kotlin.gradle.utils.findConsumable
 
 internal fun createCInteropApiElementsKlibArtifact(
-    target: KotlinNativeTarget,
+    compilation: KotlinNativeCompilation,
     settings: DefaultCInteropSettings,
     interopTask: TaskProvider<out CInteropProcess>,
 ) {
-    val project = target.project
-    val configurationName = cInteropApiElementsConfigurationName(target)
+    val project = compilation.project
+    val configurationName = cInteropApiElementsConfigurationName(compilation.target)
     val configuration = project.configurations.getByName(configurationName)
-    project.artifacts.add(configuration.name, interopTask.flatMap { it.outputFileProvider }) { artifact ->
+    val (packTask, packedArtifactFile) = if (project.kotlinPropertiesProvider.produceUnpackedKlibs) {
+        val packTask = maybeCreateKlibPackingTask(compilation, settings.classifier, interopTask)
+        packTask to packTask.map { it.archiveFile.get().asFile }
+    } else {
+        interopTask to interopTask.flatMap { it.klibFile }
+    }
+    project.artifacts.add(configuration.name, packedArtifactFile) { artifact ->
         artifact.extension = "klib"
         artifact.type = "klib"
-        artifact.classifier = "cinterop-${settings.name}"
-        artifact.builtBy(interopTask)
+        artifact.classifier = settings.classifier
+        artifact.builtBy(packTask)
+    }
+    if (compilation.project.kotlinPropertiesProvider.produceUnpackedKlibs) {
+        configuration.outgoing.variants.getByName(UNPACKED_KLIB_VARIANT_NAME)
+            .artifact(interopTask.flatMap { it.klibFile }) {
+                it.builtBy(interopTask)
+            }
     }
 }
 
@@ -57,7 +72,13 @@ internal fun Project.locateOrCreateCInteropDependencyConfiguration(
         launchInStage(AfterFinaliseDsl) {
             usesPlatformOf(compilation.target)
             compilation.copyAttributesTo(project, dest = attributes)
-            attributes.setAttribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, cinteropKlibLibraryElements())
+            attributes.setAttribute(
+                LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, if (project.kotlinPropertiesProvider.consumeUnpackedKlibs) {
+                    unpackedCinteropKlibLibraryElements()
+                } else {
+                    cinteropKlibLibraryElements()
+                }
+            )
             attributes.setAttribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_CINTEROP))
             attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
             description = "CInterop dependencies for compilation '${compilation.name}')."
@@ -77,6 +98,13 @@ internal fun Project.locateOrCreateCInteropApiElementsConfiguration(target: Kotl
     configurations.findConsumable(configurationName)?.let { return it }
 
     return configurations.createConsumable(configurationName).apply {
+        if (target.project.kotlinPropertiesProvider.produceUnpackedKlibs) {
+            addUnpackedKlibSecondaryOutgoingVariant(
+                project,
+                project.cinteropKlibLibraryElements(),
+                project.unpackedCinteropKlibLibraryElements()
+            )
+        }
         /* Deferring attributes to wait for target.attributes to be configured by user */
         launchInStage(AfterFinaliseDsl) {
             usesPlatformOf(target)
@@ -100,8 +128,11 @@ private fun cInteropApiElementsConfigurationName(target: KotlinTarget): String {
 
 internal object CInteropKlibLibraryElements {
     const val CINTEROP_KLIB = "cinterop-klib"
+    const val UNPACKED_CINTEROP_KLIB = "unpacked-cinterop-klib"
 
     fun Project.cinteropKlibLibraryElements(): LibraryElements = objects.named(LibraryElements::class.java, CINTEROP_KLIB)
+
+    fun Project.unpackedCinteropKlibLibraryElements(): LibraryElements = objects.named(LibraryElements::class.java, UNPACKED_CINTEROP_KLIB)
 
     fun setupAttributesMatchingStrategy(schema: AttributesSchema) {
         schema.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE) { strategy ->

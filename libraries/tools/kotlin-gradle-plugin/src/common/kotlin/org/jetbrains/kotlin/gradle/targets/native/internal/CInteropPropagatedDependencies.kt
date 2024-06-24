@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
+import org.jetbrains.kotlin.gradle.artifacts.maybeCreateKlibPackingTask
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
@@ -98,6 +99,19 @@ private fun Project.getAllCInteropOutputFiles(compilation: KotlinNativeCompilati
     val cinteropTasks = compilation.cinterops.map { interop -> interop.interopProcessingTaskName }
         .mapNotNull { taskName -> tasks.findByName(taskName) as? CInteropProcess }
 
+    if (project.kotlinPropertiesProvider.produceUnpackedKlibs) {
+        // this part of import isn't ready for working with unpacked klibs
+        return project.filesProvider {
+            cinteropTasks.map { interopTask ->
+                maybeCreateKlibPackingTask(
+                    compilation,
+                    interopTask.settings.classifier,
+                    interopTask.outputFileProvider,
+                    interopTask
+                )
+            }
+        }
+    }
     return project.filesProvider { cinteropTasks.map { it.outputFileProvider } }
         .builtBy(*cinteropTasks.toTypedArray())
 }

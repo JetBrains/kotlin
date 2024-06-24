@@ -222,7 +222,7 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
             val outFile = outputFile.get()
             outFile.ensureParentDirsCreated()
 
-            fun FileCollection.klibs() = files.filter { it.extension == "klib" }
+            fun FileCollection.klibs() = files.filter { it.extension == "klib" || it.isDirectory }
 
             val buildArgs = buildKotlinNativeBinaryLinkerArgs(
                 outFile = outFile,

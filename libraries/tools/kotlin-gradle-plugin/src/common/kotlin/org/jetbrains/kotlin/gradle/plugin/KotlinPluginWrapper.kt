@@ -21,6 +21,7 @@ import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ExternalDependency
+import org.gradle.api.attributes.*
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
@@ -48,6 +49,8 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.UnameExecutor
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerArtifactTypeAttribute
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropKlibLibraryElements
+import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropKlibLibraryElements.CINTEROP_KLIB
+import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropKlibLibraryElements.UNPACKED_CINTEROP_KLIB
 import org.jetbrains.kotlin.gradle.targets.native.internal.CommonizerTargetAttribute
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeBundleArtifactFormat
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeBundleArtifactFormat.addKotlinNativeBundleConfiguration
@@ -56,6 +59,7 @@ import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool
 import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestsRegistry
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
+import javax.inject.Inject
 import kotlin.reflect.KClass
 
 /**
@@ -212,6 +216,45 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         )
     }
 
+    private class KotlinUnpackedKlibCompatibilityRule : AttributeCompatibilityRule<LibraryElements> {
+        override fun execute(details: CompatibilityCheckDetails<LibraryElements>) = with(details) {
+            when {
+                consumerValue?.name == UNPACKED_KLIB_ATTRIBUTE && producerValue == null ->
+                    compatible()
+                (consumerValue?.name == UNPACKED_KLIB_ATTRIBUTE || consumerValue?.name == UNPACKED_CINTEROP_KLIB) && producerValue?.name == PACKED_KLIB_ATTRIBUTE ->
+                    compatible()
+                consumerValue?.name == UNPACKED_CINTEROP_KLIB && (producerValue?.name == CINTEROP_KLIB) ->
+                    compatible()
+                (consumerValue?.name == PACKED_KLIB_ATTRIBUTE || consumerValue?.name == UNPACKED_KLIB_ATTRIBUTE || consumerValue?.name == UNPACKED_CINTEROP_KLIB) && producerValue?.name == LibraryElements.JAR ->
+                    // metadata artifacts, like kotlin-stdlib-common
+                    compatible()
+                (consumerValue?.name == KotlinUsages.KOTLIN_RESOURCES_JS || consumerValue?.name == KotlinUsages.KOTLIN_RESOURCES) && (producerValue?.name == PACKED_KLIB_ATTRIBUTE || producerValue?.name == UNPACKED_KLIB_ATTRIBUTE) ->
+                    compatible()
+            }
+        }
+    }
+
+    private class KotlinUnpackedKlibDisambiguationRule @Inject constructor(
+        private val consumeUnpackedKlib: Boolean,
+    ) : AttributeDisambiguationRule<LibraryElements> {
+        override fun execute(details: MultipleCandidatesDetails<LibraryElements>) = with(details) {
+            val candidateNames = candidateValues.map { it?.name }.toSet()
+            when {
+                candidateNames.containsAll(setOf(UNPACKED_KLIB_ATTRIBUTE, PACKED_KLIB_ATTRIBUTE)) ->
+                    closestMatch(
+                        candidateValues.find { it.name == if (consumeUnpackedKlib) UNPACKED_KLIB_ATTRIBUTE else PACKED_KLIB_ATTRIBUTE }
+                            ?: error("Failed to find the proper candidate, seems like a bug")
+                    )
+                candidateNames.containsAll(setOf(UNPACKED_CINTEROP_KLIB, CINTEROP_KLIB)) ->
+                    closestMatch(
+                        candidateValues.find { it.name == if (consumeUnpackedKlib) UNPACKED_CINTEROP_KLIB else CINTEROP_KLIB }
+                            ?: error("Failed to find the proper candidate, seems like a bug")
+                    )
+            }
+        }
+
+    }
+
     protected fun setupAttributeMatchingStrategy(
         project: Project,
         isKotlinGranularMetadata: Boolean = project.isKotlinGranularMetadataEnabled,
@@ -227,6 +270,12 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         project.whenJsOrMppEnabled {
             KotlinJsCompilerAttribute.setupAttributesMatchingStrategy(project.dependencies.attributesSchema)
             KotlinWasmTargetAttribute.setupAttributesMatchingStrategy(project.dependencies.attributesSchema)
+            attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE).apply {
+                compatibilityRules.add(KotlinUnpackedKlibCompatibilityRule::class.java)
+                disambiguationRules.add(KotlinUnpackedKlibDisambiguationRule::class.java) {
+                    it.params(project.kotlinPropertiesProvider.consumeUnpackedKlibs)
+                }
+            }
         }
 
         project.whenMppEnabled {

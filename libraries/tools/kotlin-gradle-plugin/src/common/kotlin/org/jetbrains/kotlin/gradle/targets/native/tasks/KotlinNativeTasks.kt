@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
+import org.jetbrains.kotlin.gradle.internal.tasks.ProducesKlib
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
@@ -295,7 +296,8 @@ internal constructor(
     K2MultiplatformCompilationTask,
     UsesBuildMetricsService,
     UsesBuildFusService,
-    UsesKotlinNativeBundleBuildService {
+    UsesKotlinNativeBundleBuildService,
+    ProducesKlib {
 
     // used by KSP1 - should be removed via KT-67992 in 2.1.0 release
     @Deprecated("'execOperations' parameter was removed")
@@ -432,6 +434,9 @@ internal constructor(
     @get:Optional
     @get:PathSensitive(PathSensitivity.RELATIVE)
     internal var excludeOriginalPlatformLibraries: FileCollection? = null
+
+    override val klibFile
+        get() = outputFile
 
     @Suppress("DeprecatedCallableAddReplaceWith")
     @Deprecated("KTIJ-25227: Necessary override for IDEs < 2023.2", level = DeprecationLevel.ERROR)
@@ -1027,7 +1032,7 @@ internal class CacheBuilder(
 
 @CacheableTask
 abstract class CInteropProcess @Inject internal constructor(params: Params) :
-    DefaultTask(), UsesBuildMetricsService, UsesKotlinNativeBundleBuildService {
+    DefaultTask(), UsesBuildMetricsService, UsesKotlinNativeBundleBuildService, ProducesKlib {
 
     internal class Params(
         val settings: DefaultCInteropSettings,
@@ -1075,9 +1080,11 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
 
 
     @get:Internal
-    val outputFileName: String = with(LIBRARY) {
-        "$baseKlibName${suffix(konanTarget)}"
-    }
+    val outputFileName: String
+        get() = with(LIBRARY) {
+            val suffix = if (produceUnpackedKlib.get()) "" else suffix(konanTarget)
+            "$baseKlibName$suffix"
+        }
 
     @get:Input
     val moduleName: String = project.klibModuleName(baseKlibName)
@@ -1119,8 +1126,11 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
     )
     // Inputs and outputs.
 
-    @OutputFile
+    @Internal // registered in the task configuration action based on the `produceUnpackedKlib`
     val outputFileProvider: Provider<File> = project.provider { destinationDir.get().resolve(outputFileName) }
+
+    override val klibFile: Provider<File>
+        get() = outputFileProvider
 
     //Error file will be written only for errors during a project sync because for the sync task mustn't fail
     //see: org.jetbrains.kotlin.gradle.targets.native.tasks.IdeaSyncKotlinNativeCInteropRunnerExecutionContext
@@ -1190,6 +1200,9 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
 
     private val isInIdeaSync = project.isInIdeaSync
 
+    @get:Input
+    internal val produceUnpackedKlib: Property<Boolean> = objectFactory.propertyWithConvention(false)
+
     // Task action.
     @TaskAction
     fun processInterop() {
@@ -1222,6 +1235,9 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
                 addArgs("-compiler-option", allHeadersDirs.map { "-I${it.absolutePath}" })
                 addArgs("-headerFilterAdditionalSearchPrefix", headerFilterDirs.map { it.absolutePath })
                 addArg("-Xmodule-name", moduleName)
+                if (produceUnpackedKlib.get()) {
+                    add("-nopack")
+                }
 
                 addAll(extraOpts)
 

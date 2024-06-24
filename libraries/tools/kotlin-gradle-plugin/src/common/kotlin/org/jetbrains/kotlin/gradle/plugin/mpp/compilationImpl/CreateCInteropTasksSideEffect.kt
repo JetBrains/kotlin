@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl
 
 import org.jetbrains.kotlin.gradle.artifacts.createKlibArtifact
 import org.jetbrains.kotlin.gradle.artifacts.klibOutputDirectory
+import org.jetbrains.kotlin.gradle.artifacts.maybeCreateKlibPackingTask
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.plugin.KotlinNativeTargetConfigurator
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHostForBinariesCompilation
@@ -50,8 +52,13 @@ internal val KotlinCreateNativeCInteropTasksSideEffect = KotlinCompilationSideEf
             it.kotlinNativeProvider.set(project.provider {
                 KotlinNativeProvider(project, it.konanTarget, it.kotlinNativeBundleBuildService)
             })
+            it.produceUnpackedKlib.set(project.kotlinPropertiesProvider.produceUnpackedKlibs)
+            if (project.kotlinPropertiesProvider.produceUnpackedKlibs) {
+                it.outputs.dir(it.outputFileProvider)
+            } else {
+                it.outputs.file(it.outputFileProvider)
+            }
         }
-
 
         project.launch {
             project.commonizeCInteropTask()?.configure { commonizeCInteropTask ->
@@ -60,20 +67,24 @@ internal val KotlinCreateNativeCInteropTasksSideEffect = KotlinCompilationSideEf
             project.copyCommonizeCInteropForIdeTask()
         }
 
-        val interopOutput = project.files(interopTask.map { it.outputFileProvider })
+        val interopOutput =
+            if (!project.kotlinPropertiesProvider.produceUnpackedKlibs || project.kotlinPropertiesProvider.consumeUnpackedKlibs) {
+                project.files(interopTask.map { it.outputFileProvider })
+            } else {
+                project.files(maybeCreateKlibPackingTask(compilation, interop.classifier, interopTask).map { it.archiveFile })
+            }
         with(compilation) {
             compileDependencyFiles += interopOutput
             if (isMain()) {
                 // Add interop library to special CInteropApiElements configuration
-                createCInteropApiElementsKlibArtifact(compilation.target, interop, interopTask)
+                createCInteropApiElementsKlibArtifact(compilation, interop, interopTask)
 
                 // Add the interop library in publication.
                 if (compilation.konanTarget.enabledOnCurrentHostForBinariesCompilation()) {
                     createKlibArtifact(
                         compilation,
-                        artifactFile = interopTask.flatMap { it.outputFileProvider },
-                        classifier = "cinterop-${interop.name}",
-                        producingTask = interopTask,
+                        classifier = interop.classifier,
+                        klibProducingTask = interopTask,
                     )
                 }
 

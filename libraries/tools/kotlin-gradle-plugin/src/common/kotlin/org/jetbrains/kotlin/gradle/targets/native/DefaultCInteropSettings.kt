@@ -65,6 +65,9 @@ abstract class DefaultCInteropSettings @Inject internal constructor(
 
     override fun getName(): String = params.name
 
+    internal val classifier: String
+        get() = "cinterop-${name}"
+
     internal val identifier = params.identifier
 
     override var dependencyFiles: FileCollection = files()

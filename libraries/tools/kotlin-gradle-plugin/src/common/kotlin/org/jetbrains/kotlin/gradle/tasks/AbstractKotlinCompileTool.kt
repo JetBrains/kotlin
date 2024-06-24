@@ -51,7 +51,8 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments> @Inject constr
         )
     }
 
-    private val sourceFiles = objectFactory.fileCollection()
+    @get:Internal
+    internal val sourceFiles = objectFactory.fileCollection()
 
     override val sources: FileCollection = objectFactory.fileCollection()
         .from(
