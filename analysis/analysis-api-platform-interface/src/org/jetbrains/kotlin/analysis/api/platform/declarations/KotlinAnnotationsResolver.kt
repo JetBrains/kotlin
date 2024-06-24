@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.platform.declarations
 
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformComponent
@@ -49,8 +50,7 @@ public interface KotlinAnnotationsResolverFactory : KotlinPlatformComponent {
     public fun createAnnotationResolver(searchScope: GlobalSearchScope): KotlinAnnotationsResolver
 
     public companion object {
-        public fun getInstance(project: Project): KotlinAnnotationsResolverFactory =
-            project.getService(KotlinAnnotationsResolverFactory::class.java)
+        public fun getInstance(project: Project): KotlinAnnotationsResolverFactory = project.service()
     }
 }
 

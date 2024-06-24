@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.platform.permissions
 
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.platform.KaEngineService
 
@@ -17,7 +18,6 @@ public interface KaAnalysisPermissionChecker : KaEngineService {
     public fun getRejectionReason(): String
 
     public companion object {
-        public fun getInstance(project: Project): KaAnalysisPermissionChecker =
-            project.getService(KaAnalysisPermissionChecker::class.java)
+        public fun getInstance(project: Project): KaAnalysisPermissionChecker = project.service()
     }
 }

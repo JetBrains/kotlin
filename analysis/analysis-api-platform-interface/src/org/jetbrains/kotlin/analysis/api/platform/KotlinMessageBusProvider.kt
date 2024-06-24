@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.platform
 
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.util.messages.MessageBus
 import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationTopics
@@ -17,8 +18,7 @@ public interface KotlinMessageBusProvider : KotlinPlatformComponent {
     public fun getMessageBus(): MessageBus
 
     public companion object {
-        public fun getInstance(project: Project): KotlinMessageBusProvider =
-            project.getService(KotlinMessageBusProvider::class.java)
+        public fun getInstance(project: Project): KotlinMessageBusProvider = project.service()
     }
 }
 

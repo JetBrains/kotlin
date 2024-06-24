@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.platform.permissions
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.components.serviceOrNull
 import org.jetbrains.kotlin.analysis.api.platform.KotlinOptionalPlatformComponent
 
 /**
@@ -48,6 +49,6 @@ public interface KotlinAnalysisPermissionOptions : KotlinOptionalPlatformCompone
         }
 
         public fun getInstance(): KotlinAnalysisPermissionOptions =
-            ApplicationManager.getApplication().getService(KotlinAnalysisPermissionOptions::class.java) ?: standaloneDefaults
+            ApplicationManager.getApplication().serviceOrNull() ?: standaloneDefaults
     }
 }

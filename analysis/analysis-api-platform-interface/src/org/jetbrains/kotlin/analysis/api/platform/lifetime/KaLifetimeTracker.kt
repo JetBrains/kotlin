@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.platform.lifetime
 
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.platform.KaEngineService
@@ -21,7 +22,6 @@ public interface KaLifetimeTracker : KaEngineService {
     public val currentToken: KaLifetimeToken?
 
     public companion object {
-        public fun getInstance(project: Project): KaLifetimeTracker =
-            project.getService(KaLifetimeTracker::class.java)
+        public fun getInstance(project: Project): KaLifetimeTracker = project.service()
     }
 }

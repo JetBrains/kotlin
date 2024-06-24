@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.platform.packages
 
+import com.intellij.openapi.components.serviceOrNull
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.platform.KotlinOptionalPlatformComponent
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
@@ -24,8 +25,7 @@ public abstract class KotlinForwardDeclarationsPackageProviderFactory : KotlinOp
     public abstract fun createPackageProvider(module: KaModule): KotlinPackageProvider?
 
     public companion object {
-        public fun getInstance(project: Project): KotlinForwardDeclarationsPackageProviderFactory? =
-            project.getService(KotlinForwardDeclarationsPackageProviderFactory::class.java)
+        public fun getInstance(project: Project): KotlinForwardDeclarationsPackageProviderFactory? = project.serviceOrNull()
     }
 }
 

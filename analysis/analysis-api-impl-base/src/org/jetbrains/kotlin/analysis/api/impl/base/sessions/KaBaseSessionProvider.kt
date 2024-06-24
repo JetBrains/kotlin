@@ -38,7 +38,7 @@ abstract class KaBaseSessionProvider(project: Project) : KaSessionProvider(proje
     private val writeActionStartedChecker = KaBaseWriteActionStartedChecker(this)
 
     protected val tokenFactory: KaLifetimeTokenFactory by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        KotlinLifetimeTokenProvider.getService(project).getLifetimeTokenFactory()
+        KotlinLifetimeTokenProvider.getInstance(project).getLifetimeTokenFactory()
     }
 
     override fun beforeEnteringAnalysis(session: KaSession, useSiteElement: KtElement) {
