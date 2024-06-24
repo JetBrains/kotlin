@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.serialization.FirElementAwareStringTable
 import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseRecursively
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseWithCallableMembers
 import org.jetbrains.kotlin.fir.types.typeApproximator
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -74,7 +75,7 @@ internal class KaFirMetadataCalculator(
     @KaAnalysisNonPublicApi
     override fun KtClassOrObject.calculateMetadata(mapping: Multimap<KtElement, PsiElement>): Metadata = withValidityAssertion {
         val firClass = resolveToFirSymbolOfType<FirClassSymbol<*>>(firResolveSession).fir
-        firClass.lazyResolveToPhaseWithCallableMembers(FirResolvePhase.STATUS)
+        firClass.lazyResolveToPhaseWithCallableMembers(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
         val bindings = JvmSerializationBindings().also { collectBindings(firClass.declarations, mapping, it) }
         val (serializer, stringTable) = createTopLevelSerializer(bindings)
         val classProto = serializer.classProto(firClass)
@@ -83,6 +84,7 @@ internal class KaFirMetadataCalculator(
 
     override fun KtFile.calculateMetadata(mapping: Multimap<KtElement, PsiElement>): Metadata = withValidityAssertion {
         val firFile = getOrBuildFirFile(firResolveSession)
+        firFile.lazyResolveToPhaseRecursively(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
         val bindings = JvmSerializationBindings().also { collectBindings(firFile.declarations, mapping, it) }
         val (serializer, stringTable) = createTopLevelSerializer(bindings)
         val fileProto = serializer.packagePartProto(firFile, null)

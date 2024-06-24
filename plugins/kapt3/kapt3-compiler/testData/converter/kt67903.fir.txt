@@ -1,0 +1,58 @@
+/**
+ * public final value class Data : kotlin/Any {
+ *
+ *   // signature: <init>(I)V
+ *   public constructor(value: kotlin/Int)
+ *
+ *   // signature: equals(Ljava/lang/Object;)Z
+ *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
+ *
+ *   // signature: hashCode()I
+ *   public open (* synthesized *) fun hashCode(): kotlin/Int
+ *
+ *   // signature: toString()Ljava/lang/String;
+ *   public open (* synthesized *) fun toString(): kotlin/String
+ *
+ *   // field: value:I
+ *   // getter: getValue()I
+ *   public final val value: kotlin/Int
+ *     public final get
+ *
+ *   // underlying property: value
+ *
+ *   // underlying type: kotlin/Int
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Data {
+    private final int value = 0;
+
+    public Data(int value) {
+        super();
+    }
+
+    public final int getValue() {
+        return 0;
+    }
+}
+
+
+////////////////////
+
+/**
+ * package {
+ *
+ *   // signature: foo(LData;)V
+ *   public final fun Data.foo(): kotlin/Unit
+ *
+ *   public final val Data.bar: kotlin/Int
+ *     public final (* non-default *) get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Kt67903Kt {
+}
