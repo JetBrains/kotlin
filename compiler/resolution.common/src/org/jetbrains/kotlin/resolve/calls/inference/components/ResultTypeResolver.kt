@@ -93,33 +93,31 @@ class ResultTypeResolver(
         c: Context,
         variableWithConstraints: VariableWithConstraints,
         direction: ResolveDirection,
-    ): KotlinTypeMarker? {
+    ): KotlinTypeMarker? = with(c) {
         val resultTypeFromEqualConstraint = findResultIfThereIsEqualsConstraint(c, variableWithConstraints)
         if (resultTypeFromEqualConstraint != null) {
-            with(c) {
-                if (!isK2 || !resultTypeFromEqualConstraint.contains { type ->
-                        type.typeConstructor().isIntegerLiteralConstantTypeConstructor()
-                    }
-                ) {
-                    // In K2, we don't return here ILT-based types immediately
-                    return resultTypeFromEqualConstraint
+            if (!isK2 || !resultTypeFromEqualConstraint.contains { type ->
+                    type.typeConstructor().isIntegerLiteralConstantTypeConstructor()
                 }
+            ) {
+                // In K2, we don't return here ILT-based types immediately
+                return resultTypeFromEqualConstraint
             }
         }
 
-        val subType = c.findSubType(variableWithConstraints)
-        val superType = c.findSuperType(variableWithConstraints)
+        val subType = findSubType(variableWithConstraints)
+        val superType = findSuperType(variableWithConstraints)
 
-        val (preparedSubType, preparedSuperType) = if (c.isK2 && useImprovedCapturedTypeApproximation) {
-            c.prepareSubAndSuperTypes(subType, superType, variableWithConstraints)
+        val (preparedSubType, preparedSuperType) = if (isK2 && useImprovedCapturedTypeApproximation) {
+            prepareSubAndSuperTypes(subType, superType, variableWithConstraints)
         } else {
-            c.prepareSubAndSuperTypesLegacy(subType, superType, variableWithConstraints)
+            prepareSubAndSuperTypesLegacy(subType, superType, variableWithConstraints)
         }
 
         val resultTypeFromDirection = if (direction == ResolveDirection.TO_SUBTYPE || direction == ResolveDirection.UNKNOWN) {
-            c.resultType(preparedSubType, preparedSuperType, variableWithConstraints)
+            resultType(preparedSubType, preparedSuperType, variableWithConstraints)
         } else {
-            c.resultType(preparedSuperType, preparedSubType, variableWithConstraints)
+            resultType(preparedSuperType, preparedSubType, variableWithConstraints)
         }
 
         // In the general case, we can have here two types, one from EQUAL constraint which must be ILT-based,
@@ -131,7 +129,7 @@ class ResultTypeResolver(
         return when {
             resultTypeFromEqualConstraint == null -> resultTypeFromDirection
             resultTypeFromDirection == null -> resultTypeFromEqualConstraint
-            with(c) { !resultTypeFromDirection.typeConstructor().isNothingConstructor() } &&
+            !resultTypeFromDirection.typeConstructor().isNothingConstructor() &&
                     AbstractTypeChecker.isSubtypeOf(c, resultTypeFromDirection, resultTypeFromEqualConstraint) -> resultTypeFromDirection
             else -> resultTypeFromEqualConstraint
         }
