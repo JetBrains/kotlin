@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.name.ClassId
 import java.util.Collections
 
-class KaEmptyAnnotationList(override val token: KaLifetimeToken) : AbstractList<KaAnnotation>(), KaAnnotationList {
+class KaBaseEmptyAnnotationList(override val token: KaLifetimeToken) : AbstractList<KaAnnotation>(), KaAnnotationList {
     override val size: Int
         get() = withValidityAssertion { 0 }
 

@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.kaSym
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.kaSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.ktVisibility
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.cached
-import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaEmptyAnnotationList
+import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaPropertySetterSymbolPointer
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaValueParameterFromDefaultSetterSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -110,7 +110,7 @@ internal class KaFe10PsiDefaultPropertySetterSymbol(
 
     override val annotations: KaAnnotationList
         get() = withValidityAssertion {
-            descriptor?.let { KaFe10AnnotationList.create(it.annotations, analysisContext) } ?: KaEmptyAnnotationList(token)
+            descriptor?.let { KaFe10AnnotationList.create(it.annotations, analysisContext) } ?: KaBaseEmptyAnnotationList(token)
         }
 
     @OptIn(KaAnalysisApiInternals::class)
@@ -168,7 +168,7 @@ internal class KaFe10PsiDefaultPropertySetterSymbol(
 
         override val annotations: KaAnnotationList
             get() = withValidityAssertion {
-                descriptor?.let { KaFe10AnnotationList.create(it.annotations, analysisContext) } ?: KaEmptyAnnotationList(token)
+                descriptor?.let { KaFe10AnnotationList.create(it.annotations, analysisContext) } ?: KaBaseEmptyAnnotationList(token)
             }
 
         @OptIn(KaAnalysisApiInternals::class)

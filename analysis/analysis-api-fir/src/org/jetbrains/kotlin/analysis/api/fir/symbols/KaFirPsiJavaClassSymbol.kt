@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.getModule
-import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaEmptyAnnotationList
+import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolModality
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.toKtClassKind
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -137,6 +137,6 @@ internal class KaFirPsiJavaClassSymbol(
 
     override val annotations: KaAnnotationList by cached {
         if (hasAnnotations) KaFirAnnotationListForDeclaration.create(firSymbol, builder)
-        else KaEmptyAnnotationList(token)
+        else KaBaseEmptyAnnotationList(token)
     }
 }

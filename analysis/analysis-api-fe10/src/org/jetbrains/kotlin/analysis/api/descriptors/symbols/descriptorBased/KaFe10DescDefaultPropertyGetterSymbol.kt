@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.calculateHashCode
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.*
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.isEqualTo
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KaFe10NeverRestoringSymbolPointer
-import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaEmptyAnnotationList
+import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertyGetterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
@@ -76,7 +76,7 @@ class KaFe10DescDefaultPropertyGetterSymbol(
         get() = withValidityAssertion { propertyDescriptor.ktVisibility }
 
     override val annotations: KaAnnotationList
-        get() = withValidityAssertion { KaEmptyAnnotationList(token) }
+        get() = withValidityAssertion { KaBaseEmptyAnnotationList(token) }
 
     override fun createPointer(): KaSymbolPointer<KaPropertyGetterSymbol> = withValidityAssertion {
         KaFe10NeverRestoringSymbolPointer()
