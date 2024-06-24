@@ -1,0 +1,10 @@
+main
+  org.jetbrains.kotlin:kotlin-stdlib-common:1.9.0
+  org.jetbrains.kotlin:kotlin-stdlib:1.9.0
+  org.jetbrains:annotations
+  test:lib:1.0
+test
+  org.jetbrains.kotlin:kotlin-stdlib:<FUTURE_KOTLIN_VERSION>
+  org.jetbrains:annotations
+  test:lib2:1.0
+  test:lib:1.0

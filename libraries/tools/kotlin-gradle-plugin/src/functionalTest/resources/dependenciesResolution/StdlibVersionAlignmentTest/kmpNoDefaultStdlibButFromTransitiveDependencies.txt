@@ -1,0 +1,67 @@
+commonMain
+  org.jetbrains.kotlin:kotlin-stdlib:<CURRENT_KOTLIN_VERSION>
+  test:lib:1.0
+commonTest
+  org.jetbrains.kotlin:kotlin-stdlib:<FUTURE_KOTLIN_VERSION>
+  test:lib2:1.0
+  test:lib:1.0
+jsMain
+  org.jetbrains.kotlin:kotlin-dom-api-compat:<CURRENT_KOTLIN_VERSION>
+  org.jetbrains.kotlin:kotlin-stdlib-js:<CURRENT_KOTLIN_VERSION>
+  org.jetbrains.kotlin:kotlin-stdlib:<CURRENT_KOTLIN_VERSION>
+  test:lib:1.0
+jsTest
+  org.jetbrains.kotlin:kotlin-dom-api-compat:<CURRENT_KOTLIN_VERSION>
+  org.jetbrains.kotlin:kotlin-stdlib-js:<FUTURE_KOTLIN_VERSION>
+  org.jetbrains.kotlin:kotlin-stdlib:<FUTURE_KOTLIN_VERSION>
+  test:lib2:1.0
+  test:lib:1.0
+jvmMain
+  org.jetbrains.kotlin:kotlin-stdlib:1.9.0
+  org.jetbrains:annotations
+  test:lib:1.0
+jvmTest
+  org.jetbrains.kotlin:kotlin-stdlib:<FUTURE_KOTLIN_VERSION>
+  org.jetbrains:annotations
+  test:lib2:1.0
+  test:lib:1.0
+linuxMain
+  org.jetbrains.kotlin:kotlin-stdlib:<CURRENT_KOTLIN_VERSION>
+  test:lib:1.0
+linuxTest
+  org.jetbrains.kotlin:kotlin-stdlib:<FUTURE_KOTLIN_VERSION>
+  test:lib2:1.0
+  test:lib:1.0
+linuxX64Main
+  org.jetbrains.kotlin:kotlin-stdlib:1.9.0
+  org.jetbrains:annotations
+  test:lib:1.0
+linuxX64Test
+  org.jetbrains.kotlin:kotlin-stdlib:<FUTURE_KOTLIN_VERSION>
+  test:lib2:1.0
+  test:lib:1.0
+nativeMain
+  org.jetbrains.kotlin:kotlin-stdlib:<CURRENT_KOTLIN_VERSION>
+  test:lib:1.0
+nativeTest
+  org.jetbrains.kotlin:kotlin-stdlib:<FUTURE_KOTLIN_VERSION>
+  test:lib2:1.0
+  test:lib:1.0
+wasmJsMain
+  org.jetbrains.kotlin:kotlin-stdlib:1.9.0
+  org.jetbrains:annotations
+  test:lib:1.0
+wasmJsTest
+  org.jetbrains.kotlin:kotlin-stdlib-wasm-js:<FUTURE_KOTLIN_VERSION>
+  org.jetbrains.kotlin:kotlin-stdlib:<FUTURE_KOTLIN_VERSION>
+  test:lib2:1.0
+  test:lib:1.0
+wasmWasiMain
+  org.jetbrains.kotlin:kotlin-stdlib:1.9.0
+  org.jetbrains:annotations
+  test:lib:1.0
+wasmWasiTest
+  org.jetbrains.kotlin:kotlin-stdlib-wasm-wasi:<FUTURE_KOTLIN_VERSION>
+  org.jetbrains.kotlin:kotlin-stdlib:<FUTURE_KOTLIN_VERSION>
+  test:lib2:1.0
+  test:lib:1.0
