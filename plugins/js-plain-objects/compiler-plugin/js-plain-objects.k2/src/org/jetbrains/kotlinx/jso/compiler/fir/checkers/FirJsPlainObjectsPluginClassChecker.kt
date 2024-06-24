@@ -8,6 +8,7 @@ package org.jetbrains.kotlinx.jspo.compiler.fir.checkers
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
@@ -20,8 +21,10 @@ import org.jetbrains.kotlin.fir.declarations.utils.isMethodOfAny
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.processAllFunctions
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.types.UnexpandedTypeCheck
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isAny
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
@@ -87,7 +90,7 @@ object FirJsPlainObjectsPluginClassChecker : FirClassChecker(MppCheckerKind.Plat
                 ?.fullyExpandedType(session)
                 ?.toRegularClassSymbol(session) ?: return@forEach
 
-            if (!superInterface.hasAnnotation(JsPlainObjectsAnnotations.jsPlainObjectAnnotationClassId, session)) {
+            if (!superInterface.isAllowedToUseAsSuperType(session)) {
                 reporter.reportOn(
                     superType.source,
                     FirJsPlainObjectsErrors.JS_PLAIN_OBJECT_CAN_EXTEND_ONLY_OTHER_JS_PLAIN_OBJECTS,
@@ -97,6 +100,11 @@ object FirJsPlainObjectsPluginClassChecker : FirClassChecker(MppCheckerKind.Plat
             }
         }
     }
+
+    @OptIn(SymbolInternals::class, UnexpandedTypeCheck::class)
+    private fun FirClassSymbol<FirClass>.isAllowedToUseAsSuperType(session: FirSession): Boolean =
+        hasAnnotation(JsPlainObjectsAnnotations.jsPlainObjectAnnotationClassId, session) ||
+                resolvedSuperTypeRefs.singleOrNull()?.isAny == true && fir.declarations.isEmpty()
 
     private fun checkJsPlainObjectAsSuperInterface(
         classSymbol: FirClassSymbol<FirClass>,
