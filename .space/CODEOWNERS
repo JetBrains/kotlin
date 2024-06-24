@@ -44,9 +44,9 @@
 /analysis/ "Kotlin IDE Analysis Core"
 /analysis/light-classes-base/ Dmitry.Gridin
 /analysis/symbol-light-classes/ Dmitry.Gridin
-/analysis/analysis-api-fir/src/org/jetbrains/kotlin/analysis/api/fir/diagnostics/KtFirDiagnostics.kt "Kotlin Compiler Core"
-/analysis/analysis-api-fir/src/org/jetbrains/kotlin/analysis/api/fir/diagnostics/KtFirDiagnosticsImpl.kt "Kotlin Compiler Core"
-/analysis/analysis-api-fir/src/org/jetbrains/kotlin/analysis/api/fir/diagnostics/KtFirDataClassConverters.kt "Kotlin Compiler Core"
+/analysis/analysis-api-fir/src/org/jetbrains/kotlin/analysis/api/fir/diagnostics/KaFirDiagnostics.kt "Kotlin Compiler Core"
+/analysis/analysis-api-fir/src/org/jetbrains/kotlin/analysis/api/fir/diagnostics/KaFirDiagnosticsImpl.kt "Kotlin Compiler Core"
+/analysis/analysis-api-fir/src/org/jetbrains/kotlin/analysis/api/fir/diagnostics/KaFirDataClassConverters.kt "Kotlin Compiler Core"
 
 # UNKNOWN: /annotations/
 

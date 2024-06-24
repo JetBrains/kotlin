@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.checkers.generator.inBracketsWithIndent
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
 
-object FirDiagnosticToKtDiagnosticConverterRenderer : AbstractDiagnosticsDataClassRenderer() {
+object FirDiagnosticToKaDiagnosticConverterRenderer : AbstractDiagnosticsDataClassRenderer() {
     override fun SmartPrinter.render(diagnosticList: HLDiagnosticList, packageName: String) {
         printHeader(packageName, diagnosticList)
         printDiagnosticConverter(diagnosticList)
