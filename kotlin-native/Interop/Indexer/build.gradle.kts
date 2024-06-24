@@ -157,9 +157,11 @@ kotlinNativeInterop {
     this.create("clang") {
         defFile("clang.def")
         compilerOpts(cflags)
-        linkerOpts = ldflags
-        genTask.dependsOn(libclangextTask)
-        genTask.inputs.dir(libclangextDir)
+        linkerOpts(ldflags)
+        genTask.configure {
+            dependsOn(libclangextTask)
+            inputs.dir(libclangextDir)
+        }
     }
 }
 

@@ -22,7 +22,6 @@ repositories {
 }
 
 plugins {
-    groovy
     kotlin("jvm")
     `kotlin-dsl`
 }
@@ -66,7 +65,6 @@ java {
 }
 
 val compileKotlin: KotlinCompile by tasks
-val compileGroovy: GroovyCompile by tasks
 
 compileKotlin.apply {
     compilerOptions {
@@ -79,12 +77,6 @@ compileKotlin.apply {
             )
         )
     }
-}
-
-// Add Kotlin classes to a classpath for the Groovy compiler
-compileGroovy.apply {
-    classpath += project.files(compileKotlin.destinationDirectory)
-    dependsOn(compileKotlin)
 }
 
 kotlin {
@@ -111,7 +103,7 @@ gradlePlugin {
         }
         create("native-interop-plugin") {
             id = "native-interop-plugin"
-            implementationClass = "org.jetbrains.kotlin.NativeInteropPlugin"
+            implementationClass = "org.jetbrains.kotlin.interop.NativeInteropPlugin"
         }
         create("native") {
             id = "native"
