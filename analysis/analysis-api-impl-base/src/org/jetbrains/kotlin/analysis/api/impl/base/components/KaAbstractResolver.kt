@@ -10,6 +10,7 @@ import com.intellij.psi.PsiMember
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaResolver
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseExplicitReceiverValue
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallCandidateInfo
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallInfo
@@ -80,7 +81,7 @@ abstract class KaAbstractResolver<T : KaSession> : KaSessionComponent<T>(), KaRe
     }
 
     protected fun KtExpression.toExplicitReceiverValue(type: KaType): KaExplicitReceiverValue =
-        KaExplicitReceiverValue(this, type, isReceiverOfKtSafeQualifiedExpression(), token)
+        KaBaseExplicitReceiverValue(expression = this, backingType = type, isSafeNavigation = isReceiverOfKtSafeQualifiedExpression())
 
     private fun KtExpression.isReceiverOfKtSafeQualifiedExpression(): Boolean {
         val safeQualifiedExpression = parentOfType<KtSafeQualifiedExpression>() ?: return false
