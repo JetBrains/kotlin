@@ -423,7 +423,7 @@ private class KlibValidationPipelineBuilder(
                 "the golden file stored in the project"
         group = "other"
         strictValidation.set(extension.klib.strictValidation)
-        requiredTargets.addAll(supportedTargets())
+        targetsToRemove.addAll(unsupportedTargets())
         inputAbiFile.fileProvider(klibApiDir.map { it.resolve(klibDumpFileName) })
         outputAbiFile.fileProvider(klibOutputDir.map { it.resolve(klibDumpFileName) })
     }
@@ -534,8 +534,8 @@ private class KlibValidationPipelineBuilder(
         }
     }
 
-    // Compilable targets supported by the host compiler
-    private fun Project.supportedTargets(): Provider<Set<KlibTarget>> {
+    // Compilable targets not supported by the host compiler
+    private fun Project.unsupportedTargets(): Provider<Set<KlibTarget>> {
         val banned = bannedTargets() // for testing only
         return project.provider {
             val hm = HostManager()
@@ -543,9 +543,9 @@ private class KlibValidationPipelineBuilder(
                 .asSequence()
                 .filter {
                     if (it is KotlinNativeTarget) {
-                        hm.isEnabled(it.konanTarget) && it.targetName !in banned
+                        !hm.isEnabled(it.konanTarget) || it.targetName in banned
                     } else {
-                        true
+                        false
                     }
                 }
                 .map { it.toKlibTarget() }

@@ -30,10 +30,10 @@ public abstract class KotlinKlibExtractAbiTask : DefaultTask() {
     public abstract val inputAbiFile: RegularFileProperty
 
     /**
-     * List of the targets that the resulting dump should contain.
+     * List of the targets that need to be filtered out from [inputAbiFile].
      */
     @get:Input
-    public abstract val requiredTargets: SetProperty<KlibTarget>
+    public abstract val targetsToRemove: SetProperty<KlibTarget>
 
     /**
      * Refer to [KlibValidationSettings.strictValidation] for details.
@@ -61,17 +61,16 @@ public abstract class KotlinKlibExtractAbiTask : DefaultTask() {
             error("Project ABI file ${inputFile.relativeTo(rootDir)} is empty.")
         }
         val dump = KlibDump.from(inputFile)
-        val enabledTargets = requiredTargets.get().map(KlibTarget::targetName).toSet()
+        val unsupportedTargets = targetsToRemove.get().map(KlibTarget::targetName).toSet()
         // Filter out only unsupported files.
         // That ensures that target renaming will be caught and reported as a change.
-        val targetsToRemove = dump.targets.filter { it.targetName !in enabledTargets }
-        if (targetsToRemove.isNotEmpty() && strictValidation.get()) {
+        if (unsupportedTargets.isNotEmpty() && strictValidation.get()) {
             throw IllegalStateException(
-                "Validation could not be performed as some targets are not available " +
+                "Validation could not be performed as some targets (namely, $targetsToRemove) are not available " +
                         "and the strictValidation mode was enabled."
             )
         }
-        dump.remove(targetsToRemove)
+        dump.remove(unsupportedTargets.map(KlibTarget::parse))
         dump.saveTo(outputAbiFile.asFile.get())
     }
 }
