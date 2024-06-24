@@ -604,7 +604,7 @@ class NewConstraintSystemImpl(
         }
 
         for (otherVariableWithConstraints in notFixedTypeVariables.values) {
-            otherVariableWithConstraints.removeConstrains { containsTypeVariable(it.type, freshTypeConstructor) }
+            otherVariableWithConstraints.removeConstraints { containsTypeVariable(it.type, freshTypeConstructor) }
         }
 
         storage.fixedTypeVariables[freshTypeConstructor] = resultType
@@ -807,7 +807,7 @@ class NewConstraintSystemImpl(
 
     override fun removePostponedTypeVariablesFromConstraints(postponedTypeVariables: Set<TypeConstructorMarker>) {
         for ((_, variableWithConstraints) in storage.notFixedTypeVariables) {
-            variableWithConstraints.removeConstrains { constraint ->
+            variableWithConstraints.removeConstraints { constraint ->
                 constraint.type.contains { it is StubTypeMarker && it.getOriginalTypeVariable() in postponedTypeVariables }
             }
         }
