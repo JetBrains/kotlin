@@ -35,4 +35,8 @@ class FirParcelizeCheckersExtension(
         override val constructorCheckers: Set<FirConstructorChecker>
             get() = setOf(FirParcelizeConstructorChecker(parcelizeAnnotations))
     }
+
+    fun some() {
+        println("Test")
+    }
 }
