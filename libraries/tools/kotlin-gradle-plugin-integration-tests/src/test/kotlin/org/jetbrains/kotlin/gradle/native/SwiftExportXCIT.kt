@@ -13,7 +13,7 @@ import org.junit.jupiter.api.condition.OS
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @DisplayName("Tests for running Swift Export XCTests")
 @SwiftExportGradlePluginTests
-@GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
+@GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
 class SwiftExportXCIT : KGPBaseTest() {
 
     @DisplayName("run XCTests for testing Swift Export")
@@ -32,8 +32,7 @@ class SwiftExportXCIT : KGPBaseTest() {
                 buildXcodeProject(
                     xcodeproj = projectPath.resolve("iosApp/iosApp.xcodeproj"),
                     destination = "platform=iOS Simulator,id=${simulator.udid}",
-                    buildMode = XcodeBuildMode.TEST,
-                    buildSettingOverrides = mapOf("VALID_ARCHS" to "arm64")
+                    buildMode = XcodeBuildMode.TEST
                 )
             }
         }
