@@ -1,0 +1,1 @@
+fun test(block: <expr>(String) -> Int?</expr>) {}

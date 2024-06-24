@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.types
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescNamedClassSymbol
@@ -117,5 +118,11 @@ internal class KaFe10FunctionalType(
 
     override fun toString(): String {
         return fe10Type.renderForDebugging(analysisContext)
+    }
+
+    @KaExperimentalApi
+    @KaImplementationDetail
+    override fun createPointer(): KaTypePointer<KaFunctionType> = withValidityAssertion {
+        throw NotImplementedError("Type pointers are not implemented for FE 1.0")
     }
 }

@@ -1,0 +1,32 @@
+Restored type is the same as the original one
+
+KaFlexibleType:
+  abbreviatedType: null
+  annotations: []
+  lowerBound: KaUsualClassType:
+    abbreviatedType: null
+    annotations: []
+    classId: kotlin/String
+    nullability: NON_NULLABLE
+    qualifiers: [
+      qualifier:
+        name: String
+        symbol: KaNamedClassSymbol(kotlin/String)
+        typeArguments: []
+    ]
+    symbol: KaNamedClassSymbol(kotlin/String)
+    typeArguments: []
+  nullability: UNKNOWN
+  upperBound: KaUsualClassType:
+    abbreviatedType: null
+    annotations: []
+    classId: kotlin/String
+    nullability: NULLABLE
+    qualifiers: [
+      qualifier:
+        name: String
+        symbol: KaNamedClassSymbol(kotlin/String)
+        typeArguments: []
+    ]
+    symbol: KaNamedClassSymbol(kotlin/String)
+    typeArguments: []

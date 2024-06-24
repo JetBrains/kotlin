@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModuleProvider
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
 
 /**
  * [KaSession] is the entry point to all frontend-related work. It has the following contracts:
@@ -96,6 +98,11 @@ public interface KaSession : KaLifetimeOwner,
     public fun <S : KaSymbol> KaSymbolPointer<S>.restoreSymbol(): S? = withValidityAssertion {
         @OptIn(KaImplementationDetail::class)
         restoreSymbol(useSiteSession)
+    }
+
+    public fun <T : KaType> KaTypePointer<T>.restore(): T? = withValidityAssertion {
+        @OptIn(KaImplementationDetail::class)
+        restore(useSiteSession)
     }
 }
 

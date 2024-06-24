@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.types
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktNullability
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
@@ -15,6 +17,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaIntersectionType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
 import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.SimpleType
@@ -43,5 +46,11 @@ internal class KaFe10IntersectionType(
 
     override fun toString(): String {
         return fe10Type.renderForDebugging(analysisContext)
+    }
+
+    @KaExperimentalApi
+    @KaImplementationDetail
+    override fun createPointer(): KaTypePointer<KaIntersectionType> = withValidityAssertion {
+        throw NotImplementedError("Type pointers are not implemented for FE 1.0")
     }
 }

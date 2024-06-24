@@ -5,20 +5,28 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.types
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForType
 import org.jetbrains.kotlin.analysis.api.fir.types.qualifiers.UsualClassTypeQualifierBuilder
+import org.jetbrains.kotlin.analysis.api.fir.utils.ConeClassLikeTypePointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.buildAbbreviatedType
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
+import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
 import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
 import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
+import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.fir.types.isSomeFunctionType
 import org.jetbrains.kotlin.fir.types.renderForDebugging
 import org.jetbrains.kotlin.name.ClassId
 
@@ -55,4 +63,24 @@ internal class KaFirUsualClassType(
     override fun equals(other: Any?) = typeEquals(other)
     override fun hashCode() = typeHashcode()
     override fun toString() = coneType.renderForDebugging()
+
+    @KaExperimentalApi
+    @KaImplementationDetail
+    override fun createPointer(): KaTypePointer<KaUsualClassType> = withValidityAssertion {
+        val coneTypePointer = ConeClassLikeTypePointer(symbol, coneType, builder)
+        return KaFirUsualClassTypePointer(coneTypePointer)
+    }
+}
+
+private class KaFirUsualClassTypePointer(private val coneTypePointer: ConeClassLikeTypePointer) : KaTypePointer<KaUsualClassType> {
+    override fun restore(session: KaSession): KaUsualClassType? = session.withValidityAssertion {
+        requireIsInstance<KaFirSession>(session)
+
+        val coneType = coneTypePointer.restore(session) ?: return null
+        if (coneType.isSomeFunctionType(session.firResolveSession.useSiteFirSession)) {
+            return null
+        }
+
+        return KaFirUsualClassType(coneType, session.firSymbolBuilder)
+    }
 }
