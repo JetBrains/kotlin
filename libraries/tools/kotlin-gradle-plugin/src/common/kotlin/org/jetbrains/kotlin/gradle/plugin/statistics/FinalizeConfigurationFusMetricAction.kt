@@ -13,17 +13,9 @@ import org.jetbrains.kotlin.gradle.plugin.await
 internal val FinalizeConfigurationFusMetricAction = KotlinProjectSetupCoroutine {
     KotlinPluginLifecycle.Stage.ReadyForExecution.await()
 
-    val projectConfigurationService =
-        project.gradle.sharedServices.registrations.findByName(ProjectConfigurationFusService.getServiceName(project))?.also {
-            val parameters = it.parameters as ProjectConfigurationFusService.Parameters
-            parameters.configurationMetrics.finalizeValue()
-        }
-
     project.gradle.sharedServices.registrations.findByName(BuildFusService.serviceName)?.also {
         val parameters = it.parameters as BuildFusService.Parameters
         parameters.generalConfigurationMetrics.finalizeValue()
-        projectConfigurationService?.service?.orNull?.also {
-            parameters.configurationMetrics.add((it.parameters as ProjectConfigurationFusService.Parameters).configurationMetrics)
-        }
+        parameters.configurationMetrics.add(KotlinProjectConfigurationMetrics.collectMetrics(project))
     }
 }
