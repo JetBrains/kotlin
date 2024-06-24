@@ -96,7 +96,10 @@ internal class WasmPropertyReferenceLowering(val context: WasmBackendContext) : 
 
         val kPropertiesFieldType: IrType = arrayClass.typeWith(kPropertyImplType)
 
-        val kPropertiesField = context.irFactory.stageController.restrictTo(symbols.kProperty1Impl.owner) {
+        val firstFileDeclaration = irFile.declarations.firstOrNull() ?: return
+
+        //TODO Check is this valid
+        val kPropertiesField = context.irFactory.stageController.restrictTo(firstFileDeclaration) {
             context.irFactory.createField(
                 startOffset = SYNTHETIC_OFFSET,
                 endOffset = SYNTHETIC_OFFSET,
