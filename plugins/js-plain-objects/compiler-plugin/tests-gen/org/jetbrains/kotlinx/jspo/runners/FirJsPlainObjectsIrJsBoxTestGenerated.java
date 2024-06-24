@@ -49,6 +49,12 @@ public class FirJsPlainObjectsIrJsBoxTestGenerated extends AbstractFirJsPlainObj
   }
 
   @Test
+  @TestMetadata("reservedKeywordsAsPropery.kt")
+  public void testReservedKeywordsAsPropery() {
+    runTest("plugins/js-plain-objects/compiler-plugin/testData/box/reservedKeywordsAsPropery.kt");
+  }
+
+  @Test
   @TestMetadata("simple.kt")
   public void testSimple() {
     runTest("plugins/js-plain-objects/compiler-plugin/testData/box/simple.kt");

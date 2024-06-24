@@ -8,7 +8,6 @@ import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
@@ -16,16 +15,19 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
-import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.js.common.RESERVED_KEYWORDS
+import org.jetbrains.kotlin.js.common.isES5IdentifierPart
+import org.jetbrains.kotlin.js.common.isES5IdentifierStart
+import org.jetbrains.kotlin.js.common.isValidES5Identifier
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlinx.jspo.compiler.resolve.JsPlainObjectsPluginKey
 import org.jetbrains.kotlinx.jspo.compiler.resolve.StandardIds
+import kotlin.math.abs
 
 private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val context: IrPluginContext) : DeclarationTransformer {
     private val jsFunction = context.referenceFunctions(StandardIds.JS_FUNCTION_ID).single()
@@ -125,12 +127,31 @@ private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val c
                     0,
                     1,
                 ).apply {
-                    val jsObject = "{ ${declaration.valueParameters.joinToString(", ") { "${it.name.identifier}:${it.name.identifier}" }} }"
-                    putValueArgument(0, jsObject.toIrConst(context.irBuiltIns.stringType))
+                    putValueArgument(0, createValueParametersObject(declaration.valueParameters).toIrConst(context.irBuiltIns.stringType))
                 }
             )
         }
     }
+
+    private fun sanitizeName(name: String): String {
+        if (name.isEmpty()) return "_"
+
+        val builder = StringBuilder(name.length + 7)
+
+        val first = name.first()
+
+        builder.append(first.mangleIfNot(Char::isES5IdentifierStart))
+
+        for (idx in 1..name.lastIndex) {
+            val c = name[idx]
+            builder.append(c.mangleIfNot(Char::isES5IdentifierPart))
+        }
+
+        return "${builder}_${abs(name.hashCode()).toString(Character.MAX_RADIX)}"
+    }
+
+    private inline fun Char.mangleIfNot(predicate: Char.() -> Boolean) =
+        if (predicate()) this else '_'
 
     private fun IrSimpleFunction.generateBodyForCopyFunction(): IrBlockBody {
         val declaration = this
@@ -167,12 +188,26 @@ private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val c
                     0,
                     1,
                 ).apply {
-                    val jsObject = "{ ${declaration.valueParameters.joinToString(", ") { "${it.name.identifier}:${it.name.identifier}" }} }"
-                    val objectAssignCall = "Object.assign({}, ${selfName.identifier}, $jsObject)"
+                    val objectAssignCall = "Object.assign({}, ${selfName.identifier}, ${createValueParametersObject(declaration.valueParameters)})"
                     putValueArgument(0, objectAssignCall.toIrConst(context.irBuiltIns.stringType))
                 }
             )
         }
+    }
+
+    private fun createValueParametersObject(valueParameters: Iterable<IrValueParameter>): String {
+        val listOfParameters = valueParameters.joinToString(", ") {
+            val (key, value) = it.name.run {
+                if (identifier.isValidES5Identifier() && identifier !in RESERVED_KEYWORDS) identifier to identifier
+                else {
+                    val newName: Name = Name.identifier(sanitizeName(identifier)).apply { it.name = this }
+                    "\"${identifier}\"" to newName.identifier
+                }
+            }
+            "$key:$value"
+        }
+
+        return "{$listOfParameters}"
     }
 }
 
