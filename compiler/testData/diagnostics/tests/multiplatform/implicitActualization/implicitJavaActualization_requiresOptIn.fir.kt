@@ -6,7 +6,7 @@
 import kotlin.jvm.ImplicitlyActualizedByJvmDeclaration
 
 @OptIn(ExperimentalMultiplatform::class)
-@ImplicitlyActualizedByJvmDeclaration
+<!IMPLICIT_ACTUAL_OPT_IN_ANNOTATION!>@ImplicitlyActualizedByJvmDeclaration<!>
 expect annotation class Foo
 
 // MODULE: m2-jvm()()(m1-common)

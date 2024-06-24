@@ -6,7 +6,7 @@
 import kotlin.jvm.ImplicitlyActualizedByJvmDeclaration
 
 @OptIn(ExperimentalMultiplatform::class)
-<!IMPLICIT_ACTUAL_NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>@ImplicitlyActualizedByJvmDeclaration<!>
+@ImplicitlyActualizedByJvmDeclaration
 expect class Foo {
     fun foo(a: Int)
 }
