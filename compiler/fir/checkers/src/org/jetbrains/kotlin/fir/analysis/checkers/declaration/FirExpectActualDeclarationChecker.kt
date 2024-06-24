@@ -162,7 +162,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
         val source = declaration.source
         if (!declaration.hasActualModifier() &&
             ExpectActualMatchingCompatibility.MatchedSuccessfully in matchingCompatibilityToMembersMap &&
-            (actualContainingClass == null || requireActualModifier(symbol, actualContainingClass, context.session)) &&
+            requireActualModifier(symbol, actualContainingClass, context.session) &&
             expectedSingleCandidate != null &&
             // Don't require 'actual' keyword on fake-overrides actualizations.
             // It's an inconsistency in the language design, but it's the way it works right now
@@ -333,24 +333,19 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
         }
     }
 
-    // we don't require `actual` modifier on
-    //  - implicit primary constructors
-    //  - data class fake members
-    //  - annotation constructors, because annotation classes can only have one constructor
-    //  - value class primary constructors, because value class must have primary constructor
-    //  - value parameter inside primary constructor of inline class, because inline class must have one value parameter
     private fun requireActualModifier(
         declaration: FirBasedSymbol<*>,
-        actualContainingClass: FirRegularClassSymbol,
+        actualContainingClass: FirRegularClassSymbol?,
         platformSession: FirSession
     ): Boolean {
         val source = declaration.source
         check(source != null) { "expect-actual matching is only possible for code with sources" }
-        return source.kind != KtFakeSourceElementKind.ImplicitConstructor &&
+        return source.kind != KtFakeSourceElementKind.ImplicitConstructor && // implicit primary constructors
                 declaration.origin != FirDeclarationOrigin.Synthetic.DataClassMember &&
-                !declaration.isAnnotationConstructor(platformSession) &&
-                !declaration.isPrimaryConstructorOfInlineOrValueClass(platformSession) &&
-                !isUnderlyingPropertyOfInlineClass(declaration, actualContainingClass, platformSession)
+                !declaration.isAnnotationConstructor(platformSession) && // because annotation classes can only have one constructor
+                !declaration.isPrimaryConstructorOfInlineOrValueClass(platformSession) && // because value class must have only a single primary constructor anyway
+                (actualContainingClass == null ||
+                        !isUnderlyingPropertyOfInlineClass(declaration, actualContainingClass, platformSession)) // because inline class must have a single value parameter anyway
     }
 
     // Ideally, this function shouldn't exist KT-63751
