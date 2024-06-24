@@ -791,4 +791,30 @@ internal class KlibVerificationTests : BaseKotlinGradleTest() {
             assertTaskFailure(":klibApiCheck")
         }
     }
+
+    @Test
+    fun `apiCheck should fail after target removal`() {
+        val runner = test {
+            settingsGradleKts {
+                resolve("/examples/gradle/settings/settings-name-testproject.gradle.kts")
+            }
+            // only a single native target is defined there
+            buildGradleKts {
+                resolve("/examples/gradle/base/withNativePluginAndSingleTarget.gradle.kts")
+            }
+            addToSrcSet("/examples/classes/AnotherBuildConfig.kt")
+            // dump was created for multiple native targets
+            abiFile(projectName = "testproject") {
+                resolve("/examples/classes/AnotherBuildConfig.klib.dump")
+            }
+            runApiCheck()
+        }
+        runner.buildAndFail().apply {
+            assertTaskFailure(":klibApiCheck")
+            Assertions.assertThat(output)
+                .contains("-// Targets: [androidNativeArm32, androidNativeArm64, androidNativeX64, " +
+                        "androidNativeX86, linuxArm64, linuxX64, mingwX64]")
+                .contains("+// Targets: [linuxArm64]")
+        }
+    }
 }

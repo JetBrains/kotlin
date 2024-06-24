@@ -88,8 +88,8 @@ public abstract class kotlinx/validation/KotlinKlibExtractAbiTask : org/gradle/a
 	public fun <init> ()V
 	public abstract fun getInputAbiFile ()Lorg/gradle/api/file/RegularFileProperty;
 	public abstract fun getOutputAbiFile ()Lorg/gradle/api/file/RegularFileProperty;
-	public abstract fun getRequiredTargets ()Lorg/gradle/api/provider/SetProperty;
 	public final fun getStrictValidation ()Lorg/gradle/api/provider/Property;
+	public abstract fun getTargetsToRemove ()Lorg/gradle/api/provider/SetProperty;
 }
 
 public abstract class kotlinx/validation/KotlinKlibInferAbiTask : org/gradle/api/DefaultTask {
