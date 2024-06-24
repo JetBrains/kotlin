@@ -20114,6 +20114,12 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     }
 
     @Test
+    @TestMetadata("equalityForIndyLambdaParameter.kt")
+    public void testEqualityForIndyLambdaParameter() {
+      runTest("compiler/testData/codegen/box/inlineClasses/equalityForIndyLambdaParameter.kt");
+    }
+
+    @Test
     @TestMetadata("equalsCallsLeftArgument.kt")
     public void testEqualsCallsLeftArgument() {
       runTest("compiler/testData/codegen/box/inlineClasses/equalsCallsLeftArgument.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());

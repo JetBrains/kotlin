@@ -22233,6 +22233,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       }
 
       @Test
+      @TestMetadata("equalityForIndyLambdaParameter.kt")
+      public void testEqualityForIndyLambdaParameter() {
+        runTest("compiler/testData/codegen/box/inlineClasses/equalityForIndyLambdaParameter.kt");
+      }
+
+      @Test
       @TestMetadata("equalsCallsLeftArgument.kt")
       public void testEqualsCallsLeftArgument() {
         // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
