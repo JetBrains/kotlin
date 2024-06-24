@@ -67,9 +67,7 @@ object ModuleWrapperTranslation {
 
         val adapterBody = JsBlock()
         val adapter = JsFunction(program.scope, adapterBody, "Adapter")
-        val rootName = adapter.scope.declareName("root")
         val factoryName = adapter.scope.declareName("factory")
-        adapter.parameters += JsParameter(rootName)
         adapter.parameters += JsParameter(factoryName)
 
         val amdTest = JsAstUtils.and(JsAstUtils.typeOfIs(defineName.makeRef(), JsStringLiteral("function")),
@@ -79,6 +77,8 @@ object ModuleWrapperTranslation {
         val amdBody = JsBlock(wrapAmd(factoryName.makeRef(), importedModules, program))
         val commonJsBody = JsBlock(wrapCommonJs(factoryName.makeRef(), importedModules, program))
         val plainInvocation = makePlainInvocation(moduleId, factoryName.makeRef(), importedModules, program)
+
+        val rootName = JsName("globalThis", false)
 
         val lhs: JsExpression = if (Namer.requiresEscaping(moduleId)) {
             JsArrayAccess(rootName.makeRef(), JsStringLiteral(moduleId))
@@ -96,7 +96,7 @@ object ModuleWrapperTranslation {
         val selector = JsAstUtils.newJsIf(amdTest, amdBody, JsAstUtils.newJsIf(commonJsTest, commonJsBody, plainBlock))
         adapterBody.statements += selector
 
-        return listOf(JsInvocation(adapter, JsName("globalThis", false).makeRef(), function).makeStmt())
+        return listOf(JsInvocation(adapter, function).makeStmt())
     }
 
     private fun wrapAmd(

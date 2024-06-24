@@ -169,14 +169,14 @@ abstract class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
                             .forEach {
                                 val text = it.readText()
                                 // cache keeps the js code of compiled module, this substring from that js code
-                                if (text.contains("root['kotlin-js-ir-ic-multiple-artifacts-lib']")) {
+                                if (text.contains("globalThis['kotlin-js-ir-ic-multiple-artifacts-lib'] = ")) {
                                     if (lib) {
                                         error("lib should be only once in cache")
                                     }
                                     lib = true
                                 }
                                 // cache keeps the js code of compiled module, this substring from that js code
-                                if (text.contains("root['kotlin-js-ir-ic-multiple-artifacts-lib-other']")) {
+                                if (text.contains("globalThis['kotlin-js-ir-ic-multiple-artifacts-lib-other'] = ")) {
                                     if (libOther) {
                                         error("libOther should be only once in cache")
                                     }
