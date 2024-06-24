@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.Renderer
 import org.jetbrains.kotlin.diagnostics.rendering.RenderingContext
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.containingClassLookupTag
+import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirNamedReference
@@ -275,5 +276,33 @@ object FirDiagnosticRenderers {
 
     val SYMBOL_WITH_CONTAINING_DECLARATION = Renderer { symbol: FirCallableSymbol<*> ->
         "'${SYMBOL.render(symbol)}' defined in ${NAME_OF_CONTAINING_DECLARATION_OR_FILE.render(symbol.callableId)}"
+    }
+
+    val SYMBOL_KIND = Renderer { symbol: FirBasedSymbol<*> ->
+        when (symbol) {
+            is FirPropertyAccessorSymbol -> "property accessor"
+            is FirConstructorSymbol -> "constructor"
+            is FirFunctionSymbol -> "function"
+            is FirPropertySymbol -> "property"
+            is FirBackingFieldSymbol -> "backing field"
+            is FirDelegateFieldSymbol -> "delegate field"
+            is FirEnumEntrySymbol -> "enum entry"
+            is FirFieldSymbol -> "field"
+            is FirValueParameterSymbol -> "value parameter"
+            is FirFileSymbol -> "file"
+            is FirAnonymousInitializerSymbol -> "initializer"
+            is FirTypeParameterSymbol -> "type parameter"
+            is FirRegularClassSymbol -> when (symbol.classKind) {
+                ClassKind.CLASS -> "class"
+                ClassKind.INTERFACE -> "interface"
+                ClassKind.ENUM_CLASS -> "enum class"
+                ClassKind.ENUM_ENTRY -> "enum entry"
+                ClassKind.ANNOTATION_CLASS -> "annotation class"
+                ClassKind.OBJECT -> "object"
+            }
+            is FirAnonymousObjectSymbol -> "anonymous object"
+            is FirTypeAliasSymbol -> "type alias"
+            else -> "declaration"
+        }
     }
 }

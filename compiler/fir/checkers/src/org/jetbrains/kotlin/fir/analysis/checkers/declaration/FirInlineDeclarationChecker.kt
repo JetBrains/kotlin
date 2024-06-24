@@ -117,7 +117,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
                     )
                 accessedDataCopyVisibility != null &&
                         shouldReportNonPublicCallFromPublicInline(accessedDataCopyVisibility, declarationVisibility) ->
-                    reporter.reportOn(source, FirErrors.NON_PUBLIC_DATA_COPY_CALL_FROM_PUBLIC_INLINE, context)
+                    reporter.reportOn(source, FirErrors.NON_PUBLIC_DATA_COPY_CALL_FROM_PUBLIC_INLINE, inlineFunction.symbol, context)
                 else -> checkPrivateClassMemberAccess(accessedSymbol, source, context, reporter)
             }
             return AccessedDeclarationVisibilityData(

@@ -1744,7 +1744,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val NON_PUBLIC_DATA_COPY_CALL_FROM_PUBLIC_INLINE by deprecationError<KtElement>(
             LanguageFeature.ErrorAboutDataClassCopyVisibilityChange,
             PositioningStrategy.REFERENCE_BY_QUALIFIED
-        )
+        ) {
+            parameter<Symbol>("inlineDeclaration")
+        }
 
         val PROTECTED_CONSTRUCTOR_CALL_FROM_PUBLIC_INLINE by error<KtElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<Symbol>("inlineDeclaration")

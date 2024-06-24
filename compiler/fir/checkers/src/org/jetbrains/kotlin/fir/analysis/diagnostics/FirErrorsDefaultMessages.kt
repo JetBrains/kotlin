@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.REQU
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOLS_ON_NEWLINE_WITH_INDENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOLS_ON_NEXT_LINES
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL_KIND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL_WITH_CONTAINING_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.VARIABLE_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.WHEN_MISSING_CASES
@@ -2593,44 +2594,49 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             SYMBOL
         )
         map.put(RECURSION_IN_INLINE, "Inline function ''{0}'' cannot be recursive.", SYMBOL)
-        map.put(NON_PUBLIC_CALL_FROM_PUBLIC_INLINE, "Public-API inline declaration cannot access non-public-API ''{0}''.", SYMBOL, SYMBOL)
         map.put(
-            NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE,
-            "Public-API inline declaration cannot access non-public-API inline declaration ''{0}'' as it could transitively access non-public-API declarations.",
-            SYMBOL,
-            SYMBOL
+            NON_PUBLIC_CALL_FROM_PUBLIC_INLINE, "Public-API inline {1} cannot access non-public-API {0}.",
+            SYMBOL_KIND,
+            SYMBOL_KIND,
         )
         map.put(
             NON_PUBLIC_CALL_FROM_PUBLIC_INLINE_DEPRECATION,
-            "Public-API inline declaration cannot access non-public-API ''{0}''. " +
+            "Public-API inline {1} cannot access non-public-API {0}. " +
                     "This will become an error in ${LanguageFeature.ProhibitPrivateOperatorCallInInline.formatKotlinWithVersion()}.",
-            SYMBOL,
-            SYMBOL
+            SYMBOL_KIND,
+            SYMBOL_KIND
+        )
+        map.put(
+            NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE,
+            "Public-API inline {1} cannot access non-public-API inline {0} as it could transitively access non-public-API declarations.",
+            SYMBOL_KIND,
+            SYMBOL_KIND,
         )
         map.put(
             NON_PUBLIC_DATA_COPY_CALL_FROM_PUBLIC_INLINE,
-            "This 'copy' usage exposes the non-public primary constructor of a 'data class'. " +
-                    "The 'copy' will change its visibility in future versions of Kotlin. " +
-                    "Public-API inline function won't be able to access non-public-API 'copy'. " +
-                    "See https://youtrack.jetbrains.com/issue/KT-11914"
+            "This ''copy'' usage exposes the non-public primary constructor of a ''data class''. " +
+                    "The ''copy'' will change its visibility in future versions of Kotlin. " +
+                    "The public-API inline {0} won''t be able to access non-public-API ''copy''. " +
+                    "See https://youtrack.jetbrains.com/issue/KT-11914",
+            SYMBOL_KIND,
         )
         map.put(
             PROTECTED_CONSTRUCTOR_CALL_FROM_PUBLIC_INLINE,
-            "Protected constructor call from public-API inline function is deprecated.",
-            SYMBOL,
-            SYMBOL
+            "Protected constructor call from public-API inline {0} is deprecated.",
+            SYMBOL_KIND,
+            NOT_RENDERED,
         )
         map.put(
             PROTECTED_CALL_FROM_PUBLIC_INLINE,
-            "Protected function call from public-API inline function is deprecated.",
-            SYMBOL,
-            SYMBOL
+            "Protected function call from public-API inline {0} is deprecated.",
+            SYMBOL_KIND,
+            NOT_RENDERED,
         )
         map.put(
             PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR,
-            "Protected function call from public-API inline function is prohibited.",
-            SYMBOL,
-            SYMBOL
+            "Protected function call from public-API inline {0} is prohibited.",
+            SYMBOL_KIND,
+            NOT_RENDERED,
         )
         map.put(
             PRIVATE_CLASS_MEMBER_FROM_INLINE,
@@ -2650,7 +2656,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             SYMBOL
         )
 
-        map.put(SUPER_CALL_FROM_PUBLIC_INLINE, "Accessing super members from public-API inline function is deprecated.", SYMBOL)
+        map.put(SUPER_CALL_FROM_PUBLIC_INLINE, "Accessing super members from public-API inline {0} is deprecated.", SYMBOL_KIND)
 
         map.put(ILLEGAL_INLINE_PARAMETER_MODIFIER, "Modifier is only allowed for function parameters of an inline function.")
 
