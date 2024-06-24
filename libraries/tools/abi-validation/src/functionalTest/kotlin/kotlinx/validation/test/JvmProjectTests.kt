@@ -19,8 +19,7 @@ class JvmProjectTests : BaseKotlinGradleTest() {
                 resolve("/examples/gradle/base/withPlugin.gradle.kts")
                 resolve("/examples/gradle/configuration/generatedSources/generatedJvmSources.gradle.kts")
             }
-            // TODO: enable configuration cache back when we start skipping tasks correctly
-            runner(withConfigurationCache = false) {
+            runner {
                 arguments.add(":apiDump")
             }
         }
@@ -42,8 +41,7 @@ class JvmProjectTests : BaseKotlinGradleTest() {
             apiFile(projectName = rootProjectDir.name) {
                 resolve("/examples/classes/GeneratedSources.dump")
             }
-            // TODO: enable configuration cache back when we start skipping tasks correctly
-            runner(withConfigurationCache = false) {
+            runner {
                 arguments.add(":apiCheck")
             }
         }

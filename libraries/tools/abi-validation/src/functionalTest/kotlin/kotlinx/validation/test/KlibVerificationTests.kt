@@ -13,6 +13,8 @@ import org.assertj.core.api.Assertions
 import org.gradle.testkit.runner.BuildResult
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.utils.addToStdlib.butIf
+import org.junit.Assert
 import org.junit.Assume
 import org.junit.Test
 import java.io.File
@@ -48,27 +50,32 @@ internal class KlibVerificationTests : BaseKotlinGradleTest() {
             resolve("/examples/gradle/base/withNativePlugin.gradle.kts")
         }
     }
+
     private fun BaseKotlinScope.additionalBuildConfig(config: String) {
         buildGradleKts {
             resolve(config)
         }
     }
+
     private fun BaseKotlinScope.addToSrcSet(pathTestFile: String, sourceSet: String = "commonMain") {
         val fileName = Paths.get(pathTestFile).fileName.toString()
         kotlin(fileName, sourceSet) {
             resolve(pathTestFile)
         }
     }
+
     private fun BaseKotlinScope.runApiCheck() {
         runner {
             arguments.add(":apiCheck")
         }
     }
+
     private fun BaseKotlinScope.runApiDump() {
         runner {
             arguments.add(":apiDump")
         }
     }
+
     private fun assertApiCheckPassed(buildResult: BuildResult) {
         buildResult.assertTaskSuccess(":apiCheck")
     }
@@ -451,7 +458,7 @@ internal class KlibVerificationTests : BaseKotlinGradleTest() {
     }
 
     @Test
-    fun `klibCheck if all klib-targets are unavailable`() {
+    fun `klibCheck should not fail if all klib-targets are unavailable`() {
         val runner = test {
             baseProjectSetting()
             addToSrcSet("/examples/classes/TopLevelDeclarations.kt")
@@ -468,10 +475,32 @@ internal class KlibVerificationTests : BaseKotlinGradleTest() {
             }
         }
 
+        runner.build().apply {
+            assertTaskSuccess(":klibApiCheck")
+        }
+    }
+
+    @Test
+    fun `klibCheck should fail with strict validation if all klib-targets are unavailable`() {
+        val runner = test {
+            baseProjectSetting()
+            additionalBuildConfig("/examples/gradle/configuration/unsupported/enforce.gradle.kts")
+            addToSrcSet("/examples/classes/TopLevelDeclarations.kt")
+            abiFile(projectName = "testproject") {
+                // note that the regular dump is used, where linuxArm64 is presented
+                resolve("/examples/classes/TopLevelDeclarations.klib.dump")
+            }
+            runner {
+                arguments.add(
+                    "-P$BANNED_TARGETS_PROPERTY_NAME=linuxArm64,linuxX64,mingwX64," +
+                            "androidNativeArm32,androidNativeArm64,androidNativeX64,androidNativeX86"
+                )
+                arguments.add(":klibApiCheck")
+            }
+        }
+
         runner.buildAndFail().apply {
-            Assertions.assertThat(output).contains(
-                "KLib ABI dump/validation requires at least one enabled klib target, but none were found."
-            )
+            assertTaskFailure(":klibApiExtractForValidation")
         }
     }
 
@@ -580,8 +609,10 @@ internal class KlibVerificationTests : BaseKotlinGradleTest() {
         checkKlibDump(runner.build(), "/examples/classes/AnotherBuildConfig.klib.dump")
 
         // Update the source file by adding a declaration
-        val updatedSourceFile = File(this::class.java.getResource(
-            "/examples/classes/AnotherBuildConfigModified.kt")!!.toURI()
+        val updatedSourceFile = File(
+            this::class.java.getResource(
+                "/examples/classes/AnotherBuildConfigModified.kt"
+            )!!.toURI()
         )
         val existingSource = runner.projectDir.resolve(
             "src/commonMain/kotlin/AnotherBuildConfig.kt"
@@ -601,8 +632,10 @@ internal class KlibVerificationTests : BaseKotlinGradleTest() {
         checkKlibDump(runner.build(), "/examples/classes/AnotherBuildConfig.klib.dump")
 
         // Update the source file by adding a declaration
-        val updatedSourceFile = File(this::class.java.getResource(
-            "/examples/classes/AnotherBuildConfigLinuxArm64.kt")!!.toURI()
+        val updatedSourceFile = File(
+            this::class.java.getResource(
+                "/examples/classes/AnotherBuildConfigLinuxArm64.kt"
+            )!!.toURI()
         )
         val existingSource = runner.projectDir.resolve(
             "src/linuxArm64Main/kotlin/AnotherBuildConfigLinuxArm64.kt"
@@ -626,8 +659,10 @@ internal class KlibVerificationTests : BaseKotlinGradleTest() {
         assertApiCheckPassed(runner.build())
 
         // Update the source file by adding a declaration
-        val updatedSourceFile = File(this::class.java.getResource(
-            "/examples/classes/AnotherBuildConfigModified.kt")!!.toURI()
+        val updatedSourceFile = File(
+            this::class.java.getResource(
+                "/examples/classes/AnotherBuildConfigModified.kt"
+            )!!.toURI()
         )
         val existingSource = runner.projectDir.resolve(
             "src/commonMain/kotlin/AnotherBuildConfig.kt"
@@ -665,10 +700,27 @@ internal class KlibVerificationTests : BaseKotlinGradleTest() {
             runApiDump()
         }
 
-        runner.build().apply {
+        runner.withDebug(true).build().apply {
             assertTaskSkipped(":klibApiDump")
         }
         assertFalse(runner.projectDir.resolve("api").exists())
+    }
+
+    @Test
+    fun `apiDump should remove dump file if the project does not contain sources anymore`() {
+        val runner = test {
+            baseProjectSetting()
+            addToSrcSet("/examples/classes/AnotherBuildConfig.kt", sourceSet = "commonTest")
+            abiFile(projectName = "testproject") {
+                resolve("/examples/classes/AnotherBuildConfig.klib.dump")
+            }
+            runApiDump()
+        }
+
+        runner.build().apply {
+            assertTaskSuccess(":klibApiDump")
+        }
+        assertFalse(runner.projectDir.resolve("api").resolve("testproject.klib.api").exists())
     }
 
     @Test
@@ -683,13 +735,18 @@ internal class KlibVerificationTests : BaseKotlinGradleTest() {
     }
 
     @Test
-    fun `apiCheck should not fail for empty project`() {
+    fun `apiCheck should fail for empty project`() {
         val runner = test {
             baseProjectSetting()
             addToSrcSet("/examples/classes/AnotherBuildConfig.kt", sourceSet = "commonTest")
             runApiCheck()
         }
-        runner.build()
+        runner.buildAndFail().apply {
+            assertTaskFailure(":klibApiExtractForValidation")
+            Assertions.assertThat(output).contains(
+                "File with project's API declarations 'api/testproject.klib.api' does not exist."
+            )
+        }
     }
 
     @Test
@@ -697,8 +754,7 @@ internal class KlibVerificationTests : BaseKotlinGradleTest() {
         val runner = test {
             baseProjectSetting()
             additionalBuildConfig("/examples/gradle/configuration/generatedSources/generatedSources.gradle.kts")
-            // TODO: enable configuration cache back when we start skipping tasks correctly
-            runner(withConfigurationCache = false) {
+            runner {
                 arguments.add(":apiDump")
             }
         }
@@ -713,11 +769,26 @@ internal class KlibVerificationTests : BaseKotlinGradleTest() {
             abiFile(projectName = "testproject") {
                 resolve("/examples/classes/GeneratedSources.klib.dump")
             }
-            // TODO: enable configuration cache back when we start skipping tasks correctly
-            runner(withConfigurationCache = false) {
+            runner {
                 arguments.add(":apiCheck")
             }
         }
         assertApiCheckPassed(runner.build())
+    }
+
+    @Test
+    fun `apiCheck should fail after a source set was removed`() {
+        val runner = test {
+            baseProjectSetting()
+            addToSrcSet("/examples/classes/AnotherBuildConfig.kt", "linuxX64Main")
+            addToSrcSet("/examples/classes/AnotherBuildConfig.kt", "linuxArm64Main")
+            abiFile(projectName = "testproject") {
+                resolve("/examples/classes/AnotherBuildConfig.klib.dump")
+            }
+            runApiCheck()
+        }
+        runner.buildAndFail().apply {
+            assertTaskFailure(":klibApiCheck")
+        }
     }
 }

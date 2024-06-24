@@ -12,54 +12,59 @@ import org.gradle.api.tasks.*
 import java.util.jar.JarFile
 import javax.inject.Inject
 
-public open class KotlinApiBuildTask @Inject constructor(
+public abstract class KotlinApiBuildTask @Inject constructor(
 ) : BuildTaskBase() {
+    @get:OutputFile
+    public abstract val outputApiFile: RegularFileProperty
 
-    @InputFiles
-    @Optional
-    @PathSensitive(PathSensitivity.RELATIVE)
-    public var inputClassesDirs: FileCollection? = null
+    @get:InputFiles
+    @get:Optional
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    public abstract val inputClassesDirs: ConfigurableFileCollection
 
-    @InputFile
-    @Optional
-    @PathSensitive(PathSensitivity.RELATIVE)
-    public val inputJar: RegularFileProperty = this.project.objects.fileProperty()
+    @get:InputFile
+    @get:Optional
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    public abstract val inputJar: RegularFileProperty
 
-    @InputFiles
-    @PathSensitive(PathSensitivity.RELATIVE)
-    public lateinit var inputDependencies: FileCollection
+    @get:InputFiles
+    @get:Optional
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    public abstract val inputDependencies: ConfigurableFileCollection
 
     @TaskAction
     internal fun generate() {
-        outputApiFile.delete()
-        outputApiFile.parentFile.mkdirs()
-
         val inputClassesDirs = inputClassesDirs
         val signatures = when {
             // inputJar takes precedence if specified
             inputJar.isPresent ->
                 JarFile(inputJar.get().asFile).use { it.loadApiFromJvmClasses() }
-            inputClassesDirs != null ->
+
+            inputClassesDirs.any() ->
                 inputClassesDirs.asFileTree.asSequence()
                     .filter {
                         !it.isDirectory && it.name.endsWith(".class") && !it.name.startsWith("META-INF/")
                     }
                     .map { it.inputStream() }
                     .loadApiFromJvmClasses()
+
             else ->
                 throw GradleException("KotlinApiBuildTask should have either inputClassesDirs, or inputJar property set")
         }
 
-        val publicPackagesNames = signatures.extractAnnotatedPackages(publicMarkers.map(::replaceDots).toSet())
-        val ignoredPackagesNames = signatures.extractAnnotatedPackages(nonPublicMarkers.map(::replaceDots).toSet())
+        val publicPackagesNames = signatures.extractAnnotatedPackages(publicMarkers.get().map(::replaceDots).toSet())
+        val ignoredPackagesNames =
+            signatures.extractAnnotatedPackages(nonPublicMarkers.get().map(::replaceDots).toSet())
 
         val filteredSignatures = signatures
-            .retainExplicitlyIncludedIfDeclared(publicPackages + publicPackagesNames,
-                publicClasses, publicMarkers)
-            .filterOutNonPublic(ignoredPackages + ignoredPackagesNames, ignoredClasses)
-            .filterOutAnnotated(nonPublicMarkers.map(::replaceDots).toSet())
+            .retainExplicitlyIncludedIfDeclared(
+                publicPackages.get() + publicPackagesNames,
+                publicClasses.get(), publicMarkers.get()
+            )
+            .filterOutNonPublic(ignoredPackages.get() + ignoredPackagesNames, ignoredClasses.get())
+            .filterOutAnnotated(nonPublicMarkers.get().map(::replaceDots).toSet())
 
-        outputApiFile.bufferedWriter().use { writer ->
+        outputApiFile.asFile.get().bufferedWriter().use { writer ->
             filteredSignatures.dump(writer)
         }
     }
