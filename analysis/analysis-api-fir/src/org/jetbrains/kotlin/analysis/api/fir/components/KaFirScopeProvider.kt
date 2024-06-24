@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.components.KaScopeKinds
 import org.jetbrains.kotlin.analysis.api.components.KaScopeWithKindImpl
@@ -240,7 +239,6 @@ internal class KaFirScopeProvider(
         return KaBaseCompositeScope.create(this, token)
     }
 
-    @KaExperimentalApi
     override val KaType.scope: KaTypeScope?
         get() = withValidityAssertion {
             check(this is KaFirType) { "KtFirScopeProvider can only work with KtFirType, but ${this::class} was provided" }
@@ -249,7 +247,6 @@ internal class KaFirScopeProvider(
                 ?.let { convertToKtTypeScope(it) }
         }
 
-    @KaExperimentalApi
     override val KaTypeScope.declarationScope: KaScope
         get() = withValidityAssertion {
             return when (this) {
@@ -259,7 +256,6 @@ internal class KaFirScopeProvider(
             }
         }
 
-    @KaExperimentalApi
     override val KaType.syntheticJavaPropertiesScope: KaTypeScope?
         get() = withValidityAssertion {
             check(this is KaFirType) { "KtFirScopeProvider can only work with KtFirType, but ${this::class} was provided" }
@@ -378,7 +374,6 @@ internal class KaFirScopeProvider(
         return KaFirPackageScope(fqName, analysisSession)
     }
 
-    @OptIn(KaExperimentalApi::class)
     private fun convertToKtTypeScope(firScope: FirScope): KaTypeScope {
         return when (firScope) {
             is FirContainingNamesAwareScope -> KaFirDelegatingTypeScope(firScope, analysisSession.firSymbolBuilder)

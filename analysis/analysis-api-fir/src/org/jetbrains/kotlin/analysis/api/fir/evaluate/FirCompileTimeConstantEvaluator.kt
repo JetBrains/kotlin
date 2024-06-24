@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.fir.evaluate
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
 import org.jetbrains.kotlin.analysis.api.impl.base.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
@@ -102,7 +101,6 @@ internal object FirCompileTimeConstantEvaluator {
         } else null
     }
 
-    @OptIn(KaImplementationDetail::class)
     fun evaluateAsKtConstantValue(
         fir: FirElement,
     ): KaConstantValue? {

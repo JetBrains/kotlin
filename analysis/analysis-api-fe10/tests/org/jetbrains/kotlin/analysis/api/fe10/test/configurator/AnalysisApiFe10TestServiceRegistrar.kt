@@ -8,13 +8,12 @@ package org.jetbrains.kotlin.analysis.api.fe10.test.configurator
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
-import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
 import org.jetbrains.kotlin.analysis.api.descriptors.CliFe10AnalysisFacade
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10AnalysisHandlerExtension
-import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.PluginStructureProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
+import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.PluginStructureProvider
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.cli.common.CliModuleVisibilityManagerImpl
@@ -45,7 +44,7 @@ object AnalysisApiFe10TestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
         PluginStructureProvider.registerProjectListeners(project, PLUGIN_RELATIVE_PATH)
     }
 
-    @OptIn(KaAnalysisApiInternals::class, TestInfrastructureInternals::class)
+    @OptIn(TestInfrastructureInternals::class)
     override fun registerProjectModelServices(project: MockProject, disposable: Disposable, testServices: TestServices) {
         project.apply {
             registerService(Fe10AnalysisFacade::class.java, CliFe10AnalysisFacade())

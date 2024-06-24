@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors
 
-import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.descriptors.components.*
 import org.jetbrains.kotlin.analysis.api.impl.base.KaBaseSession
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaAnalysisScopeProviderImpl
@@ -14,7 +13,6 @@ import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaGlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
-@OptIn(KaIdeApi::class, KaExperimentalApi::class, KaNonPublicApi::class)
 class KaFe10Session(
     val analysisContext: Fe10AnalysisContext,
     override val useSiteModule: KaModule,

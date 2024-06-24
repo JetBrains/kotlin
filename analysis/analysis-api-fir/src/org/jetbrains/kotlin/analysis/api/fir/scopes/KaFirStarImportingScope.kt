@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.scopes
 
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -33,7 +32,6 @@ internal class KaFirStarImportingScope(
         get() = withValidityAssertion { emptySequence() }
 
     // todo cache?
-    @KaExperimentalApi
     override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
         imports.flatMapTo(hashSetOf()) { import: Import ->
             if (import.relativeClassName == null) { // top level callable
@@ -45,12 +43,10 @@ internal class KaFirStarImportingScope(
         }
     }
 
-    @KaExperimentalApi
     override fun getPackageSymbols(nameFilter: (Name) -> Boolean): Sequence<KaPackageSymbol> = withValidityAssertion {
         emptySequence()
     }
 
-    @KaExperimentalApi
     override fun getPossibleClassifierNames(): Set<Name> = withValidityAssertion {
         imports.flatMapTo(hashSetOf()) { import ->
             if (import.relativeClassName == null) {

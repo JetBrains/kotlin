@@ -3,8 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(KaAnalysisApiInternals::class)
-
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base
 
 import com.intellij.psi.impl.compiled.ClsElementImpl
@@ -414,7 +412,6 @@ internal val DeclarationDescriptor.kaSymbolModality: KaSymbolModality
         return this.modality.asKaSymbolModality
     }
 
-@OptIn(KaImplementationDetail::class)
 internal fun ConstantValue<*>.toKtConstantValue(): KaConstantValue {
     return when (this) {
         is ErrorValue.ErrorValueWithMessage -> KaErrorConstantValueImpl(message, sourcePsi = null)
@@ -658,7 +655,6 @@ internal fun CallableMemberDescriptor.getSymbolPointerSignature(): String {
     return DescriptorRenderer.FQ_NAMES_IN_TYPES.render(this)
 }
 
-@KaExperimentalApi
 internal fun createKtInitializerValue(
     initializer: KtExpression?,
     propertyDescriptor: PropertyDescriptor?,

@@ -84,6 +84,7 @@ allprojects {
                 "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
                 "org.jetbrains.kotlin.analysis.api.KaNonPublicApi",
                 "org.jetbrains.kotlin.analysis.api.KaIdeApi",
+                "org.jetbrains.kotlin.analysis.api.KaPlatformInterface",
                 "org.jetbrains.kotlin.analysis.api.permissions.KaAllowProhibitedAnalyzeFromWriteAction"
             )
         )
@@ -119,10 +120,4 @@ compileKotlin.dependsOn(generateCode)
 
 tasks.withType<KotlinJvmCompile>().configureEach {
     compilerOptions.freeCompilerArgs.add("-Xcontext-receivers")
-
-    compilerOptions.optIn.addAll(
-        "org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals",
-        "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
-        "org.jetbrains.kotlin.analysis.api.KaPlatformInterface",
-    )
 }

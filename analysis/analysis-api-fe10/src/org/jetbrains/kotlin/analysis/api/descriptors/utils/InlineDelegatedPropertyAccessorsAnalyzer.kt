@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.utils
 
-import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
@@ -16,7 +15,6 @@ import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 import org.jetbrains.kotlin.resolve.BindingContext
 
-@OptIn(KaAnalysisNonPublicApi::class)
 fun MutableSet<KtFile>.collectReachableInlineDelegatedPropertyAccessors() {
     if (isEmpty()) return
 
@@ -53,7 +51,6 @@ fun MutableSet<KtFile>.collectReachableInlineDelegatedPropertyAccessors() {
     }
 }
 
-@OptIn(KaAnalysisNonPublicApi::class)
 fun List<KtFile>.collectReachableInlineDelegatedPropertyAccessors(): List<KtFile> {
     if (isEmpty()) return this
 

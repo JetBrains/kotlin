@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.scopes
 
 import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
@@ -25,21 +24,18 @@ class KaBaseCompositeScope private constructor(
         }
     }
 
-    @KaExperimentalApi
     override fun getAllPossibleNames(): Set<Name> = withValidityAssertion {
         buildSet {
             subScopes.flatMapTo(this) { it.getAllPossibleNames() }
         }
     }
 
-    @KaExperimentalApi
     override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
         buildSet {
             subScopes.flatMapTo(this) { it.getPossibleCallableNames() }
         }
     }
 
-    @KaExperimentalApi
     override fun getPossibleClassifierNames(): Set<Name> = withValidityAssertion {
         buildSet {
             subScopes.flatMapTo(this) { it.getPossibleClassifierNames() }
@@ -86,14 +82,12 @@ class KaBaseCompositeScope private constructor(
             }
         }
 
-    @KaExperimentalApi
     override fun getPackageSymbols(nameFilter: (Name) -> Boolean): Sequence<KaPackageSymbol> = withValidityAssertion {
         sequence {
             subScopes.forEach { yieldAll(it.getPackageSymbols(nameFilter)) }
         }
     }
 
-    @KaExperimentalApi
     override fun mayContainName(name: Name): Boolean = withValidityAssertion {
         subScopes.any { it.mayContainName(name) }
     }

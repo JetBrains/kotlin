@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.impl.base.KaChainedSubstitutor
@@ -44,7 +43,6 @@ import kotlin.reflect.KVisibility
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.memberProperties
 
-@OptIn(KaAnalysisApiInternals::class)
 internal fun KaSession.stringRepresentation(any: Any?): String = with(any) {
     fun KaType.render() = toString().replace('/', '.')
     return when (this) {

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.getCandidateSymbols
@@ -83,7 +82,6 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.rethrowExceptionWithDetails
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
-@OptIn(KaExperimentalApi::class)
 internal class KaFirResolver(
     override val analysisSessionProvider: () -> KaFirSession
 ) : KaAbstractResolver<KaFirSession>(), KaFirSessionComponent {
