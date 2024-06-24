@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseImplicitRece
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseScopeContext
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseCompositeScope
-import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaEmptyScope
+import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseEmptyScope
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.scopes.KaTypeScope
@@ -111,7 +111,7 @@ internal class KaFe10ScopeProvider(
         }
 
     private fun createEmptyScope(): KaScope {
-        return KaEmptyScope(token)
+        return KaBaseEmptyScope(token)
     }
 
     private class DeclaredMemberScope(

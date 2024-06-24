@@ -101,7 +101,7 @@ class KaBaseCompositeScope private constructor(
     companion object {
         fun create(subScopes: List<KaScope>, token: KaLifetimeToken): KaScope =
             when (subScopes.size) {
-                0 -> KaEmptyScope(token)
+                0 -> KaBaseEmptyScope(token)
                 1 -> subScopes.single()
                 else -> KaBaseCompositeScope(subScopes, token)
             }
