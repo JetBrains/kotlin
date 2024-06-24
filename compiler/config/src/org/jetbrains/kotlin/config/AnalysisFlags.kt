@@ -19,7 +19,7 @@ object AnalysisFlags {
      * that the reason is broken design of `expect`/`actual` KT-64130).
      * E.g. `ABSTRACT_NOT_IMPLEMENTED` (KT-66205)
      *
-     * This flag is true in two case:
+     * This flag is true in two cases:
      * 1. Metadata compilation (`:compile*KotlinMetadata` Gradle task)
      * 2. IDE analysis
      *
