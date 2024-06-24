@@ -95,8 +95,6 @@ abstract class BuildFusService : BuildService<BuildFusService.Parameters>, AutoC
             val isConfigurationCacheRequested = project.isConfigurationCacheRequested
             val isProjectIsolationRequested = project.isProjectIsolationRequested
 
-            ProjectConfigurationFusService.registerIfAbsent(project)
-
             project.gradle.sharedServices.registrations.findByName(serviceName)?.let {
                 @Suppress("UNCHECKED_CAST")
                 return (it.service as Provider<BuildFusService>)
