@@ -6,13 +6,14 @@
 package org.jetbrains.kotlin.analysis.api.descriptors
 
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider.CompilerPluginType
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.extensions.internal.InternalNonStableExtensionPoints
 import org.jetbrains.kotlin.resolve.extensions.AssignResolutionAltererExtension
 
 @Suppress("unused")
-class KotlinFe10CompilerPluginsProvider : KotlinCompilerPluginsProvider() {
+class KotlinFe10CompilerPluginsProvider : KotlinCompilerPluginsProvider {
     override fun <T : Any> getRegisteredExtensions(module: KaSourceModule, extensionType: ProjectExtensionDescriptor<T>): List<T> {
         return extensionType.getInstances(module.project)
     }

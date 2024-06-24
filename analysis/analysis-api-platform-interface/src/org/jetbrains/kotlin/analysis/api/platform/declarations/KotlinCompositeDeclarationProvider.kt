@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.utils.flatMapToNullableSet
 
 public class KotlinCompositeDeclarationProvider private constructor(
     override val providers: List<KotlinDeclarationProvider>
-) : KotlinDeclarationProvider(), KotlinCompositeProvider<KotlinDeclarationProvider> {
+) : KotlinDeclarationProvider, KotlinCompositeProvider<KotlinDeclarationProvider> {
     override fun getClassLikeDeclarationByClassId(classId: ClassId): KtClassLikeDeclaration? {
         return providers.firstNotNullOfOrNull { it.getClassLikeDeclarationByClassId(classId) }
     }

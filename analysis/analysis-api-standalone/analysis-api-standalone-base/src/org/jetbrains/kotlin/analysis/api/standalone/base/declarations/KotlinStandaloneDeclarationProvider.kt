@@ -49,7 +49,7 @@ import java.util.concurrent.ConcurrentHashMap
 class KotlinStandaloneDeclarationProvider internal constructor(
     private val index: KotlinStandaloneDeclarationIndex,
     val scope: GlobalSearchScope,
-) : KotlinDeclarationProvider() {
+) : KotlinDeclarationProvider {
 
     private val KtElement.inScope: Boolean
         get() = containingKtFile.virtualFile in scope
@@ -158,7 +158,7 @@ class KotlinStandaloneDeclarationProviderFactory(
     sharedBinaryRoots: List<VirtualFile> = emptyList(),
     skipBuiltins: Boolean = false,
     shouldBuildStubsForBinaryLibraries: Boolean = false,
-) : KotlinDeclarationProviderFactory() {
+) : KotlinDeclarationProviderFactory {
 
     private val index = KotlinStandaloneDeclarationIndex()
 
@@ -486,7 +486,7 @@ class KotlinFakeClsStubsCache {
     }
 }
 
-class KotlinStandaloneDeclarationProviderMerger(private val project: Project) : KotlinDeclarationProviderMerger() {
+class KotlinStandaloneDeclarationProviderMerger(private val project: Project) : KotlinDeclarationProviderMerger {
     override fun merge(providers: List<KotlinDeclarationProvider>): KotlinDeclarationProvider =
         providers.mergeSpecificProviders<_, KotlinStandaloneDeclarationProvider>(KotlinCompositeDeclarationProvider.factory) { targetProviders ->
             val combinedScope = GlobalSearchScope.union(targetProviders.map { it.scope })

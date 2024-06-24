@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformComponent
  * sense when there are many, possibly short-lived objects that need to be notified of a change. In such cases, subscriber management in the
  * message bus adds too much overhead.
  */
-public abstract class KotlinModificationTrackerFactory : KotlinPlatformComponent {
+public interface KotlinModificationTrackerFactory : KotlinPlatformComponent {
     /**
      * Creates an out-of-block modification tracker which is incremented every time there is an out-of-block change in some source project
      * module.
@@ -57,14 +57,14 @@ public abstract class KotlinModificationTrackerFactory : KotlinPlatformComponent
      *
      * @see ModificationTracker
      */
-    public abstract fun createProjectWideOutOfBlockModificationTracker(): ModificationTracker
+    public fun createProjectWideOutOfBlockModificationTracker(): ModificationTracker
 
     /**
      * Creates a modification tracker which is incremented every time libraries in the project are changed.
      *
      * @see ModificationTracker
      */
-    public abstract fun createLibrariesWideModificationTracker(): ModificationTracker
+    public fun createLibrariesWideModificationTracker(): ModificationTracker
 
     public companion object {
         public fun getInstance(project: Project): KotlinModificationTrackerFactory = project.service()

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 
 public class KotlinCompositePackageProvider private constructor(
     override val providers: List<KotlinPackageProvider>,
-) : KotlinPackageProvider(), KotlinCompositeProvider<KotlinPackageProvider> {
+) : KotlinPackageProvider, KotlinCompositeProvider<KotlinPackageProvider> {
     override fun doesPackageExist(packageFqName: FqName, platform: TargetPlatform): Boolean {
         return providers.any { it.doesPackageExist(packageFqName, platform) }
     }

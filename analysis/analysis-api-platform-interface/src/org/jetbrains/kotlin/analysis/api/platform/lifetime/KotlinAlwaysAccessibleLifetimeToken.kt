@@ -40,7 +40,7 @@ public object KotlinAlwaysAccessibleLifetimeTokenFactory : KaLifetimeTokenFactor
         KotlinAlwaysAccessibleLifetimeToken(project)
 }
 
-public class KotlinAlwaysAccessibleLifetimeTokenProvider : KotlinLifetimeTokenProvider() {
+public class KotlinAlwaysAccessibleLifetimeTokenProvider : KotlinLifetimeTokenProvider {
     override fun getLifetimeTokenFactory(): KaLifetimeTokenFactory {
         return KotlinAlwaysAccessibleLifetimeTokenFactory
     }

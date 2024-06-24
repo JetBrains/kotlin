@@ -49,13 +49,13 @@ class KotlinStandalonePackageProvider(
 class KotlinStandalonePackageProviderFactory(
     private val project: Project,
     private val files: Collection<KtFile>
-) : KotlinPackageProviderFactory() {
+) : KotlinPackageProviderFactory {
     override fun createPackageProvider(searchScope: GlobalSearchScope): KotlinPackageProvider {
         return KotlinStandalonePackageProvider(project, searchScope, files)
     }
 }
 
-class KotlinStandalonePackageProviderMerger(private val project: Project) : KotlinPackageProviderMerger() {
+class KotlinStandalonePackageProviderMerger(private val project: Project) : KotlinPackageProviderMerger {
     override fun merge(providers: List<KotlinPackageProvider>): KotlinPackageProvider =
         providers.mergeSpecificProviders<_, KotlinStandalonePackageProvider>(KotlinCompositePackageProvider.factory) { targetProviders ->
             val combinedScope = GlobalSearchScope.union(targetProviders.map { it.scope })
