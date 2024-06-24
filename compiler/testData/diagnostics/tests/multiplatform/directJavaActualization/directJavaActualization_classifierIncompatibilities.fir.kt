@@ -4,19 +4,19 @@
 // FILE: common.kt
 interface I
 
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect class <!CLASSIFIER_REDECLARATION!>A<!><!>
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect value class <!CLASSIFIER_REDECLARATION!>B<!>(val x: Int)<!>
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect fun interface <!CLASSIFIER_REDECLARATION!>C1<!> { fun foo() }<!>
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect fun interface <!CLASSIFIER_REDECLARATION!>C2<!> { fun foo() }<!>
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect class <!CLASSIFIER_REDECLARATION!>D1<!> : I<!>
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect class <!CLASSIFIER_REDECLARATION!>D2<!> : I<!>
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect enum class <!CLASSIFIER_REDECLARATION!>E1<!> { ONE, TWO }<!>
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect enum class <!CLASSIFIER_REDECLARATION!>E2<!> { ONE, TWO }<!>
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect class <!CLASSIFIER_REDECLARATION!>Outer<!> {
-    class <!CLASSIFIER_REDECLARATION!>F1<!>
-    inner class <!CLASSIFIER_REDECLARATION!>F2<!>
-    inner class <!CLASSIFIER_REDECLARATION!>F3<!>
-    class <!CLASSIFIER_REDECLARATION!>F4<!>
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect class A<!>
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect value class B(val x: Int)<!>
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect fun interface C1 { fun foo() }<!>
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect fun interface C2 { fun foo() }<!>
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect class D1 : I<!>
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect class D2 : I<!>
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect enum class E1 { ONE, TWO }<!>
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect enum class E2 { ONE, TWO }<!>
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect class Outer {
+    class F1
+    inner class F2
+    inner class F3
+    class F4
 }<!>
 
 // MODULE: m2-jvm()()(m1-common)
