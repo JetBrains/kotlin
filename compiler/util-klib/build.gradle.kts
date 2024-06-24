@@ -7,8 +7,8 @@ description = "Common klib reader and writer"
 
 dependencies {
     api(kotlinStdlib())
-    api(project(":core:metadata"))
     api(project(":kotlin-util-io"))
+    embedded(project(":core:metadata"))
     testImplementation(libs.junit4)
 }
 
