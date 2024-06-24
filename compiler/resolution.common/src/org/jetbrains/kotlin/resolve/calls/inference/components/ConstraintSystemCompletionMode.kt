@@ -5,9 +5,21 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
-enum class ConstraintSystemCompletionMode(val allLambdasShouldBeAnalyzed: Boolean, val shouldForkPointConstraintsBeResolved: Boolean) {
-    FULL(allLambdasShouldBeAnalyzed = true, shouldForkPointConstraintsBeResolved = true),
-    PCLA_POSTPONED_CALL(allLambdasShouldBeAnalyzed = true, shouldForkPointConstraintsBeResolved = false),
+enum class ConstraintSystemCompletionMode(
+    val allLambdasShouldBeAnalyzed: Boolean,
+    val shouldForkPointConstraintsBeResolved: Boolean,
+    val fixNotInferredTypeVariablesToErrorType: Boolean,
+) {
+    FULL(
+        allLambdasShouldBeAnalyzed = true,
+        shouldForkPointConstraintsBeResolved = true,
+        fixNotInferredTypeVariablesToErrorType = true,
+    ),
+    PCLA_POSTPONED_CALL(
+        allLambdasShouldBeAnalyzed = true,
+        shouldForkPointConstraintsBeResolved = false,
+        fixNotInferredTypeVariablesToErrorType = false,
+    ),
 
     /**
      * This mode allows us to infer variables in calls, which have enough type-info to be completed right-away
@@ -19,9 +31,17 @@ enum class ConstraintSystemCompletionMode(val allLambdasShouldBeAnalyzed: Boolea
      * x.plus(run { x }) // Here, to select plus overload we need to analyze lambda
      * ```
      */
-    PARTIAL(allLambdasShouldBeAnalyzed = false, shouldForkPointConstraintsBeResolved = false),
+    PARTIAL(
+        allLambdasShouldBeAnalyzed = false,
+        shouldForkPointConstraintsBeResolved = false,
+        fixNotInferredTypeVariablesToErrorType = false,
+    ),
     UNTIL_FIRST_LAMBDA(
         allLambdasShouldBeAnalyzed = false,
-        shouldForkPointConstraintsBeResolved = true /* See testData/diagnostics/tests/inference/inferenceForkRegressionSimple.kt */,
+        /* See testData/diagnostics/tests/inference/inferenceForkRegressionSimple.kt */
+        shouldForkPointConstraintsBeResolved = true,
+        // This one is quite questionable, but should not matter too much
+        // because anyway overload ambiguity would be reported for error candidates
+        fixNotInferredTypeVariablesToErrorType = true,
     ),
 }
