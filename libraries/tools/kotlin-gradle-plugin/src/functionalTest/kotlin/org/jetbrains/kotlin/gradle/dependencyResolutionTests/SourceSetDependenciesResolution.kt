@@ -81,7 +81,11 @@ abstract class SourceSetDependenciesResolution {
             .resolve("dependenciesResolution")
             .resolve(this.javaClass.simpleName)
             .resolve(expectedFilePath)
-        KotlinTestUtils.assertEqualsToFile(expectedFile, actualResult)
+
+        KotlinTestUtils.assertEqualsToFile(expectedFile.toFile(), actualResult) {
+            // remove comment lines
+            it.replace("""\s+//.+""".toRegex(), "")
+        }
     }
 
     private fun Project.resolveAllSourceSetDependencies(): String {

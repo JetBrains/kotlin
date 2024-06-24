@@ -186,6 +186,9 @@ class ResolvableMetadataConfigurationTest : SourceSetDependenciesResolution() {
         val appProject = buildProject(projectBuilder = { withName("app") })
         val libProject = buildProject(projectBuilder = { withName("lib").withParent(appProject) })
 
+        appProject.enableDefaultStdlibDependency(false)
+        libProject.enableDefaultStdlibDependency(false)
+
         assertSourceSetDependenciesResolution("KT66375JvmDependenciesShouldNotDowngrade.txt", withProject = appProject) {
             appProject.applyMultiplatformPlugin().apply {
                 jvm(); linuxX64()
@@ -211,6 +214,9 @@ class ResolvableMetadataConfigurationTest : SourceSetDependenciesResolution() {
     fun leafHostSpecificSourceSetsDependencies() {
         val appProject = buildProject(projectBuilder = { withName("app") })
         val libProject = buildProject(projectBuilder = { withName("lib").withParent(appProject) })
+
+        appProject.enableDefaultStdlibDependency(false)
+        libProject.enableDefaultStdlibDependency(false)
 
         assertSourceSetDependenciesResolution("leafHostSpecificSourceSetsDependencies.txt", withProject = appProject) {
             appProject.applyMultiplatformPlugin().apply {

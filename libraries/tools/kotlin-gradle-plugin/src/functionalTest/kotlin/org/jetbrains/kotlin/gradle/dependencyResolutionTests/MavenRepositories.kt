@@ -24,8 +24,8 @@ fun Project.configureRepositoriesForTests() {
         // they are not part of Kotlin's verification-metadata.xml
         enableDependencyVerification(false)
         repositories {
-            filteredMavenLocal()
             mavenCentralCacheRedirector()
+            filteredMavenLocal()
         }
     }
 }

@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.gradle.dependencyResolutionTests.tcs
 
+import org.jetbrains.kotlin.gradle.dependencyResolutionTests.configureRepositoriesForTests
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
@@ -33,8 +34,8 @@ class IdeSourcesAndDocumentationResolutionTest {
         val project = buildProject {
             enableDefaultStdlibDependency(false)
             enableDependencyVerification(false)
+            configureRepositoriesForTests()
             applyMultiplatformPlugin()
-            repositories.mavenCentralCacheRedirector()
         }
 
         val kotlin = project.multiplatformExtension
