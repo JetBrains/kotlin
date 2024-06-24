@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.types.arrayElementType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
-internal sealed class KaFirVariableSignature<out S : KaVariableSymbol> : KaVariableSignature<S>(), FirSymbolBasedSignature {
+internal sealed class KaFirVariableSignature<out S : KaVariableSymbol> : KaVariableSignature<S>, FirSymbolBasedSignature {
     abstract override fun substitute(substitutor: KaSubstitutor): KaFirVariableSignature<S>
 
     override fun equals(other: Any?): Boolean {
