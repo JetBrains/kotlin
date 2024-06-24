@@ -21911,6 +21911,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/inlineClasses/equalityForBoxesOfNullableValuesOfInlineClassGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
     }
 
+    @TestMetadata("equalityForIndyLambdaParameter.kt")
+    public void testEqualityForIndyLambdaParameter() {
+      runTest("compiler/testData/codegen/box/inlineClasses/equalityForIndyLambdaParameter.kt");
+    }
+
     @TestMetadata("equalsCallsLeftArgument.kt")
     public void testEqualsCallsLeftArgument() {
       runTest("compiler/testData/codegen/box/inlineClasses/equalsCallsLeftArgument.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
