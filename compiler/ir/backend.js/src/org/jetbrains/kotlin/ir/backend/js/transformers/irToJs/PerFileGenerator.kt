@@ -60,7 +60,7 @@ interface PerFileGenerator<Module, File, Artifact> {
                         suiteFunctionTag = suiteFunction
                     }
 
-                    putToMultiMap(generatedArtifact.artifactName, generatedArtifact)
+                    putToMultiMap(generatedArtifact.artifactName.lowercase(), generatedArtifact)
 
                     generatedArtifact
                 }
@@ -85,7 +85,7 @@ interface PerFileGenerator<Module, File, Artifact> {
                         testFunctions,
                         mainModuleName.takeIf { !module.isMain && hasModuleLevelEffect }
                     ) ?: continue
-                    putToMultiMap(proxyArtifact.artifactName, proxyArtifact)
+                    putToMultiMap(proxyArtifact.artifactName.lowercase(), proxyArtifact)
                 }
             }
         }

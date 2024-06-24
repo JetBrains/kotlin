@@ -369,7 +369,7 @@ fun List<JsIrModule>.merge(): JsIrModule {
             module.reexportedInModuleWithName?.let { reexportedInModuleWithName = it }
         }
 
-        JsIrModule(firstModule.moduleName, firstModule.externalModuleName, fragments, reexportedInModuleWithName)
+        JsIrModule(firstModule.moduleName, firstModule.externalModuleName.lowercase(), fragments, reexportedInModuleWithName)
     }
 }
 
@@ -397,7 +397,7 @@ fun List<JsIrModuleHeader>.merge(): JsIrModuleHeader {
 
         JsIrModuleHeader(
             firstModule.moduleName,
-            firstModule.externalModuleName,
+            firstModule.externalModuleName.lowercase(),
             definitions,
             nameBindings,
             optionalCrossModuleImports,
