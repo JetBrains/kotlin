@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.defaultArgumentsDispatchFunction
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -110,7 +111,7 @@ abstract class DefaultArgumentFunctionFactory(val context: CommonBackendContext)
         if (skipInlineMethods && declaration.isInline) return null
         if (skipExternalMethods && declaration.isExternalOrInheritedFromExternal()) return null
         if (context.mapping.defaultArgumentsOriginalFunction[declaration] != null) return null
-        context.mapping.defaultArgumentsDispatchFunction[declaration]?.let { return it }
+        declaration.defaultArgumentsDispatchFunction?.let { return it }
         if (declaration is IrSimpleFunction) {
             // If this is an override of a function with default arguments, produce a fake override of a default stub.
             if (declaration.overriddenSymbols.any {
@@ -128,7 +129,7 @@ abstract class DefaultArgumentFunctionFactory(val context: CommonBackendContext)
                     true,
                     useConstructorMarker,
                 ).also { defaultsFunction ->
-                    context.mapping.defaultArgumentsDispatchFunction[declaration] = defaultsFunction
+                    declaration.defaultArgumentsDispatchFunction = defaultsFunction
                     context.mapping.defaultArgumentsOriginalFunction[defaultsFunction] = declaration
 
                     if (forceSetOverrideSymbols) {
@@ -166,7 +167,7 @@ abstract class DefaultArgumentFunctionFactory(val context: CommonBackendContext)
                 false,
                 useConstructorMarker,
             ).also {
-                context.mapping.defaultArgumentsDispatchFunction[declaration] = it
+                declaration.defaultArgumentsDispatchFunction = it
                 context.mapping.defaultArgumentsOriginalFunction[it] = declaration
             }
         }

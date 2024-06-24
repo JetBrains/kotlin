@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common
 
+import org.jetbrains.kotlin.backend.common.Mapping.*
 import org.jetbrains.kotlin.ir.IrAttribute
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.get
@@ -14,8 +15,9 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty
 
+var IrFunction.defaultArgumentsDispatchFunction: IrFunction? by irAttribute(followAttributeOwner = false)
+
 open class Mapping {
-    val defaultArgumentsDispatchFunction: DeclarationMapping<IrFunction, IrFunction> by AttributeBasedMappingDelegate()
     val defaultArgumentsOriginalFunction: MapBasedMapping<IrFunction, IrFunction> = MapBasedMapping()
     val suspendFunctionToCoroutineConstructor: DeclarationMapping<IrFunction, IrConstructor> by AttributeBasedMappingDelegate()
     val lateInitFieldToNullableField: DeclarationMapping<IrField, IrField> by AttributeBasedMappingDelegate()

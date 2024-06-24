@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.phaser
 
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.defaultArgumentsDispatchFunction
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -191,7 +192,7 @@ private fun adjustDefaultArgumentStubs(
         if (defaultStub !is IrSimpleFunction) continue
         val original = context.mapping.defaultArgumentsOriginalFunction[defaultStub] as? IrSimpleFunction ?: continue
         val originalNew = remappedFunctions[original.symbol]?.owner ?: continue
-        val defaultStubNew = context.mapping.defaultArgumentsDispatchFunction[originalNew] ?: continue
+        val defaultStubNew = originalNew.defaultArgumentsDispatchFunction ?: continue
         remappedFunctions[defaultStub.symbol] = defaultStubNew.symbol as IrSimpleFunctionSymbol
     }
 }
