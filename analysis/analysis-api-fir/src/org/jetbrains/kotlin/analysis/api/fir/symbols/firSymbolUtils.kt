@@ -3,12 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(KaAnalysisApiInternals::class)
-
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
-import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaInitializerValue
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
@@ -33,7 +29,6 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
-
 
 internal fun FirCallableSymbol<*>.invalidModalityError(): Nothing {
     errorWithAttachment("Symbol modality should not be null, looks like the FIR symbol was not properly resolved") {
@@ -109,7 +104,6 @@ internal fun FirCallableSymbol<*>.dispatchReceiverType(
     return type?.let { builder.typeBuilder.buildKtType(it) }
 }
 
-@KaExperimentalApi
 internal fun FirVariableSymbol<*>.getKtConstantInitializer(builder: KaSymbolByFirBuilder): KaInitializerValue? {
     // to avoid lazy resolve
     if (fir.initializer == null) return null

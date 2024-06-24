@@ -360,7 +360,6 @@ internal class SymbolLightAccessorMethod private constructor(
 
     override fun isOverride(): Boolean = _isOverride
 
-    @OptIn(KaExperimentalApi::class)
     private val _defaultValue: PsiAnnotationMemberValue? by lazyPub {
         if (!containingClass.isAnnotationType) return@lazyPub null
 

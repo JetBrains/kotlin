@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade
@@ -104,7 +103,6 @@ internal class KaFe10PsiDefaultPropertyGetterSymbol(
             descriptor?.let { KaFe10AnnotationList.create(it.annotations, analysisContext) } ?: KaBaseEmptyAnnotationList(token)
         }
 
-    @OptIn(KaAnalysisApiInternals::class)
     override fun createPointer(): KaSymbolPointer<KaPropertyGetterSymbol> = withValidityAssertion {
         KaPsiBasedSymbolPointer.createForSymbolFromPsi<KaPropertySymbol>(propertyPsi)?.let(::KaPropertyGetterSymbolPointer)
             ?: KaFe10NeverRestoringSymbolPointer()
