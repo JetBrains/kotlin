@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.components.*
+import org.jetbrains.kotlin.analysis.api.components.KaScopeKinds
+import org.jetbrains.kotlin.analysis.api.components.KaScopeWithKindImpl
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.scopes.*
 import org.jetbrains.kotlin.analysis.api.fir.symbols.*
@@ -14,10 +16,8 @@ import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseImplicitReceiver
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseScopeContext
-import org.jetbrains.kotlin.analysis.api.components.KaScopeKinds
-import org.jetbrains.kotlin.analysis.api.components.KaScopeWithKindImpl
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
-import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaCompositeScope
+import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseCompositeScope
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaCompositeTypeScope
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaEmptyScope
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -237,7 +237,7 @@ internal class KaFirScopeProvider(
         }
 
     override fun List<KaScope>.asCompositeScope(): KaScope = withValidityAssertion {
-        return KaCompositeScope.create(this, token)
+        return KaBaseCompositeScope.create(this, token)
     }
 
     @KaExperimentalApi
@@ -254,7 +254,7 @@ internal class KaFirScopeProvider(
         get() = withValidityAssertion {
             return when (this) {
                 is KaFirDelegatingTypeScope -> KaFirDelegatingNamesAwareScope(firScope, analysisSession.firSymbolBuilder)
-                is KaCompositeTypeScope -> KaCompositeScope.create(subScopes.map { it.declarationScope }, token)
+                is KaCompositeTypeScope -> KaBaseCompositeScope.create(subScopes.map { it.declarationScope }, token)
                 else -> unexpectedElementError<KaTypeScope>(this)
             }
         }
