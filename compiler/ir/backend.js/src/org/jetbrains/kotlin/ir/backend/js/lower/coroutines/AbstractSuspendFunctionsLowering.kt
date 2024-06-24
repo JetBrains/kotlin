@@ -312,12 +312,11 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
 
                 val thisReceiver = this.dispatchReceiverParameter!!
 
-                val boundFields =
-                    context.mapping.capturedFields[coroutineClass]
-                        ?: compilationException(
-                            "No captured values",
-                            coroutineClass
-                        )
+                val boundFields = coroutineClass.capturedFields
+                    ?: compilationException(
+                        "No captured values",
+                        coroutineClass
+                    )
 
                 val irBuilder = context.createIrBuilder(symbol, startOffset, endOffset)
                 body = irBuilder.irBlockBody(startOffset, endOffset) {

@@ -17,10 +17,11 @@ import kotlin.reflect.KProperty
 
 var IrFunction.defaultArgumentsDispatchFunction: IrFunction? by irAttribute(followAttributeOwner = false)
 
+var IrClass.capturedFields: Collection<IrField>? by irAttribute(followAttributeOwner = false)
+
 open class Mapping {
     val defaultArgumentsOriginalFunction: MapBasedMapping<IrFunction, IrFunction> = MapBasedMapping()
     val lateInitFieldToNullableField: DeclarationMapping<IrField, IrField> by AttributeBasedMappingDelegate()
-    val capturedFields: DeclarationMapping<IrClass, Collection<IrField>> by AttributeBasedMappingDelegate()
     val capturedConstructors: MapBasedMapping<IrConstructor, IrConstructor> = MapBasedMapping()
     val reflectedNameAccessor: DeclarationMapping<IrClass, IrSimpleFunction> by AttributeBasedMappingDelegate()
     val suspendFunctionsToFunctionWithContinuations: DeclarationMapping<IrSimpleFunction, IrSimpleFunction> by AttributeBasedMappingDelegate()
