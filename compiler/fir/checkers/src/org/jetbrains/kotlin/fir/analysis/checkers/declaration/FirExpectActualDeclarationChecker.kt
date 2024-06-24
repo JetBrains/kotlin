@@ -174,7 +174,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
 
         when {
             checkingCompatibility is ExpectActualCheckingCompatibility.ClassScopes -> {
-                reportClassScopesIncompatibility(symbol, expectedSingleCandidate, declaration, checkingCompatibility, reporter, source, context)
+                reportClassScopesIncompatibility(symbol, expectedSingleCandidate, checkingCompatibility, reporter, source, context)
             }
 
             ExpectActualMatchingCompatibility.MatchedSuccessfully !in matchingCompatibilityToMembersMap ||
@@ -205,8 +205,6 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
                     )
                 }
             }
-
-            else -> {}
         }
         if (expectedSingleCandidate != null) {
             checkOptInAnnotation(declaration, expectedSingleCandidate, context, reporter)
@@ -216,14 +214,13 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
     private fun reportClassScopesIncompatibility(
         symbol: FirBasedSymbol<FirDeclaration>,
         expectedSingleCandidate: FirBasedSymbol<*>?,
-        declaration: FirMemberDeclaration,
         checkingCompatibility: ExpectActualCheckingCompatibility.ClassScopes<FirBasedSymbol<*>>,
         reporter: DiagnosticReporter,
         source: KtSourceElement?,
         context: CheckerContext,
     ) {
         require((symbol is FirRegularClassSymbol || symbol is FirTypeAliasSymbol) && expectedSingleCandidate is FirRegularClassSymbol) {
-            "Incompatible.ClassScopes is only possible for a class or a typealias: $declaration"
+            "Incompatible.ClassScopes is only possible for a class or a typealias: $symbol $expectedSingleCandidate"
         }
 
         // Do not report "expected members have no actual ones" for those expected members, for which there's a clear
