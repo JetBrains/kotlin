@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Success
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.ForcedNoopTestRunner
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.testProcessExecutor
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.DumpedTestListing
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.native.executors.runProcess
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
+import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -80,18 +82,20 @@ class InfrastructureDumpedTestListingTest : AbstractNativeSimpleTest() {
         val dumpedTestListing = DumpedTestListing.parse(testDumpFile.readText()).toSet()
         assertTrue(dumpedTestListing.isNotEmpty())
 
-        // parse test listing obtained from executable file with the help of --ktest_list_tests flag:
-        val testExecutable = TestExecutable.fromCompilationResult(executableTestCase, executableCompilationSuccess)
-        val extractedTestListing = with (testRunSettings) {
-            val listing = testProcessExecutor.runProcess(testExecutable.executable.executableFile.absolutePath, "--ktest_list_tests") {
-                timeout = get<Timeouts>().executionTimeout
-            }.stdout
-            GTestListing.parse(listing).toSet()
+        Assumptions.assumingThat(!testRunSettings.get<ForcedNoopTestRunner>().value) {
+            // parse test listing obtained from executable file with the help of --ktest_list_tests flag:
+            val testExecutable = TestExecutable.fromCompilationResult(executableTestCase, executableCompilationSuccess)
+            val extractedTestListing = with(testRunSettings) {
+                val listing = testProcessExecutor.runProcess(testExecutable.executable.executableFile.absolutePath, "--ktest_list_tests") {
+                    timeout = get<Timeouts>().executionTimeout
+                }.stdout
+                GTestListing.parse(listing).toSet()
+            }
+
+            assertEquals(extractedTestListing, dumpedTestListing)
+
+            runExecutableAndVerify(executableTestCase, testExecutable) // <-- run executable and verify
         }
-
-        assertEquals(extractedTestListing, dumpedTestListing)
-
-        runExecutableAndVerify(executableTestCase, testExecutable) // <-- run executable and verify
     }
 
     private fun assertDumpFilesEqual(expected: File, actual: File) {

@@ -32,7 +32,6 @@ import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
-import kotlin.time.Duration
 
 @TestDataPath("\$PROJECT_ROOT")
 class ClassicComplexCInteropTest : ComplexCInteropTestBase()
@@ -187,7 +186,9 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
     @TestMetadata("with_initializer")
     fun testObjCWithGlobalInitializer() {
         val execResult = testDylibCinteropExe("with_initializer")
-        assertEquals("OK", execResult.stdout)
+        Assumptions.assumingThat(!testRunSettings.get<ForcedNoopTestRunner>().value) {
+            assertEquals("OK", execResult.stdout)
+        }
     }
 
     @Test
@@ -201,25 +202,31 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
     fun testKt42172() {
         Assumptions.assumeFalse(testRunSettings.get<GCType>() == GCType.NOOP)
         val execResult = testDylibCinteropExe("kt42172")
-        assertEquals("Executed finalizer", execResult.stdout)
+        Assumptions.assumingThat(!testRunSettings.get<ForcedNoopTestRunner>().value) {
+            assertEquals("Executed finalizer", execResult.stdout)
+        }
     }
 
     @Test
     @TestMetadata("include_categories")
     fun testInclude_categories() {
         val execResult = testDylibCinteropExe("include_categories")
-        assertEquals("""
-            3.0
-            3.14
-            6.0
-            
-            3
-            6
-            6.0
-            
-            3.0
-            600.0
-        """.trimIndent(), execResult.stdout)
+        Assumptions.assumingThat(!testRunSettings.get<ForcedNoopTestRunner>().value) {
+            assertEquals(
+                """
+                3.0
+                3.14
+                6.0
+                
+                3
+                6
+                6.0
+                
+                3.0
+                600.0
+                """.trimIndent(), execResult.stdout
+            )
+        }
     }
 
     @Test
@@ -234,7 +241,9 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
             extraClangOpts = listOf("-framework", "AppKit", "-fobjc-arc"),
             extraCompilerOpts = listOf("-tr"),
         )
-        assertTrue(execResult.stdout.contains("[  PASSED  ] 8 tests"), execResult.stdout)
+        Assumptions.assumingThat(!testRunSettings.get<ForcedNoopTestRunner>().value) {
+            assertTrue(execResult.stdout.contains("[  PASSED  ] 8 tests"), execResult.stdout)
+        }
     }
 
     @Test
@@ -247,7 +256,9 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
             extraCompilerOpts = listOf("-tr", "-XXLanguage:+ImplicitSignedToUnsignedIntegerConversion"),
             extras = TestCase.WithTestRunnerExtras(TestRunnerType.DEFAULT),
         )
-        assertTrue(execResult.stdout.contains("[  PASSED  ] 4 tests"))
+        Assumptions.assumingThat(!testRunSettings.get<ForcedNoopTestRunner>().value) {
+            assertTrue(execResult.stdout.contains("[  PASSED  ] 4 tests"))
+        }
     }
 
     @Test
@@ -258,7 +269,9 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
             extraCompilerOpts = listOf("-tr"),
             extras = TestCase.WithTestRunnerExtras(TestRunnerType.DEFAULT),
         )
-        assertTrue(execResult.stdout.contains("[  PASSED  ] 5 tests"))
+        Assumptions.assumingThat(!testRunSettings.get<ForcedNoopTestRunner>().value) {
+            assertTrue(execResult.stdout.contains("[  PASSED  ] 5 tests"))
+        }
     }
 
     @Test
@@ -271,8 +284,10 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
             "objc_wrap.def",
             "objc_wrap.kt",
         )
-        assertEquals("", res.stdout)
-        assertEquals("", res.stderr)
+        Assumptions.assumingThat(!testRunSettings.get<ForcedNoopTestRunner>().value) {
+            assertEquals("", res.stdout)
+            assertEquals("", res.stderr)
+        }
     }
 
     @Test
@@ -285,8 +300,10 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
             "objcExceptionMode.def",
             "objcExceptionMode_wrap.kt",
         )
-        assertEquals("OK: Ends with uncaught exception handler", res.stdout)
-        assertEquals("", res.stderr)
+        Assumptions.assumingThat(!testRunSettings.get<ForcedNoopTestRunner>().value) {
+            assertEquals("OK: Ends with uncaught exception handler", res.stdout)
+            assertEquals("", res.stderr)
+        }
     }
 
     @Test
@@ -300,8 +317,10 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
             "objcExceptionMode_wrap.kt",
             extraCinteropArgs = listOf("-Xforeign-exception-mode", "objc-wrap")
         )
-        assertEquals("OK: ForeignException", res.stdout)
-        assertEquals("", res.stderr)
+        Assumptions.assumingThat(!testRunSettings.get<ForcedNoopTestRunner>().value) {
+            assertEquals("OK: ForeignException", res.stdout)
+            assertEquals("", res.stderr)
+        }
     }
 
     private fun testDylibCinteropExe(
