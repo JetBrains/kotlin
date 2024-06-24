@@ -357,6 +357,9 @@ open class JvmIrCodegenFactory(
 
         jvmLoweringPhases.invokeToplevel(phaseConfig, context, irModuleFragment)
 
+        println("!!!!!!!!!!!!!")
+        Thread.sleep(111111111111)
+
         return JvmIrCodegenInput(state, context, irModuleFragment, notifyCodegenStart)
     }
 

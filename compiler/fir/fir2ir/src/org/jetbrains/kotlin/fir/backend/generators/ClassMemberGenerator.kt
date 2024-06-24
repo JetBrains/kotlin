@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.resolve.DataClassResolver
 internal class ClassMemberGenerator(
     private val c: Fir2IrComponents,
     private val visitor: Fir2IrVisitor,
-    private val conversionScope: Fir2IrConversionScope
+    private val conversionScope: Fir2IrConversionScope,
 ) : Fir2IrComponents by c {
     private fun <T : IrDeclaration> applyParentFromStackTo(declaration: T): T = conversionScope.applyParentFromStackTo(declaration)
 
@@ -100,6 +100,9 @@ internal class ClassMemberGenerator(
             }
         }
         declarationStorage.leaveScope(irClass.symbol)
+
+        // Save memory
+        klass.replaceControlFlowGraphReference(null)
     }
 
     fun <T : IrFunction> convertFunctionContent(irFunction: T, firFunction: FirFunction?, containingClass: FirClass?): T {
@@ -201,6 +204,15 @@ internal class ClassMemberGenerator(
                 // Scope for primary constructor should be left after class declaration
                 declarationStorage.leaveScope(irFunction.symbol)
             }
+
+            // Save memory
+            if (firFunction != null) {
+                firFunction.replaceBody(null)
+                firFunction.replaceControlFlowGraphReference(null)
+                firFunction.valueParameters.forEach {
+                    it.replaceControlFlowGraphReference(null)
+                }
+            }
         }
         return irFunction
     }
@@ -228,6 +240,11 @@ internal class ClassMemberGenerator(
             )
         }
         annotationGenerator.generate(irProperty, property)
+
+        // Save memory
+        property.replaceInitializer(null)
+        property.replaceControlFlowGraphReference(null)
+
         return irProperty
     }
 
@@ -240,12 +257,17 @@ internal class ClassMemberGenerator(
             }
             declarationStorage.leaveScope(irField.symbol)
         }
+
+        // Save memory
+        field.replaceInitializer(null)
+        field.replaceControlFlowGraphReference(null)
+
         return irField
     }
 
     private fun IrProperty.initializeBackingField(
         property: FirProperty,
-        initializerExpression: FirExpression?
+        initializerExpression: FirExpression?,
     ) {
         val irField = backingField ?: return
         conversionScope.withParent(irField) {
@@ -272,13 +294,17 @@ internal class ClassMemberGenerator(
             declarationStorage.leaveScope(this@initializeBackingField.symbol)
         }
         property.backingField?.let { annotationGenerator.generate(irField, it) }
+
+
+        // Save memory
+        property.backingField?.replaceInitializer(null)
     }
 
     private fun IrSimpleFunction.setPropertyAccessorContent(
         propertyAccessor: FirPropertyAccessor?,
         correspondingProperty: IrProperty,
         propertyType: IrType,
-        isDefault: Boolean
+        isDefault: Boolean,
     ) {
         conversionScope.withFunction(this) {
             applyParentFromStackTo(this)
@@ -311,6 +337,11 @@ internal class ClassMemberGenerator(
                 }
             }
         }
+
+
+        // Save memory
+        propertyAccessor?.replaceBody(null)
+        propertyAccessor?.replaceControlFlowGraphReference(null)
     }
 
     private fun IrFieldAccessExpression.setReceiver(declaration: IrDeclaration): IrFieldAccessExpression {

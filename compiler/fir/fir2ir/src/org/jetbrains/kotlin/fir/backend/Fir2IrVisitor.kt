@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.deserialization.toQualifiedPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.builder.buildEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -334,6 +335,9 @@ class Fir2IrVisitor(
         }
         declarationStorage.leaveScope(irFunction.symbol)
 
+        // Save memory
+        codeFragment.replaceBlock(buildEmptyExpressionBlock())
+
         return irFunction
     }
 
@@ -353,6 +357,10 @@ class Fir2IrVisitor(
             memberGenerator.convertClassContent(irAnonymousObject, anonymousObject)
         }
         val anonymousClassType = irAnonymousObject.thisReceiver!!.type
+
+        // Save memory
+        anonymousObject.replaceControlFlowGraphReference(null)
+
         return anonymousObject.convertWithOffsets { startOffset, endOffset ->
             IrBlockImpl(
                 startOffset, endOffset, anonymousClassType, IrStatementOrigin.OBJECT_LITERAL,
@@ -393,6 +401,10 @@ class Fir2IrVisitor(
             irAnonymousInitializer.body = convertToIrBlockBody(anonymousInitializer.body!!)
         }
         declarationStorage.leaveScope(irAnonymousInitializer.symbol)
+
+        // Save memory
+        anonymousInitializer.replaceBody(null)
+
         return irAnonymousInitializer
     }
 
@@ -405,6 +417,7 @@ class Fir2IrVisitor(
             @OptIn(UnsafeDuringIrConstructionAPI::class)
             declarationStorage.getCachedIrFunctionSymbol(simpleFunction)!!.owner
         }
+
         return conversionScope.withFunction(irFunction) {
             memberGenerator.convertFunctionContent(
                 irFunction, simpleFunction, containingClass = conversionScope.containerFirClass()
