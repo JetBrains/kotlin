@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KaFe1
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.getResolutionScope
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaAbstractResolver
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseImplicitReceiverValue
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBasePartiallyAppliedSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSimpleVariableReadAccess
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSimpleVariableWriteAccess
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSmartCastedReceiverValue
@@ -472,17 +473,17 @@ internal class KaFe10Resolver(
             // FE1.0 represents synthesized properties as an extension property of the Java class. Hence we use the extension receiver as
             // the dispatch receiver and always pass null for extension receiver (because in Java there is no way to specify an extension
             // receiver)
-            return KaPartiallyAppliedSymbol(
-                signature,
-                extensionReceiver?.toKtReceiverValue(context, this),
-                null
+            return KaBasePartiallyAppliedSymbol(
+                backingSignature = signature,
+                dispatchReceiver = extensionReceiver?.toKtReceiverValue(context, this),
+                extensionReceiver = null,
             )
         } else {
-            return KaPartiallyAppliedSymbol(
-                signature,
-                dispatchReceiver?.toKtReceiverValue(context, this, smartCastDispatchReceiverType)
+            return KaBasePartiallyAppliedSymbol(
+                backingSignature = signature,
+                dispatchReceiver = dispatchReceiver?.toKtReceiverValue(context, this, smartCastDispatchReceiverType)
                     ?: targetDescriptor.dispatchReceiverForImportedCallables(),
-                extensionReceiver?.toKtReceiverValue(context, this),
+                extensionReceiver = extensionReceiver?.toKtReceiverValue(context, this),
             )
         }
     }
