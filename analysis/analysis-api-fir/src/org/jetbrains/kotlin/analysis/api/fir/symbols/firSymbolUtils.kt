@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.KaInitializerValue
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.utils.asKaInitializerValue
-import org.jetbrains.kotlin.analysis.api.impl.base.KaContextReceiverImpl
+import org.jetbrains.kotlin.analysis.api.impl.base.KaBaseContextReceiver
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolModality
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
@@ -78,7 +78,7 @@ internal fun FirRegularClassSymbol.createContextReceivers(
 private fun createContextReceiver(
     builder: KaSymbolByFirBuilder,
     contextReceiver: FirContextReceiver
-) = KaContextReceiverImpl(
+) = KaBaseContextReceiver(
     builder.typeBuilder.buildKtType(contextReceiver.typeRef),
     contextReceiver.customLabelName,
     builder.token
