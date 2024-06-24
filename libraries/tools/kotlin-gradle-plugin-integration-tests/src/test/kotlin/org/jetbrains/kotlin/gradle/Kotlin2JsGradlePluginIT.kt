@@ -512,12 +512,12 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         project("kotlin-js-with-friend-paths", gradleVersion) {
             build("assemble")
 
-            val oldFriendPaths = "friendPaths.from(project(\":lib\").buildDir.resolve(\"libs/lib.klib\"))"
+            val oldFriendPaths = "friendPaths.from(project(\":lib\").buildDir.resolve(\"classes/kotlin/main\"))"
             val appModuleGradleBuildKts = subProject("app").buildGradleKts
             assertFileInProjectContains(appModuleGradleBuildKts.absolutePathString(), oldFriendPaths)
             appModuleGradleBuildKts.replaceText(
                 oldFriendPaths,
-                "friendPaths.from(project(\":lib\").buildDir.resolve(\"libs/lib.klib\"), project(\":lib\").buildDir.resolve(\"libs/not_existed_lib.klib\"))"
+                "friendPaths.from(project(\":lib\").buildDir.resolve(\"classes/kotlin/main\"), project(\":lib\").buildDir.resolve(\"libs/not_existed_lib.klib\"))"
             )
 
             build("assemble") {

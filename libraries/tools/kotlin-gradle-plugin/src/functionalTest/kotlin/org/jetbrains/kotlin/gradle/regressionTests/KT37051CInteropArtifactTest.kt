@@ -7,8 +7,11 @@
 
 package org.jetbrains.kotlin.gradle.regressionTests
 
+import org.jetbrains.kotlin.gradle.artifacts.maybeCreateKlibPackingTask
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
+import org.jetbrains.kotlin.gradle.utils.named
 import org.junit.Test
 import kotlin.test.fail
 
@@ -36,7 +39,12 @@ class KT37051CInteropArtifactTest {
             .apply { if (size != 1) fail("Expected only one cinterop artifact: Found $this") }
             .first()
 
-        if (cinteropArtifact.buildDependencies.getDependencies(null) != setOf(project.tasks.getByName(cinterop.interopProcessingTaskName))) {
+        val cinteropPackTask = maybeCreateKlibPackingTask(
+            mainCompilation,
+            cinterop.classifier,
+            project.tasks.named<CInteropProcess>(cinterop.interopProcessingTaskName)
+        )
+        if (cinteropArtifact.buildDependencies.getDependencies(null) != setOf(cinteropPackTask.get())) {
             fail("Expected cinterop artifact to contain the corresponding cinterop process as task dependency")
         }
     }

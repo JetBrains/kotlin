@@ -329,7 +329,7 @@ open class CommonizerIT : KGPBaseTest() {
     @DisplayName("KT-46248 single supported native target dependency propagation - cinterop")
     @GradleTest
     fun testSingleSupportedNativeTargetDependencyPropagationCInterop(gradleVersion: GradleVersion) {
-        val nativeMainContainsCInteropDependencyRegex = Regex(""".*Dependency:.*cinterop-dummy.*""")
+        val nativeMainContainsCInteropDependencyRegex = Regex(""".*Dependency:.*cinterop-nativePlatformCinterop-dummy.*""")
         nativeProject("commonize-kt-47523-singleNativeTargetPropagation-cinterop", gradleVersion) {
             build("listNativePlatformMainDependencies") {
                 assertOutputDoesNotContain(nativeMainContainsCInteropDependencyRegex)
@@ -350,7 +350,7 @@ open class CommonizerIT : KGPBaseTest() {
     @DisplayName("KT-48856 single native target dependency propagation - test source set - cinterop")
     @GradleTest
     fun testSingleSupportedNativeTargetDependencyPropagationTestSourceSetCInterop(gradleVersion: GradleVersion) {
-        val nativeMainContainsCInteropDependencyRegex = Regex(""".*Dependency:.*cinterop-sampleInterop.*""")
+        val nativeMainContainsCInteropDependencyRegex = Regex(""".*Dependency:.*platformCinterop-sampleInterop.*""")
         nativeProject("commonize-kt-48856-singleNativeTargetPropagation-testSourceSet", gradleVersion) {
             build("listNativeTestDependencies") {
                 assertOutputContains(

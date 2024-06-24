@@ -94,8 +94,7 @@ class GeneralNativeIT : KGPBaseTest() {
             )
 
             val klibPrefix = CompilerOutputKind.LIBRARY.prefix(HostManager.host)
-            val klibSuffix = CompilerOutputKind.LIBRARY.suffix(HostManager.host)
-            val klibPath = "${kotlinClassesDir(targetName = "host")}${klibPrefix}/klib/native-library$klibSuffix"
+            val klibPath = "${kotlinClassesDir(targetName = "host")}${klibPrefix}/klib/native-library"
 
             val linkTasks = listOf(
                 ":linkDebugSharedHost",
@@ -115,7 +114,7 @@ class GeneralNativeIT : KGPBaseTest() {
                     assertFileInProjectExists(it)
                     assertFileInProjectContains(it, "_KInt (*exported)();")
                 }
-                assertFileInProjectExists(klibPath)
+                assertDirectoryInProjectExists(klibPath)
             }
 
             // Test that all up-to date checks are correct
@@ -795,10 +794,10 @@ class GeneralNativeIT : KGPBaseTest() {
             gradleVersion, configureSubProjects = true,
             localRepoDir = defaultLocalRepo(gradleVersion)
         ) {
-            fun libraryFiles(projectName: String, cinteropName: String) = listOf(
-                projectPath.resolve("$projectName/build/classes/kotlin/host/main/cinterop/${projectName}-cinterop-$cinteropName.klib"),
-                projectPath.resolve("$projectName/build/classes/kotlin/host/main/klib/${projectName}.klib"),
-                projectPath.resolve("$projectName/build/classes/kotlin/host/test/klib/${projectName}_test.klib")
+            fun libraryDirectories(projectName: String, cinteropName: String) = listOf(
+                projectPath.resolve("$projectName/build/classes/kotlin/host/main/cinterop/${projectName}-cinterop-$cinteropName"),
+                projectPath.resolve("$projectName/build/classes/kotlin/host/main/klib/${projectName}"),
+                projectPath.resolve("$projectName/build/classes/kotlin/host/test/klib/${projectName}_test")
             )
 
             // Enable info log to see cinterop environment variables.
@@ -806,7 +805,7 @@ class GeneralNativeIT : KGPBaseTest() {
                 ":projectLibrary:build",
             ) {
                 assertTasksExecuted(":projectLibrary:cinteropAnotherNumberHost")
-                libraryFiles("projectLibrary", "anotherNumber").forEach { assertFileExists(it) }
+                libraryDirectories("projectLibrary", "anotherNumber").forEach { assertDirectoryExists(it) }
                 assertNativeTasksCustomEnvironment(
                     ":projectLibrary:cinteropAnotherNumberHost",
                     toolName = NativeToolKind.C_INTEROP
@@ -817,7 +816,7 @@ class GeneralNativeIT : KGPBaseTest() {
 
             build(":publishedLibrary:build", ":publishedLibrary:publish") {
                 assertTasksExecuted(":publishedLibrary:cinteropNumberHost")
-                libraryFiles("publishedLibrary", "number").forEach { assertFileExists(it) }
+                libraryDirectories("publishedLibrary", "number").forEach { assertDirectoryExists(it) }
             }
 
             build(":build")

@@ -568,10 +568,10 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = booleanProperty(PropertyNames.KOTLIN_COLLECT_FUS_METRICS_ENABLED) ?: true
 
     val produceUnpackedKlibs: Boolean
-        get() = booleanProperty(PropertyNames.KOTLIN_PRODUCE_UNCOMPRESSED_KLIBS) ?: false
+        get() = booleanProperty(PropertyNames.KOTLIN_PRODUCE_UNCOMPRESSED_KLIBS) ?: true
 
     val consumeUnpackedKlibs: Boolean
-        get() = booleanProperty(PropertyNames.KOTLIN_CONSUME_UNCOMPRESSED_KLIBS) ?: false
+        get() = booleanProperty(PropertyNames.KOTLIN_CONSUME_UNCOMPRESSED_KLIBS) ?: true
 
     /**
      * Retrieves a comma-separated list of browsers to use when running karma tests for [target]

@@ -54,7 +54,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
                     dependsOnDependency(":consumerA/commonMain"),
                     dependsOnDependency(":consumerA/nativeMain"),
                     dependsOnDependency(":consumerA/linuxMain"),
-                    projectArtifactDependency(Regular, ":producerBuild::producerA", FilePathRegex(".*/linuxX64/main/klib/producerA.klib")),
+                    projectArtifactDependency(Regular, ":producerBuild::producerA", FilePathRegex(".*/linuxX64/main/klib/producerA")),
                     kotlinNativeDistributionDependencies,
                 )
             }
@@ -392,7 +392,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
                     projectArtifactDependency(
                         Regular,
                         ":producerBuild::producerA",
-                        FilePathRegex(".*/linuxX64/main/klib/producerA.klib")
+                        FilePathRegex(".*/linuxX64/main/klib/producerA")
                     ),
                     kotlinNativeDistributionDependencies,
                 )

@@ -13,10 +13,13 @@ import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropKlibLibraryElements.cinteropKlibLibraryElements
+import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropKlibLibraryElements.unpackedCinteropKlibLibraryElements
 import org.jetbrains.kotlin.gradle.targets.native.internal.locateOrCreateCInteropApiElementsConfiguration
 import org.jetbrains.kotlin.gradle.targets.native.internal.locateOrCreateCInteropDependencyConfiguration
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
@@ -80,9 +83,9 @@ class KT56143CinteropConfigurationAttributes {
     fun `test - all cinterop configurations contain default attributes`() {
         project.evaluate()
 
-        fun checkConfigurationAttributes(configuration: Configuration) {
+        fun checkConfigurationAttributes(configuration: Configuration, resolvable: Boolean) {
             assertEquals(
-                project.cinteropKlibLibraryElements(),
+                if (resolvable) project.unpackedCinteropKlibLibraryElements() else project.cinteropKlibLibraryElements(),
                 configuration.attributes.getAttribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE),
                 "Expected cinterop klib library elements on ${configuration.name}"
             )
@@ -102,11 +105,11 @@ class KT56143CinteropConfigurationAttributes {
 
         project.multiplatformExtension.targets.forEach { target ->
             val cinteropApiElements = project.locateOrCreateCInteropApiElementsConfiguration(target)
-            checkConfigurationAttributes(cinteropApiElements)
+            checkConfigurationAttributes(cinteropApiElements, false)
 
             target.compilations.forEach { compilation ->
                 if (compilation is KotlinNativeCompilation)
-                    checkConfigurationAttributes(project.locateOrCreateCInteropDependencyConfiguration(compilation))
+                    checkConfigurationAttributes(project.locateOrCreateCInteropDependencyConfiguration(compilation), true)
             }
         }
     }

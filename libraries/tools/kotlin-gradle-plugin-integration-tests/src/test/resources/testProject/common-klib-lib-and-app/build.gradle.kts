@@ -66,12 +66,19 @@ publishing {
 
 tasks {
 	val skipCompilationOfTargets = kotlin.targets.matching { it.platformType.toString() == "native" }.names
-	all { 
+	withType<org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile> {
 		val target = name.removePrefix("compileKotlin").decapitalize()
 		if (target in skipCompilationOfTargets) {
 			actions.clear()
-			doLast { 
-				val destinationFile = project.buildDir.resolve("classes/kotlin/$target/main/klib/${project.name}.klib")
+		}
+	}
+	withType<Zip> {
+		val target = name.removeSuffix("Klib")
+		if (target in skipCompilationOfTargets) {
+			from("build.gradle.kts") // to make the task run
+			actions.clear()
+			doLast {
+				val destinationFile = archiveFile.get().asFile
 				destinationFile.parentFile.mkdirs()
 				println("Writing a dummy klib to $destinationFile")
 				destinationFile.createNewFile()

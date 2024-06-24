@@ -28,7 +28,11 @@ afterEvaluate {
             it as ConfigurablePublishArtifact
             it.classifier = targetName
         }
-        customComponent.addVariantsFromConfiguration(configuration) {}
+        customComponent.addVariantsFromConfiguration(configuration) {
+            if (configurationVariant.name == "unpacked-klib") {
+                skip()
+            }
+        }
     }
 }
 

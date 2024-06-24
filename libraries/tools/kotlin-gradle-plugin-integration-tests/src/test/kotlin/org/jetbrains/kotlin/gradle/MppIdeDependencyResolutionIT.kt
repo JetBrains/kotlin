@@ -125,7 +125,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
 
                 // CInterops are currently imported as extra roots of a platform publication, not as separate libraries
                 // This is a bit inconsistent with other CInterop dependencies, but correctly represents the published artifacts
-                fun assertDependencyOnPublishedProjectCInterop(sourceSetName: String) {
+                fun assertDependencyOnPublishedProjectCInterop(sourceSetName: String, targetName: String) {
                     val publishedProjectDependencies = dependencies[sourceSetName].filterIsInstance<IdeaKotlinResolvedBinaryDependency>()
                         .filter { it.coordinates?.module?.contains("dep-with-cinterop") == true }
 
@@ -134,17 +134,22 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                         .map { file -> file.name }
                         .toSet()
 
-                    assert(fileNames == setOf("dep-with-cinterop.klib", "dep-with-cinterop-cinterop-dep.klib")) {
+                    assert(
+                        fileNames == setOf(
+                            "dep-with-cinterop-${targetName}Main-1.0.klib",
+                            "dep-with-cinterop-${targetName}Cinterop-depMain-1.0.klib"
+                        )
+                    ) {
                         """Unexpected cinterop dependencies for the source set :client-for-binary-dep:$sourceSetName.
                             |Expected a project dependency and a cinterop dependency, but instead found:
                             |$fileNames""".trimMargin()
                     }
                 }
 
-                assertDependencyOnPublishedProjectCInterop("linuxX64Main")
-                assertDependencyOnPublishedProjectCInterop("linuxX64Test")
-                assertDependencyOnPublishedProjectCInterop("linuxArm64Main")
-                assertDependencyOnPublishedProjectCInterop("linuxArm64Test")
+                assertDependencyOnPublishedProjectCInterop("linuxX64Main", "linuxX64")
+                assertDependencyOnPublishedProjectCInterop("linuxX64Test", "linuxX64")
+                assertDependencyOnPublishedProjectCInterop("linuxArm64Main", "linuxArm64")
+                assertDependencyOnPublishedProjectCInterop("linuxArm64Test", "linuxArm64")
             }
 
             resolveIdeDependencies("client-for-project-to-project-dep") { dependencies ->
@@ -258,7 +263,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                     binaryCoordinates(Regex("com.example:cinterop-.*-dummy:linux_x64")),
                     IdeaKotlinDependencyMatcher("Unresolved 'failing' cinterop") { dependency ->
                         dependency is IdeaKotlinUnresolvedBinaryDependency && dependency.cause.orEmpty().contains(
-                            "cinterop-withFailingCInteropProcess-cinterop-failing.klib"
+                            "cinterop-withFailingCInteropProcess-linuxX64Cinterop-failing"
                         )
                     }
                 )
