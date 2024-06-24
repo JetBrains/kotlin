@@ -71,7 +71,7 @@ class ContextualSerializersProvider(session: FirSession) : FirExtensionSessionCo
             is FirVarargArgumentsExpression -> argument.arguments
             else -> return emptyList()
         }
-        return arguments.mapNotNull { (it as? FirGetClassCall)?.getTargetType() }
+        return arguments.mapNotNull { (it as? FirGetClassCall)?.getTargetType()?.fullyExpandedType(session) }
     }
 }
 

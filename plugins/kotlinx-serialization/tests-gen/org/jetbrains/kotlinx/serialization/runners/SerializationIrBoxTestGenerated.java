@@ -313,6 +313,12 @@ public class SerializationIrBoxTestGenerated extends AbstractSerializationIrBoxT
   }
 
   @Test
+  @TestMetadata("typealiasesInContextualTest.kt")
+  public void testTypealiasesInContextualTest() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/typealiasesInContextualTest.kt");
+  }
+
+  @Test
   @TestMetadata("typealiasesTest.kt")
   public void testTypealiasesTest() {
     runTest("plugins/kotlinx-serialization/testData/boxIr/typealiasesTest.kt");
