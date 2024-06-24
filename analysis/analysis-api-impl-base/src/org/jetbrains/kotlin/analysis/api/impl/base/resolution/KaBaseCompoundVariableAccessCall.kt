@@ -15,12 +15,10 @@ import org.jetbrains.kotlin.analysis.api.resolution.KaPartiallyAppliedVariableSy
 import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
 
 @KaImplementationDetail
-class KaCompoundVariableAccessCallImpl(
-    partiallyAppliedSymbol: KaPartiallyAppliedVariableSymbol<KaVariableSymbol>,
+class KaBaseCompoundVariableAccessCall(
+    private val backingPartiallyAppliedSymbol: KaPartiallyAppliedVariableSymbol<KaVariableSymbol>,
     compoundAccess: KaCompoundAccess,
 ) : KaCompoundVariableAccessCall {
-    private val backingPartiallyAppliedSymbol: KaPartiallyAppliedVariableSymbol<KaVariableSymbol> = partiallyAppliedSymbol
-
     override val variablePartiallyAppliedSymbol: KaPartiallyAppliedVariableSymbol<KaVariableSymbol>
         get() = withValidityAssertion { backingPartiallyAppliedSymbol }
 
