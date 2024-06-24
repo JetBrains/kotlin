@@ -744,7 +744,7 @@ internal class KlibVerificationTests : BaseKotlinGradleTest() {
         runner.buildAndFail().apply {
             assertTaskFailure(":klibApiExtractForValidation")
             Assertions.assertThat(output).contains(
-                "File with project's API declarations 'api/testproject.klib.api' does not exist."
+                "File with project's API declarations 'api${File.separator}testproject.klib.api' does not exist."
             )
         }
     }
