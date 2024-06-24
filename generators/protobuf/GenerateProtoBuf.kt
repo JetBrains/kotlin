@@ -52,7 +52,7 @@ val PROTO_PATHS: List<ProtoPath> = listOf(
     ProtoPath("core/metadata.jvm/src/jvm_metadata.proto"),
     ProtoPath("core/metadata.jvm/src/jvm_module.proto"),
     ProtoPath("build-common/src/java_descriptors.proto"),
-    ProtoPath("compiler/util-klib-metadata/src/KlibMetadataProtoBuf.proto"),
+    ProtoPath("compiler/util-klib/src/KlibMetadataProtoBuf.proto"),
     ProtoPath("compiler/ir/serialization.common/src/KotlinIr.proto", false),
     ProtoPath("compiler/ir/serialization.jvm/src/JvmIr.proto", false),
 )
