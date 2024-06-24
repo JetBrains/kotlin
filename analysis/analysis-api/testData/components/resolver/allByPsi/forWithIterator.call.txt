@@ -311,7 +311,7 @@ KtNameReferenceExpression(250,253): 'Int'
 
 KtPostfixExpression(256,265): 'current++'
   KaSuccessCallInfo:
-    call = KaCompoundVariableAccessCallImpl:
+    call = KaCompoundVariableAccessCall:
       compoundAccess = IncOrDecOperation:
         kind = INC
         precedence = POSTFIX
@@ -358,7 +358,7 @@ KtNameReferenceExpression(256,263): 'current'
 
 KtOperationReferenceExpression(263,265): '++'
   KaSuccessCallInfo:
-    call = KaCompoundVariableAccessCallImpl:
+    call = KaCompoundVariableAccessCall:
       compoundAccess = IncOrDecOperation:
         kind = INC
         precedence = POSTFIX

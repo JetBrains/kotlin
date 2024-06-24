@@ -1,6 +1,6 @@
 KtPrefixExpression(47,58): '++foo.value'
   KaSuccessCallInfo:
-    call = KaCompoundVariableAccessCallImpl:
+    call = KaCompoundVariableAccessCall:
       compoundAccess = IncOrDecOperation:
         kind = INC
         precedence = PREFIX
