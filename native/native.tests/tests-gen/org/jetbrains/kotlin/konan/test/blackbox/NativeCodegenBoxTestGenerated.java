@@ -5000,6 +5000,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
           public void testUnitWithSideEffect() {
             runTest("compiler/testData/codegen/box/callableReference/function/local/unitWithSideEffect.kt");
           }
+
+          @Test
+          @TestMetadata("withValueArguments.kt")
+          public void testWithValueArguments() {
+            runTest("compiler/testData/codegen/box/callableReference/function/local/withValueArguments.kt");
+          }
         }
       }
 
@@ -47342,6 +47348,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
       @TestMetadata("localFunInLambdaCapturesAnotherFun.kt")
       public void testLocalFunInLambdaCapturesAnotherFun() {
         runTest("compiler/testData/codegen/boxInline/localFunInLambda/localFunInLambdaCapturesAnotherFun.kt");
+      }
+
+      @Test
+      @TestMetadata("localFunInLambdaCapturesOuterVariable.kt")
+      public void testLocalFunInLambdaCapturesOuterVariable() {
+        runTest("compiler/testData/codegen/boxInline/localFunInLambda/localFunInLambdaCapturesOuterVariable.kt");
       }
     }
 
