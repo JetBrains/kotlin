@@ -1,6 +1,6 @@
 KtBinaryExpression(31,37): 'i += 1'
   KaSuccessCallInfo:
-    call = KaCompoundVariableAccessCallImpl:
+    call = KaCompoundVariableAccessCall:
       compoundAccess = CompoundAssign:
         kind = PLUS_ASSIGN
         operand = 1

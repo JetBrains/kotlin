@@ -1,6 +1,6 @@
 KtOperationReferenceExpression(195,197): '+='
   KaSuccessCallInfo:
-    call = KaCompoundVariableAccessCallImpl:
+    call = KaCompoundVariableAccessCall:
       compoundAccess = CompoundAssign:
         kind = PLUS_ASSIGN
         operand = foo

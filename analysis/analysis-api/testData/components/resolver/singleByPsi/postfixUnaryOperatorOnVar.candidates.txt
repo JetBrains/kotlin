@@ -1,6 +1,6 @@
 KtPostfixExpression(31,34): 'i++'
   KaApplicableCallCandidateInfo:
-    candidate = KaCompoundVariableAccessCallImpl:
+    candidate = KaCompoundVariableAccessCall:
       compoundAccess = IncOrDecOperation:
         kind = INC
         precedence = POSTFIX

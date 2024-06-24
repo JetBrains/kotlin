@@ -1,6 +1,6 @@
 KtOperationReferenceExpression(138,140): '--'
   KaApplicableCallCandidateInfo:
-    candidate = KaCompoundVariableAccessCallImpl:
+    candidate = KaCompoundVariableAccessCall:
       compoundAccess = IncOrDecOperation:
         kind = DEC
         precedence = PREFIX

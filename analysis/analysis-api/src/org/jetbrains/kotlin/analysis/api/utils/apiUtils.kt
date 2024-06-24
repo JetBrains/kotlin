@@ -13,6 +13,7 @@ private val implementationPackageNames = listOf(
     "org.jetbrains.kotlin.analysis.api.impl.base",
     "org.jetbrains.kotlin.analysis.api.fir",
     "org.jetbrains.kotlin.analysis.api.descriptors",
+    "org.jetbrains.kotlin.references.fe10",
 )
 
 @KaImplementationDetail

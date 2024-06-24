@@ -932,7 +932,7 @@ KtConstantExpression(131,132): '1'
 
 KtBinaryExpression(137,161): 'javaClass.something += 1'
   KaApplicableCallCandidateInfo:
-    candidate = KaCompoundVariableAccessCallImpl:
+    candidate = KaCompoundVariableAccessCall:
       compoundAccess = CompoundAssign:
         kind = PLUS_ASSIGN
         operand = 1
@@ -1083,7 +1083,7 @@ KtNameReferenceExpression(147,156): 'something'
 
 KtOperationReferenceExpression(157,159): '+='
   KaApplicableCallCandidateInfo:
-    candidate = KaCompoundVariableAccessCallImpl:
+    candidate = KaCompoundVariableAccessCall:
       compoundAccess = CompoundAssign:
         kind = PLUS_ASSIGN
         operand = 1
@@ -1125,7 +1125,7 @@ KtConstantExpression(160,161): '1'
 
 KtPostfixExpression(166,187): 'javaClass.something++'
   KaApplicableCallCandidateInfo:
-    candidate = KaCompoundVariableAccessCallImpl:
+    candidate = KaCompoundVariableAccessCall:
       compoundAccess = IncOrDecOperation:
         kind = INC
         precedence = POSTFIX
@@ -1269,7 +1269,7 @@ KtNameReferenceExpression(176,185): 'something'
 
 KtOperationReferenceExpression(185,187): '++'
   KaApplicableCallCandidateInfo:
-    candidate = KaCompoundVariableAccessCallImpl:
+    candidate = KaCompoundVariableAccessCall:
       compoundAccess = IncOrDecOperation:
         kind = INC
         precedence = POSTFIX
@@ -1301,7 +1301,7 @@ KtOperationReferenceExpression(185,187): '++'
 
 KtPrefixExpression(192,213): '--javaClass.something'
   KaApplicableCallCandidateInfo:
-    candidate = KaCompoundVariableAccessCallImpl:
+    candidate = KaCompoundVariableAccessCall:
       compoundAccess = IncOrDecOperation:
         kind = DEC
         precedence = PREFIX
@@ -1333,7 +1333,7 @@ KtPrefixExpression(192,213): '--javaClass.something'
 
 KtOperationReferenceExpression(192,194): '--'
   KaApplicableCallCandidateInfo:
-    candidate = KaCompoundVariableAccessCallImpl:
+    candidate = KaCompoundVariableAccessCall:
       compoundAccess = IncOrDecOperation:
         kind = DEC
         precedence = PREFIX
@@ -1477,7 +1477,7 @@ KtNameReferenceExpression(204,213): 'something'
 
 KtPostfixExpression(219,230): 'something++'
   KaApplicableCallCandidateInfo:
-    candidate = KaCompoundVariableAccessCallImpl:
+    candidate = KaCompoundVariableAccessCall:
       compoundAccess = IncOrDecOperation:
         kind = INC
         precedence = POSTFIX
@@ -1542,7 +1542,7 @@ KtNameReferenceExpression(219,228): 'something'
 
 KtOperationReferenceExpression(228,230): '++'
   KaApplicableCallCandidateInfo:
-    candidate = KaCompoundVariableAccessCallImpl:
+    candidate = KaCompoundVariableAccessCall:
       compoundAccess = IncOrDecOperation:
         kind = INC
         precedence = POSTFIX
@@ -1581,7 +1581,7 @@ KtOperationReferenceExpression(228,230): '++'
 
 KtPostfixExpression(235,248): '(something)++'
   KaApplicableCallCandidateInfo:
-    candidate = KaCompoundVariableAccessCallImpl:
+    candidate = KaCompoundVariableAccessCall:
       compoundAccess = IncOrDecOperation:
         kind = INC
         precedence = POSTFIX
@@ -1649,7 +1649,7 @@ KtNameReferenceExpression(236,245): 'something'
 
 KtOperationReferenceExpression(246,248): '++'
   KaApplicableCallCandidateInfo:
-    candidate = KaCompoundVariableAccessCallImpl:
+    candidate = KaCompoundVariableAccessCall:
       compoundAccess = IncOrDecOperation:
         kind = INC
         precedence = POSTFIX

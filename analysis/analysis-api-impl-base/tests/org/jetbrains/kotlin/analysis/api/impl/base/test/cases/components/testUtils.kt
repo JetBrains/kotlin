@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.utils.getApiKClassOf
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
@@ -111,10 +112,10 @@ internal fun KaSession.stringRepresentation(any: Any?): String = with(any) {
         is CallableId -> toString()
         is KaCallableSignature<*> -> stringRepresentation(this)
         else -> buildString {
-            val clazz = this@with::class
-            val className = clazz.simpleName
+            val className = renderFrontendIndependentKClassNameOf(this@with)
             append(className)
-            clazz.memberProperties
+
+            this@with::class.memberProperties
                 .filter {
                     it.name != "token" && it.visibility == KVisibility.PUBLIC && !it.hasAnnotation<Deprecated>()
                 }.ifNotEmpty {
@@ -137,10 +138,7 @@ internal fun KaSession.stringRepresentation(any: Any?): String = with(any) {
 }
 
 private fun KaSession.stringRepresentation(signature: KaCallableSignature<*>): String = buildString {
-    when (signature) {
-        is KaFunctionSignature<*> -> append(KaFunctionSignature::class.simpleName)
-        is KaVariableSignature<*> -> append(KaVariableSignature::class.simpleName)
-    }
+    append(renderFrontendIndependentKClassNameOf(signature))
 
     val memberProperties = listOfNotNull(
         KaVariableSignature<*>::name.takeIf { signature is KaVariableSignature<*> },
@@ -329,10 +327,6 @@ internal fun KaSession.renderScopeWithParentDeclarations(scope: KaScope): String
 }
 
 internal fun renderFrontendIndependentKClassNameOf(instanceOfClassToRender: Any): String {
-    var classToRender: Class<*> = instanceOfClassToRender::class.java
-    while (classToRender.simpleName.let { it.contains("Fir") || it.contains("Fe10") || it.contains("Base") } == true) {
-        classToRender = classToRender.superclass
-    }
-
-    return classToRender.simpleName
+    val classToRender = getApiKClassOf(instanceOfClassToRender)
+    return classToRender.simpleName!!
 }
