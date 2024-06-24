@@ -19,7 +19,6 @@ var IrFunction.defaultArgumentsDispatchFunction: IrFunction? by irAttribute(foll
 
 open class Mapping {
     val defaultArgumentsOriginalFunction: MapBasedMapping<IrFunction, IrFunction> = MapBasedMapping()
-    val suspendFunctionToCoroutineConstructor: DeclarationMapping<IrFunction, IrConstructor> by AttributeBasedMappingDelegate()
     val lateInitFieldToNullableField: DeclarationMapping<IrField, IrField> by AttributeBasedMappingDelegate()
     val inlineClassMemberToStatic: DeclarationMapping<IrFunction, IrSimpleFunction> by AttributeBasedMappingDelegate()
     val capturedFields: DeclarationMapping<IrClass, Collection<IrField>> by AttributeBasedMappingDelegate()
