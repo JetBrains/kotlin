@@ -116,13 +116,8 @@ fun IrMemberAccessExpression<*>.getAllArgumentsWithIr(): List<Pair<IrValueParame
 fun IrMemberAccessExpression<*>.getAllArgumentsWithIr(irFunction: IrFunction): List<Pair<IrValueParameter, IrExpression?>> {
     val res = mutableListOf<Pair<IrValueParameter, IrExpression?>>()
 
-    dispatchReceiver?.let { arg ->
-        irFunction.dispatchReceiverParameter?.let { parameter -> res += (parameter to arg) }
-    }
-
-    extensionReceiver?.let { arg ->
-        irFunction.extensionReceiverParameter?.let { parameter -> res += (parameter to arg) }
-    }
+    irFunction.dispatchReceiverParameter?.let { parameter -> res += (parameter to dispatchReceiver) }
+    irFunction.extensionReceiverParameter?.let { parameter -> res += (parameter to extensionReceiver) }
 
     irFunction.valueParameters.forEachIndexed { index, it ->
         res += it to getValueArgument(index)
