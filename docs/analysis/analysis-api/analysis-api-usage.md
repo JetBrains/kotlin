@@ -1,6 +1,6 @@
 # Analysis API Usage
 
-To use Analysis API, you need to be in the `KaSession` context. Basically, it means that you need to call [`analyse(contextElement: KtElement, action: KaSession.() -> R): R`](https://github.com/JetBrains/kotlin/blob/master/analysis/analysis-api/src/org/jetbrains/kotlin/analysis/api/KaAnalysisSessionProvider.kt#L106) function. All your actions with Analysis API will be performed with `KaSession` receiver available.
+To use Analysis API, you need to be in the `KaSession` context. Basically, it means that you need to call [`analyse(contextElement: KtElement, action: KaSession.() -> R): R`](https://github.com/JetBrains/kotlin/blob/master/analysis/analysis-api/src/org/jetbrains/kotlin/analysis/api/KaSessionProvider.kt#L106) function. All your actions with Analysis API will be performed with `KaSession` receiver available.
 ```kotlin
 analyse(psiElementForContext) { // you are inside KaSession Context
     // you can use a wide variety of Analysis API functions here: work with types, symbols, signatures, scopes and more.
