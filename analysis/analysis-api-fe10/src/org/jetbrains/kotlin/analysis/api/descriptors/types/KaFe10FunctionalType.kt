@@ -118,4 +118,9 @@ internal class KaFe10FunctionalType(
     override fun toString(): String {
         return fe10Type.renderForDebugging(analysisContext)
     }
+
+    @KaExperimentalApi
+    override fun createPointer(): KaTypePointer<KaFunctionType> = withValidityAssertion {
+        throw NotImplementedError("Type pointers are not implemented for FE 1.0")
+    }
 }

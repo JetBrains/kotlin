@@ -1,0 +1,95 @@
+Type has changed on restoration
+
+Before:
+
+KaUsualClassType:
+  abbreviation: null
+  annotations: []
+  classId: kotlin/collections/List
+  nullability: NON_NULLABLE
+  qualifiers: [
+    qualifier:
+      name: List
+      symbol: KaNamedClassSymbol(kotlin/collections/List)
+      typeArguments: [
+        KaUsualClassType:
+          abbreviation: null
+          annotations: [
+            Anno()
+              psi: KtAnnotationEntry
+          ]
+          classId: kotlin/String
+          nullability: NON_NULLABLE
+          qualifiers: [
+            qualifier:
+              name: String
+              symbol: KaNamedClassSymbol(kotlin/String)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+      ]
+  ]
+  symbol: KaNamedClassSymbol(kotlin/collections/List)
+  typeArguments: [
+    KaUsualClassType:
+      abbreviation: null
+      annotations: [
+        Anno()
+          psi: KtAnnotationEntry
+      ]
+      classId: kotlin/String
+      nullability: NON_NULLABLE
+      qualifiers: [
+        qualifier:
+          name: String
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/String)
+      typeArguments: []
+  ]
+
+After:
+
+KaUsualClassType:
+  abbreviation: null
+  annotations: []
+  classId: kotlin/collections/List
+  nullability: NON_NULLABLE
+  qualifiers: [
+    qualifier:
+      name: List
+      symbol: KaNamedClassSymbol(kotlin/collections/List)
+      typeArguments: [
+        KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/String
+          nullability: NON_NULLABLE
+          qualifiers: [
+            qualifier:
+              name: String
+              symbol: KaNamedClassSymbol(kotlin/String)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+      ]
+  ]
+  symbol: KaNamedClassSymbol(kotlin/collections/List)
+  typeArguments: [
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: kotlin/String
+      nullability: NON_NULLABLE
+      qualifiers: [
+        qualifier:
+          name: String
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/String)
+      typeArguments: []
+  ]

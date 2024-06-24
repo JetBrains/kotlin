@@ -1,0 +1,95 @@
+Restored type is the same as the original one
+
+KaUsualClassType:
+  abbreviation: null
+  annotations: []
+  classId: Foo
+  nullability: NON_NULLABLE
+  qualifiers: [
+    qualifier:
+      name: Foo
+      symbol: KaNamedClassSymbol(Foo)
+      typeArguments: [
+        KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: First
+          nullability: NON_NULLABLE
+          qualifiers: [
+            qualifier:
+              name: First
+              symbol: KaNamedClassSymbol(First)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(First)
+          typeArguments: []
+        in KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: Second
+          nullability: NON_NULLABLE
+          qualifiers: [
+            qualifier:
+              name: Second
+              symbol: KaNamedClassSymbol(Second)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(Second)
+          typeArguments: []
+        out KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: Third
+          nullability: NON_NULLABLE
+          qualifiers: [
+            qualifier:
+              name: Third
+              symbol: KaNamedClassSymbol(Third)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(Third)
+          typeArguments: []
+      ]
+  ]
+  symbol: KaNamedClassSymbol(Foo)
+  typeArguments: [
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: First
+      nullability: NON_NULLABLE
+      qualifiers: [
+        qualifier:
+          name: First
+          symbol: KaNamedClassSymbol(First)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(First)
+      typeArguments: []
+    in KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: Second
+      nullability: NON_NULLABLE
+      qualifiers: [
+        qualifier:
+          name: Second
+          symbol: KaNamedClassSymbol(Second)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(Second)
+      typeArguments: []
+    out KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: Third
+      nullability: NON_NULLABLE
+      qualifiers: [
+        qualifier:
+          name: Third
+          symbol: KaNamedClassSymbol(Third)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(Third)
+      typeArguments: []
+  ]

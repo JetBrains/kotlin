@@ -5,7 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.types
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForType
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
@@ -13,8 +17,11 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaDynamicType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
+import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
 import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
+import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.fir.types.ConeDynamicType
+import org.jetbrains.kotlin.fir.types.create
 import org.jetbrains.kotlin.fir.types.renderForDebugging
 
 internal class KaFirDynamicType(
@@ -33,4 +40,19 @@ internal class KaFirDynamicType(
     override fun equals(other: Any?) = typeEquals(other)
     override fun hashCode() = typeHashcode()
     override fun toString() = coneType.renderForDebugging()
+
+    @KaExperimentalApi
+    override fun createPointer(): KaTypePointer<KaDynamicType> = withValidityAssertion {
+        return KaFirDynamicTypePointer
+    }
+}
+
+private object KaFirDynamicTypePointer : KaTypePointer<KaDynamicType> {
+    @KaImplementationDetail
+    override fun restore(session: KaSession): KaDynamicType = session.withValidityAssertion {
+        requireIsInstance<KaFirSession>(session)
+
+        val coneType = ConeDynamicType.create(session.firSession)
+        return KaFirDynamicType(coneType, session.firSymbolBuilder)
+    }
 }
