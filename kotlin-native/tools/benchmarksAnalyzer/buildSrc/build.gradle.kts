@@ -68,7 +68,7 @@ dependencies {
     val kotlinVersion = project.bootstrapKotlinVersion
     val ktorVersion = "1.2.1"
     val slackApiVersion = "1.2.0"
-    val shadowVersion = "8.1.1"
+    val shadowVersion = "8.1.7"
     val metadataVersion = "0.0.1-dev-10"
 
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
