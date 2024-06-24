@@ -252,7 +252,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
                 if (mode == KotlinJsBinaryMode.PRODUCTION && compilation.isMain()) {
                     assembleTaskProvider.dependsOn(distributionTask)
-                    registerSubTargetTask<Task>(disambiguateCamelCased(binary.name, WEBPACK_TASK_NAME)) {
+                    registerSubTargetTask<Task>(disambiguateCamelCased(WEBPACK_TASK_NAME)) {
                         it.dependsOn(webpackTask)
                     }
                 }
