@@ -8,57 +8,40 @@ package kotlinx.validation
 import kotlinx.validation.api.klib.KlibDump
 import kotlinx.validation.api.klib.saveTo
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.*
-import java.io.File
 
 /**
  * Merges multiple individual KLib ABI dumps into a single merged dump.
  */
-internal abstract class KotlinKlibMergeAbiTask : DefaultTask() {
-    private val targetToFile = mutableMapOf<String, File>()
-
-    @get:Internal
-    internal val projectName = project.name
+@CacheableTask
+public abstract class KotlinKlibMergeAbiTask : DefaultTask() {
+    /**
+     * Dumps to merge.
+     *
+     * If a file referred by [KlibDumpMetadata.dumpFile] does not exist, it will be ignored and corresponding
+     * target will not be mentioned in the resulting merged dump.
+     */
+    @get:Nested
+    public abstract val dumps: SetProperty<KlibDumpMetadata>
 
     /**
-     * Set of targets whose dumps should be merged.
+     * A path to a resulting merged dump file.
      */
-    @get:Input
-    val targets: Set<String>
-        get() = targetToFile.keys
-
-    // Required to enforce task rerun on klibs update
-    @Suppress("UNUSED")
-    @get:InputFiles
-    internal val inputDumps: Collection<File>
-        get() = targetToFile.values
-
-    /**
-     * A path to a resulting merged dump.
-     */
-    @OutputFile
-    lateinit var mergedFile: File
-
-    /**
-     * The name of a dump file.
-     */
-    @Input
-    lateinit var dumpFileName: String
-
-    internal fun addInput(target: String, file: File) {
-        targetToFile[target] = file
-    }
+    @get:OutputFile
+    public abstract val mergedApiFile: RegularFileProperty
 
     @OptIn(ExperimentalBCVApi::class)
     @TaskAction
     internal fun merge() {
         KlibDump().apply {
-            targetToFile.forEach { (targetName, dumpDir) ->
-                val dumpFile = dumpDir.resolve(dumpFileName)
+            dumps.get().forEach { dump ->
+                val dumpFile = dump.dumpFile.asFile.get()
                 if (dumpFile.exists()) {
-                    merge(dumpFile, targetName)
+                    merge(dumpFile, dump.target.configurableName)
                 }
             }
-        }.saveTo(mergedFile)
+        }.saveTo(mergedApiFile.asFile.get())
     }
 }

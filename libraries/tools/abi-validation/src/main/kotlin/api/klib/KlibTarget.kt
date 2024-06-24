@@ -5,6 +5,8 @@
 
 package kotlinx.validation.api.klib
 
+import java.io.Serializable
+
 
 /**
  * Target name consisting of two parts: a [configurableName] that could be configured by a user, and an [targetName]
@@ -25,7 +27,7 @@ public class KlibTarget internal constructor(
      * Usually, it's the same name as [targetName].
      */
     public val configurableName: String
-) {
+) : Serializable {
     init {
         require(!configurableName.contains(".")) {
             "Configurable name can't contain the '.' character: $configurableName"
@@ -54,6 +56,9 @@ public class KlibTarget internal constructor(
             }
             return KlibTarget(parts[0], parts[1])
         }
+
+        @JvmStatic
+        private val serialVersionUID: Long = 1
     }
 
 

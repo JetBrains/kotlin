@@ -31,28 +31,25 @@ public final class kotlinx/validation/BinaryCompatibilityValidatorPlugin : org/g
 }
 
 public abstract class kotlinx/validation/BuildTaskBase : org/gradle/api/DefaultTask {
-	public field outputApiFile Ljava/io/File;
 	public fun <init> ()V
-	public final fun getIgnoredClasses ()Ljava/util/Set;
-	public final fun getIgnoredPackages ()Ljava/util/Set;
-	public final fun getNonPublicMarkers ()Ljava/util/Set;
-	public final fun getOutputApiFile ()Ljava/io/File;
-	public final fun getPublicClasses ()Ljava/util/Set;
-	public final fun getPublicMarkers ()Ljava/util/Set;
-	public final fun getPublicPackages ()Ljava/util/Set;
-	public final fun setIgnoredClasses (Ljava/util/Set;)V
-	public final fun setIgnoredPackages (Ljava/util/Set;)V
-	public final fun setNonPublicMarkers (Ljava/util/Set;)V
-	public final fun setOutputApiFile (Ljava/io/File;)V
-	public final fun setPublicClasses (Ljava/util/Set;)V
-	public final fun setPublicMarkers (Ljava/util/Set;)V
-	public final fun setPublicPackages (Ljava/util/Set;)V
+	public final fun getIgnoredClasses ()Lorg/gradle/api/provider/SetProperty;
+	public final fun getIgnoredPackages ()Lorg/gradle/api/provider/SetProperty;
+	public final fun getNonPublicMarkers ()Lorg/gradle/api/provider/SetProperty;
+	public final fun getPublicClasses ()Lorg/gradle/api/provider/SetProperty;
+	public final fun getPublicMarkers ()Lorg/gradle/api/provider/SetProperty;
+	public final fun getPublicPackages ()Lorg/gradle/api/provider/SetProperty;
 }
 
 public abstract interface annotation class kotlinx/validation/ExperimentalBCVApi : java/lang/annotation/Annotation {
 }
 
 public abstract interface annotation class kotlinx/validation/ExternalApi : java/lang/annotation/Annotation {
+}
+
+public final class kotlinx/validation/KlibDumpMetadata : java/io/Serializable {
+	public fun <init> (Lkotlinx/validation/api/klib/KlibTarget;Lorg/gradle/api/file/RegularFileProperty;)V
+	public final fun getDumpFile ()Lorg/gradle/api/file/RegularFileProperty;
+	public final fun getTarget ()Lkotlinx/validation/api/klib/KlibTarget;
 }
 
 public class kotlinx/validation/KlibValidationSettings {
@@ -65,24 +62,52 @@ public class kotlinx/validation/KlibValidationSettings {
 	public final fun setStrictValidation (Z)V
 }
 
-public class kotlinx/validation/KotlinApiBuildTask : kotlinx/validation/BuildTaskBase {
-	public field inputDependencies Lorg/gradle/api/file/FileCollection;
+public abstract class kotlinx/validation/KotlinApiBuildTask : kotlinx/validation/BuildTaskBase {
 	public fun <init> ()V
-	public final fun getInputClassesDirs ()Lorg/gradle/api/file/FileCollection;
-	public final fun getInputDependencies ()Lorg/gradle/api/file/FileCollection;
-	public final fun getInputJar ()Lorg/gradle/api/file/RegularFileProperty;
-	public final fun setInputClassesDirs (Lorg/gradle/api/file/FileCollection;)V
-	public final fun setInputDependencies (Lorg/gradle/api/file/FileCollection;)V
+	public abstract fun getInputClassesDirs ()Lorg/gradle/api/file/ConfigurableFileCollection;
+	public abstract fun getInputDependencies ()Lorg/gradle/api/file/ConfigurableFileCollection;
+	public abstract fun getInputJar ()Lorg/gradle/api/file/RegularFileProperty;
+	public abstract fun getOutputApiFile ()Lorg/gradle/api/file/RegularFileProperty;
 }
 
 public class kotlinx/validation/KotlinApiCompareTask : org/gradle/api/DefaultTask {
-	public field generatedApiFile Ljava/io/File;
-	public field projectApiFile Ljava/io/File;
 	public fun <init> ()V
-	public final fun getGeneratedApiFile ()Ljava/io/File;
-	public final fun getProjectApiFile ()Ljava/io/File;
-	public final fun setGeneratedApiFile (Ljava/io/File;)V
-	public final fun setProjectApiFile (Ljava/io/File;)V
+	public final fun getGeneratedApiFile ()Lorg/gradle/api/file/RegularFileProperty;
+	public final fun getProjectApiFile ()Lorg/gradle/api/file/RegularFileProperty;
+}
+
+public abstract class kotlinx/validation/KotlinKlibAbiBuildTask : kotlinx/validation/BuildTaskBase {
+	public fun <init> ()V
+	public abstract fun getKlibFile ()Lorg/gradle/api/file/ConfigurableFileCollection;
+	public abstract fun getOutputAbiFile ()Lorg/gradle/api/file/RegularFileProperty;
+	public final fun getSignatureVersion ()Lorg/gradle/api/provider/Property;
+	public abstract fun getTarget ()Lorg/gradle/api/provider/Property;
+}
+
+public abstract class kotlinx/validation/KotlinKlibExtractAbiTask : org/gradle/api/DefaultTask {
+	public fun <init> ()V
+	public abstract fun getInputAbiFile ()Lorg/gradle/api/file/RegularFileProperty;
+	public abstract fun getOutputAbiFile ()Lorg/gradle/api/file/RegularFileProperty;
+	public abstract fun getRequiredTargets ()Lorg/gradle/api/provider/SetProperty;
+	public final fun getStrictValidation ()Lorg/gradle/api/provider/Property;
+}
+
+public abstract class kotlinx/validation/KotlinKlibInferAbiTask : org/gradle/api/DefaultTask {
+	public fun <init> ()V
+	public abstract fun getInputDumps ()Lorg/gradle/api/provider/SetProperty;
+	public abstract fun getOldMergedKlibDump ()Lorg/gradle/api/file/RegularFileProperty;
+	public abstract fun getOutputAbiFile ()Lorg/gradle/api/file/RegularFileProperty;
+	public abstract fun getTarget ()Lorg/gradle/api/provider/Property;
+}
+
+public abstract class kotlinx/validation/KotlinKlibMergeAbiTask : org/gradle/api/DefaultTask {
+	public fun <init> ()V
+	public abstract fun getDumps ()Lorg/gradle/api/provider/SetProperty;
+	public abstract fun getMergedApiFile ()Lorg/gradle/api/file/RegularFileProperty;
+}
+
+public final class kotlinx/validation/_UtilsKt {
+	public static final fun toKlibTarget (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;)Lkotlinx/validation/api/klib/KlibTarget;
 }
 
 public final class kotlinx/validation/api/ClassBinarySignature {
@@ -162,7 +187,7 @@ public final class kotlinx/validation/api/klib/KlibDumpKt {
 	public static final fun saveTo (Lkotlinx/validation/api/klib/KlibDump;Ljava/io/File;)V
 }
 
-public final class kotlinx/validation/api/klib/KlibSignatureVersion {
+public final class kotlinx/validation/api/klib/KlibSignatureVersion : java/io/Serializable {
 	public static final field Companion Lkotlinx/validation/api/klib/KlibSignatureVersion$Companion;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
@@ -174,7 +199,7 @@ public final class kotlinx/validation/api/klib/KlibSignatureVersion$Companion {
 	public final fun of (I)Lkotlinx/validation/api/klib/KlibSignatureVersion;
 }
 
-public final class kotlinx/validation/api/klib/KlibTarget {
+public final class kotlinx/validation/api/klib/KlibTarget : java/io/Serializable {
 	public static final field Companion Lkotlinx/validation/api/klib/KlibTarget$Companion;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getConfigurableName ()Ljava/lang/String;

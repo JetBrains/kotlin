@@ -5,7 +5,9 @@
 
 package kotlinx.validation.api.klib
 
-public class KlibSignatureVersion internal constructor(internal val version: Int) {
+import java.io.Serializable
+
+public class KlibSignatureVersion internal constructor(internal val version: Int) : Serializable {
 
     public companion object {
         public fun of(value: Int): KlibSignatureVersion {
@@ -16,6 +18,9 @@ public class KlibSignatureVersion internal constructor(internal val version: Int
         }
 
         public val LATEST: KlibSignatureVersion = KlibSignatureVersion(Int.MIN_VALUE)
+
+        @JvmStatic
+        private val serialVersionUID: Long = 1
     }
 
     override fun equals(other: Any?): Boolean {

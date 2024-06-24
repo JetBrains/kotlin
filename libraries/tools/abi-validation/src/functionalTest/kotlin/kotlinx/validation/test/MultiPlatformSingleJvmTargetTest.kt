@@ -7,7 +7,6 @@ package kotlinx.validation.test
 
 import kotlinx.validation.api.*
 import org.assertj.core.api.Assertions.assertThat
-import org.gradle.testkit.runner.TaskOutcome
 import org.junit.Test
 import java.io.File
 
