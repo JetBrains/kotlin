@@ -725,8 +725,8 @@ internal fun ClassDescriptor.createContextReceivers(
 private fun createContextReceiver(
     contextReceiver: ReceiverParameterDescriptor,
     analysisContext: Fe10AnalysisContext
-): KaContextReceiverImpl {
-    return KaContextReceiverImpl(
+): KaBaseContextReceiver {
+    return KaBaseContextReceiver(
         contextReceiver.value.type.toKtType(analysisContext),
         (contextReceiver.value as ImplicitContextReceiver).customLabelName,
         analysisContext.token

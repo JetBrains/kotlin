@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForType
 import org.jetbrains.kotlin.analysis.api.fir.types.qualifiers.UsualClassTypeQualifierBuilder
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
-import org.jetbrains.kotlin.analysis.api.impl.base.KaContextReceiverImpl
+import org.jetbrains.kotlin.analysis.api.impl.base.KaBaseContextReceiver
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
@@ -63,7 +63,7 @@ internal class KaFirFunctionalType(
         coneType.contextReceiversTypes(builder.rootSession)
             .map {
                 // Context receivers in function types may not have labels, hence the `null` label.
-                KaContextReceiverImpl(it.buildKtType(), label = null, token)
+                KaBaseContextReceiver(it.buildKtType(), label = null, token)
             }
     }
 

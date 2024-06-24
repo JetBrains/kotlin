@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.name.Name
 
 @KaExperimentalApi
 @KaAnalysisApiInternals
-class KaContextReceiverImpl(
+class KaBaseContextReceiver(
     type: KaType,
     label: Name?,
     override val token: KaLifetimeToken

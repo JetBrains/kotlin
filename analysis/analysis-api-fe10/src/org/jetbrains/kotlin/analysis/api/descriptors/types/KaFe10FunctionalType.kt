@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.renderForDebugging
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.KaFe10JvmTypeMapperContext
-import org.jetbrains.kotlin.analysis.api.impl.base.KaContextReceiverImpl
+import org.jetbrains.kotlin.analysis.api.impl.base.KaBaseContextReceiver
 import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseResolvedClassTypeQualifier
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
@@ -68,7 +68,7 @@ internal class KaFe10FunctionalType(
         get() = withValidityAssertion {
             fe10Type.getContextReceiverTypesFromFunctionType().map { receiverType ->
                 // Context receivers in function types may not have labels, hence the `null` label.
-                KaContextReceiverImpl(
+                KaBaseContextReceiver(
                     receiverType.toKtType(analysisContext),
                     label = null,
                     analysisContext.token,
