@@ -435,6 +435,12 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByReferenceTestGenerat
   @TestDataPath("$PROJECT_ROOT")
   public class Js {
     @Test
+    @TestMetadata("actualEnum.kt")
+    public void testActualEnum() {
+      runTest("analysis/analysis-api/testData/symbols/symbolByReference/js/actualEnum.kt");
+    }
+
+    @Test
     public void testAllFilesPresentInJs() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByReference/js"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled");
     }
