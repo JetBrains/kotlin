@@ -101,10 +101,6 @@ open class Mapping {
     }
 }
 
-fun <V : Any> KMutableProperty0<V?>.getOrPut(fn: () -> V) = this.get() ?: fn().also {
-    this.set(it)
-}
-
 fun <K : IrDeclaration, V> Mapping.DeclarationMapping<K, V>.getOrPut(key: K, fn: () -> V) = this[key] ?: fn().also {
     this[key] = it
 }

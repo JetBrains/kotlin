@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.utils.IDEAPluginsCompatibilityAPI
 import java.lang.reflect.Modifier
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.reflect.KMutableProperty0
 
 inline fun <reified T : Any> Sequence<*>.firstIsInstanceOrNull(): T? {
     for (element in this) if (element is T) return element
@@ -102,7 +103,7 @@ fun <T> sequenceOfLazyValues(vararg elements: () -> T): Sequence<T> = elements.a
 fun <T1, T2> Pair<T1, T2>.swap(): Pair<T2, T1> = Pair(second, first)
 
 @RequiresOptIn(
-    message ="""
+    message = """
         Usage of this function is unsafe because it does not have native compiler support
          This means that compiler won't report UNCHECKED_CAST, CAST_NEVER_SUCCEED or similar
          diagnostics in case of error cast (which can happen immediately or after some
@@ -284,7 +285,7 @@ inline fun <T, K> List<T>.flatGroupBy(keySelector: (T) -> Collection<K>): Map<K,
 inline fun <T, U, K, V> List<T>.flatGroupBy(
     keySelector: (T) -> Collection<U>,
     keyTransformer: (U) -> K,
-    valueTransformer: (T) -> V
+    valueTransformer: (T) -> V,
 ): Map<K, List<V>> {
     val result = mutableMapOf<K, MutableList<V>>()
     for (element in this) {
@@ -389,3 +390,8 @@ fun String.countOccurrencesOf(substring: String): Int {
     }
     return result
 }
+
+inline fun <V : Any> KMutableProperty0<V?>.getOrSetIfNull(compute: () -> V): V =
+    this.get() ?: compute().also {
+        this.set(it)
+    }
