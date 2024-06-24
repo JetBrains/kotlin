@@ -10,7 +10,9 @@ import org.gradle.api.DomainObjectSet
 import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Task
+import org.gradle.api.file.RegularFile
 import org.gradle.api.plugins.ExtensionAware
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
@@ -65,10 +67,12 @@ abstract class KotlinJsIrSubTarget(
 
     internal fun configure() {
         configureTests()
-        target.compilations.all {
-            val npmProject = it.npmProject
-            @Suppress("DEPRECATION")
-            it.compilerOptions.options.freeCompilerArgs.add("$PER_MODULE_OUTPUT_NAME=${npmProject.name}")
+        target.compilations.all { compilation ->
+            compilation.compileTaskProvider.configure { task ->
+                task.compilerOptions {
+                    freeCompilerArgs.add(compilation.outputModuleName.map { "$PER_MODULE_OUTPUT_NAME=$it" })
+                }
+            }
         }
     }
 
@@ -122,19 +126,11 @@ abstract class KotlinJsIrSubTarget(
                 KotlinJsBinaryMode.DEVELOPMENT
             ).single()
 
-            val inputFileProperty = if (target.wasmTargetType != KotlinWasmTargetType.WASI) {
-                testJs.dependsOn(binary.linkSyncTask)
-                binary.mainFileSyncPath
-            } else {
-                testJs.dependsOn(binary.linkTask)
-                binary.mainFile
-            }
-
             testJs.inputFileProperty.set(
-                inputFileProperty
+                testInputFile(binary)
             )
 
-            configureTestDependencies(testJs)
+            configureTestDependencies(testJs, binary)
 
             testJs.onlyIf { task ->
                 (task as KotlinJsTest).inputFileProperty
@@ -167,7 +163,9 @@ abstract class KotlinJsIrSubTarget(
     }
 
     protected abstract fun configureDefaultTestFramework(test: KotlinJsTest)
-    protected abstract fun configureTestDependencies(test: KotlinJsTest)
+    protected abstract fun configureTestDependencies(test: KotlinJsTest, binary: JsIrBinary)
+    protected abstract fun mainInputFile(binary: JsIrBinary): Provider<RegularFile>
+    protected abstract fun testInputFile(binary: JsIrBinary): Provider<RegularFile>
 
     private fun configureMainCompilation() {
         target.compilations.all { compilation ->

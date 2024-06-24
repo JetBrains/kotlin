@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
-import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
@@ -22,16 +21,15 @@ import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenExec
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer.Companion.generateBinaryName
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
-import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.createDefaultDistribution
 import org.jetbrains.kotlin.gradle.targets.js.typescript.TypeScriptValidationTask
+import org.jetbrains.kotlin.gradle.tasks.IncrementalSyncTask
 import org.jetbrains.kotlin.gradle.tasks.configuration.KotlinJsIrLinkConfig
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.gradle.utils.mapToFile
+import org.jetbrains.kotlin.gradle.utils.named
 
 interface JsBinary {
     val compilation: KotlinJsCompilation
@@ -50,7 +48,7 @@ sealed class JsIrBinary(
 
     val linkTaskName: String = linkTaskName()
 
-    val linkSyncTaskName: String = linkSyncTaskName()
+//    val linkSyncTaskName: String = linkSyncTaskName()
 
     val validateGeneratedTsTaskName: String = validateTypeScriptTaskName()
 
@@ -58,22 +56,22 @@ sealed class JsIrBinary(
 
     val linkTask: TaskProvider<KotlinJsIrLink> = project.registerTask(linkTaskName, KotlinJsIrLink::class.java, listOf(project))
 
-    private val _linkSyncTask: TaskProvider<DefaultIncrementalSyncTask>? =
-        if (target.wasmTargetType == KotlinWasmTargetType.WASI) {
-            null
-        } else {
-            project.registerTask<DefaultIncrementalSyncTask>(
-                linkSyncTaskName
-            ) { task ->
-                syncInputConfigure(task)
-
-                task.duplicatesStrategy = DuplicatesStrategy.WARN
-
-                task.from.from(project.tasks.named(compilation.processResourcesTaskName))
-
-                task.destinationDirectory.set(compilation.npmProject.dist.mapToFile())
-            }
-        }
+//    private val _linkSyncTask: TaskProvider<DefaultIncrementalSyncTask>? =
+//        if (target.wasmTargetType == KotlinWasmTargetType.WASI) {
+//            null
+//        } else {
+//            project.registerTask<DefaultIncrementalSyncTask>(
+//                linkSyncTaskName
+//            ) { task ->
+//                syncInputConfigure(task)
+//
+//                task.duplicatesStrategy = DuplicatesStrategy.WARN
+//
+//                task.from.from(project.tasks.named(compilation.processResourcesTaskName))
+//
+//                task.destinationDirectory.set(compilation.npmProject.dist.mapToFile())
+//            }
+//        }
 
     protected open fun syncInputConfigure(syncTask: DefaultIncrementalSyncTask) {
         syncTask.from.from(
@@ -85,12 +83,12 @@ sealed class JsIrBinary(
 
     // Wasi target doesn't have sync task
     // need to extract wasm related binaries
-    val linkSyncTask: TaskProvider<DefaultIncrementalSyncTask>
-        get() = if (target.wasmTargetType == KotlinWasmTargetType.WASI) {
-            throw IllegalStateException("Wasi target has no sync task")
-        } else {
-            _linkSyncTask!!
-        }
+//    val linkSyncTask: TaskProvider<DefaultIncrementalSyncTask>
+//        get() = if (target.wasmTargetType == KotlinWasmTargetType.WASI) {
+//            throw IllegalStateException("Wasi target has no sync task")
+//        } else {
+//            _linkSyncTask!!
+//        }
 
     val mainFileName: Provider<String> = linkTask.flatMap {
         it.compilerOptions.moduleName.zip(compilation.fileExtension) { moduleName, extension ->
@@ -102,16 +100,16 @@ sealed class JsIrBinary(
         it.destinationDirectory.file(mainFileName.get())
     }
 
-    val mainFileSyncPath: Provider<RegularFile> =
-        if (target.wasmTargetType == KotlinWasmTargetType.WASI) {
-            project.objects.fileProperty()
-        } else {
-            project.objects.fileProperty().fileProvider(
-                linkSyncTask.map {
-                    it.destinationDirectory.get().resolve(mainFileName.get())
-                }
-            )
-        }
+//    val mainFileSyncPath: Provider<RegularFile> =
+//        if (target.wasmTargetType == KotlinWasmTargetType.WASI) {
+//            project.objects.fileProperty()
+//        } else {
+//            project.objects.fileProperty().fileProvider(
+//                linkSyncTask.map {
+//                    it.destinationDirectory.get().resolve(mainFileName.get())
+//                }
+//            )
+//        }
 
     private fun linkTaskName(): String =
         lowerCamelCaseName(
@@ -119,14 +117,6 @@ sealed class JsIrBinary(
             name,
             "Kotlin",
             target.targetName
-        )
-
-    private fun linkSyncTaskName(): String =
-        lowerCamelCaseName(
-            compilation.target.disambiguationClassifier,
-            compilation.name.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
-            name,
-            COMPILE_SYNC
         )
 
     private fun validateTypeScriptTaskName(): String =
@@ -164,6 +154,20 @@ sealed class JsIrBinary(
         }
     }
 }
+
+fun JsIrBinary.npmProjectLinkSyncTaskName(): String = lowerCamelCaseName(
+    compilation.target.disambiguationClassifier,
+    compilation.name.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
+    name,
+    COMPILE_SYNC
+)
+
+fun JsIrBinary.npmProjectMainFileSyncPath(): Provider<RegularFile> =
+    project.objects.fileProperty().fileProvider(
+        project.tasks.named<IncrementalSyncTask>(npmProjectLinkSyncTaskName()).map {
+            it.destinationDirectory.get().resolve(mainFileName.get())
+        }
+    )
 
 interface WasmBinary {
     val optimizeTaskName: String

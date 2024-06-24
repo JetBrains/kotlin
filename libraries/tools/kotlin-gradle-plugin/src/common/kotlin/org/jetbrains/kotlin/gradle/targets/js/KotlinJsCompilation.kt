@@ -11,6 +11,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import groovy.lang.Closure
 import org.gradle.api.Action
 import org.gradle.api.attributes.AttributeContainer
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants
@@ -18,13 +19,15 @@ import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
 import org.jetbrains.kotlin.gradle.plugin.DeprecatedHasCompilerOptions
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.JsBinary
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import javax.inject.Inject
 
 open class KotlinJsCompilation @Inject internal constructor(
@@ -47,16 +50,49 @@ open class KotlinJsCompilation @Inject internal constructor(
             compilation.target.project.objects.domainObjectSet(JsBinary::class.java)
         )
 
-    var outputModuleName: String? = null
-        set(value) {
-            (target as KotlinJsSubTargetContainerDsl).apply {
-                check(!isBrowserConfigured && !isNodejsConfigured) {
-                    "Please set outputModuleName for compilation before initialize browser() or nodejs() on target"
-                }
-            }
+    val outputModuleName: Property<String> = compilation.project.objects.property(String::class.java).convention(
+        buildNpmProjectName()
+    )
 
-            field = value
+    private fun buildNpmProjectName(): String {
+        val project = target.project
+
+        val moduleName = (target as KotlinJsIrTarget).moduleName
+
+        val compilationName = if (compilation.name != KotlinCompilation.MAIN_COMPILATION_NAME) {
+            compilation.name
+        } else null
+
+        if (moduleName != null) {
+            return sequenceOf(moduleName, compilationName)
+                .filterNotNull()
+                .joinToString("-")
         }
+
+        val rootProjectName = project.rootProject.name
+
+        val localName = if (project != project.rootProject) {
+            (rootProjectName + project.path).replace(":", "-")
+        } else rootProjectName
+
+        val targetName = if (target.name.isNotEmpty() && target.name.toLowerCaseAsciiOnly() != "js") {
+            target.name
+                .replace(DECAMELIZE_REGEX) {
+                    it.groupValues
+                        .drop(1)
+                        .joinToString(prefix = "-", separator = "-")
+                }
+                .toLowerCaseAsciiOnly()
+        } else null
+
+        return sequenceOf(
+            localName,
+            targetName,
+            compilationName
+        )
+            .filterNotNull()
+            .joinToString("-")
+    }
 
     @Deprecated("Use compilationName instead", ReplaceWith("compilationName"))
     val compilationPurpose: String get() = compilationName
@@ -98,6 +134,10 @@ open class KotlinJsCompilation @Inject internal constructor(
         packageJson {
             project.configure(this, handler)
         }
+    }
+
+    companion object {
+        private val DECAMELIZE_REGEX = "([A-Z])".toRegex()
     }
 }
 

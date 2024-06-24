@@ -25,9 +25,9 @@ class D8EnvironmentConfigurator(subTarget: KotlinJsIrSubTarget) :
 
         return D8Exec.create(binary.compilation, binaryRunName) {
             group = subTarget.taskGroupName
-            dependsOn(binary.linkSyncTask)
+            dependsOn(binary.linkTask)
             inputFileProperty.set(
-                binary.mainFileSyncPath
+                binary.mainFile
             )
             runTaskConfigurations.all {
                 it.execute(this)

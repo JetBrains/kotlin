@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSubTarget.Companion.DISTRIBUTION_TASK_NAME
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
+import org.jetbrains.kotlin.gradle.tasks.IncrementalSyncTask
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
+import org.jetbrains.kotlin.gradle.utils.named
 
 class LibraryConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTargetConfigurator<Copy, Nothing> {
     private val project = subTarget.target.project
@@ -21,14 +23,16 @@ class LibraryConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
     override fun setupBuild(compilation: KotlinJsIrCompilation) {
         val assembleTaskProvider = project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME)
 
-        val npmProject = compilation.npmProject
-
         compilation.binaries
             .matching { it is Library }
             .all { binary ->
                 binary as Library
 
+                val npmProject = compilation.npmProject
+
                 val mode = binary.mode
+
+                val linkSyncTask = compilation.target.project.tasks.named<IncrementalSyncTask>(binary.npmProjectLinkSyncTaskName())
 
                 val distributionTask = subTarget.registerSubTargetTask<Copy>(
                     subTarget.disambiguateCamelCased(
@@ -38,7 +42,7 @@ class LibraryConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
                 ) {
                     if (target.wasmTargetType != KotlinWasmTargetType.WASI) {
                         it.from(project.tasks.named(npmProject.publicPackageJsonTaskName))
-                        it.from(binary.linkSyncTask)
+                        it.from(linkSyncTask)
                     } else {
                         it.from(binary.linkTask)
                         it.from(project.tasks.named(compilation.processResourcesTaskName))

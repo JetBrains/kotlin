@@ -14,9 +14,7 @@ import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.d8.D8RootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
-import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.writeWasmUnitTestRunner
-import org.jetbrains.kotlin.gradle.utils.getValue
 
 internal class KotlinWasmD8(kotlinJsTest: KotlinJsTest) : KotlinJsTestFramework {
     override val settingsState: String = "KotlinWasmD8"
@@ -27,9 +25,12 @@ internal class KotlinWasmD8(kotlinJsTest: KotlinJsTest) : KotlinJsTestFramework 
     override val compilation: KotlinJsIrCompilation = kotlinJsTest.compilation
 
     private val d8 = D8RootPlugin.apply(kotlinJsTest.project.rootProject)
-    private val d8Executable by kotlinJsTest.project.provider { d8.requireConfigured().executable }
 
-    override val workingDir: Provider<Directory> = compilation.npmProject.dir
+    private val projectLayout = kotlinJsTest.project.layout
+
+    override val workingDir: Provider<Directory> = projectLayout.dir(kotlinJsTest.inputFileProperty.asFile.map { it.parentFile })
+
+    override val executable: Provider<String> = kotlinJsTest.project.provider { d8.requireConfigured().executable }
 
     override fun createTestExecutionSpec(
         task: KotlinJsTest,
@@ -38,9 +39,8 @@ internal class KotlinWasmD8(kotlinJsTest: KotlinJsTest) : KotlinJsTestFramework 
         debug: Boolean
     ): TCServiceMessagesTestExecutionSpec {
         val compiledFile = task.inputFileProperty.get().asFile
-        val testRunnerFile = writeWasmUnitTestRunner(workingDir.get().asFile, compiledFile)
+        val testRunnerFile = writeWasmUnitTestRunner(workingDir.get().asFile.parentFile, compiledFile)
 
-        forkOptions.executable = d8Executable
         forkOptions.workingDir = compiledFile.parentFile
 
         val clientSettings = TCServiceMessagesClientSettings(

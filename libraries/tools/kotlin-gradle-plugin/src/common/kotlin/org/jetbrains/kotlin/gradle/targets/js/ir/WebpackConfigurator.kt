@@ -27,7 +27,9 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackDevtool
+import org.jetbrains.kotlin.gradle.tasks.IncrementalSyncTask
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.archivesName
 import org.jetbrains.kotlin.gradle.utils.doNotTrackStateCompat
 import org.jetbrains.kotlin.gradle.utils.domainObjectSet
@@ -59,6 +61,8 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
                 val mode = binary.mode
                 val archivesName = project.archivesName
 
+                val linkSyncTask = compilation.target.project.tasks.named<IncrementalSyncTask>(binary.npmProjectLinkSyncTaskName())
+
                 val webpackTask = subTarget.registerSubTargetTask<KotlinWebpack>(
                     subTarget.disambiguateCamelCased(
                         binary.executeTaskBaseName,
@@ -75,13 +79,13 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
                         }
                     ).finalizeValueOnRead()
 
-                    task.dependsOn(binary.linkSyncTask)
+                    task.dependsOn(linkSyncTask)
 
                     task.commonConfigure(
                         binary = binary,
                         mode = mode,
                         inputFilesDirectory = task.project.objects.directoryProperty().fileProvider(
-                            task.project.provider { binary.linkSyncTask.get().destinationDirectory.get() },
+                            task.project.provider { linkSyncTask.get().destinationDirectory.get() },
                         ),
                         entryModuleName = binary.linkTask.flatMap { it.compilerOptions.moduleName },
                         configurationActions = webpackTaskConfigurations,
@@ -101,7 +105,7 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
 
                     if (binary.compilation.platformType == KotlinPlatformType.wasm) {
                         copy.from(
-                            binary.linkSyncTask.zip(binary.linkTask) { linkSyncTask, linkTask ->
+                            linkSyncTask.zip(binary.linkTask) { linkSyncTask, linkTask ->
                                 val moduleNameProvider = linkTask.compilerOptions.moduleName
                                 linkSyncTask.destinationDirectory.zip(moduleNameProvider) { destDir, moduleName ->
                                     destDir.resolve("$moduleName.wasm")
@@ -135,6 +139,8 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
                 val mode = binary.mode
                 val archivesName = project.archivesName
 
+                val linkSyncTask = compilation.target.project.tasks.named<IncrementalSyncTask>(binary.npmProjectLinkSyncTaskName())
+
                 subTarget.registerSubTargetTask<KotlinWebpack>(
                     subTarget.disambiguateCamelCased(
                         if (binary.mode == KotlinJsBinaryMode.DEVELOPMENT && compilation.isMain()) "" else binary.executeTaskBaseName,
@@ -142,7 +148,7 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
                     ),
                     listOf(compilation)
                 ) { task ->
-                    task.dependsOn(binary.linkSyncTask)
+                    task.dependsOn(linkSyncTask)
 
                     task.args.add(0, "serve")
                     task.description = "start ${mode.name.toLowerCaseAsciiOnly()} webpack dev server"
@@ -174,13 +180,13 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
 
                     task.doNotTrackStateCompat("Tracked by external webpack tool")
 
-                    task.dependsOn(binary.linkSyncTask)
+                    task.dependsOn(linkSyncTask)
 
                     task.commonConfigure(
                         binary = binary,
                         mode = mode,
                         inputFilesDirectory = task.project.objects.directoryProperty().fileProvider(
-                            task.project.provider { binary.linkSyncTask.get().destinationDirectory.get() },
+                            task.project.provider { linkSyncTask.get().destinationDirectory.get() },
                         ),
                         entryModuleName = binary.linkTask.flatMap { it.compilerOptions.moduleName },
                         configurationActions = runTaskConfigurations,

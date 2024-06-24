@@ -27,9 +27,10 @@ open class KotlinJsIrTargetConfigurator :
                 compilation.binaries
                     .matching { it.mode == KotlinJsBinaryMode.PRODUCTION }
                     .all {
-                        when (target.wasmTargetType) {
-                            KotlinWasmTargetType.WASI -> assemble.dependsOn((it as WasmBinary).optimizeTask)
-                            KotlinWasmTargetType.JS, null -> assemble.dependsOn(it.linkSyncTask)
+                        if (target.wasmTargetType != null) {
+                            assemble.dependsOn((it as WasmBinary).optimizeTask)
+                        } else {
+                            assemble.dependsOn(it.linkTask)
                         }
                     }
             }

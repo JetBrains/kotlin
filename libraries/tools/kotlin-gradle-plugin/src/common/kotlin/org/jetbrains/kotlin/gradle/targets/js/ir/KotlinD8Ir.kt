@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Action
+import org.gradle.api.file.RegularFile
+import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.targets.js.d8.D8Exec
 import org.jetbrains.kotlin.gradle.targets.js.d8.D8RootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmD8Dsl
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinWasmD8
-import org.jetbrains.kotlin.gradle.tasks.locateTask
-import org.jetbrains.kotlin.gradle.utils.domainObjectSet
 import javax.inject.Inject
 
 abstract class KotlinD8Ir @Inject constructor(target: KotlinJsIrTarget) :
@@ -36,7 +36,15 @@ abstract class KotlinD8Ir @Inject constructor(target: KotlinJsIrTarget) :
         test.testFramework = KotlinWasmD8(test)
     }
 
-    override fun configureTestDependencies(test: KotlinJsTest) {
+    override fun configureTestDependencies(test: KotlinJsTest, binary: JsIrBinary) {
         test.dependsOn(d8.setupTaskProvider)
+    }
+
+    override fun mainInputFile(binary: JsIrBinary): Provider<RegularFile> {
+        return binary.mainFile
+    }
+
+    override fun testInputFile(binary: JsIrBinary): Provider<RegularFile> {
+        return binary.mainFile
     }
 }

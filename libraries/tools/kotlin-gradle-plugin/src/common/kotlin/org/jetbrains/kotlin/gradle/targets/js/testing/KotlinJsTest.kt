@@ -35,11 +35,6 @@ constructor(
     override var compilation: KotlinJsIrCompilation
 ) : KotlinTest(),
     RequiresNpmDependencies {
-    @Transient
-    private val nodeJs = project.rootProject.kotlinNodeJsExtension
-
-    private val nodeExecutable by project.provider { nodeJs.requireConfigured().executable }
-
     @Input
     var environment = mutableMapOf<String, String>()
 
@@ -155,7 +150,7 @@ constructor(
     override fun createTestExecutionSpec(): TCServiceMessagesTestExecutionSpec {
         val forkOptions = DefaultProcessForkOptions(fileResolver)
         forkOptions.workingDir = testFramework!!.workingDir.getFile()
-        forkOptions.executable = nodeExecutable
+        forkOptions.executable = testFramework!!.executable.get()
 
         environment.forEach { (key, value) ->
             forkOptions.environment(key, value)
