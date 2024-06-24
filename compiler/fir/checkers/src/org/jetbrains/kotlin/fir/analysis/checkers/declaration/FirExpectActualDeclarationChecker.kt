@@ -61,7 +61,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
 
         if (declaration.isExpect) {
             checkExpectDeclarationModifiers(declaration, context, reporter)
-            checkOptInAnnotation(declaration, declaration.symbol, context, reporter)
+            checkOptInAnnotation(declaration, declaration.symbol, context, reporter, declaration.source)
         }
         val matchingCompatibilityToMembersMap = declaration.symbol.expectForActual.orEmpty()
         if ((ExpectActualMatchingCompatibility.MatchedSuccessfully in matchingCompatibilityToMembersMap || declaration.hasActualModifier()) &&
@@ -207,7 +207,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
             }
         }
         if (expectedSingleCandidate != null) {
-            checkOptInAnnotation(declaration, expectedSingleCandidate, context, reporter)
+            checkOptInAnnotation(declaration, expectedSingleCandidate, context, reporter, source)
         }
     }
 
@@ -374,6 +374,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
         expectDeclarationSymbol: FirBasedSymbol<*>,
         context: CheckerContext,
         reporter: DiagnosticReporter,
+        reportOn: KtSourceElement?,
     ) {
         if (context.languageVersionSettings.supportsFeature(LanguageFeature.MultiplatformRestrictions) &&
             declaration is FirClass &&
@@ -381,7 +382,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
             !expectDeclarationSymbol.hasAnnotation(StandardClassIds.Annotations.OptionalExpectation, context.session) &&
             declaration.hasAnnotation(OptInNames.REQUIRES_OPT_IN_CLASS_ID, context.session)
         ) {
-            reporter.reportOn(declaration.source, FirErrors.EXPECT_ACTUAL_OPT_IN_ANNOTATION, context)
+            reporter.reportOn(reportOn, FirErrors.EXPECT_ACTUAL_OPT_IN_ANNOTATION, context)
         }
     }
 }
