@@ -316,13 +316,15 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
 
     protected fun getChangedFiles(
         inputChanges: InputChanges,
-        incrementalProps: List<FileCollection>
+        incrementalProps: List<FileCollection>,
+        filter: (File) -> Boolean = { true },
     ) = if (!inputChanges.isIncremental) {
         SourcesChanges.Unknown
     } else {
         incrementalProps
             .fold(mutableListOf<File>() to mutableListOf<File>()) { (modified, removed), prop ->
                 inputChanges.getFileChanges(prop).forEach {
+                    if (!filter(it.file)) return@forEach
                     when (it.changeType) {
                         ChangeType.ADDED, ChangeType.MODIFIED -> modified.add(it.file)
                         ChangeType.REMOVED -> removed.add(it.file)

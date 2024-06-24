@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.tasks
 
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
@@ -16,6 +17,7 @@ import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
 import org.gradle.work.NormalizeLineEndings
 import org.gradle.workers.WorkerExecutor
+import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
@@ -40,6 +42,7 @@ import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.gradle.utils.toPathsArray
 import org.jetbrains.kotlin.incremental.ClasspathChanges
+import org.jetbrains.kotlin.library.KLIB_MANIFEST_FILE_NAME
 import org.jetbrains.kotlin.library.impl.isKotlinLibrary
 import java.io.File
 import javax.inject.Inject
@@ -235,13 +238,31 @@ abstract class Kotlin2JsCompile @Inject constructor(
         )
 
     @get:Internal
+    abstract override val libraries: ConfigurableFileCollection
+
+    @get:InputFiles
+    @get:IgnoreEmptyDirectories
+    @get:NormalizeLineEndings
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    @get:Incremental
+    internal val directoryLibraries by lazy {
+        libraries.filter { it.isDirectory }
+    }
+
+    @get:Classpath
+    @get:Incremental
+    internal val packedLibraries by lazy {
+        libraries.filter { !it.isDirectory }
+    }
+
+    @get:Internal
     protected val libraryFilter: (File) -> Boolean
         get() = { file ->
             libraryFilterCacheService.get().getOrCompute(file.asLibraryFilterCacheKey, ::isKotlinLibrary)
         }
 
     override val incrementalProps: List<FileCollection>
-        get() = super.incrementalProps + listOf(friendDependencies)
+        get() = super.incrementalProps - listOf(libraries) + listOf(packedLibraries, friendDependencies)
 
     protected open fun processArgsBeforeCompile(args: K2JSCompilerArguments) = Unit
 
@@ -249,6 +270,18 @@ abstract class Kotlin2JsCompile @Inject constructor(
         context.primitive { args ->
             args.irOnly = true
             args.irProduceKlibDir = true
+        }
+    }
+
+    private operator fun SourcesChanges.plus(other: SourcesChanges): SourcesChanges {
+        return when {
+            this is SourcesChanges.Unknown || this is SourcesChanges.ToBeCalculated -> this
+            other is SourcesChanges.Unknown || other is SourcesChanges.ToBeCalculated -> other
+            this is SourcesChanges.Known && other is SourcesChanges.Known -> SourcesChanges.Known(
+                modifiedFiles + other.modifiedFiles,
+                removedFiles + other.removedFiles
+            )
+            else -> error("Impossible combination of sources changes during merging them")
         }
     }
 
@@ -282,8 +315,11 @@ abstract class Kotlin2JsCompile @Inject constructor(
 
         val icEnv = if (isIncrementalCompilationEnabled()) {
             logger.info(USING_JS_INCREMENTAL_COMPILATION_MESSAGE)
+            val changedFiles = getChangedFiles(inputChanges, incrementalProps) + getChangedFiles(inputChanges, listOf(directoryLibraries)) {
+                it.endsWith("default/${KLIB_MANIFEST_FILE_NAME}")
+            }
             IncrementalCompilationEnvironment(
-                getChangedFiles(inputChanges, incrementalProps),
+                changedFiles,
                 ClasspathChanges.NotAvailableForJSCompiler,
                 taskBuildCacheableOutputDirectory.get().asFile,
                 rootProjectDir = rootProjectDir,
