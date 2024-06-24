@@ -29,7 +29,7 @@ internal class DefaultConfigTests : BaseKotlinGradleTest() {
         val projectName = rootProjectDir.name
         runner.buildAndFail().apply {
             Assertions.assertThat(output).contains(
-                "Expected file with API declarations 'api/$projectName.api' does not exist."
+                "Expected file with API declarations 'api${File.separator}$projectName.api' does not exist."
             ).contains(
                 "Please ensure that ':apiDump' was executed in order to get an API dump to compare the build against"
             )
