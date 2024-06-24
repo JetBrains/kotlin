@@ -356,6 +356,10 @@ internal class KlibMetadataExtensions : MetadataExtensions {
                     annotation.writeAnnotation(c.strings).build()
                 )
             }
+
+            override fun equals(other: Any?): Boolean {
+                throw AssertionError("Unsupported and should not be called")
+            }
         })
     }
 

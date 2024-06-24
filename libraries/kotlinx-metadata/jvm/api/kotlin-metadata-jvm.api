@@ -558,11 +558,13 @@ public final class kotlin/metadata/KmPropertyAccessorAttributes {
 public final class kotlin/metadata/KmType {
 	public field classifier Lkotlin/metadata/KmClassifier;
 	public fun <init> ()V
+	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAbbreviatedType ()Lkotlin/metadata/KmType;
 	public final fun getArguments ()Ljava/util/List;
 	public final fun getClassifier ()Lkotlin/metadata/KmClassifier;
 	public final fun getFlexibleTypeUpperBound ()Lkotlin/metadata/KmFlexibleTypeUpperBound;
 	public final fun getOuterType ()Lkotlin/metadata/KmType;
+	public fun hashCode ()I
 	public final fun setAbbreviatedType (Lkotlin/metadata/KmType;)V
 	public final fun setClassifier (Lkotlin/metadata/KmClassifier;)V
 	public final fun setFlexibleTypeUpperBound (Lkotlin/metadata/KmFlexibleTypeUpperBound;)V

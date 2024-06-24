@@ -109,6 +109,19 @@ internal class KlibTypeExtension : KlibTypeExtensionVisitor(), KmTypeExtension {
         require(visitor is KlibTypeExtensionVisitor)
         annotations.forEach(visitor::visitAnnotation)
     }
+
+    override fun hashCode(): Int {
+        return annotations.hashCode()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as KlibTypeExtension
+
+        return annotations == other.annotations
+    }
 }
 
 internal class KlibPropertyExtension : KlibPropertyExtensionVisitor(), KmPropertyExtension {

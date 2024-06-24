@@ -489,6 +489,59 @@ public class KmType internal constructor(
 
     internal val extensions: List<KmTypeExtension> =
         MetadataExtensions.INSTANCES.map(MetadataExtensions::createTypeExtension)
+
+    /**
+     * Determines whether this KmType is equal to the given [other].
+     *
+     * KmTypes are compared using structural equality, i.e., two objects are considered equal
+     * if they have all the following parts equal:
+     * attributes (such as [isNullable] and [isSuspend]), [classifier],
+     * [arguments], [outerType], [abbreviatedType], [flexibleTypeUpperBound],
+     * and all platform extensions (such as annotations on JVM).
+     *
+     * Note that equality of [KmType] instances differs from the concept of type equality in the Kotlin language.
+     * In the language, types A and B are equal if `A.isSubtypeOf(B) && B.isSubtypeOf(A)`.
+     * Since kotlin-metadata-jvm does not provide subtyping algorithms (or any kind of type inference algorithms whatsoever),
+     * [KmType] equality adheres to a comparison of what is written to the metadata.
+     * For example, flexible types are not considered equal to their lower and upper bounds —
+     * which means that `String?` and `String!` are not equal KmTypes, despite being freely assignable from each other
+     * in the Kotlin language.
+     *
+     * @param other The object to compare for equality.
+     * @return `true` if the objects are equal, `false` otherwise.
+     */
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as KmType
+
+        if (flags != other.flags) return false
+        if (classifier != other.classifier) return false
+        if (arguments != other.arguments) return false
+        if (outerType != other.outerType) return false
+        if (abbreviatedType != other.abbreviatedType) return false
+        if (flexibleTypeUpperBound != other.flexibleTypeUpperBound) return false
+        if (extensions != other.extensions) return false
+
+        return true
+    }
+
+    /**
+     * Computes the hash code of the KmType object using its properties.
+     *
+     * @return The computed hash code of the KmType object.
+     */
+    override fun hashCode(): Int {
+        var result = flags
+        result = 31 * result + classifier.hashCode()
+        result = 31 * result + arguments.hashCode()
+        /**
+         * outerType, abbreviatedType, and flexibleTypeUpperBound are omitted, so we can compute hash code faster
+         * with a trade-off for rare collisions.
+         */
+        return result
+    }
 }
 
 /**
