@@ -137,6 +137,13 @@ public class ClassicJsKlibSyntheticAccessorTestGenerated extends AbstractClassic
             }
 
             @Test
+            @TestMetadata("leakingPrivateVarThroughInlineFunParameter.kt")
+            public void testLeakingPrivateVarThroughInlineFunParameter() {
+                runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateVarThroughInlineFunParameter.kt");
+            }
+
+
+            @Test
             @TestMetadata("leakingPrivateVarThroughPrivateInlineFunChain.kt")
             public void testLeakingPrivateVarThroughPrivateInlineFunChain() {
                 runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateVarThroughPrivateInlineFunChain.kt");
@@ -214,11 +221,17 @@ public class ClassicJsKlibSyntheticAccessorTestGenerated extends AbstractClassic
                 runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateVarThroughInlineFun.kt");
             }
 
-            @Test
-            @TestMetadata("leakingPrivateVarThroughInlineVar.kt")
-            public void testLeakingPrivateVarThroughInlineVar() {
-                runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateVarThroughInlineVar.kt");
-            }
+      @Test
+      @TestMetadata("leakingPrivateVarThroughInlineFunParameter.kt")
+      public void testLeakingPrivateVarThroughInlineFunParameter() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateVarThroughInlineFunParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingPrivateVarThroughInlineVar.kt")
+      public void testLeakingPrivateVarThroughInlineVar() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateVarThroughInlineVar.kt");
+      }
 
             @Test
             @TestMetadata("leakingPrivateVarThroughPrivateInlineFunChain.kt")
@@ -340,11 +353,17 @@ public class ClassicJsKlibSyntheticAccessorTestGenerated extends AbstractClassic
                 runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateTopLevelVarThroughInlineFun.kt");
             }
 
-            @Test
-            @TestMetadata("leakingPrivateTopLevelVarThroughInlineVar.kt")
-            public void testLeakingPrivateTopLevelVarThroughInlineVar() {
-                runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateTopLevelVarThroughInlineVar.kt");
-            }
+      @Test
+      @TestMetadata("leakingPrivateTopLevelVarThroughInlineFunParameter.kt")
+      public void testLeakingPrivateTopLevelVarThroughInlineFunParameter() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateTopLevelVarThroughInlineFunParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingPrivateTopLevelVarThroughInlineVar.kt")
+      public void testLeakingPrivateTopLevelVarThroughInlineVar() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateTopLevelVarThroughInlineVar.kt");
+      }
 
             @Test
             @TestMetadata("leakingTopLevelPrivateSetterThroughPrivateInlineFunChain.kt")
@@ -418,11 +437,17 @@ public class ClassicJsKlibSyntheticAccessorTestGenerated extends AbstractClassic
                 runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateTopLevelVarThroughInlineFun.kt");
             }
 
-            @Test
-            @TestMetadata("leakingPrivateTopLevelVarThroughInlineVar.kt")
-            public void testLeakingPrivateTopLevelVarThroughInlineVar() {
-                runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateTopLevelVarThroughInlineVar.kt");
-            }
+      @Test
+      @TestMetadata("leakingPrivateTopLevelVarThroughInlineFunParameter.kt")
+      public void testLeakingPrivateTopLevelVarThroughInlineFunParameter() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateTopLevelVarThroughInlineFunParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingPrivateTopLevelVarThroughInlineVar.kt")
+      public void testLeakingPrivateTopLevelVarThroughInlineVar() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateTopLevelVarThroughInlineVar.kt");
+      }
 
             @Test
             @TestMetadata("leakingTopLevelPrivateSetterThroughPrivateInlineFunChain.kt")
