@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.mpp.RegularClassSymbolMarker
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations.ImplicitlyActualizedByJvmDeclaration
 import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualChecker
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCheckingCompatibility
@@ -392,3 +393,8 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
         }
     }
 }
+
+fun FirRegularClass.isMarkedAsImplicitlyActualizedByJvmDeclaration(context: CheckerContext): Boolean =
+    hasAnnotation(ImplicitlyActualizedByJvmDeclaration, context.session) ||
+            context.containingDeclarations.asReversed().takeWhile { it is FirRegularClass }
+                .any { it.hasAnnotation(ImplicitlyActualizedByJvmDeclaration, context.session) }
