@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -22,6 +23,8 @@ import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.resolve.providers.getImplicitActualClassSymbolByClassId
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -68,12 +71,72 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
             checkExpectDeclarationModifiers(declaration, context, reporter)
             checkOptInAnnotation(declaration, declaration.symbol, context, reporter, declaration.source)
         }
+        if (!context.session.languageVersionSettings.getFlag(AnalysisFlags.metadataCompilation) &&
+            declaration is FirRegularClass &&
+            declaration.isExpect &&
+            declaration.isMarkedAsImplicitlyActualizedByJvmDeclaration(context)
+        ) {
+            val reportOn = declaration.getAnnotationByClassId(ImplicitlyActualizedByJvmDeclaration, context.session)?.source
+                ?: declaration.source
+            // This works only because FirExpectActualDeclarationChecker is MppCheckerKind.Platform => we can find and check actual for expect
+            // IDE doesn't support MppCheckerKind.Platform
+            // We can't check implicit actualization neither in metadata nor in IDE
+            checkExpectWithImplicitActual(declaration, context, reporter, reportOn)
+        }
         val matchingCompatibilityToMembersMap = declaration.symbol.expectForActual.orEmpty()
         if ((ExpectActualMatchingCompatibility.MatchedSuccessfully in matchingCompatibilityToMembersMap || declaration.hasActualModifier()) &&
             !declaration.isLocalMember // Reduce verbosity. WRONG_MODIFIER_TARGET will be reported anyway.
         ) {
             checkActualDeclarationHasExpected(declaration, context, reporter, matchingCompatibilityToMembersMap)
         }
+    }
+
+    private fun checkExpectWithImplicitActual(
+        expect: FirRegularClass,
+        context: CheckerContext,
+        reporter: DiagnosticReporter,
+        reportOn: KtSourceElement?,
+    ) {
+        // If it's null NO_ACTUAL_FOR_EXPECT will be reported by IR
+        val implicitActual = context.session.getImplicitActualClassSymbolByClassId(expect.classId) ?: return
+        val expectActualMatchingContext =
+            context.session.expectActualMatchingContextFactory.create(
+                context.session,
+                context.scopeSession,
+                allowedWritingMemberExpectForActualMapping = true
+            )
+        val compatibility = AbstractExpectActualChecker.getClassifiersCompatibility(
+            expect.symbol,
+            implicitActual,
+            expectActualMatchingContext,
+            context.languageVersionSettings
+        )
+        when (compatibility) {
+            ExpectActualCheckingCompatibility.Compatible -> {} // All good. Nothing to do
+            is ExpectActualCheckingCompatibility.ClassScopes -> {
+                reportClassScopesIncompatibility(
+                    implicitActual,
+                    expect.symbol,
+                    compatibility,
+                    reporter,
+                    reportOn,
+                    context,
+                    noActualForExpectDiagFactory = FirErrors.IMPLICIT_ACTUAL_NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS
+                )
+            }
+            is ExpectActualCheckingCompatibility.ClassifiersIncompatible -> {
+                reporter.reportOn(
+                    reportOn,
+                    FirErrors.IMPLICIT_ACTUAL_IS_INCOMPATIBLE_WITH_EXPECT,
+                    implicitActual,
+                    mapOf(compatibility to listOf(expect.symbol)),
+                    context
+                )
+            }
+            else -> error("Implicit actualization incorrect incompatibility kind: $compatibility")
+        }
+        @OptIn(SymbolInternals::class)
+        checkOptInAnnotation(implicitActual.fir, expect.symbol, context, reporter, reportOn, FirErrors.IMPLICIT_ACTUAL_OPT_IN_ANNOTATION)
     }
 
     private fun containsExpectOrActualModifier(declaration: FirMemberDeclaration): Boolean {
