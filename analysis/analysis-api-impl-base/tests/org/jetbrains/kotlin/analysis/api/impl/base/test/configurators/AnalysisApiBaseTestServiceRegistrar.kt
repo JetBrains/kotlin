@@ -89,7 +89,11 @@ object AnalysisApiBaseTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
         // additionally build and index stubs for the library.
         val mainBinaryModules = moduleStructure.mainModules
             .filter { it.moduleKind == TestModuleKind.LibraryBinary }
-            .map { it.ktModule as KaLibraryModule }
+            .mapNotNull {
+                // Builtins have `TestModuleKind.LibraryBinary` but `KaBuiltinsModule`
+                // See KT-69367, builtins should probably be handled another way
+                it.ktModule as? KaLibraryModule
+            }
 
         val sharedBinaryDependencies = moduleStructure.binaryModules.toMutableSet()
         for (mainModule in moduleStructure.mainModules) {
