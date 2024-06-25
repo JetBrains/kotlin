@@ -1,6 +1,20 @@
 KtCallExpression(66,91): 'function(1) { s -> true }'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {
+        1 -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = a: kotlin.Int
+          callableId = null),
+        { s -> true } -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.String, kotlin.Boolean>
+          symbol = b: kotlin.Function1<kotlin.String, kotlin.Boolean>
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -25,17 +39,3 @@ KtCallExpression(66,91): 'function(1) { s -> true }'
           ]
           callableId = /function
       typeArgumentsMapping = {}
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = a: kotlin.Int
-          callableId = null),
-        { s -> true } -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Function1<kotlin.String, kotlin.Boolean>
-          symbol = b: kotlin.Function1<kotlin.String, kotlin.Boolean>
-          callableId = null)
-      }

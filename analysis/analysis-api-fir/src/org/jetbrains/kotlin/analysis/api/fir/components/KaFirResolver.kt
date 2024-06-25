@@ -18,15 +18,20 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.processEqualsFunctions
 import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaAbstractResolver
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseAnnotationCall
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseApplicableCallCandidateInfo
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseCompoundArrayAccessCall
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseCompoundAssignOperation
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseCompoundUnaryOperation
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseCompoundVariableAccessCall
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseDelegatedConstructorCall
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseErrorCallInfo
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseExplicitReceiverValue
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseImplicitReceiverValue
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseInapplicableCallCandidateInfo
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBasePartiallyAppliedSymbol
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSimpleFunctionCall
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSimpleVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSimpleVariableReadAccess
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSimpleVariableWriteAccess
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSmartCastedReceiverValue
@@ -576,7 +581,7 @@ internal class KaFirResolver(
             is FirAnnotationCall -> {
                 if (unsubstitutedKtSignature.symbol !is KaConstructorSymbol) return null
                 @Suppress("UNCHECKED_CAST") // safe because of the above check on targetKtSymbol
-                KaAnnotationCall(
+                KaBaseAnnotationCall(
                     partiallyAppliedSymbol as KaPartiallyAppliedFunctionSymbol<KaConstructorSymbol>,
                     fir.createArgumentMapping(partiallyAppliedSymbol.signature as KaFunctionSignature<*>)
                 )
@@ -584,7 +589,7 @@ internal class KaFirResolver(
             is FirDelegatedConstructorCall -> {
                 if (unsubstitutedKtSignature.symbol !is KaConstructorSymbol) return null
                 @Suppress("UNCHECKED_CAST") // safe because of the above check on targetKtSymbol
-                KaDelegatedConstructorCall(
+                KaBaseDelegatedConstructorCall(
                     partiallyAppliedSymbol as KaPartiallyAppliedFunctionSymbol<KaConstructorSymbol>,
                     if (fir.isThis) KaDelegatedConstructorCall.Kind.THIS_CALL else KaDelegatedConstructorCall.Kind.SUPER_CALL,
                     fir.createArgumentMapping(partiallyAppliedSymbol.signature as KaFunctionSignature<*>),
@@ -595,7 +600,7 @@ internal class KaFirResolver(
                 if (unsubstitutedKtSignature.symbol !is KaVariableSymbol) return null
                 val rhs = fir.rValue.psi as? KtExpression
                 @Suppress("UNCHECKED_CAST") // safe because of the above check on targetKtSymbol
-                KaSimpleVariableAccessCall(
+                KaBaseSimpleVariableAccessCall(
                     partiallyAppliedSymbol as KaPartiallyAppliedVariableSymbol<KaVariableSymbol>,
                     fir.unwrapLValue()?.toTypeArgumentsMapping(partiallyAppliedSymbol) ?: emptyMap(),
                     KaBaseSimpleVariableWriteAccess(rhs),
@@ -607,7 +612,7 @@ internal class KaFirResolver(
                 when (unsubstitutedKtSignature.symbol) {
                     is KaVariableSymbol -> {
                         @Suppress("UNCHECKED_CAST") // safe because of the above check on targetKtSymbol
-                        KaSimpleVariableAccessCall(
+                        KaBaseSimpleVariableAccessCall(
                             partiallyAppliedSymbol as KaPartiallyAppliedVariableSymbol<KaVariableSymbol>,
                             fir.toTypeArgumentsMapping(partiallyAppliedSymbol),
                             KaBaseSimpleVariableReadAccess,
@@ -616,7 +621,7 @@ internal class KaFirResolver(
                     // if errorsness call without ()
                     is KaFunctionSymbol -> {
                         @Suppress("UNCHECKED_CAST") // safe because of the above check on targetKtSymbol
-                        KaSimpleFunctionCall(
+                        KaBaseSimpleFunctionCall(
                             partiallyAppliedSymbol as KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol>,
                             LinkedHashMap(),
                             fir.toTypeArgumentsMapping(partiallyAppliedSymbol),
@@ -639,7 +644,7 @@ internal class KaFirResolver(
                         argumentMapping?.entries
                     }
                 @Suppress("UNCHECKED_CAST") // safe because of the above check on targetKtSymbol
-                KaSimpleFunctionCall(
+                KaBaseSimpleFunctionCall(
                     partiallyAppliedSymbol as KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol>,
                     @Suppress("USELESS_CAST") // K2 warning suppression, TODO: KT-62472
                     argumentMappingWithoutExtensionReceiver
@@ -677,14 +682,14 @@ internal class KaFirResolver(
                 }
 
                 return if (resolveFragmentOfCall) {
-                    KaSimpleFunctionCall(
+                    KaBaseSimpleFunctionCall(
                         getPartiallyAppliedSymbol,
                         getAccessArgumentMapping,
                         fir.toTypeArgumentsMapping(getPartiallyAppliedSymbol),
                         false
                     )
                 } else {
-                    KaCompoundArrayAccessCall(
+                    KaBaseCompoundArrayAccessCall(
                         KaBaseCompoundAssignOperation(operationPartiallyAppliedSymbol, compoundAssignKind, rightOperandPsi),
                         leftOperandPsi.indexExpressions,
                         getPartiallyAppliedSymbol,
@@ -701,7 +706,7 @@ internal class KaFirResolver(
                 val operationPartiallyAppliedSymbol =
                     getOperationPartiallyAppliedSymbolsForCompoundVariableAccess(fir, leftOperandPsi) ?: return null
                 return if (resolveFragmentOfCall) {
-                    KaSimpleVariableAccessCall(
+                    KaBaseSimpleVariableAccessCall(
                         variablePartiallyAppliedSymbol,
                         fir.unwrapLValue()?.toTypeArgumentsMapping(variablePartiallyAppliedSymbol) ?: emptyMap(),
                         KaBaseSimpleVariableReadAccess,
@@ -731,14 +736,14 @@ internal class KaFirResolver(
                     putAll(baseExpression.indexExpressions.zip(getPartiallyAppliedSymbol.signature.valueParameters))
                 }
                 return if (resolveFragmentOfCall) {
-                    KaSimpleFunctionCall(
+                    KaBaseSimpleFunctionCall(
                         getPartiallyAppliedSymbol,
                         getAccessArgumentMapping,
                         fir.toTypeArgumentsMapping(getPartiallyAppliedSymbol),
                         false
                     )
                 } else {
-                    KaCompoundArrayAccessCall(
+                    KaBaseCompoundArrayAccessCall(
                         KaBaseCompoundUnaryOperation(operationPartiallyAppliedSymbol, incOrDecOperationKind, precedence),
                         baseExpression.indexExpressions,
                         getPartiallyAppliedSymbol,
@@ -755,7 +760,7 @@ internal class KaFirResolver(
                 val operationPartiallyAppliedSymbol =
                     getOperationPartiallyAppliedSymbolsForCompoundVariableAccess(fir, baseExpression) ?: return null
                 return if (resolveFragmentOfCall) {
-                    KaSimpleVariableAccessCall(
+                    KaBaseSimpleVariableAccessCall(
                         variablePartiallyAppliedSymbol,
                         fir.unwrapLValue()?.toTypeArgumentsMapping(variablePartiallyAppliedSymbol) ?: emptyMap(),
                         KaBaseSimpleVariableReadAccess,
@@ -1083,7 +1088,7 @@ internal class KaFirResolver(
         analysisSession.apply {
             return constructors.map { constructor ->
                 val partiallyAppliedSymbol = KaBasePartiallyAppliedSymbol(constructor.asSignature(), null, null)
-                KaSimpleFunctionCall(partiallyAppliedSymbol, LinkedHashMap(), toTypeArgumentsMapping(partiallyAppliedSymbol), false)
+                KaBaseSimpleFunctionCall(partiallyAppliedSymbol, LinkedHashMap(), toTypeArgumentsMapping(partiallyAppliedSymbol), false)
             }
         }
     }
@@ -1252,7 +1257,7 @@ internal class KaFirResolver(
                     )
                     KaBaseErrorCallInfo(
                         listOf(
-                            KaSimpleFunctionCall(
+                            KaBaseSimpleFunctionCall(
                                 partiallyAppliedSymbol,
                                 createArgumentMapping(defaultArrayOfSymbol, substitutor),
                                 this@toKtCallInfo.toTypeArgumentsMapping(partiallyAppliedSymbol),
@@ -1276,7 +1281,7 @@ internal class KaFirResolver(
             null,
         )
         return KaBaseSuccessCallInfo(
-            KaSimpleFunctionCall(
+            KaBaseSimpleFunctionCall(
                 partiallyAppliedSymbol,
                 createArgumentMapping(arrayOfSymbol, substitutor),
                 this@toKtCallInfo.toTypeArgumentsMapping(partiallyAppliedSymbol),
@@ -1306,7 +1311,7 @@ internal class KaFirResolver(
                 val equalsSymbol = getEqualsSymbol() ?: return null
                 val kaSignature = equalsSymbol.toKaSignature()
                 KaBaseSuccessCallInfo(
-                    KaSimpleFunctionCall(
+                    KaBaseSimpleFunctionCall(
                         KaBasePartiallyAppliedSymbol(
                             kaSignature,
                             KaBaseExplicitReceiverValue(

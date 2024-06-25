@@ -1,6 +1,7 @@
 KtAnnotationEntry(23,37): '@property:Anno'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {}
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -11,4 +12,3 @@ KtAnnotationEntry(23,37): '@property:Anno'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}

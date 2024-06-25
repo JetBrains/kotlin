@@ -1,6 +1,7 @@
 KtCallExpression(81,86): 'foo()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -12,11 +13,11 @@ KtCallExpression(81,86): 'foo()'
           valueParameters = []
           callableId = /BaseClass.foo
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -35,6 +36,5 @@ KtCallExpression(81,86): 'foo()'
           ]
           callableId = /BaseClass.foo
       typeArgumentsMapping = {}
-      argumentMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i'>
     isInBestCandidates = false

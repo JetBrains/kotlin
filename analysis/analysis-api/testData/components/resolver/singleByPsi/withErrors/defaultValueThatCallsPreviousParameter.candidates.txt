@@ -1,6 +1,14 @@
 KtNameReferenceExpression(270,279): 'getString'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        if (testInt == 0) R.string.test_string_1 else R.string.test_string_2 -> (KaVariableSignature:
+          name = id
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = id: kotlin.Int
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -22,12 +30,4 @@ KtNameReferenceExpression(270,279): 'getString'
           ]
           callableId = test/pkg/Context.getString
       typeArgumentsMapping = {}
-      argumentMapping = {
-        if (testInt == 0) R.string.test_string_1 else R.string.test_string_2 -> (KaVariableSignature:
-          name = id
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = id: kotlin.Int
-          callableId = null)
-      }
     isInBestCandidates = true

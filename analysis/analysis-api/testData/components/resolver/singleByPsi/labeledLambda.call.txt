@@ -1,6 +1,14 @@
 KtCallExpression(49,62): 'foo label@ {}'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {
+        label@ {} -> (KaVariableSignature:
+          name = l1
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
+          symbol = l1: kotlin.Function1<kotlin.Int, kotlin.Unit>
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -19,11 +27,3 @@ KtCallExpression(49,62): 'foo label@ {}'
           ]
           callableId = /foo
       typeArgumentsMapping = {}
-      argumentMapping = {
-        label@ {} -> (KaVariableSignature:
-          name = l1
-          receiverType = null
-          returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
-          symbol = l1: kotlin.Function1<kotlin.Int, kotlin.Unit>
-          callableId = null)
-      }

@@ -1,6 +1,7 @@
 KtNameReferenceExpression(589,592): 'bar'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -12,4 +13,3 @@ KtNameReferenceExpression(589,592): 'bar'
           valueParameters = []
           callableId = pkg/Foo.bar
       typeArgumentsMapping = {}
-      argumentMapping = {}

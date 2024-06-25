@@ -2,6 +2,7 @@ KtNameReferenceExpression(183,194): 'suspendHere'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        argumentMapping = {}
         isImplicitInvoke = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaImplicitReceiverValue:
@@ -30,6 +31,5 @@ KtNameReferenceExpression(183,194): 'suspendHere'
             ]
             callableId = /Controller.suspendHere
         typeArgumentsMapping = {}
-        argumentMapping = {}
     ]
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'x'>

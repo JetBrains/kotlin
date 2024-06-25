@@ -37,6 +37,7 @@ KtDeclarationModifierList(59,81): '@Repeatable'
 KtAnnotationEntry(59,70): '@Repeatable'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      argumentMapping = {}
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -47,12 +48,12 @@ KtAnnotationEntry(59,70): '@Repeatable'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(60,70): 'Repeatable'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      argumentMapping = {}
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -63,7 +64,6 @@ KtConstructorCalleeExpression(60,70): 'Repeatable'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(60,70): 'Repeatable'
@@ -102,6 +102,7 @@ KtDeclarationModifierList(122,144): '@Repeatable'
 KtAnnotationEntry(122,133): '@Repeatable'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      argumentMapping = {}
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -112,12 +113,12 @@ KtAnnotationEntry(122,133): '@Repeatable'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(123,133): 'Repeatable'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      argumentMapping = {}
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -128,7 +129,6 @@ KtConstructorCalleeExpression(123,133): 'Repeatable'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(123,133): 'Repeatable'
@@ -173,6 +173,7 @@ KtDeclarationModifierList(185,207): '@Repeatable'
 KtAnnotationEntry(185,196): '@Repeatable'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      argumentMapping = {}
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -183,12 +184,12 @@ KtAnnotationEntry(185,196): '@Repeatable'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(186,196): 'Repeatable'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      argumentMapping = {}
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -199,7 +200,6 @@ KtConstructorCalleeExpression(186,196): 'Repeatable'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(186,196): 'Repeatable'
@@ -334,6 +334,14 @@ KtDeclarationModifierList(423,826): '@AnnoWithArray([1, 2, 3])'
 KtAnnotationEntry(423,448): '@AnnoWithArray([1, 2, 3])'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      argumentMapping = {
+        [1, 2, 3] -> (KaVariableSignature:
+          name = arr
+          receiverType = null
+          returnType = kotlin.IntArray
+          symbol = arr: kotlin.IntArray
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -351,19 +359,19 @@ KtAnnotationEntry(423,448): '@AnnoWithArray([1, 2, 3])'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        [1, 2, 3] -> (KaVariableSignature:
-          name = arr
-          receiverType = null
-          returnType = kotlin.IntArray
-          symbol = arr: kotlin.IntArray
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(424,437): 'AnnoWithArray'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      argumentMapping = {
+        [1, 2, 3] -> (KaVariableSignature:
+          name = arr
+          receiverType = null
+          returnType = kotlin.IntArray
+          symbol = arr: kotlin.IntArray
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -381,14 +389,6 @@ KtConstructorCalleeExpression(424,437): 'AnnoWithArray'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        [1, 2, 3] -> (KaVariableSignature:
-          name = arr
-          receiverType = null
-          returnType = kotlin.IntArray
-          symbol = arr: kotlin.IntArray
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtTypeReference(424,437): 'AnnoWithArray'
@@ -409,24 +409,6 @@ KtValueArgument(438,447): '[1, 2, 3]'
 KtCollectionLiteralExpression(438,447): '[1, 2, 3]'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.IntArray
-          symbol = kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
-          valueParameters = [
-            KaVariableSignature:
-              name = elements
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = vararg elements: kotlin.Int
-              callableId = null
-          ]
-          callableId = kotlin/intArrayOf
-      typeArgumentsMapping = {}
       argumentMapping = {
         1 -> (KaVariableSignature:
           name = elements
@@ -447,6 +429,24 @@ KtCollectionLiteralExpression(438,447): '[1, 2, 3]'
           symbol = vararg elements: kotlin.Int
           callableId = null)
       }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.IntArray
+          symbol = kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
+          valueParameters = [
+            KaVariableSignature:
+              name = elements
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = vararg elements: kotlin.Int
+              callableId = null
+          ]
+          callableId = kotlin/intArrayOf
+      typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtConstantExpression(439,440): '1'
@@ -461,6 +461,14 @@ KtConstantExpression(445,446): '3'
 KtAnnotationEntry(449,480): '@AnnoWithArray(arr = [4, 5, 6])'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      argumentMapping = {
+        [4, 5, 6] -> (KaVariableSignature:
+          name = arr
+          receiverType = null
+          returnType = kotlin.IntArray
+          symbol = arr: kotlin.IntArray
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -478,19 +486,19 @@ KtAnnotationEntry(449,480): '@AnnoWithArray(arr = [4, 5, 6])'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        [4, 5, 6] -> (KaVariableSignature:
-          name = arr
-          receiverType = null
-          returnType = kotlin.IntArray
-          symbol = arr: kotlin.IntArray
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(450,463): 'AnnoWithArray'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      argumentMapping = {
+        [4, 5, 6] -> (KaVariableSignature:
+          name = arr
+          receiverType = null
+          returnType = kotlin.IntArray
+          symbol = arr: kotlin.IntArray
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -508,14 +516,6 @@ KtConstructorCalleeExpression(450,463): 'AnnoWithArray'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        [4, 5, 6] -> (KaVariableSignature:
-          name = arr
-          receiverType = null
-          returnType = kotlin.IntArray
-          symbol = arr: kotlin.IntArray
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtTypeReference(450,463): 'AnnoWithArray'
@@ -542,24 +542,6 @@ KtNameReferenceExpression(464,467): 'arr'
 KtCollectionLiteralExpression(470,479): '[4, 5, 6]'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.IntArray
-          symbol = kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
-          valueParameters = [
-            KaVariableSignature:
-              name = elements
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = vararg elements: kotlin.Int
-              callableId = null
-          ]
-          callableId = kotlin/intArrayOf
-      typeArgumentsMapping = {}
       argumentMapping = {
         4 -> (KaVariableSignature:
           name = elements
@@ -580,6 +562,24 @@ KtCollectionLiteralExpression(470,479): '[4, 5, 6]'
           symbol = vararg elements: kotlin.Int
           callableId = null)
       }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.IntArray
+          symbol = kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
+          valueParameters = [
+            KaVariableSignature:
+              name = elements
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = vararg elements: kotlin.Int
+              callableId = null
+          ]
+          callableId = kotlin/intArrayOf
+      typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtConstantExpression(471,472): '4'
@@ -594,6 +594,14 @@ KtConstantExpression(477,478): '6'
 KtAnnotationEntry(481,516): '@AnnoWithArray(intArrayOf(7, 8, 9))'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      argumentMapping = {
+        intArrayOf(7, 8, 9) -> (KaVariableSignature:
+          name = arr
+          receiverType = null
+          returnType = kotlin.IntArray
+          symbol = arr: kotlin.IntArray
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -611,19 +619,19 @@ KtAnnotationEntry(481,516): '@AnnoWithArray(intArrayOf(7, 8, 9))'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        intArrayOf(7, 8, 9) -> (KaVariableSignature:
-          name = arr
-          receiverType = null
-          returnType = kotlin.IntArray
-          symbol = arr: kotlin.IntArray
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(482,495): 'AnnoWithArray'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      argumentMapping = {
+        intArrayOf(7, 8, 9) -> (KaVariableSignature:
+          name = arr
+          receiverType = null
+          returnType = kotlin.IntArray
+          symbol = arr: kotlin.IntArray
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -641,14 +649,6 @@ KtConstructorCalleeExpression(482,495): 'AnnoWithArray'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        intArrayOf(7, 8, 9) -> (KaVariableSignature:
-          name = arr
-          receiverType = null
-          returnType = kotlin.IntArray
-          symbol = arr: kotlin.IntArray
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtTypeReference(482,495): 'AnnoWithArray'
@@ -669,24 +669,6 @@ KtValueArgument(496,515): 'intArrayOf(7, 8, 9)'
 KtCallExpression(496,515): 'intArrayOf(7, 8, 9)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.IntArray
-          symbol = kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
-          valueParameters = [
-            KaVariableSignature:
-              name = elements
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = vararg elements: kotlin.Int
-              callableId = null
-          ]
-          callableId = kotlin/intArrayOf
-      typeArgumentsMapping = {}
       argumentMapping = {
         7 -> (KaVariableSignature:
           name = elements
@@ -707,29 +689,29 @@ KtCallExpression(496,515): 'intArrayOf(7, 8, 9)'
           symbol = vararg elements: kotlin.Int
           callableId = null)
       }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.IntArray
+          symbol = kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
+          valueParameters = [
+            KaVariableSignature:
+              name = elements
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = vararg elements: kotlin.Int
+              callableId = null
+          ]
+          callableId = kotlin/intArrayOf
+      typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(496,506): 'intArrayOf'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.IntArray
-          symbol = kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
-          valueParameters = [
-            KaVariableSignature:
-              name = elements
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = vararg elements: kotlin.Int
-              callableId = null
-          ]
-          callableId = kotlin/intArrayOf
-      typeArgumentsMapping = {}
       argumentMapping = {
         7 -> (KaVariableSignature:
           name = elements
@@ -750,6 +732,24 @@ KtNameReferenceExpression(496,506): 'intArrayOf'
           symbol = vararg elements: kotlin.Int
           callableId = null)
       }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.IntArray
+          symbol = kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
+          valueParameters = [
+            KaVariableSignature:
+              name = elements
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = vararg elements: kotlin.Int
+              callableId = null
+          ]
+          callableId = kotlin/intArrayOf
+      typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(506,515): '(7, 8, 9)'
@@ -776,6 +776,14 @@ KtConstantExpression(513,514): '9'
 KtAnnotationEntry(517,555): '@AnnoWithKClass(AnnoWithKClass::class)'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      argumentMapping = {
+        AnnoWithKClass::class -> (KaVariableSignature:
+          name = k
+          receiverType = null
+          returnType = kotlin.reflect.KClass<*>
+          symbol = k: kotlin.reflect.KClass<*>
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -793,19 +801,19 @@ KtAnnotationEntry(517,555): '@AnnoWithKClass(AnnoWithKClass::class)'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        AnnoWithKClass::class -> (KaVariableSignature:
-          name = k
-          receiverType = null
-          returnType = kotlin.reflect.KClass<*>
-          symbol = k: kotlin.reflect.KClass<*>
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(518,532): 'AnnoWithKClass'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      argumentMapping = {
+        AnnoWithKClass::class -> (KaVariableSignature:
+          name = k
+          receiverType = null
+          returnType = kotlin.reflect.KClass<*>
+          symbol = k: kotlin.reflect.KClass<*>
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -823,14 +831,6 @@ KtConstructorCalleeExpression(518,532): 'AnnoWithKClass'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        AnnoWithKClass::class -> (KaVariableSignature:
-          name = k
-          receiverType = null
-          returnType = kotlin.reflect.KClass<*>
-          symbol = k: kotlin.reflect.KClass<*>
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtTypeReference(518,532): 'AnnoWithKClass'
@@ -854,6 +854,7 @@ KtClassLiteralExpression(533,554): 'AnnoWithKClass::class'
 KtNameReferenceExpression(533,547): 'AnnoWithKClass'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -872,7 +873,6 @@ KtNameReferenceExpression(533,547): 'AnnoWithKClass'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
@@ -882,6 +882,14 @@ KtAnnotation(556,600): '@[AnnoWithKClass(one.AnnoWithKClass::class)]'
 KtAnnotationEntry(558,599): 'AnnoWithKClass(one.AnnoWithKClass::class)'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      argumentMapping = {
+        one.AnnoWithKClass::class -> (KaVariableSignature:
+          name = k
+          receiverType = null
+          returnType = kotlin.reflect.KClass<*>
+          symbol = k: kotlin.reflect.KClass<*>
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -899,19 +907,19 @@ KtAnnotationEntry(558,599): 'AnnoWithKClass(one.AnnoWithKClass::class)'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        one.AnnoWithKClass::class -> (KaVariableSignature:
-          name = k
-          receiverType = null
-          returnType = kotlin.reflect.KClass<*>
-          symbol = k: kotlin.reflect.KClass<*>
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(558,572): 'AnnoWithKClass'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      argumentMapping = {
+        one.AnnoWithKClass::class -> (KaVariableSignature:
+          name = k
+          receiverType = null
+          returnType = kotlin.reflect.KClass<*>
+          symbol = k: kotlin.reflect.KClass<*>
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -929,14 +937,6 @@ KtConstructorCalleeExpression(558,572): 'AnnoWithKClass'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        one.AnnoWithKClass::class -> (KaVariableSignature:
-          name = k
-          receiverType = null
-          returnType = kotlin.reflect.KClass<*>
-          symbol = k: kotlin.reflect.KClass<*>
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtTypeReference(558,572): 'AnnoWithKClass'
@@ -960,6 +960,7 @@ KtClassLiteralExpression(573,598): 'one.AnnoWithKClass::class'
 KtDotQualifiedExpression(573,591): 'one.AnnoWithKClass'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -978,13 +979,13 @@ KtDotQualifiedExpression(573,591): 'one.AnnoWithKClass'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(573,576): 'one'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1003,13 +1004,13 @@ KtNameReferenceExpression(573,576): 'one'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(577,591): 'AnnoWithKClass'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1028,13 +1029,20 @@ KtNameReferenceExpression(577,591): 'AnnoWithKClass'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtAnnotationEntry(601,675): '@AnnoWithArrayOfKClass([AnnoWithKClass::class, one.AnnoWithKClass::class])'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      argumentMapping = {
+        [AnnoWithKClass::class, one.AnnoWithKClass::class] -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = kotlin.Array<kotlin.reflect.KClass<*>>
+          symbol = a: kotlin.Array<kotlin.reflect.KClass<*>>
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -1052,19 +1060,19 @@ KtAnnotationEntry(601,675): '@AnnoWithArrayOfKClass([AnnoWithKClass::class, one.
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        [AnnoWithKClass::class, one.AnnoWithKClass::class] -> (KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = kotlin.Array<kotlin.reflect.KClass<*>>
-          symbol = a: kotlin.Array<kotlin.reflect.KClass<*>>
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(602,623): 'AnnoWithArrayOfKClass'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      argumentMapping = {
+        [AnnoWithKClass::class, one.AnnoWithKClass::class] -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = kotlin.Array<kotlin.reflect.KClass<*>>
+          symbol = a: kotlin.Array<kotlin.reflect.KClass<*>>
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -1082,14 +1090,6 @@ KtConstructorCalleeExpression(602,623): 'AnnoWithArrayOfKClass'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        [AnnoWithKClass::class, one.AnnoWithKClass::class] -> (KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = kotlin.Array<kotlin.reflect.KClass<*>>
-          symbol = a: kotlin.Array<kotlin.reflect.KClass<*>>
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtTypeReference(602,623): 'AnnoWithArrayOfKClass'
@@ -1110,6 +1110,20 @@ KtValueArgument(624,674): '[AnnoWithKClass::class, one.AnnoWithKClass::class]'
 KtCollectionLiteralExpression(624,674): '[AnnoWithKClass::class, one.AnnoWithKClass::class]'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        AnnoWithKClass::class -> (KaVariableSignature:
+          name = elements
+          receiverType = null
+          returnType = kotlin.reflect.KClass<*>
+          symbol = vararg elements: T
+          callableId = null),
+        one.AnnoWithKClass::class -> (KaVariableSignature:
+          name = elements
+          receiverType = null
+          returnType = kotlin.reflect.KClass<*>
+          symbol = vararg elements: T
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1130,20 +1144,6 @@ KtCollectionLiteralExpression(624,674): '[AnnoWithKClass::class, one.AnnoWithKCl
       typeArgumentsMapping = {
         T -> (kotlin.reflect.KClass<*>)
       }
-      argumentMapping = {
-        AnnoWithKClass::class -> (KaVariableSignature:
-          name = elements
-          receiverType = null
-          returnType = kotlin.reflect.KClass<*>
-          symbol = vararg elements: T
-          callableId = null),
-        one.AnnoWithKClass::class -> (KaVariableSignature:
-          name = elements
-          receiverType = null
-          returnType = kotlin.reflect.KClass<*>
-          symbol = vararg elements: T
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtClassLiteralExpression(625,646): 'AnnoWithKClass::class'
@@ -1152,6 +1152,7 @@ KtClassLiteralExpression(625,646): 'AnnoWithKClass::class'
 KtNameReferenceExpression(625,639): 'AnnoWithKClass'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1170,7 +1171,6 @@ KtNameReferenceExpression(625,639): 'AnnoWithKClass'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
@@ -1180,6 +1180,7 @@ KtClassLiteralExpression(648,673): 'one.AnnoWithKClass::class'
 KtDotQualifiedExpression(648,666): 'one.AnnoWithKClass'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1198,13 +1199,13 @@ KtDotQualifiedExpression(648,666): 'one.AnnoWithKClass'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(648,651): 'one'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1223,13 +1224,13 @@ KtNameReferenceExpression(648,651): 'one'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(652,666): 'AnnoWithKClass'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1248,13 +1249,20 @@ KtNameReferenceExpression(652,666): 'AnnoWithKClass'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtAnnotationEntry(676,783): '@AnnoWithAnotherAnnotation(arrayOf(one.AnnoWithArray([10, 11, 12]), AnnoWithArray(intArrayOf(13, 14, 15))))'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      argumentMapping = {
+        arrayOf(one.AnnoWithArray([10, 11, 12]), AnnoWithArray(intArrayOf(13, 14, 15))) -> (KaVariableSignature:
+          name = another
+          receiverType = null
+          returnType = kotlin.Array<one.AnnoWithArray>
+          symbol = another: kotlin.Array<one.AnnoWithArray>
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -1272,19 +1280,19 @@ KtAnnotationEntry(676,783): '@AnnoWithAnotherAnnotation(arrayOf(one.AnnoWithArra
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        arrayOf(one.AnnoWithArray([10, 11, 12]), AnnoWithArray(intArrayOf(13, 14, 15))) -> (KaVariableSignature:
-          name = another
-          receiverType = null
-          returnType = kotlin.Array<one.AnnoWithArray>
-          symbol = another: kotlin.Array<one.AnnoWithArray>
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(677,702): 'AnnoWithAnotherAnnotation'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      argumentMapping = {
+        arrayOf(one.AnnoWithArray([10, 11, 12]), AnnoWithArray(intArrayOf(13, 14, 15))) -> (KaVariableSignature:
+          name = another
+          receiverType = null
+          returnType = kotlin.Array<one.AnnoWithArray>
+          symbol = another: kotlin.Array<one.AnnoWithArray>
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -1302,14 +1310,6 @@ KtConstructorCalleeExpression(677,702): 'AnnoWithAnotherAnnotation'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        arrayOf(one.AnnoWithArray([10, 11, 12]), AnnoWithArray(intArrayOf(13, 14, 15))) -> (KaVariableSignature:
-          name = another
-          receiverType = null
-          returnType = kotlin.Array<one.AnnoWithArray>
-          symbol = another: kotlin.Array<one.AnnoWithArray>
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtTypeReference(677,702): 'AnnoWithAnotherAnnotation'
@@ -1330,6 +1330,20 @@ KtValueArgument(703,782): 'arrayOf(one.AnnoWithArray([10, 11, 12]), AnnoWithArra
 KtCallExpression(703,782): 'arrayOf(one.AnnoWithArray([10, 11, 12]), AnnoWithArray(intArrayOf(13, 14, 15)))'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        one.AnnoWithArray([10, 11, 12]) -> (KaVariableSignature:
+          name = elements
+          receiverType = null
+          returnType = one.AnnoWithArray
+          symbol = vararg elements: T
+          callableId = null),
+        AnnoWithArray(intArrayOf(13, 14, 15)) -> (KaVariableSignature:
+          name = elements
+          receiverType = null
+          returnType = one.AnnoWithArray
+          symbol = vararg elements: T
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1349,26 +1363,26 @@ KtCallExpression(703,782): 'arrayOf(one.AnnoWithArray([10, 11, 12]), AnnoWithArr
           callableId = kotlin/arrayOf
       typeArgumentsMapping = {
         T -> (one.AnnoWithArray)
-      }
-      argumentMapping = {
-        one.AnnoWithArray([10, 11, 12]) -> (KaVariableSignature:
-          name = elements
-          receiverType = null
-          returnType = one.AnnoWithArray
-          symbol = vararg elements: T
-          callableId = null),
-        AnnoWithArray(intArrayOf(13, 14, 15)) -> (KaVariableSignature:
-          name = elements
-          receiverType = null
-          returnType = one.AnnoWithArray
-          symbol = vararg elements: T
-          callableId = null)
       }
     isInBestCandidates = true
 
 KtNameReferenceExpression(703,710): 'arrayOf'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        one.AnnoWithArray([10, 11, 12]) -> (KaVariableSignature:
+          name = elements
+          receiverType = null
+          returnType = one.AnnoWithArray
+          symbol = vararg elements: T
+          callableId = null),
+        AnnoWithArray(intArrayOf(13, 14, 15)) -> (KaVariableSignature:
+          name = elements
+          receiverType = null
+          returnType = one.AnnoWithArray
+          symbol = vararg elements: T
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1388,20 +1402,6 @@ KtNameReferenceExpression(703,710): 'arrayOf'
           callableId = kotlin/arrayOf
       typeArgumentsMapping = {
         T -> (one.AnnoWithArray)
-      }
-      argumentMapping = {
-        one.AnnoWithArray([10, 11, 12]) -> (KaVariableSignature:
-          name = elements
-          receiverType = null
-          returnType = one.AnnoWithArray
-          symbol = vararg elements: T
-          callableId = null),
-        AnnoWithArray(intArrayOf(13, 14, 15)) -> (KaVariableSignature:
-          name = elements
-          receiverType = null
-          returnType = one.AnnoWithArray
-          symbol = vararg elements: T
-          callableId = null)
       }
     isInBestCandidates = true
 
@@ -1414,6 +1414,14 @@ KtValueArgument(711,742): 'one.AnnoWithArray([10, 11, 12])'
 KtDotQualifiedExpression(711,742): 'one.AnnoWithArray([10, 11, 12])'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        [10, 11, 12] -> (KaVariableSignature:
+          name = arr
+          receiverType = null
+          returnType = kotlin.IntArray
+          symbol = arr: kotlin.IntArray
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1432,14 +1440,6 @@ KtDotQualifiedExpression(711,742): 'one.AnnoWithArray([10, 11, 12])'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        [10, 11, 12] -> (KaVariableSignature:
-          name = arr
-          receiverType = null
-          returnType = kotlin.IntArray
-          symbol = arr: kotlin.IntArray
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(711,714): 'one'
@@ -1448,6 +1448,14 @@ KtNameReferenceExpression(711,714): 'one'
 KtCallExpression(715,742): 'AnnoWithArray([10, 11, 12])'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        [10, 11, 12] -> (KaVariableSignature:
+          name = arr
+          receiverType = null
+          returnType = kotlin.IntArray
+          symbol = arr: kotlin.IntArray
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1466,19 +1474,19 @@ KtCallExpression(715,742): 'AnnoWithArray([10, 11, 12])'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        [10, 11, 12] -> (KaVariableSignature:
-          name = arr
-          receiverType = null
-          returnType = kotlin.IntArray
-          symbol = arr: kotlin.IntArray
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(715,728): 'AnnoWithArray'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        [10, 11, 12] -> (KaVariableSignature:
+          name = arr
+          receiverType = null
+          returnType = kotlin.IntArray
+          symbol = arr: kotlin.IntArray
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1497,14 +1505,6 @@ KtNameReferenceExpression(715,728): 'AnnoWithArray'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        [10, 11, 12] -> (KaVariableSignature:
-          name = arr
-          receiverType = null
-          returnType = kotlin.IntArray
-          symbol = arr: kotlin.IntArray
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtValueArgumentList(728,742): '([10, 11, 12])'
@@ -1516,24 +1516,6 @@ KtValueArgument(729,741): '[10, 11, 12]'
 KtCollectionLiteralExpression(729,741): '[10, 11, 12]'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.IntArray
-          symbol = kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
-          valueParameters = [
-            KaVariableSignature:
-              name = elements
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = vararg elements: kotlin.Int
-              callableId = null
-          ]
-          callableId = kotlin/intArrayOf
-      typeArgumentsMapping = {}
       argumentMapping = {
         10 -> (KaVariableSignature:
           name = elements
@@ -1554,6 +1536,24 @@ KtCollectionLiteralExpression(729,741): '[10, 11, 12]'
           symbol = vararg elements: kotlin.Int
           callableId = null)
       }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.IntArray
+          symbol = kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
+          valueParameters = [
+            KaVariableSignature:
+              name = elements
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = vararg elements: kotlin.Int
+              callableId = null
+          ]
+          callableId = kotlin/intArrayOf
+      typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtConstantExpression(730,732): '10'
@@ -1571,6 +1571,14 @@ KtValueArgument(744,781): 'AnnoWithArray(intArrayOf(13, 14, 15))'
 KtCallExpression(744,781): 'AnnoWithArray(intArrayOf(13, 14, 15))'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        intArrayOf(13, 14, 15) -> (KaVariableSignature:
+          name = arr
+          receiverType = null
+          returnType = kotlin.IntArray
+          symbol = arr: kotlin.IntArray
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1589,19 +1597,19 @@ KtCallExpression(744,781): 'AnnoWithArray(intArrayOf(13, 14, 15))'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        intArrayOf(13, 14, 15) -> (KaVariableSignature:
-          name = arr
-          receiverType = null
-          returnType = kotlin.IntArray
-          symbol = arr: kotlin.IntArray
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(744,757): 'AnnoWithArray'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        intArrayOf(13, 14, 15) -> (KaVariableSignature:
+          name = arr
+          receiverType = null
+          returnType = kotlin.IntArray
+          symbol = arr: kotlin.IntArray
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1620,14 +1628,6 @@ KtNameReferenceExpression(744,757): 'AnnoWithArray'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        intArrayOf(13, 14, 15) -> (KaVariableSignature:
-          name = arr
-          receiverType = null
-          returnType = kotlin.IntArray
-          symbol = arr: kotlin.IntArray
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtValueArgumentList(757,781): '(intArrayOf(13, 14, 15))'
@@ -1639,24 +1639,6 @@ KtValueArgument(758,780): 'intArrayOf(13, 14, 15)'
 KtCallExpression(758,780): 'intArrayOf(13, 14, 15)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.IntArray
-          symbol = kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
-          valueParameters = [
-            KaVariableSignature:
-              name = elements
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = vararg elements: kotlin.Int
-              callableId = null
-          ]
-          callableId = kotlin/intArrayOf
-      typeArgumentsMapping = {}
       argumentMapping = {
         13 -> (KaVariableSignature:
           name = elements
@@ -1677,29 +1659,29 @@ KtCallExpression(758,780): 'intArrayOf(13, 14, 15)'
           symbol = vararg elements: kotlin.Int
           callableId = null)
       }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.IntArray
+          symbol = kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
+          valueParameters = [
+            KaVariableSignature:
+              name = elements
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = vararg elements: kotlin.Int
+              callableId = null
+          ]
+          callableId = kotlin/intArrayOf
+      typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(758,768): 'intArrayOf'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.IntArray
-          symbol = kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
-          valueParameters = [
-            KaVariableSignature:
-              name = elements
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = vararg elements: kotlin.Int
-              callableId = null
-          ]
-          callableId = kotlin/intArrayOf
-      typeArgumentsMapping = {}
       argumentMapping = {
         13 -> (KaVariableSignature:
           name = elements
@@ -1720,6 +1702,24 @@ KtNameReferenceExpression(758,768): 'intArrayOf'
           symbol = vararg elements: kotlin.Int
           callableId = null)
       }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.IntArray
+          symbol = kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
+          valueParameters = [
+            KaVariableSignature:
+              name = elements
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = vararg elements: kotlin.Int
+              callableId = null
+          ]
+          callableId = kotlin/intArrayOf
+      typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(768,780): '(13, 14, 15)'
@@ -1746,6 +1746,14 @@ KtConstantExpression(777,779): '15'
 KtAnnotationEntry(784,826): '@AnnoWithString(stringConstant + " 1.2.3")'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      argumentMapping = {
+        stringConstant + " 1.2.3" -> (KaVariableSignature:
+          name = str
+          receiverType = null
+          returnType = kotlin.String
+          symbol = str: kotlin.String
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -1763,19 +1771,19 @@ KtAnnotationEntry(784,826): '@AnnoWithString(stringConstant + " 1.2.3")'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        stringConstant + " 1.2.3" -> (KaVariableSignature:
-          name = str
-          receiverType = null
-          returnType = kotlin.String
-          symbol = str: kotlin.String
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(785,799): 'AnnoWithString'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      argumentMapping = {
+        stringConstant + " 1.2.3" -> (KaVariableSignature:
+          name = str
+          receiverType = null
+          returnType = kotlin.String
+          symbol = str: kotlin.String
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -1793,14 +1801,6 @@ KtConstructorCalleeExpression(785,799): 'AnnoWithString'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        stringConstant + " 1.2.3" -> (KaVariableSignature:
-          name = str
-          receiverType = null
-          returnType = kotlin.String
-          symbol = str: kotlin.String
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtTypeReference(785,799): 'AnnoWithString'
@@ -1821,6 +1821,14 @@ KtValueArgument(800,825): 'stringConstant + " 1.2.3"'
 KtBinaryExpression(800,825): 'stringConstant + " 1.2.3"'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        " 1.2.3" -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1842,6 +1850,10 @@ KtBinaryExpression(800,825): 'stringConstant + " 1.2.3"'
           ]
           callableId = kotlin/String.plus
       typeArgumentsMapping = {}
+    isInBestCandidates = true
+  
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
       argumentMapping = {
         " 1.2.3" -> (KaVariableSignature:
           name = other
@@ -1850,10 +1862,6 @@ KtBinaryExpression(800,825): 'stringConstant + " 1.2.3"'
           symbol = other: kotlin.Any?
           callableId = null)
       }
-    isInBestCandidates = true
-  
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1875,14 +1883,6 @@ KtBinaryExpression(800,825): 'stringConstant + " 1.2.3"'
           ]
           callableId = kotlin/plus
       typeArgumentsMapping = {}
-      argumentMapping = {
-        " 1.2.3" -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = false
 
 KtNameReferenceExpression(800,814): 'stringConstant'
@@ -1904,6 +1904,14 @@ KtNameReferenceExpression(800,814): 'stringConstant'
 KtOperationReferenceExpression(815,816): '+'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        " 1.2.3" -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1925,6 +1933,10 @@ KtOperationReferenceExpression(815,816): '+'
           ]
           callableId = kotlin/String.plus
       typeArgumentsMapping = {}
+    isInBestCandidates = true
+  
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
       argumentMapping = {
         " 1.2.3" -> (KaVariableSignature:
           name = other
@@ -1933,10 +1945,6 @@ KtOperationReferenceExpression(815,816): '+'
           symbol = other: kotlin.Any?
           callableId = null)
       }
-    isInBestCandidates = true
-  
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1958,14 +1966,6 @@ KtOperationReferenceExpression(815,816): '+'
           ]
           callableId = kotlin/plus
       typeArgumentsMapping = {}
-      argumentMapping = {
-        " 1.2.3" -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = false
 
 KtStringTemplateExpression(817,825): '" 1.2.3"'

@@ -1,6 +1,7 @@
 KtCallExpression(135,142): 'i()()()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -15,4 +16,3 @@ KtCallExpression(135,142): 'i()()()'
           valueParameters = []
           callableId = /invoke
       typeArgumentsMapping = {}
-      argumentMapping = {}

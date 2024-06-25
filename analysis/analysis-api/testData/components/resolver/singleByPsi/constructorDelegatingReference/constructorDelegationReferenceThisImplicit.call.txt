@@ -1,6 +1,7 @@
 KtConstructorDelegationReferenceExpression(136,136): ''
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      argumentMapping = {}
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -12,4 +13,3 @@ KtConstructorDelegationReferenceExpression(136,136): ''
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}

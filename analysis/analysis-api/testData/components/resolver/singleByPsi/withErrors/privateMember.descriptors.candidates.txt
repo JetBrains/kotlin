@@ -1,6 +1,7 @@
 KtDotQualifiedExpression(59,66): 'a.foo()'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -15,6 +16,5 @@ KtDotQualifiedExpression(59,66): 'a.foo()'
           valueParameters = []
           callableId = /A.foo
       typeArgumentsMapping = {}
-      argumentMapping = {}
     diagnostic = ERROR<INVISIBLE_MEMBER: Cannot access 'foo': it is private in 'A'>
     isInBestCandidates = true

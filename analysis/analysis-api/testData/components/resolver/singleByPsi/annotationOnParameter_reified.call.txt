@@ -1,6 +1,14 @@
 KtAnnotationEntry(51,65): '@Suppress("s")'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {
+        "s" -> (KaVariableSignature:
+          name = names
+          receiverType = null
+          returnType = kotlin.String
+          symbol = vararg names: kotlin.String
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -18,11 +26,3 @@ KtAnnotationEntry(51,65): '@Suppress("s")'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        "s" -> (KaVariableSignature:
-          name = names
-          receiverType = null
-          returnType = kotlin.String
-          symbol = vararg names: kotlin.String
-          callableId = null)
-      }

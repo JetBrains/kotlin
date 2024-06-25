@@ -1,6 +1,14 @@
 KtDotQualifiedExpression(137,160): 'handler.act(::callback)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        ::callback -> (KaVariableSignature:
+          name = actor
+          receiverType = null
+          returnType = test.pkg.MyInterface!
+          symbol = actor: test.pkg.MyInterface!
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -22,12 +30,4 @@ KtDotQualifiedExpression(137,160): 'handler.act(::callback)'
           ]
           callableId = test/pkg/MyHandler.act
       typeArgumentsMapping = {}
-      argumentMapping = {
-        ::callback -> (KaVariableSignature:
-          name = actor
-          receiverType = null
-          returnType = test.pkg.MyInterface!
-          symbol = actor: test.pkg.MyInterface!
-          callableId = null)
-      }
     isInBestCandidates = true

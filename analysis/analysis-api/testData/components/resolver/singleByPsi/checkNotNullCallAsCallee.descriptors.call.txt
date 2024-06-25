@@ -1,6 +1,14 @@
 KtPostfixExpression(33,36): 'a!!'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {
+        a -> (KaVariableSignature:
+          name = baseExpr
+          receiverType = null
+          returnType = kotlin.Function0<kotlin.Unit>?
+          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -20,12 +28,4 @@ KtPostfixExpression(33,36): 'a!!'
           callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
       typeArgumentsMapping = {
         <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (kotlin.Function0<kotlin.Unit>)
-      }
-      argumentMapping = {
-        a -> (KaVariableSignature:
-          name = baseExpr
-          receiverType = null
-          returnType = kotlin.Function0<kotlin.Unit>?
-          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-          callableId = null)
       }

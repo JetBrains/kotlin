@@ -1,6 +1,14 @@
 KtNameReferenceExpression(202,210): 'IntArray'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {
+        array("1", "2", "3") -> (KaVariableSignature:
+          name = content
+          receiverType = null
+          returnType = kotlin.String
+          symbol = vararg content: kotlin.String
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -19,11 +27,3 @@ KtNameReferenceExpression(202,210): 'IntArray'
           ]
           callableId = ctrl_click/IntArray
       typeArgumentsMapping = {}
-      argumentMapping = {
-        array("1", "2", "3") -> (KaVariableSignature:
-          name = content
-          receiverType = null
-          returnType = kotlin.String
-          symbol = vararg content: kotlin.String
-          callableId = null)
-      }

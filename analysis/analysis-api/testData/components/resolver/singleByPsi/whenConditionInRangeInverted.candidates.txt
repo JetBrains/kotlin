@@ -1,6 +1,14 @@
 KtWhenConditionInRange(177,190): '!in MyClass()'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        3 -> (KaVariableSignature:
+          name = str
+          receiverType = null
+          returnType = kotlin.String
+          symbol = str: kotlin.String
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -22,19 +30,19 @@ KtWhenConditionInRange(177,190): '!in MyClass()'
           ]
           callableId = /MyClass.contains
       typeArgumentsMapping = {}
-      argumentMapping = {
-        3 -> (KaVariableSignature:
-          name = str
-          receiverType = null
-          returnType = kotlin.String
-          symbol = str: kotlin.String
-          callableId = null)
-      }
     diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun contains(str: String): Boolean>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        3 -> (KaVariableSignature:
+          name = int
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = int: kotlin.Int
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -57,13 +65,5 @@ KtWhenConditionInRange(177,190): '!in MyClass()'
           callableId = /contains
       typeArgumentsMapping = {
         T -> (MyClass)
-      }
-      argumentMapping = {
-        3 -> (KaVariableSignature:
-          name = int
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = int: kotlin.Int
-          callableId = null)
       }
     isInBestCandidates = true

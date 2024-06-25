@@ -1,6 +1,14 @@
 KtCallExpression(146,166): 'test(this::uiMethod)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        this::uiMethod -> (KaVariableSignature:
+          name = foo
+          receiverType = null
+          returnType = Test.Foo
+          symbol = foo: Test.Foo
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaImplicitReceiverValue:
@@ -21,12 +29,4 @@ KtCallExpression(146,166): 'test(this::uiMethod)'
           ]
           callableId = /Test.test
       typeArgumentsMapping = {}
-      argumentMapping = {
-        this::uiMethod -> (KaVariableSignature:
-          name = foo
-          receiverType = null
-          returnType = Test.Foo
-          symbol = foo: Test.Foo
-          callableId = null)
-      }
     isInBestCandidates = true

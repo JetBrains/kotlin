@@ -2,6 +2,14 @@ KtCallExpression(128,144): 'function<Int>(1)'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        argumentMapping = {
+          1 -> (KaVariableSignature:
+            name = t
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = t: T
+            callableId = null)
+        }
         isImplicitInvoke = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = null
@@ -27,16 +35,16 @@ KtCallExpression(128,144): 'function<Int>(1)'
             callableId = /function
         typeArgumentsMapping = {
           T -> (kotlin.Int)
-        }
-        argumentMapping = {
-          1 -> (KaVariableSignature:
-            name = t
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = t: T
-            callableId = null)
         },
       KaSimpleFunctionCall:
+        argumentMapping = {
+          1 -> (KaVariableSignature:
+            name = u
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = u: U
+            callableId = null)
+        }
         isImplicitInvoke = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = null
@@ -62,16 +70,16 @@ KtCallExpression(128,144): 'function<Int>(1)'
             callableId = /function
         typeArgumentsMapping = {
           U -> (kotlin.Int)
-        }
-        argumentMapping = {
-          1 -> (KaVariableSignature:
-            name = u
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = u: U
-            callableId = null)
         },
       KaSimpleFunctionCall:
+        argumentMapping = {
+          1 -> (KaVariableSignature:
+            name = v
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = v: V
+            callableId = null)
+        }
         isImplicitInvoke = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = null
@@ -97,14 +105,6 @@ KtCallExpression(128,144): 'function<Int>(1)'
             callableId = /function
         typeArgumentsMapping = {
           V -> (kotlin.Int)
-        }
-        argumentMapping = {
-          1 -> (KaVariableSignature:
-            name = v
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = v: V
-            callableId = null)
         }
     ]
     diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:

@@ -1,6 +1,7 @@
 KtAnnotationEntry(40,49): '@Suppress'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {}
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -18,4 +19,3 @@ KtAnnotationEntry(40,49): '@Suppress'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}

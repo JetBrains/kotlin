@@ -1,6 +1,7 @@
 KtNameReferenceExpression(100,109): 'asDynamic'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -15,5 +16,4 @@ KtNameReferenceExpression(100,109): 'asDynamic'
           valueParameters = []
           callableId = kotlin/js/asDynamic
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true

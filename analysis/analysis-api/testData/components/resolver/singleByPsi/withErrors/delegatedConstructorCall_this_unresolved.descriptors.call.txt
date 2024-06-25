@@ -2,6 +2,20 @@ KtConstructorDelegationCall(115,132): 'this(i, j, i * j)'
   KaErrorCallInfo:
     candidateCalls = [
       KaDelegatedConstructorCall:
+        argumentMapping = {
+          i -> (KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            callableId = null),
+          j -> (KaVariableSignature:
+            name = j
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = j: kotlin.Int
+            callableId = null)
+        }
         kind = THIS_CALL
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = null
@@ -25,22 +39,16 @@ KtConstructorDelegationCall(115,132): 'this(i, j, i * j)'
                 callableId = null
             ]
             callableId = null
-        typeArgumentsMapping = {}
+        typeArgumentsMapping = {},
+      KaDelegatedConstructorCall:
         argumentMapping = {
           i -> (KaVariableSignature:
-            name = i
+            name = p
             receiverType = null
             returnType = kotlin.Int
-            symbol = i: kotlin.Int
-            callableId = null),
-          j -> (KaVariableSignature:
-            name = j
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = j: kotlin.Int
+            symbol = p: kotlin.Int
             callableId = null)
-        },
-      KaDelegatedConstructorCall:
+        }
         kind = THIS_CALL
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = null
@@ -59,14 +67,6 @@ KtConstructorDelegationCall(115,132): 'this(i, j, i * j)'
             ]
             callableId = null
         typeArgumentsMapping = {}
-        argumentMapping = {
-          i -> (KaVariableSignature:
-            name = p
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = p: kotlin.Int
-            callableId = null)
-        }
     ]
     diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
     public constructor Sub(p: Int) defined in Sub

@@ -1,6 +1,14 @@
 KtNameReferenceExpression(114,123): 'compareTo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        m2 -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = MyClass
+          symbol = value: MyClass
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -22,12 +30,4 @@ KtNameReferenceExpression(114,123): 'compareTo'
           ]
           callableId = /MyClass.compareTo
       typeArgumentsMapping = {}
-      argumentMapping = {
-        m2 -> (KaVariableSignature:
-          name = value
-          receiverType = null
-          returnType = MyClass
-          symbol = value: MyClass
-          callableId = null)
-      }
     isInBestCandidates = true

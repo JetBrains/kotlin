@@ -1,6 +1,14 @@
 KtCallExpression(143,162): 'test { uiMethod() }'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {
+        { uiMethod() } -> (KaVariableSignature:
+          name = foo
+          receiverType = null
+          returnType = Test.Foo
+          symbol = foo: Test.Foo
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaImplicitReceiverValue:
@@ -21,11 +29,3 @@ KtCallExpression(143,162): 'test { uiMethod() }'
           ]
           callableId = /Test.test
       typeArgumentsMapping = {}
-      argumentMapping = {
-        { uiMethod() } -> (KaVariableSignature:
-          name = foo
-          receiverType = null
-          returnType = Test.Foo
-          symbol = foo: Test.Foo
-          callableId = null)
-      }

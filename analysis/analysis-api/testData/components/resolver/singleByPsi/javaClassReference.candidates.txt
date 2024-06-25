@@ -1,6 +1,7 @@
 KtCallExpression(31,44): 'Array<String>'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -27,6 +28,5 @@ KtCallExpression(31,44): 'Array<String>'
       typeArgumentsMapping = {
         T -> (kotlin.String)
       }
-      argumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false

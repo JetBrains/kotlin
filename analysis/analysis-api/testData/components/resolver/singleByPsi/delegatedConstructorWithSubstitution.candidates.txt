@@ -1,6 +1,14 @@
 KtConstructorDelegationCall(144,152): 'super(1)'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      argumentMapping = {
+        1 -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = T
+          symbol = i: T
+          callableId = null)
+      }
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -21,6 +29,10 @@ KtConstructorDelegationCall(144,152): 'super(1)'
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
+    isInBestCandidates = true
+  
+  KaInapplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         1 -> (KaVariableSignature:
           name = i
@@ -29,10 +41,6 @@ KtConstructorDelegationCall(144,152): 'super(1)'
           symbol = i: T
           callableId = null)
       }
-    isInBestCandidates = true
-  
-  KaInapplicableCallCandidateInfo:
-    candidate = KaDelegatedConstructorCall:
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -58,14 +66,6 @@ KtConstructorDelegationCall(144,152): 'super(1)'
           callableId = null
       typeArgumentsMapping = {
         T -> (kotlin.Int)
-      }
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = T
-          symbol = i: T
-          callableId = null)
       }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'str'.>
     isInBestCandidates = false

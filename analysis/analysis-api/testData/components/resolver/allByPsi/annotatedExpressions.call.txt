@@ -25,6 +25,14 @@ KtDeclarationModifierList(38,124): '@Target(AnnotationTarget.EXPRESSION)'
 KtAnnotationEntry(38,74): '@Target(AnnotationTarget.EXPRESSION)'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {
+        AnnotationTarget.EXPRESSION -> (KaVariableSignature:
+          name = allowedTargets
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationTarget
+          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -42,18 +50,18 @@ KtAnnotationEntry(38,74): '@Target(AnnotationTarget.EXPRESSION)'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        AnnotationTarget.EXPRESSION -> (KaVariableSignature:
-          name = allowedTargets
-          receiverType = null
-          returnType = kotlin.annotation.AnnotationTarget
-          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
-          callableId = null)
-      }
 
 KtConstructorCalleeExpression(39,45): 'Target'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {
+        AnnotationTarget.EXPRESSION -> (KaVariableSignature:
+          name = allowedTargets
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationTarget
+          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -71,14 +79,6 @@ KtConstructorCalleeExpression(39,45): 'Target'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        AnnotationTarget.EXPRESSION -> (KaVariableSignature:
-          name = allowedTargets
-          receiverType = null
-          returnType = kotlin.annotation.AnnotationTarget
-          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
-          callableId = null)
-      }
 
 KtTypeReference(39,45): 'Target'
   null
@@ -137,6 +137,14 @@ KtNameReferenceExpression(63,73): 'EXPRESSION'
 KtAnnotationEntry(75,113): '@Retention(AnnotationRetention.SOURCE)'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {
+        AnnotationRetention.SOURCE -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationRetention
+          symbol = value: kotlin.annotation.AnnotationRetention
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -154,18 +162,18 @@ KtAnnotationEntry(75,113): '@Retention(AnnotationRetention.SOURCE)'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        AnnotationRetention.SOURCE -> (KaVariableSignature:
-          name = value
-          receiverType = null
-          returnType = kotlin.annotation.AnnotationRetention
-          symbol = value: kotlin.annotation.AnnotationRetention
-          callableId = null)
-      }
 
 KtConstructorCalleeExpression(76,85): 'Retention'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {
+        AnnotationRetention.SOURCE -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationRetention
+          symbol = value: kotlin.annotation.AnnotationRetention
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -183,14 +191,6 @@ KtConstructorCalleeExpression(76,85): 'Retention'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        AnnotationRetention.SOURCE -> (KaVariableSignature:
-          name = value
-          receiverType = null
-          returnType = kotlin.annotation.AnnotationRetention
-          symbol = value: kotlin.annotation.AnnotationRetention
-          callableId = null)
-      }
 
 KtTypeReference(76,85): 'Retention'
   null
@@ -279,6 +279,14 @@ KtAnnotatedExpression(172,226): '@Anno(0 + integer) (@Anno(integer) usage()).toS
 KtAnnotationEntry(172,190): '@Anno(0 + integer)'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {
+        0 + integer -> (KaVariableSignature:
+          name = number
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = number: kotlin.Int
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -296,18 +304,18 @@ KtAnnotationEntry(172,190): '@Anno(0 + integer)'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        0 + integer -> (KaVariableSignature:
-          name = number
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = number: kotlin.Int
-          callableId = null)
-      }
 
 KtConstructorCalleeExpression(173,177): 'Anno'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {
+        0 + integer -> (KaVariableSignature:
+          name = number
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = number: kotlin.Int
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -325,14 +333,6 @@ KtConstructorCalleeExpression(173,177): 'Anno'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        0 + integer -> (KaVariableSignature:
-          name = number
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = number: kotlin.Int
-          callableId = null)
-      }
 
 KtTypeReference(173,177): 'Anno'
   null
@@ -352,6 +352,14 @@ KtValueArgument(178,189): '0 + integer'
 KtBinaryExpression(178,189): '0 + integer'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {
+        integer -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -373,14 +381,6 @@ KtBinaryExpression(178,189): '0 + integer'
           ]
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
-      argumentMapping = {
-        integer -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = other: kotlin.Int
-          callableId = null)
-      }
 
 KtConstantExpression(178,179): '0'
   null
@@ -388,6 +388,14 @@ KtConstantExpression(178,179): '0'
 KtOperationReferenceExpression(180,181): '+'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {
+        integer -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -409,14 +417,6 @@ KtOperationReferenceExpression(180,181): '+'
           ]
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
-      argumentMapping = {
-        integer -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = other: kotlin.Int
-          callableId = null)
-      }
 
 KtNameReferenceExpression(182,189): 'integer'
   KaSuccessCallInfo:
@@ -436,6 +436,7 @@ KtNameReferenceExpression(182,189): 'integer'
 KtDotQualifiedExpression(191,226): '(@Anno(integer) usage()).toString()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -450,7 +451,6 @@ KtDotQualifiedExpression(191,226): '(@Anno(integer) usage()).toString()'
           valueParameters = []
           callableId = kotlin/Unit.toString
       typeArgumentsMapping = {}
-      argumentMapping = {}
 
 KtParenthesizedExpression(191,215): '(@Anno(integer) usage())'
   null
@@ -461,6 +461,14 @@ KtAnnotatedExpression(192,214): '@Anno(integer) usage()'
 KtAnnotationEntry(192,206): '@Anno(integer)'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {
+        integer -> (KaVariableSignature:
+          name = number
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = number: kotlin.Int
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -478,18 +486,18 @@ KtAnnotationEntry(192,206): '@Anno(integer)'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        integer -> (KaVariableSignature:
-          name = number
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = number: kotlin.Int
-          callableId = null)
-      }
 
 KtConstructorCalleeExpression(193,197): 'Anno'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {
+        integer -> (KaVariableSignature:
+          name = number
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = number: kotlin.Int
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -507,14 +515,6 @@ KtConstructorCalleeExpression(193,197): 'Anno'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        integer -> (KaVariableSignature:
-          name = number
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = number: kotlin.Int
-          callableId = null)
-      }
 
 KtTypeReference(193,197): 'Anno'
   null
@@ -549,6 +549,7 @@ KtNameReferenceExpression(198,205): 'integer'
 KtCallExpression(207,214): 'usage()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -560,11 +561,11 @@ KtCallExpression(207,214): 'usage()'
           valueParameters = []
           callableId = /usage
       typeArgumentsMapping = {}
-      argumentMapping = {}
 
 KtNameReferenceExpression(207,212): 'usage'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -576,7 +577,6 @@ KtNameReferenceExpression(207,212): 'usage'
           valueParameters = []
           callableId = /usage
       typeArgumentsMapping = {}
-      argumentMapping = {}
 
 KtValueArgumentList(212,214): '()'
   null
@@ -584,6 +584,7 @@ KtValueArgumentList(212,214): '()'
 KtCallExpression(216,226): 'toString()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -598,11 +599,11 @@ KtCallExpression(216,226): 'toString()'
           valueParameters = []
           callableId = kotlin/Unit.toString
       typeArgumentsMapping = {}
-      argumentMapping = {}
 
 KtNameReferenceExpression(216,224): 'toString'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -617,7 +618,6 @@ KtNameReferenceExpression(216,224): 'toString'
           valueParameters = []
           callableId = kotlin/Unit.toString
       typeArgumentsMapping = {}
-      argumentMapping = {}
 
 KtValueArgumentList(224,226): '()'
   null

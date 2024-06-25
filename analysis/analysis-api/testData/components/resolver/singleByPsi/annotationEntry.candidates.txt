@@ -1,6 +1,14 @@
 KtAnnotationEntry(114,154): '@AnnotationInner(Annotation("v1", "v2"))'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      argumentMapping = {
+        Annotation("v1", "v2") -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = Annotation
+          symbol = value: Annotation
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -18,12 +26,4 @@ KtAnnotationEntry(114,154): '@AnnotationInner(Annotation("v1", "v2"))'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        Annotation("v1", "v2") -> (KaVariableSignature:
-          name = value
-          receiverType = null
-          returnType = Annotation
-          symbol = value: Annotation
-          callableId = null)
-      }
     isInBestCandidates = true
