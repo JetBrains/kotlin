@@ -39,6 +39,11 @@ class Fir2IrLazyFakeOverrideGenerator(private val c: Fir2IrComponents) : Fir2IrC
         klass: FirClass,
         originalFunction: FirNamedFunctionSymbol,
     ): List<Pair<FirNamedFunctionSymbol, ConeClassLikeLookupTag>> {
+        // When generating code for IDE debugger we may get an empty session and empty scope caches
+        // We work it around by forcing cache initialization
+        if (c.configuration.allowNonCachedDeclarations) {
+            klass.unsubstitutedScope(c).processFunctionsByName(originalFunction.name) {}
+        }
         return computeFakeOverrideKeysImpl(
             klass,
             originalFunction,
@@ -58,6 +63,10 @@ class Fir2IrLazyFakeOverrideGenerator(private val c: Fir2IrComponents) : Fir2IrC
         klass: FirClass,
         originalProperty: FirPropertySymbol,
     ): List<Pair<FirPropertySymbol, ConeClassLikeLookupTag>> {
+        // Same reasoning as for `computeFakeOverrideKeys` for functions
+        if (c.configuration.allowNonCachedDeclarations) {
+            klass.unsubstitutedScope(c).processPropertiesByName(originalProperty.name) {}
+        }
         return computeFakeOverrideKeysImpl(
             klass,
             originalProperty,

@@ -47,7 +47,7 @@ class Fir2IrLazySimpleFunction(
         set(_) = mutationNotSupported()
 
     override var returnType: IrType by lazyVar(lock) {
-        fir.returnTypeRef.toIrType(typeConverter)
+        fir.symbol.resolvedReturnTypeRef.toIrType(typeConverter)
     }
 
     override var dispatchReceiverParameter: IrValueParameter? by lazyVar(lock) {
