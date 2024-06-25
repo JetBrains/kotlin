@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.extractLambdaInfoFromFunctionT
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExplicitTypeParameterConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeReceiverConstraintPosition
-import org.jetbrains.kotlin.fir.returnExpressions
+import org.jetbrains.kotlin.fir.lastExpression
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
@@ -139,8 +139,8 @@ internal object ArgumentCheckingProcessor {
     }
 
     private fun ArgumentContext.resolveBlockArgument(block: FirBlock) {
-        val returnArguments = block.returnExpressions()
-        if (returnArguments.isEmpty()) {
+        val lastExpression = block.lastExpression
+        if (lastExpression == null) {
             val newContext = this.copy(isReceiver = false, isDispatch = false)
             newContext.checkApplicabilityForArgumentType(
                 block,
@@ -149,9 +149,7 @@ internal object ArgumentCheckingProcessor {
             )
             return
         }
-        for (argument in returnArguments) {
-            resolveArgumentExpression(argument)
-        }
+        resolveArgumentExpression(lastExpression)
     }
 
     private fun ArgumentContext.resolvePlainExpressionArgument(

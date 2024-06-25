@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeFixVariableConstraintPosition
-import org.jetbrains.kotlin.fir.returnExpressions
+import org.jetbrains.kotlin.fir.lastExpression
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -574,13 +574,11 @@ private fun FirStatement.processCandidatesAndPostponedAtomsInOrderImpl(
         }
 
         is FirBlock -> {
-            this.returnExpressions().forEach {
-                it.processCandidatesAndPostponedAtomsInOrderImpl(
-                    topLevelCandidate,
-                    candidateProcessor,
-                    postponedAtomsProcessor
-                )
-            }
+            this.lastExpression?.processCandidatesAndPostponedAtomsInOrderImpl(
+                topLevelCandidate,
+                candidateProcessor,
+                postponedAtomsProcessor
+            )
         }
     }
 }
