@@ -42,6 +42,8 @@ import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.ir.backend.js.*
+import org.jetbrains.kotlin.ir.backend.js.checkers.JsStandardLibrarySpecialCompatibilityChecker
+import org.jetbrains.kotlin.ir.backend.js.checkers.WasmStandardLibrarySpecialCompatibilityChecker
 import org.jetbrains.kotlin.ir.backend.js.dce.DceDumpNameCache
 import org.jetbrains.kotlin.ir.backend.js.dce.dumpDeclarationIrSizesIfNeed
 import org.jetbrains.kotlin.ir.backend.js.ic.*
@@ -53,6 +55,7 @@ import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
 import org.jetbrains.kotlin.konan.file.ZipFileSystemCacheableAccessor
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
@@ -390,7 +393,9 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 configurationJs,
                 libraries,
                 friendLibraries
-            )
+            ).also {
+                runStandardLibrarySpecialCompatibilityChecks(it.allDependencies, isWasm = arguments.wasm, messageCollector)
+            }
         } else {
             sourceModule!!
         }
@@ -584,6 +589,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         val mainModule = MainModule.SourceFiles(environmentForJS.getSourceFiles())
         val moduleStructure = ModulesStructure(environmentForJS.project, mainModule, configuration, libraries, friendLibraries)
 
+        runStandardLibrarySpecialCompatibilityChecks(moduleStructure.allDependencies, isWasm = arguments.wasm, messageCollector)
+
         val lookupTracker = configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER) ?: LookupTracker.DO_NOTHING
 
         val analyzedOutput = if (
@@ -757,6 +764,15 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             return IcCachesArtifacts(artifacts, cacheGuard)
         }
         return null
+    }
+
+    private fun runStandardLibrarySpecialCompatibilityChecks(
+        libraries: List<KotlinLibrary>,
+        isWasm: Boolean,
+        messageCollector: MessageCollector,
+    ) {
+        val checker = if (isWasm) WasmStandardLibrarySpecialCompatibilityChecker() else JsStandardLibrarySpecialCompatibilityChecker()
+        checker.check(libraries, messageCollector)
     }
 
     override fun setupPlatformSpecificArgumentsAndServices(
