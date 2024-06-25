@@ -763,7 +763,7 @@ KtValueArgument(183,192): '--list[i]'
 KtPrefixExpression(183,192): '--list[i]'
   KaApplicableCallCandidateInfo:
     candidate = KaCompoundArrayAccessCall:
-      compoundAccess = IncOrDecOperation:
+      compoundOperation = IncOrDecOperation:
         kind = DEC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaExplicitReceiverValue:
@@ -830,7 +830,7 @@ KtPrefixExpression(183,192): '--list[i]'
 KtOperationReferenceExpression(183,185): '--'
   KaApplicableCallCandidateInfo:
     candidate = KaCompoundArrayAccessCall:
-      compoundAccess = IncOrDecOperation:
+      compoundOperation = IncOrDecOperation:
         kind = DEC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaExplicitReceiverValue:

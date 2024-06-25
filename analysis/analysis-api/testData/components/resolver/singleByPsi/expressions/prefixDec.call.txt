@@ -1,7 +1,7 @@
 KtPrefixExpression(138,148): '--variable'
   KaSuccessCallInfo:
     call = KaCompoundVariableAccessCall:
-      compoundAccess = IncOrDecOperation:
+      compoundOperation = IncOrDecOperation:
         kind = DEC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaExplicitReceiverValue:

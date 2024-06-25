@@ -23,5 +23,5 @@ class KaBaseCompoundVariableAccessCall(
         get() = withValidityAssertion { backingPartiallyAppliedSymbol }
 
     override val token: KaLifetimeToken get() = backingPartiallyAppliedSymbol.token
-    override val compoundAccess: KaCompoundOperation by validityAsserted(compoundAccess)
+    override val compoundOperation: KaCompoundOperation by validityAsserted(compoundAccess)
 }

@@ -1,7 +1,7 @@
 KtOperationReferenceExpression(146,148): '++'
   KaSuccessCallInfo:
     call = KaCompoundVariableAccessCall:
-      compoundAccess = IncOrDecOperation:
+      compoundOperation = IncOrDecOperation:
         kind = INC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaExplicitReceiverValue:

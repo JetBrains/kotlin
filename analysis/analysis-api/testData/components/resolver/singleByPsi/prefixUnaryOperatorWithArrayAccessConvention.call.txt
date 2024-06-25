@@ -1,7 +1,7 @@
 KtPrefixExpression(128,136): '++m["a"]'
   KaSuccessCallInfo:
     call = KaCompoundArrayAccessCall:
-      compoundAccess = IncOrDecOperation:
+      compoundOperation = IncOrDecOperation:
         kind = INC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaExplicitReceiverValue:
