@@ -27973,6 +27973,12 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       }
 
       @Test
+      @TestMetadata("directJavaActualization.kt")
+      public void testDirectJavaActualization() {
+        runTest("compiler/testData/codegen/box/multiplatform/k2/directJavaActualization.kt");
+      }
+
+      @Test
       @TestMetadata("expectNonExpectOverloads.kt")
       public void testExpectNonExpectOverloads() {
         runTest("compiler/testData/codegen/box/multiplatform/k2/expectNonExpectOverloads.kt");
