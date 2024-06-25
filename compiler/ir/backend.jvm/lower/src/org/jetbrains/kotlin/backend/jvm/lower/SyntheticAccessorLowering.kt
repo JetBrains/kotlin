@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER
@@ -409,8 +410,10 @@ private class SyntheticAccessorTransformer(
                     oldExpression.type,
                     accessorSymbol as IrConstructorSymbol
                 )
-            else ->
-                error("Unexpected IrFunctionAccessExpression: $oldExpression")
+            is IrEnumConstructorCall -> compilationException(
+                "Generating synthetic accessors for IrEnumConstructorCall is not supported",
+                oldExpression,
+            )
         }
         newExpression.copyTypeArgumentsFrom(oldExpression)
         val receiverAndArgs = oldExpression.receiverAndArgs()

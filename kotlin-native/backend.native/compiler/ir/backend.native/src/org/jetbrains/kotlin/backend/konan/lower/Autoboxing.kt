@@ -120,12 +120,13 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
             this.adaptIfNecessary(actualType, type, skipTypeCheck)
     }
 
-    private val IrFunctionAccessExpression.target: IrFunction get() = when (this) {
-        is IrCall -> this.callTarget
-        is IrDelegatingConstructorCall -> this.symbol.owner
-        is IrConstructorCall -> this.symbol.owner
-        else -> TODO(this.render())
-    }
+    private val IrFunctionAccessExpression.target: IrFunction
+        get() = when (this) {
+            is IrCall -> this.callTarget
+            is IrDelegatingConstructorCall -> this.symbol.owner
+            is IrConstructorCall -> this.symbol.owner
+            is IrEnumConstructorCall -> compilationException("IrEnumConstructorCall is not supported here", this)
+        }
 
     private val IrCall.callTarget: IrFunction
         get() = if (this.isVirtualCall) {

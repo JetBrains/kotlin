@@ -714,7 +714,7 @@ object IrTree : AbstractTreeBuilder() {
             )
         }
     }
-    val functionAccessExpression: Element by element(Expression) {
+    val functionAccessExpression: Element by sealedElement(Expression) {
         nameInVisitorMethod = "FunctionAccess"
         transformerReturnType = rootElement
 
