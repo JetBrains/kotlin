@@ -9,7 +9,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.psi.KtElement
 
@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.psi.KtElement
  * This provider should not be used directly.
  * Please use [analyze][org.jetbrains.kotlin.analysis.api.analyze] or [analyzeCopy][org.jetbrains.kotlin.analysis.api.analyzeCopy] instead.
  */
-@OptIn(KaAnalysisApiInternals::class)
+@OptIn(KaImplementationDetail::class)
 public abstract class KaSessionProvider(public val project: Project) : Disposable {
     public abstract fun getAnalysisSession(useSiteElement: KtElement): KaSession
 
@@ -62,7 +62,7 @@ public abstract class KaSessionProvider(public val project: Project) : Disposabl
      *
      * The signature of [beforeEnteringAnalysis] should be kept stable to avoid breaking binary compatibility, since [analyze] is inlined.
      */
-    @KaAnalysisApiInternals
+    @KaImplementationDetail
     public abstract fun beforeEnteringAnalysis(session: KaSession, useSiteElement: KtElement)
 
     /**
@@ -70,7 +70,7 @@ public abstract class KaSessionProvider(public val project: Project) : Disposabl
      *
      * The signature of [beforeEnteringAnalysis] should be kept stable to avoid breaking binary compatibility, since [analyze] is inlined.
      */
-    @KaAnalysisApiInternals
+    @KaImplementationDetail
     public abstract fun beforeEnteringAnalysis(session: KaSession, useSiteModule: KaModule)
 
     /**
@@ -78,7 +78,7 @@ public abstract class KaSessionProvider(public val project: Project) : Disposabl
      *
      * The signature of [afterLeavingAnalysis] should be kept stable to avoid breaking binary compatibility, since [analyze] is inlined.
      */
-    @KaAnalysisApiInternals
+    @KaImplementationDetail
     public abstract fun afterLeavingAnalysis(session: KaSession, useSiteElement: KtElement)
 
     /**
@@ -86,7 +86,7 @@ public abstract class KaSessionProvider(public val project: Project) : Disposabl
      *
      * The signature of [afterLeavingAnalysis] should be kept stable to avoid breaking binary compatibility, since [analyze] is inlined.
      */
-    @KaAnalysisApiInternals
+    @KaImplementationDetail
     public abstract fun afterLeavingAnalysis(session: KaSession, useSiteModule: KaModule)
 
     @TestOnly
@@ -95,7 +95,7 @@ public abstract class KaSessionProvider(public val project: Project) : Disposabl
     override fun dispose() {}
 
     public companion object {
-        @KaAnalysisApiInternals
+        @KaImplementationDetail
         public fun getInstance(project: Project): KaSessionProvider =
             project.getService(KaSessionProvider::class.java)
     }

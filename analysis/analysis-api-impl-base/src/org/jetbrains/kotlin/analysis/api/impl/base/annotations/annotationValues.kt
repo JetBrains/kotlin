@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.annotations
 
-import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtElement
 
-@KaAnalysisApiInternals
+@KaImplementationDetail
 class KaUnsupportedAnnotationValueImpl(
     override val token: KaLifetimeToken
 ) : KaAnnotationValue.UnsupportedValue {
@@ -24,7 +24,7 @@ class KaUnsupportedAnnotationValueImpl(
         get() = withValidityAssertion { null }
 }
 
-@KaAnalysisApiInternals
+@KaImplementationDetail
 class KaArrayAnnotationValueImpl(
     values: Collection<KaAnnotationValue>,
     sourcePsi: KtElement?,
@@ -40,7 +40,7 @@ class KaArrayAnnotationValueImpl(
         get() = withValidityAssertion { backingSourcePsi }
 }
 
-@KaAnalysisApiInternals
+@KaImplementationDetail
 class KaNestedAnnotationAnnotationValueImpl(
     annotation: KaAnnotation,
     override val token: KaLifetimeToken,
@@ -54,7 +54,7 @@ class KaNestedAnnotationAnnotationValueImpl(
         get() = withValidityAssertion { backingAnnotation.psi }
 }
 
-@KaAnalysisApiInternals
+@KaImplementationDetail
 class KaClassLiteralAnnotationValueImpl(
     type: KaType,
     classId: ClassId?,
@@ -75,7 +75,7 @@ class KaClassLiteralAnnotationValueImpl(
         get() = withValidityAssertion { backingSourcePsi }
 }
 
-@KaAnalysisApiInternals
+@KaImplementationDetail
 class KaEnumEntryAnnotationValueImpl(
     callableId: CallableId?,
     sourcePsi: KtElement?,
@@ -91,7 +91,7 @@ class KaEnumEntryAnnotationValueImpl(
         get() = withValidityAssertion { backingSourcePsi }
 }
 
-@KaAnalysisApiInternals
+@KaImplementationDetail
 class KaConstantAnnotationValueImpl(
     value: KaConstantValue,
     override val token: KaLifetimeToken,

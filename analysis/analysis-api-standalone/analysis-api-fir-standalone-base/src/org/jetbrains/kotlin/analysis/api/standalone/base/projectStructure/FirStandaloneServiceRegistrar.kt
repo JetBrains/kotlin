@@ -10,10 +10,10 @@ import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.impl.PsiElementFinderImpl
-import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 
-@OptIn(KaAnalysisNonPublicApi::class)
+@OptIn(KaImplementationDetail::class)
 object FirStandaloneServiceRegistrar : AnalysisApiSimpleServiceRegistrar() {
     private const val PLUGIN_RELATIVE_PATH = "/META-INF/analysis-api/analysis-api-fir-standalone-base.xml"
 

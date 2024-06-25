@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.permissions
 
-import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.permissions.KaAnalysisPermissionRegistry.KaExplicitAnalysisRestriction
 
 /**
@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.api.permissions.KaAnalysisPermissionRegistr
  * @param description A human-readable description of the [action], which is used to generate error messages when
  *  [analyze][org.jetbrains.kotlin.analysis.api.analyze] is called.
  */
-@OptIn(KaAnalysisApiInternals::class)
+@OptIn(KaImplementationDetail::class)
 public inline fun <R> forbidAnalysis(description: String, action: () -> R): R {
     val permissionRegistry = KaAnalysisPermissionRegistry.getInstance()
     if (permissionRegistry.explicitAnalysisRestriction != null) return action()
@@ -36,7 +36,7 @@ public annotation class KaAllowAnalysisOnEdt
  * Analysis is not supposed to be invoked from the EDT, as it may cause freezes. Use at your own risk!
  */
 @KaAllowAnalysisOnEdt
-@OptIn(KaAnalysisApiInternals::class)
+@OptIn(KaImplementationDetail::class)
 public inline fun <T> allowAnalysisOnEdt(action: () -> T): T {
     val permissionRegistry = KaAnalysisPermissionRegistry.getInstance()
     if (permissionRegistry.isAnalysisAllowedOnEdt) return action()
@@ -97,7 +97,7 @@ private annotation class KaAllowProhibitedAnalyzeFromWriteAction
  */
 @KaAllowAnalysisFromWriteAction
 @KaAllowProhibitedAnalyzeFromWriteAction
-@OptIn(KaAnalysisApiInternals::class)
+@OptIn(KaImplementationDetail::class)
 public inline fun <T> allowAnalysisFromWriteAction(action: () -> T): T {
     val permissionRegistry = KaAnalysisPermissionRegistry.getInstance()
     if (permissionRegistry.isAnalysisAllowedInWriteAction) return action()

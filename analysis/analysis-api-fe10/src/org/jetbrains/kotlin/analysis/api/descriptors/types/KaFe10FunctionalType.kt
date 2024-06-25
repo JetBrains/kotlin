@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.types
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescNamedClassSymbol
@@ -59,6 +60,7 @@ internal class KaFe10FunctionalType(
     override val hasContextReceivers: Boolean
         get() = withValidityAssertion { fe10Type.contextFunctionTypeParamsCount() > 0 }
 
+    @KaExperimentalApi
     override val contextReceivers: List<KaContextReceiver>
         get() = withValidityAssertion {
             fe10Type.getContextReceiverTypesFromFunctionType().map { receiverType ->
