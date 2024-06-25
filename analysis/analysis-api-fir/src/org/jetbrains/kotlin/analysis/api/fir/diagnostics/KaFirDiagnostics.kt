@@ -2823,6 +2823,12 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val compatibility: Map<ExpectActualCompatibility<FirBasedSymbol<*>>, List<KaSymbol>>
     }
 
+    interface ImplicitActualIsIncompatibleWithExpect : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = ImplicitActualIsIncompatibleWithExpect::class
+        val actualDeclaration: KaSymbol
+        val compatibility: Map<ExpectActualCompatibility<FirBasedSymbol<*>>, List<KaSymbol>>
+    }
+
     interface AmbiguousExpects : KaFirDiagnostic<KtNamedDeclaration> {
         override val diagnosticClass get() = AmbiguousExpects::class
         val declaration: KaSymbol
@@ -2831,6 +2837,12 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface NoActualClassMemberForExpectedClass : KaFirDiagnostic<KtNamedDeclaration> {
         override val diagnosticClass get() = NoActualClassMemberForExpectedClass::class
+        val declaration: KaSymbol
+        val members: List<Pair<KaSymbol, Map<MismatchOrIncompatible<FirBasedSymbol<*>>, List<KaSymbol>>>>
+    }
+
+    interface ImplicitActualNoActualClassMemberForExpectedClass : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = ImplicitActualNoActualClassMemberForExpectedClass::class
         val declaration: KaSymbol
         val members: List<Pair<KaSymbol, Map<MismatchOrIncompatible<FirBasedSymbol<*>>, List<KaSymbol>>>>
     }
@@ -2849,6 +2861,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface ExpectActualOptInAnnotation : KaFirDiagnostic<KtNamedDeclaration> {
         override val diagnosticClass get() = ExpectActualOptInAnnotation::class
+    }
+
+    interface ImplicitActualOptInAnnotation : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = ImplicitActualOptInAnnotation::class
     }
 
     interface ActualTypealiasToSpecialAnnotation : KaFirDiagnostic<KtTypeAlias> {
