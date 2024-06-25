@@ -24,12 +24,14 @@ import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseApplicableCa
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseCompoundAssignOperation
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseCompoundUnaryOperation
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseCompoundVariableAccessCall
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseErrorCallInfo
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseImplicitReceiverValue
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseInapplicableCallCandidateInfo
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBasePartiallyAppliedSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSimpleVariableReadAccess
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSimpleVariableWriteAccess
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSmartCastedReceiverValue
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSuccessCallInfo
 import org.jetbrains.kotlin.analysis.api.impl.base.util.KaNonBoundToPsiErrorDiagnostic
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.*
@@ -599,7 +601,7 @@ internal class KaFe10Resolver(
         resolvedCalls: List<ResolvedCall<*>>,
         diagnostics: Diagnostics = context.diagnostics,
     ): KaCallInfo {
-        val failedResolveCall = resolvedCalls.firstOrNull { !it.status.isSuccess } ?: return KaSuccessCallInfo(ktCall)
+        val failedResolveCall = resolvedCalls.firstOrNull { !it.status.isSuccess } ?: return KaBaseSuccessCallInfo(ktCall)
 
         val diagnostic = getDiagnosticToReport(context, psi, ktCall, diagnostics)?.let { KaFe10Diagnostic(it, token) }
             ?: KaNonBoundToPsiErrorDiagnostic(
@@ -607,7 +609,8 @@ internal class KaFe10Resolver(
                 "${failedResolveCall.status} with ${failedResolveCall.resultingDescriptor.name}",
                 token
             )
-        return KaErrorCallInfo(listOf(ktCall), diagnostic, token)
+
+        return KaBaseErrorCallInfo(listOf(ktCall), diagnostic)
     }
 
     private fun handleResolveErrors(context: BindingContext, psi: KtElement): KaErrorCallInfo? {
@@ -628,7 +631,8 @@ internal class KaFe10Resolver(
                 emptyList()
             }
         }
-        return KaErrorCallInfo(calls.mapNotNull { it.toFunctionKtCall(context) ?: it.toPropertyRead(context) }, ktDiagnostic, token)
+
+        return KaBaseErrorCallInfo(calls.mapNotNull { it.toFunctionKtCall(context) ?: it.toPropertyRead(context) }, ktDiagnostic)
     }
 
     private fun getDiagnosticToReport(
