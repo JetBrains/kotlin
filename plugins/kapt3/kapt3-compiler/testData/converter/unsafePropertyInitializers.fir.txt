@@ -64,6 +64,11 @@ public final class Boo {
  *   public final val aliasedInt: kotlin/Int (* = TInt^ *) (* = ... *)
  *     public final get
  *
+ *   // field: b:B
+ *   // getter: getB()B
+ *   public final val b: kotlin/Byte (* = ... *)
+ *     public final get
+ *
  *   // field: bInt:I
  *   // getter: getBInt()I
  *   public final val bInt: kotlin/Int (* = ... *)
@@ -128,6 +133,48 @@ public final class Boo {
  *   public final val k: kotlin/String
  *     public final get
  *
+ *   // field: s:S
+ *   // getter: getS()S
+ *   public final val s: kotlin/Short (* = ... *)
+ *     public final get
+ *
+ *   // field: x:F
+ *   // getter: getX()F
+ *   public final val x: kotlin/Float (* = ... *)
+ *     public final get
+ *
+ *   // field: ubyte1:B
+ *   public final val ubyte1: kotlin/UByte (* = ... *)
+ *     public final get
+ *
+ *   // field: ubyteMax:B
+ *   public final val ubyteMax: kotlin/UByte (* = ... *)
+ *     public final get
+ *
+ *   // field: uint1:I
+ *   public final val uint1: kotlin/UInt (* = ... *)
+ *     public final get
+ *
+ *   // field: uintMax:I
+ *   public final val uintMax: kotlin/UInt (* = ... *)
+ *     public final get
+ *
+ *   // field: ulong1:J
+ *   public final val ulong1: kotlin/ULong (* = ... *)
+ *     public final get
+ *
+ *   // field: ulongMax:J
+ *   public final val ulongMax: kotlin/ULong (* = ... *)
+ *     public final get
+ *
+ *   // field: ushort1:S
+ *   public final val ushort1: kotlin/UShort (* = ... *)
+ *     public final get
+ *
+ *   // field: ushortMax:S
+ *   public final val ushortMax: kotlin/UShort (* = ... *)
+ *     public final get
+ *
  *   // module name: main
  * }
  */
@@ -174,6 +221,28 @@ public final class Foo {
     private static final int aliasedInt = 1;
 
     private static final int aliasedUInt = 1;
+
+    private static final byte b = 1;
+
+    private static final short s = 1;
+
+    private static final float x = 1.0f;
+
+    private static final byte ubyte1 = 1;
+
+    private static final short ushort1 = 1;
+
+    private static final int uint1 = 1;
+
+    private static final long ulong1 = 1L;
+
+    private static final byte ubyteMax = -1;
+
+    private static final short ushortMax = -1;
+
+    private static final int uintMax = -1;
+
+    private static final long ulongMax = -1L;
 
     private Foo() {
         super();
@@ -241,6 +310,18 @@ public final class Foo {
 
     public final int getAliasedInt() {
         return 0;
+    }
+
+    public final byte getB() {
+        return 0;
+    }
+
+    public final short getS() {
+        return 0;
+    }
+
+    public final float getX() {
+        return 0.0F;
     }
 }
 

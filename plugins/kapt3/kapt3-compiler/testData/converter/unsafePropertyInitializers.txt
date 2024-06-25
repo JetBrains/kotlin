@@ -66,6 +66,11 @@ public final class Boo {
  *   public final val aliasedUInt: kotlin/UInt (* = TUint^ *) (* = ... *)
  *     public final get
  *
+ *   // field: b:B
+ *   // getter: getB()B
+ *   public final val b: kotlin/Byte (* = ... *)
+ *     public final get
+ *
  *   // field: bInt:I
  *   // getter: getBInt()I
  *   public final val bInt: kotlin/Int (* = ... *)
@@ -130,6 +135,72 @@ public final class Boo {
  *   public final val k: kotlin/String
  *     public final get
  *
+ *   // field: s:S
+ *   // getter: getS()S
+ *   public final val s: kotlin/Short (* = ... *)
+ *     public final get
+ *
+ *   // requires compiler version 1.4.30 (level=ERROR)
+ *   // requires language version 1.4.0 (level=ERROR)
+ *   // field: ubyte1:B
+ *   // getter: getUbyte1-w2LRezQ()B
+ *   public final val ubyte1: kotlin/UByte (* = ... *)
+ *     public final get
+ *
+ *   // requires compiler version 1.4.30 (level=ERROR)
+ *   // requires language version 1.4.0 (level=ERROR)
+ *   // field: ubyteMax:B
+ *   // getter: getUbyteMax-w2LRezQ()B
+ *   public final val ubyteMax: kotlin/UByte (* = ... *)
+ *     public final get
+ *
+ *   // requires compiler version 1.4.30 (level=ERROR)
+ *   // requires language version 1.4.0 (level=ERROR)
+ *   // field: uint1:I
+ *   // getter: getUint1-pVg5ArA()I
+ *   public final val uint1: kotlin/UInt (* = ... *)
+ *     public final get
+ *
+ *   // requires compiler version 1.4.30 (level=ERROR)
+ *   // requires language version 1.4.0 (level=ERROR)
+ *   // field: uintMax:I
+ *   // getter: getUintMax-pVg5ArA()I
+ *   public final val uintMax: kotlin/UInt (* = ... *)
+ *     public final get
+ *
+ *   // requires compiler version 1.4.30 (level=ERROR)
+ *   // requires language version 1.4.0 (level=ERROR)
+ *   // field: ulong1:J
+ *   // getter: getUlong1-s-VKNKU()J
+ *   public final val ulong1: kotlin/ULong (* = ... *)
+ *     public final get
+ *
+ *   // requires compiler version 1.4.30 (level=ERROR)
+ *   // requires language version 1.4.0 (level=ERROR)
+ *   // field: ulongMax:J
+ *   // getter: getUlongMax-s-VKNKU()J
+ *   public final val ulongMax: kotlin/ULong (* = ... *)
+ *     public final get
+ *
+ *   // requires compiler version 1.4.30 (level=ERROR)
+ *   // requires language version 1.4.0 (level=ERROR)
+ *   // field: ushort1:S
+ *   // getter: getUshort1-Mh2AYeg()S
+ *   public final val ushort1: kotlin/UShort (* = ... *)
+ *     public final get
+ *
+ *   // requires compiler version 1.4.30 (level=ERROR)
+ *   // requires language version 1.4.0 (level=ERROR)
+ *   // field: ushortMax:S
+ *   // getter: getUshortMax-Mh2AYeg()S
+ *   public final val ushortMax: kotlin/UShort (* = ... *)
+ *     public final get
+ *
+ *   // field: x:F
+ *   // getter: getX()F
+ *   public final val x: kotlin/Float (* = ... *)
+ *     public final get
+ *
  *   // module name: main
  * }
  */
@@ -158,6 +229,17 @@ public final class Foo {
     private static final java.lang.String k = null;
     private static final int aliasedInt = 1;
     private static final int aliasedUInt = 1;
+    private static final byte b = (byte)1;
+    private static final short s = (short)1;
+    private static final float x = 1.0F;
+    private static final byte ubyte1 = (byte)1;
+    private static final short ushort1 = (short)1;
+    private static final int uint1 = 1;
+    private static final long ulong1 = 1L;
+    private static final byte ubyteMax = (byte)-1;
+    private static final short ushortMax = (short)-1;
+    private static final int uintMax = -1;
+    private static final long ulongMax = -1L;
     @org.jetbrains.annotations.NotNull()
     public static final Foo INSTANCE = null;
 
@@ -228,6 +310,18 @@ public final class Foo {
 
     public final int getAliasedInt() {
         return 0;
+    }
+
+    public final byte getB() {
+        return 0;
+    }
+
+    public final short getS() {
+        return 0;
+    }
+
+    public final float getX() {
+        return 0.0F;
     }
 }
 

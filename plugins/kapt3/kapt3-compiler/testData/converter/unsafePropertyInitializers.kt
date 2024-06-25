@@ -22,6 +22,20 @@ object Foo {
 
     val aliasedInt: TInt = 1
     val aliasedUInt: TUint = 1U
+
+    val b: Byte = 1
+    val s: Short = 1
+    val x: Float = 1f
+
+    val ubyte1: UByte = 1u
+    val ushort1: UShort = 1u
+    val uint1: UInt = 1u
+    val ulong1: ULong = 1u
+
+    val ubyteMax: UByte = UByte.MAX_VALUE
+    val ushortMax: UShort = UShort.MAX_VALUE
+    val uintMax: UInt = UInt.MAX_VALUE
+    val ulongMax: ULong = ULong.MAX_VALUE
 }
 
 object Boo {

@@ -260,6 +260,10 @@ private fun KaConstantValue.asStringForPsiExpression(): String =
         is String -> "\"${escapeString(value)}\""
         is Long -> "${value}L"
         is Float -> "${value}f"
+        is UByte -> "${value.toByte()}"
+        is UShort -> "${value.toShort()}"
+        is UInt -> "${value.toInt()}"
+        is ULong -> "${value.toLong()}L"
         else -> value.toString()
     }
 
