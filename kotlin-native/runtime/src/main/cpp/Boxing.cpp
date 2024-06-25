@@ -54,12 +54,12 @@ extern KBox<KLong>    LONG_CACHE[];
 namespace {
 
 template<class T>
-inline bool isInRange(T value, T from, T to) {
+ALWAYS_INLINE inline bool isInRange(T value, T from, T to) {
   return value >= from && value <= to;
 }
 
 template<class T>
-OBJ_GETTER(getCachedBox, T value, KBox<T> cache[], T from) {
+ALWAYS_INLINE OBJ_GETTER(getCachedBox, T value, KBox<T> cache[], T from) {
   uint64_t index = value - from;
   RETURN_OBJ(&cache[index].header);
 }
@@ -68,53 +68,53 @@ OBJ_GETTER(getCachedBox, T value, KBox<T> cache[], T from) {
 
 extern "C" {
 
-bool inBooleanBoxCache(KBoolean value) {
+PERFORMANCE_INLINE bool inBooleanBoxCache(KBoolean value) {
   return isInRange(value, BOOLEAN_RANGE_FROM, BOOLEAN_RANGE_TO);
 }
 
-bool inByteBoxCache(KByte value) {
+PERFORMANCE_INLINE bool inByteBoxCache(KByte value) {
   return isInRange(value, BYTE_RANGE_FROM, BYTE_RANGE_TO);
 }
 
-bool inCharBoxCache(KChar value) {
+PERFORMANCE_INLINE bool inCharBoxCache(KChar value) {
   return isInRange(value, CHAR_RANGE_FROM, CHAR_RANGE_TO);
 }
 
-bool inShortBoxCache(KShort value) {
+PERFORMANCE_INLINE bool inShortBoxCache(KShort value) {
   return isInRange(value, SHORT_RANGE_FROM, SHORT_RANGE_TO);
 }
 
-bool inIntBoxCache(KInt value) {
+PERFORMANCE_INLINE bool inIntBoxCache(KInt value) {
   return isInRange(value, INT_RANGE_FROM, INT_RANGE_TO);
 }
 
-bool inLongBoxCache(KLong value) {
+PERFORMANCE_INLINE bool inLongBoxCache(KLong value) {
   return isInRange(value, LONG_RANGE_FROM, LONG_RANGE_TO);
 }
 
-OBJ_GETTER(getCachedBooleanBox, KBoolean value) {
+PERFORMANCE_INLINE OBJ_GETTER(getCachedBooleanBox, KBoolean value) {
   RETURN_RESULT_OF(getCachedBox, value, BOOLEAN_CACHE, BOOLEAN_RANGE_FROM);
 }
 
-OBJ_GETTER(getCachedByteBox, KByte value) {
+PERFORMANCE_INLINE OBJ_GETTER(getCachedByteBox, KByte value) {
   // Remember that KByte can't handle values >= 127
   // so it can't be used as indexing type.
   RETURN_RESULT_OF(getCachedBox, value, BYTE_CACHE, BYTE_RANGE_FROM);
 }
 
-OBJ_GETTER(getCachedCharBox, KChar value) {
+PERFORMANCE_INLINE OBJ_GETTER(getCachedCharBox, KChar value) {
   RETURN_RESULT_OF(getCachedBox, value, CHAR_CACHE, CHAR_RANGE_FROM);
 }
 
-OBJ_GETTER(getCachedShortBox, KShort value) {
+PERFORMANCE_INLINE OBJ_GETTER(getCachedShortBox, KShort value) {
   RETURN_RESULT_OF(getCachedBox, value, SHORT_CACHE, SHORT_RANGE_FROM);
 }
 
-OBJ_GETTER(getCachedIntBox, KInt value) {
+PERFORMANCE_INLINE OBJ_GETTER(getCachedIntBox, KInt value) {
   RETURN_RESULT_OF(getCachedBox, value, INT_CACHE, INT_RANGE_FROM);
 }
 
-OBJ_GETTER(getCachedLongBox, KLong value) {
+PERFORMANCE_INLINE OBJ_GETTER(getCachedLongBox, KLong value) {
   RETURN_RESULT_OF(getCachedBox, value, LONG_CACHE, LONG_RANGE_FROM);
 }
 

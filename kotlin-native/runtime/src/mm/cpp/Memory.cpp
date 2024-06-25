@@ -127,12 +127,12 @@ extern "C" void ClearMemoryForTests(MemoryState* state) {
     state->GetThreadData()->ClearForTests();
 }
 
-extern "C" RUNTIME_NOTHROW OBJ_GETTER(AllocInstance, const TypeInfo* typeInfo) {
+extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW OBJ_GETTER(AllocInstance, const TypeInfo* typeInfo) {
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     RETURN_RESULT_OF(mm::AllocateObject, threadData, typeInfo);
 }
 
-extern "C" OBJ_GETTER(AllocArrayInstance, const TypeInfo* typeInfo, int32_t elements) {
+extern "C" PERFORMANCE_INLINE OBJ_GETTER(AllocArrayInstance, const TypeInfo* typeInfo, int32_t elements) {
     if (elements < 0) {
         ThrowIllegalArgumentException();
     }
@@ -209,13 +209,13 @@ extern "C" OBJ_GETTER(ReadHeapRefNoLock, ObjHeader* object, int32_t index) {
     ThrowNotImplementedError();
 }
 
-extern "C" RUNTIME_NOTHROW void EnterFrame(ObjHeader** start, int parameters, int count) {
+extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void EnterFrame(ObjHeader** start, int parameters, int count) {
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     AssertThreadState(threadData, ThreadState::kRunnable);
     threadData->shadowStack().EnterFrame(start, parameters, count);
 }
 
-extern "C" RUNTIME_NOTHROW void LeaveFrame(ObjHeader** start, int parameters, int count) {
+extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void LeaveFrame(ObjHeader** start, int parameters, int count) {
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     AssertThreadState(threadData, ThreadState::kRunnable);
     threadData->shadowStack().LeaveFrame(start, parameters, count);

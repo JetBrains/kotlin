@@ -18,11 +18,11 @@ using Cell = typename kotlin::alloc::ExtraObjectCell;
 using Page = typename kotlin::alloc::ExtraObjectPage;
 
 Data* alloc(Page* page) {
-    Data* ptr = page->TryAllocate();
+    uint8_t* ptr = page->TryAllocate();
     if (ptr) {
-        memset(ptr, 0, sizeof(Data));
+        return new(ptr) Data();
     }
-    return ptr;
+    return nullptr;
 }
 
 TEST(CustomAllocTest, ExtraObjectPageConsequtiveAlloc) {

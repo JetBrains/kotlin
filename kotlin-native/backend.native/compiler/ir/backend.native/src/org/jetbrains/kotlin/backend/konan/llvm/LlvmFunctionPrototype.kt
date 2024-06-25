@@ -12,6 +12,7 @@ import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.binaryTypeIsReference
+import org.jetbrains.kotlin.backend.konan.ir.isBoxOrUnboxFun
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -236,5 +237,8 @@ private fun inferFunctionAttributes(contextUtils: ContextUtils, irFunction: IrFu
             }
             if (mustNotInline(contextUtils.context, irFunction)) {
                 add(LlvmFunctionAttribute.NoInline)
+            }
+            if (irFunction.symbol.isBoxOrUnboxFun() && contextUtils.context.shouldInlineBoxing()) {
+                add(LlvmFunctionAttribute.AlwaysInline)
             }
         }
