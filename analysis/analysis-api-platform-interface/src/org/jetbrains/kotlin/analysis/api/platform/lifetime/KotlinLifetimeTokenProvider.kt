@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.platform.lifetime
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeTokenFactory
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformComponent
 
 public abstract class KotlinLifetimeTokenProvider : KotlinPlatformComponent {

@@ -10,10 +10,10 @@ import com.intellij.psi.util.PsiUtilCore
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.impl.base.lifetime.KaBaseLifetimeTracker
 import org.jetbrains.kotlin.analysis.api.impl.base.permissions.KaBaseWriteActionStartedChecker
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeTokenFactory
 import org.jetbrains.kotlin.analysis.api.session.KaSessionProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
+import org.jetbrains.kotlin.analysis.api.platform.lifetime.KaLifetimeTokenFactory
 import org.jetbrains.kotlin.analysis.api.platform.lifetime.KotlinLifetimeTokenProvider
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.analysis.api.platform.permissions.KaAnalysisPermissionChecker
@@ -37,7 +37,7 @@ abstract class KaBaseSessionProvider(project: Project) : KaSessionProvider(proje
 
     private val writeActionStartedChecker = KaBaseWriteActionStartedChecker(this)
 
-    override val tokenFactory: KaLifetimeTokenFactory by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    protected val tokenFactory: KaLifetimeTokenFactory by lazy(LazyThreadSafetyMode.PUBLICATION) {
         KotlinLifetimeTokenProvider.getService(project).getLifetimeTokenFactory()
     }
 

@@ -12,7 +12,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
 import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeTokenFactory
 import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
 import org.jetbrains.kotlin.analysis.api.platform.permissions.KaAnalysisPermissionChecker
 import kotlin.reflect.KClass
@@ -34,8 +33,6 @@ public class KotlinReadActionConfinementLifetimeToken(
      */
     @KaCachedService
     private val lifetimeTracker = KaLifetimeTracker.getInstance(project)
-
-    override val factory: KaLifetimeTokenFactory get() = KotlinReadActionConfinementLifetimeTokenFactory
 
     override fun isValid(): Boolean {
         return onCreatedTimeStamp == modificationTracker.modificationCount
@@ -66,7 +63,7 @@ public class KotlinReadActionConfinementLifetimeToken(
     }
 }
 
-public object KotlinReadActionConfinementLifetimeTokenFactory : KaLifetimeTokenFactory() {
+public object KotlinReadActionConfinementLifetimeTokenFactory : KaLifetimeTokenFactory {
     override val identifier: KClass<out KaLifetimeToken> = KotlinReadActionConfinementLifetimeToken::class
 
     override fun create(project: Project, modificationTracker: ModificationTracker): KaLifetimeToken =

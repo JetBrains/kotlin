@@ -10,7 +10,6 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeTokenFactory
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.psi.KtElement
 
@@ -22,8 +21,6 @@ import org.jetbrains.kotlin.psi.KtElement
  */
 @OptIn(KaAnalysisApiInternals::class)
 public abstract class KaSessionProvider(public val project: Project) : Disposable {
-    public abstract val tokenFactory: KaLifetimeTokenFactory
-
     public abstract fun getAnalysisSession(useSiteElement: KtElement): KaSession
 
     public abstract fun getAnalysisSession(useSiteModule: KaModule): KaSession
