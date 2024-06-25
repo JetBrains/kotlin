@@ -36,8 +36,7 @@ object FirProjectionRelationChecker : FirTypeRefChecker(MppCheckerKind.Common) {
         val potentiallyProblematicArguments = collectPotentiallyProblematicArguments(typeRef, context.session)
 
         for (argumentData in potentiallyProblematicArguments) {
-            val declaration = argumentData.constructor.toRegularClassSymbol(context.session)
-                ?: error("Shouldn't be here")
+            val declaration = argumentData.constructor.toRegularClassSymbol(context.session) ?: continue
             val proto = declaration.typeParameterSymbols[argumentData.index]
             val actual = argumentData.projection
             val protoVariance = proto.variance
@@ -167,7 +166,7 @@ object FirProjectionRelationChecker : FirTypeRefChecker(MppCheckerKind.Common) {
             }
 
             val substitutedArgument = previousSubstitutor.substituteArgument(argument, index) ?: continue
-            val source = (argument.type as? ConeTypeParameterType)?.toSymbol(session)?.let { parametersToSources[it] }
+            val source = unsubstitutedType.toSymbol(session)?.let { parametersToSources[it] }
                 ?: error("Should have calculated")
             result += TypeArgumentData(substitutedType, index, substitutedArgument, source)
         }
