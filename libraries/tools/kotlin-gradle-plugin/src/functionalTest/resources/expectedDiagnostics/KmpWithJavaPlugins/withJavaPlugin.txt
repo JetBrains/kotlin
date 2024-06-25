@@ -1,0 +1,3 @@
+[DeprecatedInKMPJavaPluginsDiagnostic | WARNING] 'java' Gradle plugin is not compatible with 'org.jetbrains.kotlin.multiplatform' plugin.
+
+Consider adding a new subproject with 'java' plugin where the KMP project is added as a dependency.
