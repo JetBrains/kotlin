@@ -122,9 +122,10 @@ object CheckExtensionReceiver : ResolutionStage() {
         context: ResolutionContext
     ) {
         val receiver = receivers.single()
+        val receiverAtom = ConeCallAtom.createRawAtom(receiver.expression)
         ArgumentCheckingProcessor.resolvePlainArgumentType(
             candidate,
-            receiver.expression,
+            receiverAtom,
             argumentType = receiver.type,
             expectedType = expectedType,
             sink = sink,
@@ -134,6 +135,7 @@ object CheckExtensionReceiver : ResolutionStage() {
             sourceForReceiver = candidate.callInfo.callSite.source
         )
 
+        // TODO: store atoms for receivers in candidate
         candidate.chosenExtensionReceiver = receiver.expression
 
         sink.yieldIfNeed()
