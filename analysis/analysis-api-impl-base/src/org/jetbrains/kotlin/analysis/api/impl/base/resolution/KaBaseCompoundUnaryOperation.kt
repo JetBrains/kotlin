@@ -16,13 +16,13 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 @KaImplementationDetail
 class KaBaseCompoundUnaryOperation(
     private val backingOperationPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>,
-    kind: KaCompoundOperation.IncOrDecOperation.Kind,
-    precedence: KaCompoundOperation.IncOrDecOperation.Precedence,
-) : KaCompoundOperation.IncOrDecOperation {
+    kind: KaCompoundOperation.KaCompoundUnaryOperation.Kind,
+    precedence: KaCompoundOperation.KaCompoundUnaryOperation.Precedence,
+) : KaCompoundOperation.KaCompoundUnaryOperation {
     override val token: KaLifetimeToken get() = backingOperationPartiallyAppliedSymbol.token
 
-    override val kind: KaCompoundOperation.IncOrDecOperation.Kind by validityAsserted(kind)
-    override val precedence: KaCompoundOperation.IncOrDecOperation.Precedence by validityAsserted(precedence)
+    override val kind: KaCompoundOperation.KaCompoundUnaryOperation.Kind by validityAsserted(kind)
+    override val precedence: KaCompoundOperation.KaCompoundUnaryOperation.Precedence by validityAsserted(precedence)
     override val operationPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>
         get() = withValidityAssertion { backingOperationPartiallyAppliedSymbol }
 }

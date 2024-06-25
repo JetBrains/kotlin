@@ -319,7 +319,7 @@ KtNameReferenceExpression(250,253): 'Int'
 KtPostfixExpression(256,265): 'current++'
   KaApplicableCallCandidateInfo:
     candidate = KaCompoundVariableAccessCall:
-      compoundOperation = IncOrDecOperation:
+      compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaExplicitReceiverValue:
@@ -368,7 +368,7 @@ KtNameReferenceExpression(256,263): 'current'
 KtOperationReferenceExpression(263,265): '++'
   KaApplicableCallCandidateInfo:
     candidate = KaCompoundVariableAccessCall:
-      compoundOperation = IncOrDecOperation:
+      compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaExplicitReceiverValue:

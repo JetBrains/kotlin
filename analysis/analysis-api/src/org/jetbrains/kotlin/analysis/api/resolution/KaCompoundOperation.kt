@@ -34,7 +34,7 @@ public sealed interface KaCompoundOperation : KaLifetimeOwner {
     /**
      * A compound access that read, increment or decrement, and write the computed value back.
      */
-    public interface IncOrDecOperation : KaCompoundOperation {
+    public interface KaCompoundUnaryOperation : KaCompoundOperation {
         public val kind: Kind
         public val precedence: Precedence
 

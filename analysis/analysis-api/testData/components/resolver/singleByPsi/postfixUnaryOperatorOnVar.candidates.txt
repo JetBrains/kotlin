@@ -1,7 +1,7 @@
 KtPostfixExpression(31,34): 'i++'
   KaApplicableCallCandidateInfo:
     candidate = KaCompoundVariableAccessCall:
-      compoundOperation = IncOrDecOperation:
+      compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaExplicitReceiverValue:
