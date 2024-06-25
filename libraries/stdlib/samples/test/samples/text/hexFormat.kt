@@ -234,6 +234,23 @@ class HexFormats {
 
     class Numbers {
         @Sample
+        fun numberHexFormat() {
+            val numberHexFormat = HexFormat {
+                upperCase = true
+                number {
+                    removeLeadingZeros = true
+                    minLength = 4
+                    prefix = "0x"
+                }
+            }
+
+            assertPrints(0x3a.toHexString(numberHexFormat), "0x003A")
+            assertPrints("0x003A".hexToInt(numberHexFormat), "58")
+            // Parsing is case-insensitive
+            assertPrints("0X003a".hexToInt(numberHexFormat), "58")
+        }
+
+        @Sample
         fun prefix() {
             // By default, `prefix` is an empty string.
             assertPrints(0x3a.toHexString(), "0000003a")

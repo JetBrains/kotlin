@@ -439,6 +439,8 @@ public class HexFormat internal constructor(
      * `HexFormat { }` builder function and configure the options of the `number` property inside the braces. For
      * example, use `val format = HexFormat { number.prefix = "0x" }` to set the [prefix]. The `number` property is of
      * type [NumberHexFormat.Builder], whose options are configurable and correspond to the options of this class.
+     *
+     * @sample samples.text.HexFormats.Numbers.numberHexFormat
      */
     public class NumberHexFormat internal constructor(
         /**
@@ -540,6 +542,8 @@ public class HexFormat internal constructor(
          * resulting format. For example, use `val format = HexFormat { number.removeLeadingZeros = true }` to set
          * [NumberHexFormat.removeLeadingZeros]. Refer to [NumberHexFormat] for details about how the configured
          * format options affect formatting and parsing results.
+         *
+         * @sample samples.text.HexFormats.Numbers.numberHexFormat
          */
         public class Builder internal constructor() {
             /**
