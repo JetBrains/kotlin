@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.*
 import org.jetbrains.kotlin.gradle.targets.native.internal.AddKotlinPlatformIntegersSupportLibrary
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizedCInteropApiElementsConfigurationsSetupAction
 import org.jetbrains.kotlin.gradle.targets.native.internal.SetupCInteropApiElementsConfigurationSideEffect
-import org.jetbrains.kotlin.gradle.targets.native.internal.SetupKotlinNativePlatformDependenciesForLegacyImport
+import org.jetbrains.kotlin.gradle.targets.native.internal.SetupKotlinNativeStdlibAndPlatformDependenciesImport
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.KotlinArtifactsExtensionSetupAction
 import org.jetbrains.kotlin.gradle.tooling.RegisterBuildKotlinToolingMetadataTask
 
@@ -55,7 +55,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, UserDefinedAttributesSetupAction)
         register(project, CustomizeKotlinDependenciesSetupAction)
         register(project, AddKotlinPlatformIntegersSupportLibrary)
-        register(project, SetupKotlinNativePlatformDependenciesForLegacyImport)
+        register(project, SetupKotlinNativeStdlibAndPlatformDependenciesImport)
         register(project, FinalizeConfigurationFusMetricAction)
 
 
@@ -83,7 +83,7 @@ internal fun Project.registerKotlinPluginExtensions() {
             register(project, KotlinRegisterCompilationArchiveTasksExtension)
             register(project, IdeMultiplatformImportActionSetupAction)
             register(project, KotlinLLDBScriptSetupAction)
-            register(project, ExcludeDefaultPlatformDependenciesFromKotlinNativeCompileTasks)
+            register(project, SetupKotlinNativePlatformDependenciesAndStdlib)
             register(project, SetupConsistentMetadataDependenciesResolution)
             register(project, RegisterMultiplatformResourcesPublicationExtensionAction)
             register(project, SetUpMultiplatformJvmResourcesPublicationAction)
@@ -112,7 +112,6 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, KotlinCompilationProcessorSideEffect)
         register(project, KotlinCreateNativeCInteropTasksSideEffect)
         register(project, KotlinCreateCompilationArchivesTask)
-        register(project, SetupKotlinNativePlatformDependenciesAndStdlib)
     }
 
     KotlinTargetArtifact.extensionPoint.apply {
