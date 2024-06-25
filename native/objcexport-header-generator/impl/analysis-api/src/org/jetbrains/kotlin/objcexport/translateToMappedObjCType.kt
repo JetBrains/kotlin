@@ -79,6 +79,9 @@ internal val mappedObjCTypeNames: Map<ClassId, String>
         }
     }
 
+/**
+ * See K1 [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportMapper.isSpecialMapped]
+ */
 context(KaSession)
 @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal val KaType.isMappedObjCType: Boolean

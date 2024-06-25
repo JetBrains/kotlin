@@ -35,12 +35,6 @@ class ObjCExportMapper(
 
     val hiddenTypes: Set<ClassId> get() = CustomTypeMappers.hiddenTypes
 
-    fun isSpecialMapped(descriptor: ClassDescriptor): Boolean {
-        // TODO: this method duplicates some of the [ObjCExportTranslatorImpl.mapReferenceType] logic.
-        return KotlinBuiltIns.isAny(descriptor) ||
-            descriptor.getAllSuperClassifiers().any { it is ClassDescriptor && CustomTypeMappers.hasMapper(it) }
-    }
-
     private val methodBridgeCache = mutableMapOf<FunctionDescriptor, MethodBridge>()
 
     fun bridgeMethod(descriptor: FunctionDescriptor): MethodBridge = if (local) {
@@ -52,7 +46,25 @@ class ObjCExportMapper(
     }
 }
 
-internal fun ObjCExportMapper.getClassIfCategory(descriptor: CallableMemberDescriptor): ClassDescriptor? {
+internal fun isSpecialMapped(descriptor: ClassDescriptor): Boolean {
+    // TODO: this method duplicates some of the [ObjCExportTranslatorImpl.mapReferenceType] logic.
+    return KotlinBuiltIns.isAny(descriptor) ||
+            descriptor.getAllSuperClassifiers().any { it is ClassDescriptor && CustomTypeMappers.hasMapper(it) }
+}
+
+/**
+ * Return null when:
+ * 1. callable [descriptor] is not top level function or property
+ * 2. callable [descriptor] doesn't have extension
+ * 3. see other cases at [getClassIfCategory] with param [KotlinType]
+ *
+ * In other cases returns extension type:
+ * ```kotlin
+ * fun Foo.bar() = Unit
+ * getClassIfCategory(bar) > Foo
+ * ```
+ */
+internal fun getClassIfCategory(descriptor: CallableMemberDescriptor): ClassDescriptor? {
     if (descriptor.dispatchReceiverParameter != null) return null
 
     val extensionReceiverType = descriptor.extensionReceiverParameter?.type ?: return null
@@ -60,13 +72,26 @@ internal fun ObjCExportMapper.getClassIfCategory(descriptor: CallableMemberDescr
     return getClassIfCategory(extensionReceiverType)
 }
 
-internal fun ObjCExportMapper.getClassIfCategory(extensionReceiverType: KotlinType): ClassDescriptor? {
+/**
+ * Returns null when:
+ * 1. [extensionReceiverType] is extension of [kotlinx.cinterop.ObjCObject]
+ * 2. [extensionReceiverType] is interface
+ * 3. [extensionReceiverType] is inlined
+ * 4. [extensionReceiverType] is [isSpecialMapped] == true
+ *
+ * In other cases returns extension type:
+ * ```kotlin
+ * fun Foo.bar() = Unit
+ * getClassIfCategory(bar) > Foo
+ * ```
+ */
+internal fun getClassIfCategory(extensionReceiverType: KotlinType): ClassDescriptor? {
     // FIXME: this code must rely on type mapping instead of copying its logic.
 
     if (extensionReceiverType.isObjCObjectType()) return null
 
     val erasedClass = extensionReceiverType.getErasedTypeClass()
-    return if (!erasedClass.isInterface && !erasedClass.isInlined() && !this.isSpecialMapped(erasedClass)) {
+    return if (!erasedClass.isInterface && !erasedClass.isInlined() && !isSpecialMapped(erasedClass)) {
         erasedClass
     } else {
         // E.g. receiver is protocol, or some type with custom mapping.
@@ -243,10 +268,10 @@ fun ObjCExportMapper.getBaseProperties(descriptor: PropertyDescriptor): List<Pro
 internal tailrec fun KotlinType.getErasedTypeClass(): ClassDescriptor =
     TypeUtils.getClassDescriptor(this) ?: this.constructor.supertypes.first().getErasedTypeClass()
 
-internal fun ObjCExportMapper.isTopLevel(descriptor: CallableMemberDescriptor): Boolean =
-    descriptor.containingDeclaration !is ClassDescriptor && this.getClassIfCategory(descriptor) == null
+internal fun isTopLevel(descriptor: CallableMemberDescriptor): Boolean =
+    descriptor.containingDeclaration !is ClassDescriptor && getClassIfCategory(descriptor) == null
 
-internal fun ObjCExportMapper.isObjCProperty(property: PropertyDescriptor): Boolean =
+internal fun isObjCProperty(property: PropertyDescriptor): Boolean =
     property.extensionReceiverParameter == null || getClassIfCategory(property) != null
 
 @InternalKotlinNativeApi
@@ -269,7 +294,7 @@ fun ClassDescriptor.getEnumEntriesPropertyDescriptor(): PropertyDescriptor? {
     ).singleOrNull { it.extensionReceiverParameter == null }
 }
 
-internal fun ObjCExportMapper.doesThrow(method: FunctionDescriptor): Boolean = method.allOverriddenDescriptors.any {
+internal fun doesThrow(method: FunctionDescriptor): Boolean = method.allOverriddenDescriptors.any {
     it.overriddenDescriptors.isEmpty() && it.annotations.hasAnnotation(KonanFqNames.throws)
 }
 
@@ -308,7 +333,7 @@ private fun ObjCExportMapper.bridgeType(
     }
 )
 
-private fun ObjCExportMapper.bridgeFunctionType(kotlinType: KotlinType): TypeBridge {
+private fun bridgeFunctionType(kotlinType: KotlinType): TypeBridge {
     // kotlinType.arguments include return type: <P1, P2, ..., Pn, R>
     val numberOfParameters = kotlinType.arguments.size - 1
 
@@ -344,7 +369,7 @@ private fun ObjCExportMapper.bridgeReturnType(
         }
 
         descriptor.containingDeclaration.let { it is ClassDescriptor && KotlinBuiltIns.isAny(it) } &&
-            descriptor.name.asString() == "hashCode" -> {
+                descriptor.name.asString() == "hashCode" -> {
             assert(!convertExceptionsToErrors)
             MethodBridge.ReturnValue.HashCode
         }
@@ -384,7 +409,7 @@ private fun TypeBridge.isReferenceOrPointer(): Boolean = when (this) {
 private fun ObjCExportMapper.bridgeMethodImpl(descriptor: FunctionDescriptor): MethodBridge {
     assert(isBaseMethod(descriptor))
 
-    val convertExceptionsToErrors = this.doesThrow(descriptor)
+    val convertExceptionsToErrors = doesThrow(descriptor)
 
     val kotlinParameters = descriptor.allParameters.iterator()
 

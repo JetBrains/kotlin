@@ -6,11 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.backend.common.serialization.findSourceFile
-import org.jetbrains.kotlin.backend.konan.InternalKotlinNativeApi
-import org.jetbrains.kotlin.backend.konan.KonanFqNames
-import org.jetbrains.kotlin.backend.konan.ObjCExportNameCollisionMode
-import org.jetbrains.kotlin.backend.konan.UnitSuspendFunctionObjCExport
-import org.jetbrains.kotlin.backend.konan.cKeywords
+import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -625,7 +621,7 @@ class ObjCExportNamerImpl(
 
     override fun getPropertyName(property: PropertyDescriptor): ObjCExportNamer.PropertyName {
         assert(mapper.isBaseProperty(property))
-        assert(mapper.isObjCProperty(property))
+        assert(isObjCProperty(property))
         val objCName = property.getObjCName()
         fun PropertyNameMapping.getOrPut(forSwift: Boolean) = getOrPut(property) {
             StringBuilder().apply {
@@ -950,13 +946,13 @@ private fun ObjCExportMapper.canBeInheritedBySameClass(
     second: CallableMemberDescriptor,
     ignoreInterfaceMethodCollisions: Boolean,
 ): Boolean {
-    if (this.isTopLevel(first) || this.isTopLevel(second)) {
-        return this.isTopLevel(first) && this.isTopLevel(second) &&
+    if (isTopLevel(first) || isTopLevel(second)) {
+        return isTopLevel(first) && isTopLevel(second) &&
             first.propertyIfAccessor.findSourceFile() == second.propertyIfAccessor.findSourceFile()
     }
 
-    val firstClass = this.getClassIfCategory(first) ?: first.containingDeclaration as ClassDescriptor
-    val secondClass = this.getClassIfCategory(second) ?: second.containingDeclaration as ClassDescriptor
+    val firstClass = getClassIfCategory(first) ?: first.containingDeclaration as ClassDescriptor
+    val secondClass = getClassIfCategory(second) ?: second.containingDeclaration as ClassDescriptor
 
     if (first is ConstructorDescriptor) {
         return firstClass == secondClass || second !is ConstructorDescriptor && firstClass.isSubclassOf(secondClass)

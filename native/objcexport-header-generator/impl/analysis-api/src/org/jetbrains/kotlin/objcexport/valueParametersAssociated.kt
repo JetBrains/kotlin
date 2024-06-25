@@ -137,13 +137,12 @@ internal val KaFunctionSymbol.objCReceiverType: KaType?
         } else if (this is KaPropertyGetterSymbol || this is KaPropertySetterSymbol) {
             val property = containingSymbol as KaPropertySymbol
             val isExtension = property.isExtension
-            val isInner = (property.containingSymbol as? KaNamedClassSymbol)?.isInner == true
             val receiverType = property.receiverType
             if (isExtension) {
-                if (isInner) {
+                if (receiverType?.getClassIfCategory() == null) {
                     receiverType
                 } else {
-                    if (receiverType?.isMappedObjCType == true) receiverType else null
+                    null
                 }
             } else null
 
