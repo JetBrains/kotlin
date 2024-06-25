@@ -45,7 +45,6 @@ fun buildProjectWithMPP(
 ) = buildProject(projectBuilder) {
     preApplyCode()
     project.applyMultiplatformPlugin()
-    disableLegacyWarning(project)
     code()
 }
 
@@ -96,7 +95,6 @@ fun Project.androidApplication(code: ApplicationExtension.() -> Unit) {
 }
 
 fun Project.applyMultiplatformPlugin(): KotlinMultiplatformExtension {
-    disableLegacyWarning(project)
     plugins.apply("kotlin-multiplatform")
     return extensions.getByName("kotlin") as KotlinMultiplatformExtension
 }

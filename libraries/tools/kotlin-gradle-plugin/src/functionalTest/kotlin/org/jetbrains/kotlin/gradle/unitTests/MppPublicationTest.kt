@@ -28,9 +28,7 @@ import kotlin.test.*
 
 class MppPublicationTest {
 
-    private val project = ProjectBuilder.builder().build().also {
-        disableLegacyWarning(it)
-    } as ProjectInternal
+    private val project = ProjectBuilder.builder().build() as ProjectInternal
 
     init {
         project.plugins.apply("kotlin-multiplatform")
