@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.fir.deserialization
 
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
@@ -20,10 +18,12 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.providers.dependenciesSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.getRegularClassSymbolByClassId
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.setLazyPublishedVisibility
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -31,10 +31,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
-import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -497,6 +494,10 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             setLazyPublishedVisibility(c.session)
             getter?.setLazyPublishedVisibility(annotations, this, c.session)
             setter?.setLazyPublishedVisibility(annotations, this, c.session)
+
+            if (proto.hasDelegatedWrappedData()) {
+                loadDelegatedWrappedData(proto.delegatedWrappedData, this)
+            }
         }
     }
 
@@ -534,10 +535,19 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         val symbol = FirNamedFunctionSymbol(callableId)
         val local = c.childContext(proto.typeParameterList, containingDeclarationSymbol = symbol)
 
+        val memberKind = ProtoBuf.MemberKind.entries[Flags.MEMBER_KIND.get(flags).number]
+
+        val origin = when (memberKind) {
+//            ProtoBuf.MemberKind.FAKE_OVERRIDE -> TODO()
+            ProtoBuf.MemberKind.DELEGATION -> FirDeclarationOrigin.Delegated
+//            ProtoBuf.MemberKind.SYNTHESIZED -> FirDeclarationOrigin.Synthetic.FakeFunction
+            else -> deserializationOrigin
+        }
+
         val versionRequirements = VersionRequirement.create(proto, c)
         val simpleFunction = buildSimpleFunction {
             moduleData = c.moduleData
-            origin = deserializationOrigin
+            this.origin = origin
             returnTypeRef = proto.returnType(local.typeTable).toTypeRef(local)
             receiverParameter = proto.receiverType(local.typeTable)?.toTypeRef(local)?.let { receiverType ->
                 buildReceiverParameter {
@@ -593,7 +603,27 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 simpleFunction.replaceContractDescription(contractDescription)
             }
         }
+        if (proto.hasDelegatedWrappedData()) {
+            loadDelegatedWrappedData(proto.delegatedWrappedData, simpleFunction)
+        }
         return simpleFunction
+    }
+
+    private fun loadDelegatedWrappedData(
+        dproto: ProtoBuf.DelegatedWrapperData,
+        callableDeclaration: FirCallableDeclaration,
+    ) {
+        val wfqn = FqName.fromSegments(c.nameResolver.getQualifiedClassName(dproto.wrappedClassId).split("/"))
+        val wcn = c.nameResolver.getName(dproto.wrappedNameId)
+        val wcid = ClassId(wfqn.parent(), wfqn.shortName())
+        val wrappedClass =
+            c.session.symbolProvider.getRegularClassSymbolByClassId(wcid)
+                ?: c.session.dependenciesSymbolProvider.getRegularClassSymbolByClassId(wcid)
+        val wrappedFunction = wrappedClass?.fir?.declarations?.find { it is FirSimpleFunction && it.name == wcn }
+        if (wrappedFunction != null && wrappedFunction is FirSimpleFunction) {
+            callableDeclaration.delegatedWrapperData =
+                DelegatedWrapperData(wrappedFunction, null, null)
+        }
     }
 
     fun loadConstructor(

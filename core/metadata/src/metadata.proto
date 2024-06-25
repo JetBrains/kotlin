@@ -333,6 +333,8 @@ message Function {
 
   repeated ValueParameter value_parameter = 6;
 
+  optional DelegatedWrapperData delegated_wrapped_data = 15;
+
   optional TypeTable type_table = 30;
 
   // Index into the VersionRequirementTable
@@ -391,6 +393,8 @@ message Property {
   */
   optional int32 getter_flags = 7;
   optional int32 setter_flags = 8;
+
+  optional DelegatedWrapperData delegated_wrapped_data = 15;
 
   // Index into the VersionRequirementTable
   repeated int32 version_requirement = 31;
@@ -601,4 +605,9 @@ message Expression {
   // Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
   // it is optimized and embedded straight into this message.
   repeated Expression or_argument = 7;
+}
+
+message DelegatedWrapperData {
+  optional int32 wrapped_class_id = 1 [(fq_name_id_in_table) = true];
+  optional int32 wrapped_name_id = 2 [(name_id_in_table) = true];
 }
