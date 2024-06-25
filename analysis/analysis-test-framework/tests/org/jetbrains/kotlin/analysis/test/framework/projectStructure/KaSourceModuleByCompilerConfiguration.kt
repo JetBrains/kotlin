@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.test.framework.projectStructure
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.computeTransitiveDependsOnDependencies
@@ -73,6 +74,7 @@ abstract class KtModuleByCompilerConfiguration(
         val jdkHomePaths = StandaloneProjectFactory.getDefaultJdkModulePaths(project, jdkHome.toPath())
         val scope = StandaloneProjectFactory.createSearchScopeByLibraryRoots(
             jdkHomePaths,
+            emptyList(),
             testServices.environmentManager.getProjectEnvironment()
         )
 
@@ -148,6 +150,7 @@ class KaLibraryModuleByCompilerConfiguration(
     override val libraryName: String get() = testModule.name
     override val librarySources: KaLibrarySourceModule? get() = null
     override val isSdk: Boolean get() = false
+    override val binaryVirtualFiles: Collection<VirtualFile> = emptyList()
 
     override val contentScope: GlobalSearchScope =
         GlobalSearchScope.filesScope(project, psiFiles.map { it.virtualFile })
@@ -174,6 +177,7 @@ private class LibraryByRoots(
 ) : KaLibraryModule {
     override val contentScope: GlobalSearchScope = StandaloneProjectFactory.createSearchScopeByLibraryRoots(
         roots,
+        emptyList(),
         testServices.environmentManager.getProjectEnvironment(),
     )
     override val libraryName: String get() = "Test Library $roots"
@@ -184,6 +188,7 @@ private class LibraryByRoots(
     override val targetPlatform: TargetPlatform get() = parentModule.targetPlatform
     override val binaryRoots: Collection<Path> get() = roots
     override val isSdk: Boolean get() = false
+    override val binaryVirtualFiles: Collection<VirtualFile> = emptyList()
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

@@ -59,6 +59,20 @@ internal fun compileCommonKlib(kLibSourcesRoot: Path): Path {
     return testKlib
 }
 
+internal fun compileToJar(sourceRoot: Path): Path {
+    val ktFiles = Files.walk(sourceRoot).asSequence().filter { it.extension == "kt" }.toList()
+    val testJar = KtTestUtil.tmpDir("testLibrary").resolve("library.jar").toPath()
+
+    val arguments = buildList {
+        ktFiles.mapTo(this) { it.absolutePathString() }
+        add("-d")
+        add(testJar.absolutePathString())
+    }
+    MockLibraryUtil.runJvmCompiler(arguments)
+
+    return testJar
+}
+
 internal fun createDumbVirtualFile(
     project: Project,
     fileName: String,

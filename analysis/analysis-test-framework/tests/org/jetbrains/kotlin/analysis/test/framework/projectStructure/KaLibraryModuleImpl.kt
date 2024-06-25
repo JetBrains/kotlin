@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.test.framework.projectStructure
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
@@ -25,6 +26,8 @@ class KaLibraryModuleImpl(
     override val directRegularDependencies: MutableList<KaModule> = mutableListOf()
     override val directDependsOnDependencies: MutableList<KaModule> = mutableListOf()
     override val directFriendDependencies: MutableList<KaModule> = mutableListOf()
+
+    override val binaryVirtualFiles: Collection<VirtualFile> = emptyList()
 
     override fun toString(): String = libraryName
 }
