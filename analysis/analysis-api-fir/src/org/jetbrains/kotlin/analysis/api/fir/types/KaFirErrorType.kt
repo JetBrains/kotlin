@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.types
 
-import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
+import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForType
@@ -28,11 +28,11 @@ internal class KaFirErrorType(
 
     override val nullability: KaTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
 
-    @KaAnalysisNonPublicApi
+    @KaNonPublicApi
     override val errorMessage: String
         get() = withValidityAssertion { coneType.diagnostic.reason }
 
-    @KaAnalysisNonPublicApi
+    @KaNonPublicApi
     override val presentableText: String?
         get() = withValidityAssertion {
             when (val diagnostic = coneType.diagnostic) {

@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
-import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
@@ -55,7 +55,7 @@ public interface KaSubstitutorProvider {
  * Creates new [KaSubstitutor] using substitutions specified inside [build] lambda
  */
 @KaExperimentalApi
-@OptIn(ExperimentalContracts::class, KaAnalysisApiInternals::class)
+@OptIn(ExperimentalContracts::class, KaImplementationDetail::class)
 public inline fun KaSession.buildSubstitutor(
     build: KaSubstitutorBuilder.() -> Unit,
 ): KaSubstitutor {
@@ -67,7 +67,7 @@ public inline fun KaSession.buildSubstitutor(
 
 @KaExperimentalApi
 public class KaSubstitutorBuilder
-@KaAnalysisApiInternals constructor(override val token: KaLifetimeToken) : KaLifetimeOwner {
+@KaImplementationDetail constructor(override val token: KaLifetimeToken) : KaLifetimeOwner {
     private val backingMapping = mutableMapOf<KaTypeParameterSymbol, KaType>()
 
     public val mappings: Map<KaTypeParameterSymbol, KaType> get() = withValidityAssertion { backingMapping }

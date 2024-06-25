@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.platform.projectStructure
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.projectStructure.danglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.api.projectStructure.isDangling
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.psi.analysisContext
 public abstract class KotlinProjectStructureProviderBase : KotlinProjectStructureProvider {
     protected abstract fun getNotUnderContentRootModule(project: Project): KaNotUnderContentRootModule
 
-    @OptIn(KaAnalysisApiInternals::class)
+    @OptIn(KaImplementationDetail::class)
     protected fun computeSpecialModule(file: PsiFile): KaModule? {
         val virtualFile = file.virtualFile
         if (virtualFile != null) {

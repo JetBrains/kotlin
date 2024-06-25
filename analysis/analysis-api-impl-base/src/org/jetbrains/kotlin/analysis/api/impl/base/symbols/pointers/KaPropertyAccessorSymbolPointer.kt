@@ -5,13 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers
 
-import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 
-@KaAnalysisApiInternals
+@KaImplementationDetail
 sealed class KaPropertyAccessorSymbolPointer<T : KaPropertyAccessorSymbol>(
     private val propertySymbolPointer: KaSymbolPointer<KaPropertySymbol>
 ) : KaSymbolPointer<T>() {
@@ -27,7 +26,7 @@ sealed class KaPropertyAccessorSymbolPointer<T : KaPropertyAccessorSymbol>(
     }
 }
 
-@KaAnalysisApiInternals
+@KaImplementationDetail
 class KaPropertyGetterSymbolPointer(
     propertySymbolPointer: KaSymbolPointer<KaPropertySymbol>,
 ) : KaPropertyAccessorSymbolPointer<KaPropertyGetterSymbol>(propertySymbolPointer) {
@@ -37,7 +36,7 @@ class KaPropertyGetterSymbolPointer(
     }
 }
 
-@KaAnalysisApiInternals
+@KaImplementationDetail
 class KaPropertySetterSymbolPointer(
     propertySymbolPointer: KaSymbolPointer<KaPropertySymbol>,
 ) : KaPropertyAccessorSymbolPointer<KaPropertySetterSymbol>(propertySymbolPointer) {

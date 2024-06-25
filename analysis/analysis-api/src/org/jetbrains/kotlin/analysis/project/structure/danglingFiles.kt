@@ -7,7 +7,7 @@
 
 package org.jetbrains.kotlin.analysis.project.structure
 
-import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.api.projectStructure.withDanglingFileResolutionMode
 import org.jetbrains.kotlin.psi.KtFile
@@ -31,6 +31,6 @@ public val KtFile.danglingFileResolutionMode: DanglingFileResolutionMode?
 
 // Try to preserve binary compatibility of code which has inlined `analyzeCopy`.
 @Deprecated("Use 'org.jetbrains.kotlin.analysis.api.projectStructure.withDanglingFileResolutionMode' instead.")
-@KaAnalysisApiInternals
+@KaImplementationDetail
 public fun <R> withDanglingFileResolutionMode(file: KtFile, mode: DanglingFileResolutionMode, action: () -> R): R =
     withDanglingFileResolutionMode(file, mode) { action() }

@@ -5,12 +5,16 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.validityAsserted
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.name.Name
 
+@KaExperimentalApi
+@KaImplementationDetail
 class KaBaseContextReceiver(
     type: KaType,
     label: Name?,

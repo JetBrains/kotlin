@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightReferenceListBuilder
-import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
@@ -186,7 +186,7 @@ internal fun KaAnnotatedSymbol.computeThrowsList(
 
 context(KaSession)
 @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-@KaAnalysisNonPublicApi
+@KaImplementationDetail
 fun annotateByKtType(
     psiType: PsiType,
     ktType: KaType,

@@ -12,7 +12,7 @@ import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiType
 import com.intellij.psi.PsiTypes
 import com.intellij.psi.util.ClassUtil
-import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
+import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.components.KaMetadataCalculator
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
@@ -70,7 +70,7 @@ internal class KaFirMetadataCalculator(
         firSession.languageVersionSettings.languageVersion.toMetadataVersion()
     }
 
-    @KaAnalysisNonPublicApi
+    @KaNonPublicApi
     override fun KtClassOrObject.calculateMetadata(mapping: Multimap<KtElement, PsiElement>): Metadata = withValidityAssertion {
         val firClass = resolveToFirSymbolOfType<FirClassSymbol<*>>(firResolveSession).fir
         firClass.lazyResolveToPhaseWithCallableMembers(FirResolvePhase.STATUS)
