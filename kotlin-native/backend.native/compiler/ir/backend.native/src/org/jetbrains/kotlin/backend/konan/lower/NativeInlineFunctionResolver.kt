@@ -16,16 +16,17 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.*
 
 internal class InlineFunctionsSupport(mapping: NativeMapping) {
-    // Inline functions lowered up to just before the inliner.
-    private val partiallyLoweredInlineFunctions = mapping.partiallyLoweredInlineFunctions
+    /**
+     * This is the cache of the inline functions that have already been lowered.
+     * It is helpful to avoid re-lowering the same function multiple times.
+     */
+    private val loweredInlineFunctions = mapping.loweredInlineFunctions
 
-    fun savePartiallyLoweredInlineFunction(function: IrFunction) =
-            function.deepCopyWithSymbols(function.parent).also {
-                partiallyLoweredInlineFunctions[function] = it
-            }
+    fun saveLoweredInlineFunction(function: IrFunction): IrFunction = function.deepCopyWithSymbols(function.parent).also {
+        loweredInlineFunctions[function] = it
+    }
 
-    fun getPartiallyLoweredInlineFunction(function: IrFunction) =
-            partiallyLoweredInlineFunctions[function]
+    fun getLoweredInlineFunction(function: IrFunction): IrFunction? = loweredInlineFunctions[function]
 }
 
 // TODO: This is a bit hacky. Think about adopting persistent IR ideas.
@@ -49,7 +50,7 @@ internal class NativeInlineFunctionResolver(
             function to firstAccess
         } else {
             irFile = packageFragment as IrFile
-            val partiallyLoweredFunction = context.inlineFunctionsSupport.getPartiallyLoweredInlineFunction(function)
+            val partiallyLoweredFunction = context.inlineFunctionsSupport.getLoweredInlineFunction(function)
             if (partiallyLoweredFunction == null)
                 function to true
             else {
@@ -63,7 +64,7 @@ internal class NativeInlineFunctionResolver(
             lower(possiblyLoweredFunction, irFile, functionIsCached)
             if (!functionIsCached) {
                 generationState.inlineFunctionOrigins[function] =
-                        InlineFunctionOriginInfo(context.inlineFunctionsSupport.savePartiallyLoweredInlineFunction(possiblyLoweredFunction),
+                        InlineFunctionOriginInfo(context.inlineFunctionsSupport.saveLoweredInlineFunction(possiblyLoweredFunction),
                                 irFile, function.startOffset, function.endOffset)
             }
         }
