@@ -988,6 +988,24 @@ object KotlinToolingDiagnostics {
                         "Please remove '${PropertiesProvider.PropertyNames.KOTLIN_INCREMENTAL_USE_CLASSPATH_SNAPSHOT}=false' from 'gradle.properties' file."
             )
     }
+
+    object DeprecatedInKMPJavaPluginsDiagnostic : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(pluginId: String): ToolingDiagnostic {
+            val pluginString = when(pluginId) {
+                "application" -> "'$pluginId' (also applies 'java' plugin)"
+                "java-library" -> "'$pluginId' (also applies 'java' plugin)"
+                else -> "'$pluginId'"
+            }
+
+            return build(
+                """
+                |$pluginString Gradle plugin is not compatible with 'org.jetbrains.kotlin.multiplatform' plugin.
+                |
+                |Consider adding a new subproject with '$pluginId' plugin where the KMP project is added as a dependency.
+                """.trimMargin()
+            )
+        }
+    }
 }
 
 private fun String.indentLines(nSpaces: Int = 4, skipFirstLine: Boolean = true): String {

@@ -65,6 +65,7 @@ internal fun Project.registerKotlinPluginExtensions() {
 
         if (isMultiplatform) {
             register(project, ApplyJavaBasePluginSetupAction)
+            register(project, DeprecateJavaPluginsApplicationSetupAction)
             register(project, DeprecatedMppGradlePropertiesMigrationSetupAction)
             register(project, KotlinMultiplatformTargetPresetAction)
             register(project, KotlinMultiplatformSourceSetSetupAction)
