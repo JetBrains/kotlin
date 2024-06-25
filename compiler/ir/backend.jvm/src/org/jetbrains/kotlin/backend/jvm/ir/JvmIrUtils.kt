@@ -473,11 +473,6 @@ val IrClass.isOptionalAnnotationClass: Boolean
             isExpect &&
             hasAnnotation(OptionalAnnotationUtil.OPTIONAL_EXPECTATION_FQ_NAME)
 
-fun IrFunctionAccessExpression.receiverAndArgs(): List<IrExpression> {
-    return (arrayListOf(this.dispatchReceiver, this.extensionReceiver) +
-            symbol.owner.valueParameters.mapIndexed { i, _ -> getValueArgument(i) }).filterNotNull()
-}
-
 fun classFileContainsMethod(classId: ClassId, function: IrFunction, context: JvmBackendContext): Boolean? {
     val originalSignature = context.defaultMethodSignatureMapper.mapAsmMethod(function)
     val originalDescriptor = originalSignature.descriptor
