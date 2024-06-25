@@ -13,6 +13,12 @@ import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformComponent
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
 /**
+ * [KotlinDeclarationProviderFactory] creates a scope-based [KotlinDeclarationProvider] which covers all non-generated, physical
+ * declarations found in source files and possibly indices/stubs for libraries.
+ *
+ * The declaration provider created by [KotlinDeclarationProviderFactory] is considered the **main declaration provider** for the given
+ * scope. Other kinds of declaration providers exist, but they usually cover generated declarations for edge cases.
+ *
  * @see KotlinDeclarationProvider
  */
 public interface KotlinDeclarationProviderFactory : KotlinPlatformComponent {

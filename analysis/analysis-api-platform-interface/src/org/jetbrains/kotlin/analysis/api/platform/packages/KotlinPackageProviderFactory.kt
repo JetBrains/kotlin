@@ -11,6 +11,15 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.platform.KotlinComposableProviderMerger
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformComponent
 
+/**
+ * [KotlinPackageProviderFactory] creates a scope-based [KotlinPackageProvider] which covers all non-generated packages found in source
+ * files and possibly indices/stubs for libraries.
+ *
+ * The package provider created by [KotlinPackageProviderFactory] is considered the **main package provider** for the given scope. Other
+ * kinds of package providers exist, but they usually cover generated packages for edge cases.
+ *
+ * @see KotlinPackageProvider
+ */
 public interface KotlinPackageProviderFactory : KotlinPlatformComponent {
     public fun createPackageProvider(searchScope: GlobalSearchScope): KotlinPackageProvider
 

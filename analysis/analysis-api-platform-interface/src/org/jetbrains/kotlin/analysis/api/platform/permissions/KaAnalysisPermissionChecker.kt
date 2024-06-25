@@ -11,6 +11,16 @@ import org.jetbrains.kotlin.analysis.api.platform.KaEngineService
 
 /**
  * [KaAnalysisPermissionChecker] is an *engine service* which allows checking whether analysis is currently allowed.
+ *
+ * In general, analysis can be prohibited in the following cases:
+ *
+ * - If analysis is invoked from the EDT, it is prohibited unless explicitly allowed via
+ *   [allowAnalysisOnEdt][org.jetbrains.kotlin.analysis.api.permissions.allowAnalysisOnEdt] or [KotlinAnalysisPermissionOptions].
+ * - If analysis is invoked from a write action, it is prohibited unless explicitly allowed via
+ *   [allowAnalysisFromWriteAction][org.jetbrains.kotlin.analysis.api.permissions.allowAnalysisFromWriteAction] or
+ *   [KotlinAnalysisPermissionOptions].
+ * - Analysis can also be explicitly forbidden via [forbidAnalysis][org.jetbrains.kotlin.analysis.api.permissions.forbidAnalysis], which in
+ *   contrast to the above points cannot be controlled with [KotlinAnalysisPermissionOptions].
  */
 public interface KaAnalysisPermissionChecker : KaEngineService {
     public fun isAnalysisAllowed(): Boolean

@@ -14,12 +14,13 @@ import org.jetbrains.kotlin.psi.KtAnnotated
 import org.jetbrains.kotlin.psi.KtElement
 
 /**
- * A service to match declarations with their annotations and vice versa.
+ * [KotlinAnnotationsResolver] matches declarations with their annotations and vice versa.
  *
- * N.B. This service can produce both false positives and false negatives from time to time, since it might not be allowed to use
- * full-blown resolve to understand the true FqName of used annotation.
+ * This service can produce both false positives and false negatives, since it might not be allowed to use full resolution to understand the
+ * true [FqName][org.jetbrains.kotlin.name.FqName] of a used annotation.
  *
  * The next statement should be `true` for any `annotation`:
+ *
  * ```
  * declarationsByAnnotation(annotation).all { declaration ->
  *   annotation in annotationsOnDeclaration(declaration)
@@ -28,16 +29,17 @@ import org.jetbrains.kotlin.psi.KtElement
  */
 public interface KotlinAnnotationsResolver {
     /**
-     * @param queriedAnnotation A qualified name of the annotation in question.
-     * @return A set of PSI declarations which have [queriedAnnotation] declared directly on them.
-     * Might contain both false positives and false negatives.
+     * Returns an approximate set of [KtAnnotated] declarations which have an annotation with the given [queriedAnnotation] applied to them.
+     * The set may contain both false positives and false negatives.
      */
     public fun declarationsByAnnotation(queriedAnnotation: ClassId): Set<KtAnnotated>
 
     /**
-     * @param declaration A [org.jetbrains.kotlin.psi.KtDeclaration] or [org.jetbrains.kotlin.psi.KtFile] to resolve annotations on. Other
-     * [KtElement]s are not supported.
-     * @return A set of annotations declared directly on the [declaration]. Might contain both false positives and false negatives.
+     * Returns an approximate set of annotation [ClassId]s which have been applied to [declaration]. The set may contain both false
+     * positives and false negatives.
+     *
+     * @param declaration A [KtDeclaration][org.jetbrains.kotlin.psi.KtDeclaration] or [KtFile][org.jetbrains.kotlin.psi.KtFile] to resolve
+     *  annotations on. Other [KtElement]s are not supported.
      */
     public fun annotationsOnDeclaration(declaration: KtAnnotated): Set<ClassId>
 }
@@ -45,7 +47,7 @@ public interface KotlinAnnotationsResolver {
 public interface KotlinAnnotationsResolverFactory : KotlinPlatformComponent {
     /**
      * @param searchScope A scope in which the created [KotlinAnnotationsResolver] will operate. Make sure that this scope contains all
-     * the annotations that you might want to resolve.
+     *  the annotations that you might want to resolve.
      */
     public fun createAnnotationResolver(searchScope: GlobalSearchScope): KotlinAnnotationsResolver
 

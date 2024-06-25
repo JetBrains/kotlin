@@ -5,46 +5,53 @@
 
 package org.jetbrains.kotlin.analysis.api.platform.packages
 
-import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.platform.KotlinComposableProvider
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 
 /**
- * Provides information about packages that are visible to Kotlin in the given scope. Can be constructed via [KotlinPackageProviderFactory].
- * The FIR compiler calls [doesKotlinOnlyPackageExist]  very often, so the implementations should consider caching the results.
+ * [KotlinPackageProvider] provides information about packages that are visible to Kotlin in a certain context. The provider covers not only
+ * packages with Kotlin declarations, but also packages with declarations that match a specified [TargetPlatform]. For example, packages
+ * with Java declarations on the JVM platform.
+ *
+ * Package providers usually don't cover the whole project, but rather a restricted context. This usually means being limited to a specific
+ * [scope][com.intellij.psi.search.GlobalSearchScope], but the details depend on the kind of package provider.
+ *
+ * The main kind of package providers is created via [KotlinPackageProviderFactory] and it is scope-based, but there are other kinds of
+ * package providers, such as those created by [KotlinForwardDeclarationsPackageProviderFactory].
+ *
+ * Package providers are critical for performance, so implementations should cache results.
  */
 public interface KotlinPackageProvider : KotlinComposableProvider {
     /**
-     * Checks if a package with given [FqName] exists in current [GlobalSearchScope] with a view from a given [platform].
+     * Checks if a package named [packageFqName] exists in the context of the given [platform]. This includes Kotlin packages as well as
+     * [platform]-specific packages.
      *
-     * This includes Kotlin packages as well as platform-specific (i.e., JVM packages) that match the [platform].
-     * Generally, the result is equal to [doesKotlinOnlyPackageExist] || [doesPlatformSpecificPackageExist].
+     * Generally, the result is equal to: [doesKotlinOnlyPackageExist] || [doesPlatformSpecificPackageExist].
      */
     public fun doesPackageExist(packageFqName: FqName, platform: TargetPlatform): Boolean
 
     /**
-     * Checks if a package with a given [FqName] exists in the current [GlobalSearchScope].
+     * Checks if a package named [packageFqName] exists. The package should contain Kotlin declarations.
      *
-     * The package should contain Kotlin declarations inside.
-     *
-     * Note that for Kotlin, a package doesn't need to correspond to a directory structure like in Java.
-     * So, a package [FqName] is determined by a Kotlin file package directive.
+     * Note that for Kotlin, a package doesn't need to correspond to a directory structure like in Java. So, a file's package [FqName] is
+     * determined by the `package` directive.
      */
     public fun doesKotlinOnlyPackageExist(packageFqName: FqName): Boolean
 
     /**
-     * Checks if a platform-specific (e.g., Java packages for Kotlin/JVM) package with [FqName] exists in the current [GlobalSearchScope].
+     * Checks if a package named [packageFqName] exists. The package should contain [platform]-specific declarations.
      */
     public fun doesPlatformSpecificPackageExist(packageFqName: FqName, platform: TargetPlatform): Boolean
 
     /**
-     * Returns the list of subpackages for a given package, which satisfies [nameFilter].
+     * Returns the list of subpackages of a given package. The results must satisfy [nameFilter].
      *
-     * The returned sub-package list contains sub-packages visible to Kotlin. (e.g., for Kotlin/JVM, it should include Java packages)
+     * The returned subpackage list contains both Kotlin and [platform]-specific subpackages (e.g., for Kotlin/JVM, it should include Java
+     * packages).
      *
-     * Generally, the result is equal to [getKotlinOnlySubPackagesFqNames] union with [getPlatformSpecificSubPackagesFqNames]
+     * Generally, the result is equal to: [getKotlinOnlySubPackagesFqNames] union [getPlatformSpecificSubPackagesFqNames].
      */
     public fun getSubPackageFqNames(
         packageFqName: FqName,
@@ -53,16 +60,13 @@ public interface KotlinPackageProvider : KotlinComposableProvider {
     ): Set<Name>
 
     /**
-     * Returns the list of subpackages for a given package, which satisfies [nameFilter].
-     *
-     * The returned sub-package list contains all packages with some Kotlin declarations inside.
+     * Returns the list of subpackages of a given package which contain Kotlin declarations. The results must satisfy [nameFilter].
      */
     public fun getKotlinOnlySubPackagesFqNames(packageFqName: FqName, nameFilter: (Name) -> Boolean): Set<Name>
 
     /**
-     * Returns the platform-specific (e.g., Java packages for Kotlin/JVM) list of subpackages for a given package, which satisfies [nameFilter].
-     *
-     * The returned sub-package list contains sub-packages visible to Kotlin. (e.g., for Kotlin/JVM, it should include Java packages)
+     * Returns the list of subpackages of a given package which contain [platform]-specific declarations. The results must satisfy
+     * [nameFilter].
      */
     public fun getPlatformSpecificSubPackagesFqNames(
         packageFqName: FqName,

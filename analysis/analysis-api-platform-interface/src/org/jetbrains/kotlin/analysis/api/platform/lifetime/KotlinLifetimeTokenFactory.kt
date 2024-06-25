@@ -15,6 +15,11 @@ import kotlin.reflect.KClass
 public interface KotlinLifetimeTokenFactory : KotlinPlatformComponent {
     public val identifier: KClass<out KaLifetimeToken>
 
+    /**
+     * Creates a [KaLifetimeToken] for a specific analysis session represented by a [modificationTracker].
+     *
+     * @param modificationTracker A modification tracker which tracks the validity of the analysis session's content.
+     */
     public fun create(project: Project, modificationTracker: ModificationTracker): KaLifetimeToken
 
     public companion object {
