@@ -205,6 +205,12 @@ public class FirLightTreeBlackBoxCodegenTestForPowerAssertGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("SafeCast.kt")
+    public void testSafeCast() {
+      runTest("plugins/power-assert/testData/codegen/cast/SafeCast.kt");
+    }
+
+    @Test
     @TestMetadata("SmartCast.kt")
     public void testSmartCast() {
       runTest("plugins/power-assert/testData/codegen/cast/SmartCast.kt");
