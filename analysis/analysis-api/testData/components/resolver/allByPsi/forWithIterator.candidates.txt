@@ -165,6 +165,14 @@ KtParameterList(191,193): '()'
 KtBinaryExpression(196,224): 'current <= this@iterator.end'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        this@iterator.end -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -186,14 +194,6 @@ KtBinaryExpression(196,224): 'current <= this@iterator.end'
           ]
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-      argumentMapping = {
-        this@iterator.end -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = other: kotlin.Int
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(196,203): 'current'
@@ -217,6 +217,14 @@ KtNameReferenceExpression(196,203): 'current'
 KtOperationReferenceExpression(204,206): '<='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        this@iterator.end -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -238,14 +246,6 @@ KtOperationReferenceExpression(204,206): '<='
           ]
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-      argumentMapping = {
-        this@iterator.end -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = other: kotlin.Int
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtDotQualifiedExpression(207,224): 'this@iterator.end'
@@ -417,6 +417,20 @@ KtContainerNode(297,318): 'IntProgression(1, 10)'
 KtCallExpression(297,318): 'IntProgression(1, 10)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        1 -> (KaVariableSignature:
+          name = start
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = start: kotlin.Int
+          callableId = null),
+        10 -> (KaVariableSignature:
+          name = end
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = end: kotlin.Int
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -441,24 +455,11 @@ KtCallExpression(297,318): 'IntProgression(1, 10)'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = start
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = start: kotlin.Int
-          callableId = null),
-        10 -> (KaVariableSignature:
-          name = end
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = end: kotlin.Int
-          callableId = null)
-      }
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -489,13 +490,26 @@ KtCallExpression(297,318): 'IntProgression(1, 10)'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     diagnostic = ERROR<INVISIBLE_REFERENCE: Cannot access 'constructor(start: Int, endInclusive: Int, step: Int): IntProgression': it is internal in 'kotlin/ranges/IntProgression'.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(297,311): 'IntProgression'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        1 -> (KaVariableSignature:
+          name = start
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = start: kotlin.Int
+          callableId = null),
+        10 -> (KaVariableSignature:
+          name = end
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = end: kotlin.Int
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -520,24 +534,11 @@ KtNameReferenceExpression(297,311): 'IntProgression'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = start
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = start: kotlin.Int
-          callableId = null),
-        10 -> (KaVariableSignature:
-          name = end
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = end: kotlin.Int
-          callableId = null)
-      }
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -568,7 +569,6 @@ KtNameReferenceExpression(297,311): 'IntProgression'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     diagnostic = ERROR<INVISIBLE_REFERENCE: Cannot access 'constructor(start: Int, endInclusive: Int, step: Int): IntProgression': it is internal in 'kotlin/ranges/IntProgression'.>
     isInBestCandidates = false
 

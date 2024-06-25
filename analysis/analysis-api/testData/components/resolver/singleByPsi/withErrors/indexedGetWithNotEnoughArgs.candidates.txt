@@ -1,6 +1,14 @@
 KtArrayAccessExpression(100,104): 'c[1]'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        1 -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = a: kotlin.Int
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -28,13 +36,5 @@ KtArrayAccessExpression(100,104): 'c[1]'
           ]
           callableId = /C.get
       typeArgumentsMapping = {}
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = a: kotlin.Int
-          callableId = null)
-      }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'b'.>
     isInBestCandidates = true

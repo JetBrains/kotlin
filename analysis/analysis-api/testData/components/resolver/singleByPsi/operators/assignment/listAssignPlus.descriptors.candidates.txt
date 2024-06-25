@@ -1,6 +1,14 @@
 KtOperationReferenceExpression(54,56): '+='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        1 -> (KaVariableSignature:
+          name = element
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = element: T
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -23,13 +31,5 @@ KtOperationReferenceExpression(54,56): '+='
           callableId = kotlin/collections/plusAssign
       typeArgumentsMapping = {
         T -> (kotlin.Int)
-      }
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = element
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = element: T
-          callableId = null)
       }
     isInBestCandidates = true

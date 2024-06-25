@@ -1,6 +1,14 @@
 KtCallExpression(110,117): 'x(true)'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        true -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableId = null)
+      }
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -22,19 +30,19 @@ KtCallExpression(110,117): 'x(true)'
           ]
           callableId = /invoke
       typeArgumentsMapping = {}
-      argumentMapping = {
-        true -> (KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: kotlin.Int
-          callableId = null)
-      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Boolean', but 'kotlin.Int' was expected.>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        true -> (KaVariableSignature:
+          name = c
+          receiverType = null
+          returnType = kotlin.Char
+          symbol = c: kotlin.Char
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -53,19 +61,19 @@ KtCallExpression(110,117): 'x(true)'
           ]
           callableId = /x
       typeArgumentsMapping = {}
-      argumentMapping = {
-        true -> (KaVariableSignature:
-          name = c
-          receiverType = null
-          returnType = kotlin.Char
-          symbol = c: kotlin.Char
-          callableId = null)
-      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Boolean', but 'kotlin.Char' was expected.>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        true -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = b: kotlin.Boolean
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -84,12 +92,4 @@ KtCallExpression(110,117): 'x(true)'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        true -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = b: kotlin.Boolean
-          callableId = null)
-      }
     isInBestCandidates = true

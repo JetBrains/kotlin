@@ -1,6 +1,7 @@
 KtCallExpression(202,209): '(foo)()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -15,11 +16,11 @@ KtCallExpression(202,209): '(foo)()'
           valueParameters = []
           callableId = r/MyClass.invoke
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -41,12 +42,12 @@ KtCallExpression(202,209): '(foo)()'
           ]
           callableId = r/MyClass.invoke
       typeArgumentsMapping = {}
-      argumentMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 's'.>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -58,11 +59,11 @@ KtCallExpression(202,209): '(foo)()'
           valueParameters = []
           callableId = r/foo
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -81,6 +82,5 @@ KtCallExpression(202,209): '(foo)()'
           ]
           callableId = r/foo
       typeArgumentsMapping = {}
-      argumentMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'b'.>
     isInBestCandidates = false

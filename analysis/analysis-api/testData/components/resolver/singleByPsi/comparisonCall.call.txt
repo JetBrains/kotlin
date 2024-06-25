@@ -1,6 +1,14 @@
 KtBinaryExpression(31,36): 'i < j'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {
+        j -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -22,11 +30,3 @@ KtBinaryExpression(31,36): 'i < j'
           ]
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-      argumentMapping = {
-        j -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = other: kotlin.Int
-          callableId = null)
-      }

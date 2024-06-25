@@ -1,6 +1,14 @@
 KtArrayAccessExpression(130,136): 'm["a"]'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        "a" -> (KaVariableSignature:
+          name = k
+          receiverType = null
+          returnType = kotlin.String
+          symbol = k: K
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -22,12 +30,4 @@ KtArrayAccessExpression(130,136): 'm["a"]'
           ]
           callableId = /MyMap.get
       typeArgumentsMapping = {}
-      argumentMapping = {
-        "a" -> (KaVariableSignature:
-          name = k
-          receiverType = null
-          returnType = kotlin.String
-          symbol = k: K
-          callableId = null)
-      }
     isInBestCandidates = true

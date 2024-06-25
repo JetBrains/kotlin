@@ -19,6 +19,14 @@ KtBlockExpression(12,162): '{'
 KtBinaryExpression(18,23): '1 > 2'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -40,14 +48,6 @@ KtBinaryExpression(18,23): '1 > 2'
           ]
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-      argumentMapping = {
-        2 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = other: kotlin.Int
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtConstantExpression(18,19): '1'
@@ -56,6 +56,14 @@ KtConstantExpression(18,19): '1'
 KtOperationReferenceExpression(20,21): '>'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -77,14 +85,6 @@ KtOperationReferenceExpression(20,21): '>'
           ]
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-      argumentMapping = {
-        2 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = other: kotlin.Int
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtConstantExpression(22,23): '2'
@@ -93,6 +93,14 @@ KtConstantExpression(22,23): '2'
 KtBinaryExpression(28,46): '1.compareTo(2) > 0'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        0 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -114,19 +122,19 @@ KtBinaryExpression(28,46): '1.compareTo(2) > 0'
           ]
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-      argumentMapping = {
-        0 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = other: kotlin.Int
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtDotQualifiedExpression(28,42): '1.compareTo(2)'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Byte
+          symbol = other: kotlin.Byte
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -148,19 +156,19 @@ KtDotQualifiedExpression(28,42): '1.compareTo(2)'
           ]
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-      argumentMapping = {
-        2 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Byte
-          symbol = other: kotlin.Byte
-          callableId = null)
-      }
     diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Byte>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Double
+          symbol = other: kotlin.Double
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -182,19 +190,19 @@ KtDotQualifiedExpression(28,42): '1.compareTo(2)'
           ]
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-      argumentMapping = {
-        2 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Double
-          symbol = other: kotlin.Double
-          callableId = null)
-      }
     diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Double>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Float
+          symbol = other: kotlin.Float
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -216,19 +224,19 @@ KtDotQualifiedExpression(28,42): '1.compareTo(2)'
           ]
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-      argumentMapping = {
-        2 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Float
-          symbol = other: kotlin.Float
-          callableId = null)
-      }
     diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Float>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -250,18 +258,18 @@ KtDotQualifiedExpression(28,42): '1.compareTo(2)'
           ]
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-      argumentMapping = {
-        2 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = other: kotlin.Int
-          callableId = null)
-      }
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Long
+          symbol = other: kotlin.Long
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -283,19 +291,19 @@ KtDotQualifiedExpression(28,42): '1.compareTo(2)'
           ]
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-      argumentMapping = {
-        2 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Long
-          symbol = other: kotlin.Long
-          callableId = null)
-      }
     diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Long>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Short
+          symbol = other: kotlin.Short
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -317,14 +325,6 @@ KtDotQualifiedExpression(28,42): '1.compareTo(2)'
           ]
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-      argumentMapping = {
-        2 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Short
-          symbol = other: kotlin.Short
-          callableId = null)
-      }
     diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Short>
     isInBestCandidates = false
 
@@ -334,6 +334,14 @@ KtConstantExpression(28,29): '1'
 KtCallExpression(30,42): 'compareTo(2)'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Byte
+          symbol = other: kotlin.Byte
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -355,19 +363,19 @@ KtCallExpression(30,42): 'compareTo(2)'
           ]
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-      argumentMapping = {
-        2 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Byte
-          symbol = other: kotlin.Byte
-          callableId = null)
-      }
     diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Byte>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Double
+          symbol = other: kotlin.Double
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -389,19 +397,19 @@ KtCallExpression(30,42): 'compareTo(2)'
           ]
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-      argumentMapping = {
-        2 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Double
-          symbol = other: kotlin.Double
-          callableId = null)
-      }
     diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Double>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Float
+          symbol = other: kotlin.Float
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -423,19 +431,19 @@ KtCallExpression(30,42): 'compareTo(2)'
           ]
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-      argumentMapping = {
-        2 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Float
-          symbol = other: kotlin.Float
-          callableId = null)
-      }
     diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Float>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -457,18 +465,18 @@ KtCallExpression(30,42): 'compareTo(2)'
           ]
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-      argumentMapping = {
-        2 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = other: kotlin.Int
-          callableId = null)
-      }
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Long
+          symbol = other: kotlin.Long
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -490,19 +498,19 @@ KtCallExpression(30,42): 'compareTo(2)'
           ]
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-      argumentMapping = {
-        2 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Long
-          symbol = other: kotlin.Long
-          callableId = null)
-      }
     diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Long>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Short
+          symbol = other: kotlin.Short
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -524,20 +532,20 @@ KtCallExpression(30,42): 'compareTo(2)'
           ]
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-      argumentMapping = {
-        2 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Short
-          symbol = other: kotlin.Short
-          callableId = null)
-      }
     diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Short>
     isInBestCandidates = false
 
 KtNameReferenceExpression(30,39): 'compareTo'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Byte
+          symbol = other: kotlin.Byte
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -559,19 +567,19 @@ KtNameReferenceExpression(30,39): 'compareTo'
           ]
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-      argumentMapping = {
-        2 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Byte
-          symbol = other: kotlin.Byte
-          callableId = null)
-      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with compareTo>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Double
+          symbol = other: kotlin.Double
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -593,19 +601,19 @@ KtNameReferenceExpression(30,39): 'compareTo'
           ]
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-      argumentMapping = {
-        2 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Double
-          symbol = other: kotlin.Double
-          callableId = null)
-      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with compareTo>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Float
+          symbol = other: kotlin.Float
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -627,19 +635,19 @@ KtNameReferenceExpression(30,39): 'compareTo'
           ]
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-      argumentMapping = {
-        2 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Float
-          symbol = other: kotlin.Float
-          callableId = null)
-      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with compareTo>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -661,18 +669,18 @@ KtNameReferenceExpression(30,39): 'compareTo'
           ]
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-      argumentMapping = {
-        2 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = other: kotlin.Int
-          callableId = null)
-      }
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Long
+          symbol = other: kotlin.Long
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -694,19 +702,19 @@ KtNameReferenceExpression(30,39): 'compareTo'
           ]
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-      argumentMapping = {
-        2 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Long
-          symbol = other: kotlin.Long
-          callableId = null)
-      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with compareTo>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Short
+          symbol = other: kotlin.Short
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -728,14 +736,6 @@ KtNameReferenceExpression(30,39): 'compareTo'
           ]
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-      argumentMapping = {
-        2 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Short
-          symbol = other: kotlin.Short
-          callableId = null)
-      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with compareTo>
     isInBestCandidates = false
 
@@ -751,6 +751,14 @@ KtConstantExpression(40,41): '2'
 KtOperationReferenceExpression(43,44): '>'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        0 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -772,14 +780,6 @@ KtOperationReferenceExpression(43,44): '>'
           ]
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-      argumentMapping = {
-        0 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = other: kotlin.Int
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtConstantExpression(45,46): '0'
@@ -788,6 +788,14 @@ KtConstantExpression(45,46): '0'
 KtBinaryExpression(52,61): '"3" < "4"'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        "4" -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.String
+          symbol = other: kotlin.String
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -809,14 +817,6 @@ KtBinaryExpression(52,61): '"3" < "4"'
           ]
           callableId = kotlin/String.compareTo
       typeArgumentsMapping = {}
-      argumentMapping = {
-        "4" -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.String
-          symbol = other: kotlin.String
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtStringTemplateExpression(52,55): '"3"'
@@ -828,6 +828,14 @@ KtLiteralStringTemplateEntry(53,54): '3'
 KtOperationReferenceExpression(56,57): '<'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        "4" -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.String
+          symbol = other: kotlin.String
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -849,14 +857,6 @@ KtOperationReferenceExpression(56,57): '<'
           ]
           callableId = kotlin/String.compareTo
       typeArgumentsMapping = {}
-      argumentMapping = {
-        "4" -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.String
-          symbol = other: kotlin.String
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtStringTemplateExpression(58,61): '"4"'
@@ -877,6 +877,7 @@ KtProperty(85,108): 'val myClass = MyClass()'
 KtCallExpression(99,108): 'MyClass()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -888,12 +889,12 @@ KtCallExpression(99,108): 'MyClass()'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(99,106): 'MyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -905,7 +906,6 @@ KtNameReferenceExpression(99,106): 'MyClass'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(106,108): '()'
@@ -914,6 +914,14 @@ KtValueArgumentList(106,108): '()'
 KtBinaryExpression(113,130): 'myClass >= number'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        number -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -935,14 +943,6 @@ KtBinaryExpression(113,130): 'myClass >= number'
           ]
           callableId = /MyClass.compareTo
       typeArgumentsMapping = {}
-      argumentMapping = {
-        number -> (KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: kotlin.Int
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(113,120): 'myClass'
@@ -964,6 +964,14 @@ KtNameReferenceExpression(113,120): 'myClass'
 KtOperationReferenceExpression(121,123): '>='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        number -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -985,14 +993,6 @@ KtOperationReferenceExpression(121,123): '>='
           ]
           callableId = /MyClass.compareTo
       typeArgumentsMapping = {}
-      argumentMapping = {
-        number -> (KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: kotlin.Int
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(124,130): 'number'
@@ -1014,6 +1014,14 @@ KtNameReferenceExpression(124,130): 'number'
 KtDotQualifiedExpression(135,160): 'myClass.compareTo(number)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        number -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1035,14 +1043,6 @@ KtDotQualifiedExpression(135,160): 'myClass.compareTo(number)'
           ]
           callableId = /MyClass.compareTo
       typeArgumentsMapping = {}
-      argumentMapping = {
-        number -> (KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: kotlin.Int
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(135,142): 'myClass'
@@ -1064,6 +1064,14 @@ KtNameReferenceExpression(135,142): 'myClass'
 KtCallExpression(143,160): 'compareTo(number)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        number -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1085,19 +1093,19 @@ KtCallExpression(143,160): 'compareTo(number)'
           ]
           callableId = /MyClass.compareTo
       typeArgumentsMapping = {}
-      argumentMapping = {
-        number -> (KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: kotlin.Int
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(143,152): 'compareTo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        number -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1119,14 +1127,6 @@ KtNameReferenceExpression(143,152): 'compareTo'
           ]
           callableId = /MyClass.compareTo
       typeArgumentsMapping = {}
-      argumentMapping = {
-        number -> (KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: kotlin.Int
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtValueArgumentList(152,160): '(number)'

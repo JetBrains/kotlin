@@ -1,6 +1,14 @@
 KtCallExpression(108,119): 'processB(a)'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {
+        a -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = B
+          symbol = b: B
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -19,11 +27,3 @@ KtCallExpression(108,119): 'processB(a)'
           ]
           callableId = /processB
       typeArgumentsMapping = {}
-      argumentMapping = {
-        a -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = B
-          symbol = b: B
-          callableId = null)
-      }

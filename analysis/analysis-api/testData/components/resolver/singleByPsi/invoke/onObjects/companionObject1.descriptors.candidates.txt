@@ -1,6 +1,7 @@
 KtNameReferenceExpression(116,119): 'Foo'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -12,6 +13,5 @@ KtNameReferenceExpression(116,119): 'Foo'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     isInBestCandidates = false

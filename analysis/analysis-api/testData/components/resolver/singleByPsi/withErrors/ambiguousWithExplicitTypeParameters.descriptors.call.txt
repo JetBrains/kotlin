@@ -2,6 +2,14 @@ KtCallExpression(128,144): 'function<Int>(1)'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        argumentMapping = {
+          1 -> (KaVariableSignature:
+            name = t
+            receiverType = null
+            returnType = TypeVariable(T)
+            symbol = t: T
+            callableId = null)
+        }
         isImplicitInvoke = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = null
@@ -25,16 +33,16 @@ KtCallExpression(128,144): 'function<Int>(1)'
                 callableId = null
             ]
             callableId = /function
-        typeArgumentsMapping = {}
+        typeArgumentsMapping = {},
+      KaSimpleFunctionCall:
         argumentMapping = {
           1 -> (KaVariableSignature:
-            name = t
+            name = u
             receiverType = null
-            returnType = TypeVariable(T)
-            symbol = t: T
+            returnType = TypeVariable(U)
+            symbol = u: U
             callableId = null)
-        },
-      KaSimpleFunctionCall:
+        }
         isImplicitInvoke = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = null
@@ -58,16 +66,16 @@ KtCallExpression(128,144): 'function<Int>(1)'
                 callableId = null
             ]
             callableId = /function
-        typeArgumentsMapping = {}
+        typeArgumentsMapping = {},
+      KaSimpleFunctionCall:
         argumentMapping = {
           1 -> (KaVariableSignature:
-            name = u
+            name = v
             receiverType = null
-            returnType = TypeVariable(U)
-            symbol = u: U
+            returnType = TypeVariable(V)
+            symbol = v: V
             callableId = null)
-        },
-      KaSimpleFunctionCall:
+        }
         isImplicitInvoke = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = null
@@ -92,14 +100,6 @@ KtCallExpression(128,144): 'function<Int>(1)'
             ]
             callableId = /function
         typeArgumentsMapping = {}
-        argumentMapping = {
-          1 -> (KaVariableSignature:
-            name = v
-            receiverType = null
-            returnType = TypeVariable(V)
-            symbol = v: V
-            callableId = null)
-        }
     ]
     diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
     public fun <T> function(t: TypeVariable(T), a: Char): Unit defined in root package in file ambiguousWithExplicitTypeParameters.kt

@@ -1,6 +1,14 @@
 KtOperationReferenceExpression(69,72): '!in'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {
+        0 -> (KaVariableSignature:
+          name = v
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = v: kotlin.Int
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -22,11 +30,3 @@ KtOperationReferenceExpression(69,72): '!in'
           ]
           callableId = /Foo.contains
       typeArgumentsMapping = {}
-      argumentMapping = {
-        0 -> (KaVariableSignature:
-          name = v
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = v: kotlin.Int
-          callableId = null)
-      }

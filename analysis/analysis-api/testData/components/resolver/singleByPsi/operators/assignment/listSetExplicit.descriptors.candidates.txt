@@ -1,6 +1,20 @@
 KtNameReferenceExpression(54,57): 'set'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        0 -> (KaVariableSignature:
+          name = index
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = index: kotlin.Int
+          callableId = null),
+        1 -> (KaVariableSignature:
+          name = element
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = element: E
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -28,24 +42,24 @@ KtNameReferenceExpression(54,57): 'set'
           ]
           callableId = kotlin/collections/MutableList.set
       typeArgumentsMapping = {}
-      argumentMapping = {
-        0 -> (KaVariableSignature:
-          name = index
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = index: kotlin.Int
-          callableId = null),
-        1 -> (KaVariableSignature:
-          name = element
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = element: E
-          callableId = null)
-      }
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        0 -> (KaVariableSignature:
+          name = key
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = key: K
+          callableId = null),
+        1 -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = value: V
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -76,25 +90,25 @@ KtNameReferenceExpression(54,57): 'set'
         K -> (kotlin.Int),
         V -> (kotlin.Int)
       }
-      argumentMapping = {
-        0 -> (KaVariableSignature:
-          name = key
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = key: K
-          callableId = null),
-        1 -> (KaVariableSignature:
-          name = value
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = value: V
-          callableId = null)
-      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with set>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        0 -> (KaVariableSignature:
+          name = index
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = index: kotlin.Int
+          callableId = null),
+        1 -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.Char
+          symbol = value: kotlin.Char
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -122,19 +136,5 @@ KtNameReferenceExpression(54,57): 'set'
           ]
           callableId = kotlin/text/set
       typeArgumentsMapping = {}
-      argumentMapping = {
-        0 -> (KaVariableSignature:
-          name = index
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = index: kotlin.Int
-          callableId = null),
-        1 -> (KaVariableSignature:
-          name = value
-          receiverType = null
-          returnType = kotlin.Char
-          symbol = value: kotlin.Char
-          callableId = null)
-      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with set>
     isInBestCandidates = false

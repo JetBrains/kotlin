@@ -1,6 +1,14 @@
 KtAnnotationEntry(69,96): '@Suppress("UNCHECKED_CAST")'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {
+        "UNCHECKED_CAST" -> (KaVariableSignature:
+          name = names
+          receiverType = null
+          returnType = kotlin.String
+          symbol = vararg names: kotlin.String
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -18,11 +26,3 @@ KtAnnotationEntry(69,96): '@Suppress("UNCHECKED_CAST")'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        "UNCHECKED_CAST" -> (KaVariableSignature:
-          name = names
-          receiverType = null
-          returnType = kotlin.String
-          symbol = vararg names: kotlin.String
-          callableId = null)
-      }

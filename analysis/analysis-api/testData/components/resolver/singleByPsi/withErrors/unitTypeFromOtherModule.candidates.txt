@@ -1,6 +1,7 @@
 KtNameReferenceExpression(168,171): 'foo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaSmartCastedReceiverValue:
@@ -17,5 +18,4 @@ KtNameReferenceExpression(168,171): 'foo'
           valueParameters = []
           callableId = dependency/A.foo
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true

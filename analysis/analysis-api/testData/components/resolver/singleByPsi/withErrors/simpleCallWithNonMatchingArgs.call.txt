@@ -2,6 +2,7 @@ KtCallExpression(14,20): 'foo(1)'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        argumentMapping = {}
         isImplicitInvoke = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = null
@@ -13,6 +14,5 @@ KtCallExpression(14,20): 'foo(1)'
             valueParameters = []
             callableId = /foo
         typeArgumentsMapping = {}
-        argumentMapping = {}
     ]
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun foo(): Unit'.>

@@ -1,6 +1,26 @@
 KtArrayAccessExpression(93,110): 'c[1, "foo", 3.14]'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        1 -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = a: kotlin.Int
+          callableId = null),
+        "foo" -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.String
+          symbol = b: kotlin.String
+          callableId = null),
+        3.14 -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = value: kotlin.Boolean
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -34,25 +54,5 @@ KtArrayAccessExpression(93,110): 'c[1, "foo", 3.14]'
           ]
           callableId = /C.set
       typeArgumentsMapping = {}
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = a: kotlin.Int
-          callableId = null),
-        "foo" -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.String
-          symbol = b: kotlin.String
-          callableId = null),
-        3.14 -> (KaVariableSignature:
-          name = value
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = value: kotlin.Boolean
-          callableId = null)
-      }
     diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The floating-point literal does not conform to the expected type Boolean>
     isInBestCandidates = true

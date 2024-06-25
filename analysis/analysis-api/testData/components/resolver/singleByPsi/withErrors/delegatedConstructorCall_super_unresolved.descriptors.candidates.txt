@@ -1,6 +1,14 @@
 KtConstructorDelegationCall(108,116): 'super(s)'
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      argumentMapping = {
+        s -> (KaVariableSignature:
+          name = p1
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = p1: kotlin.Int
+          callableId = null)
+      }
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -19,13 +27,5 @@ KtConstructorDelegationCall(108,116): 'super(s)'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        s -> (KaVariableSignature:
-          name = p1
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = p1: kotlin.Int
-          callableId = null)
-      }
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is String but Int was expected>
     isInBestCandidates = true

@@ -1,6 +1,7 @@
 KtCallExpression(68,73): 'foo()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaImplicitReceiverValue:
@@ -14,11 +15,11 @@ KtCallExpression(68,73): 'foo()'
           valueParameters = []
           callableId = test/A.foo
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
   
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -30,5 +31,4 @@ KtCallExpression(68,73): 'foo()'
           valueParameters = []
           callableId = test/foo
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = false

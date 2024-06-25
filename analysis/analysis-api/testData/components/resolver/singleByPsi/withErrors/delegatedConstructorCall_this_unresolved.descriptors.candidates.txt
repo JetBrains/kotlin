@@ -1,6 +1,20 @@
 KtConstructorDelegationCall(115,132): 'this(i, j, i * j)'
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      argumentMapping = {
+        i -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableId = null),
+        j -> (KaVariableSignature:
+          name = j
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = j: kotlin.Int
+          callableId = null)
+      }
       kind = THIS_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -25,25 +39,19 @@ KtConstructorDelegationCall(115,132): 'this(i, j, i * j)'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        i -> (KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: kotlin.Int
-          callableId = null),
-        j -> (KaVariableSignature:
-          name = j
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = j: kotlin.Int
-          callableId = null)
-      }
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public constructor Sub(i: Int, j: Int) defined in Sub>
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      argumentMapping = {
+        i -> (KaVariableSignature:
+          name = p
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = p: kotlin.Int
+          callableId = null)
+      }
       kind = THIS_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -62,13 +70,5 @@ KtConstructorDelegationCall(115,132): 'this(i, j, i * j)'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        i -> (KaVariableSignature:
-          name = p
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = p: kotlin.Int
-          callableId = null)
-      }
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public constructor Sub(p: Int) defined in Sub>
     isInBestCandidates = true

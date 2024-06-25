@@ -2,6 +2,14 @@ KtCallExpression(128,139): 'function(1)'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        argumentMapping = {
+          1 -> (KaVariableSignature:
+            name = t
+            receiverType = null
+            returnType = T
+            symbol = t: T
+            callableId = null)
+        }
         isImplicitInvoke = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = null
@@ -25,16 +33,16 @@ KtCallExpression(128,139): 'function(1)'
                 callableId = null
             ]
             callableId = /function
-        typeArgumentsMapping = {}
+        typeArgumentsMapping = {},
+      KaSimpleFunctionCall:
         argumentMapping = {
           1 -> (KaVariableSignature:
-            name = t
+            name = u
             receiverType = null
-            returnType = T
-            symbol = t: T
+            returnType = U
+            symbol = u: U
             callableId = null)
-        },
-      KaSimpleFunctionCall:
+        }
         isImplicitInvoke = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = null
@@ -58,16 +66,16 @@ KtCallExpression(128,139): 'function(1)'
                 callableId = null
             ]
             callableId = /function
-        typeArgumentsMapping = {}
+        typeArgumentsMapping = {},
+      KaSimpleFunctionCall:
         argumentMapping = {
           1 -> (KaVariableSignature:
-            name = u
+            name = v
             receiverType = null
-            returnType = U
-            symbol = u: U
+            returnType = V
+            symbol = v: V
             callableId = null)
-        },
-      KaSimpleFunctionCall:
+        }
         isImplicitInvoke = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = null
@@ -92,14 +100,6 @@ KtCallExpression(128,139): 'function(1)'
             ]
             callableId = /function
         typeArgumentsMapping = {}
-        argumentMapping = {
-          1 -> (KaVariableSignature:
-            name = v
-            receiverType = null
-            returnType = V
-            symbol = v: V
-            callableId = null)
-        }
     ]
     diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
     fun <T> function(t: T, a: Char): Unit

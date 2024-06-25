@@ -1,6 +1,14 @@
 KtCallExpression(128,139): 'function(1)'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        1 -> (KaVariableSignature:
+          name = t
+          receiverType = null
+          returnType = T
+          symbol = t: T
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -25,19 +33,19 @@ KtCallExpression(128,139): 'function(1)'
           ]
           callableId = /function
       typeArgumentsMapping = {}
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = t
-          receiverType = null
-          returnType = T
-          symbol = t: T
-          callableId = null)
-      }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'a'.>
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        1 -> (KaVariableSignature:
+          name = u
+          receiverType = null
+          returnType = U
+          symbol = u: U
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -62,19 +70,19 @@ KtCallExpression(128,139): 'function(1)'
           ]
           callableId = /function
       typeArgumentsMapping = {}
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = u
-          receiverType = null
-          returnType = U
-          symbol = u: U
-          callableId = null)
-      }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'b'.>
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        1 -> (KaVariableSignature:
+          name = v
+          receiverType = null
+          returnType = V
+          symbol = v: V
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -99,13 +107,5 @@ KtCallExpression(128,139): 'function(1)'
           ]
           callableId = /function
       typeArgumentsMapping = {}
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = v
-          receiverType = null
-          returnType = V
-          symbol = v: V
-          callableId = null)
-      }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'c'.>
     isInBestCandidates = true

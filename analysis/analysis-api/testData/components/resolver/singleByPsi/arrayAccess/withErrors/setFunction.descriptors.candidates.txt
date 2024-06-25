@@ -1,6 +1,20 @@
 KtArrayAccessExpression(59,63): '1[2]'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        2 -> (KaVariableSignature:
+          name = index
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = index: kotlin.Int
+          callableId = null),
+        42 -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = value: kotlin.Int
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -28,19 +42,5 @@ KtArrayAccessExpression(59,63): '1[2]'
           ]
           callableId = /set
       typeArgumentsMapping = {}
-      argumentMapping = {
-        2 -> (KaVariableSignature:
-          name = index
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = index: kotlin.Int
-          callableId = null),
-        42 -> (KaVariableSignature:
-          name = value
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = value: kotlin.Int
-          callableId = null)
-      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with set>
     isInBestCandidates = true

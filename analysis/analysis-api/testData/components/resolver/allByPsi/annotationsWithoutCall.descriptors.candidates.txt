@@ -25,6 +25,7 @@ KtDeclarationModifierList(36,41): '@Anno'
 KtAnnotationEntry(36,41): '@Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      argumentMapping = {}
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -35,12 +36,12 @@ KtAnnotationEntry(36,41): '@Anno'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(37,41): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      argumentMapping = {}
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -51,7 +52,6 @@ KtConstructorCalleeExpression(37,41): 'Anno'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(37,41): 'Anno'
@@ -63,6 +63,7 @@ KtUserType(37,41): 'Anno'
 KtNameReferenceExpression(37,41): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      argumentMapping = {}
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -73,7 +74,6 @@ KtNameReferenceExpression(37,41): 'Anno'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtParameterList(49,51): '()'

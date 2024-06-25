@@ -31,6 +31,14 @@ KtContainerNode(39,44): '1..<5'
 KtBinaryExpression(39,44): '1..<5'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        5 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -52,14 +60,6 @@ KtBinaryExpression(39,44): '1..<5'
           ]
           callableId = kotlin/Int.rangeUntil
       typeArgumentsMapping = {}
-      argumentMapping = {
-        5 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = other: kotlin.Int
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtConstantExpression(39,40): '1'
@@ -68,6 +68,14 @@ KtConstantExpression(39,40): '1'
 KtOperationReferenceExpression(40,43): '..<'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        5 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -89,14 +97,6 @@ KtOperationReferenceExpression(40,43): '..<'
           ]
           callableId = kotlin/Int.rangeUntil
       typeArgumentsMapping = {}
-      argumentMapping = {
-        5 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = other: kotlin.Int
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtConstantExpression(43,44): '5'

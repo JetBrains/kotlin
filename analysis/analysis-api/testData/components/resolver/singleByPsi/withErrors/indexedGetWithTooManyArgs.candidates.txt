@@ -1,6 +1,20 @@
 KtArrayAccessExpression(100,118): 'c[1, "foo", false]'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        1 -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = a: kotlin.Int
+          callableId = null),
+        "foo" -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.String
+          symbol = b: kotlin.String
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -28,19 +42,5 @@ KtArrayAccessExpression(100,118): 'c[1, "foo", false]'
           ]
           callableId = /C.get
       typeArgumentsMapping = {}
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = a: kotlin.Int
-          callableId = null),
-        "foo" -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.String
-          symbol = b: kotlin.String
-          callableId = null)
-      }
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun get(a: Int, b: String): Boolean'.>
     isInBestCandidates = true

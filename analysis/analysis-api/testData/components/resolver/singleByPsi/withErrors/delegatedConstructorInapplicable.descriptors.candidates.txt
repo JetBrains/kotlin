@@ -1,6 +1,14 @@
 KtConstructorCalleeExpression(40,41): 'A'
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      argumentMapping = {
+        5 -> (KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = kotlin.String
+          symbol = x: kotlin.String
+          callableId = null)
+      }
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -19,13 +27,5 @@ KtConstructorCalleeExpression(40,41): 'A'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        5 -> (KaVariableSignature:
-          name = x
-          receiverType = null
-          returnType = kotlin.String
-          symbol = x: kotlin.String
-          callableId = null)
-      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     isInBestCandidates = true

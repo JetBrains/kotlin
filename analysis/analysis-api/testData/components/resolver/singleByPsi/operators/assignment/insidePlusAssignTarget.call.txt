@@ -1,6 +1,7 @@
 KtNameReferenceExpression(87,100): 'mutableListOf'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -14,4 +15,3 @@ KtNameReferenceExpression(87,100): 'mutableListOf'
       typeArgumentsMapping = {
         T -> (kotlin.String)
       }
-      argumentMapping = {}

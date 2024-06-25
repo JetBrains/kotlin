@@ -2,6 +2,7 @@ KtNameReferenceExpression(51,53): 'DD'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        argumentMapping = {}
         isImplicitInvoke = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = null
@@ -13,6 +14,5 @@ KtNameReferenceExpression(51,53): 'DD'
             valueParameters = []
             callableId = null
         typeArgumentsMapping = {}
-        argumentMapping = {}
     ]
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>

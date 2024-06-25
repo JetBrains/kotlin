@@ -1,6 +1,14 @@
 KtNameReferenceExpression(7,8): 'S'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {
+        "message" -> (KaVariableSignature:
+          name = names
+          receiverType = null
+          returnType = kotlin.String
+          symbol = vararg names: kotlin.String
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -18,11 +26,3 @@ KtNameReferenceExpression(7,8): 'S'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        "message" -> (KaVariableSignature:
-          name = names
-          receiverType = null
-          returnType = kotlin.String
-          symbol = vararg names: kotlin.String
-          callableId = null)
-      }

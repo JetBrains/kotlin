@@ -1,6 +1,7 @@
 KtNameReferenceExpression(59,69): 'Annotation'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      argumentMapping = {}
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -11,5 +12,4 @@ KtNameReferenceExpression(59,69): 'Annotation'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true

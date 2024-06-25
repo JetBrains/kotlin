@@ -40,6 +40,14 @@ KtBlockExpression(72,300): '{'
 KtCallExpression(78,104): 'print(javaClass.something)'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {
+        javaClass.something -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = message: kotlin.Int
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -58,18 +66,18 @@ KtCallExpression(78,104): 'print(javaClass.something)'
           ]
           callableId = kotlin/io/print
       typeArgumentsMapping = {}
-      argumentMapping = {
-        javaClass.something -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = message: kotlin.Int
-          callableId = null)
-      }
 
 KtNameReferenceExpression(78,83): 'print'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {
+        javaClass.something -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = message: kotlin.Int
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -88,14 +96,6 @@ KtNameReferenceExpression(78,83): 'print'
           ]
           callableId = kotlin/io/print
       typeArgumentsMapping = {}
-      argumentMapping = {
-        javaClass.something -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = message: kotlin.Int
-          callableId = null)
-      }
 
 KtValueArgumentList(83,104): '(javaClass.something)'
   null

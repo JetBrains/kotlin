@@ -20,14 +20,19 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KaFe10PsiSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.getResolutionScope
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaAbstractResolver
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseAnnotationCall
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseApplicableCallCandidateInfo
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseCompoundArrayAccessCall
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseCompoundAssignOperation
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseCompoundUnaryOperation
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseCompoundVariableAccessCall
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseDelegatedConstructorCall
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseErrorCallInfo
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseImplicitReceiverValue
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseInapplicableCallCandidateInfo
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBasePartiallyAppliedSymbol
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSimpleFunctionCall
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSimpleVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSimpleVariableReadAccess
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSimpleVariableWriteAccess
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSmartCastedReceiverValue
@@ -35,7 +40,6 @@ import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSuccessCallI
 import org.jetbrains.kotlin.analysis.api.impl.base.util.KaNonBoundToPsiErrorDiagnostic
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.*
-import org.jetbrains.kotlin.analysis.api.resolution.KaAnnotationCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallableMemberCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundArrayAccessCall
@@ -48,7 +52,6 @@ import org.jetbrains.kotlin.analysis.api.resolution.KaPartiallyAppliedSymbol
 import org.jetbrains.kotlin.analysis.api.resolution.KaPartiallyAppliedVariableSymbol
 import org.jetbrains.kotlin.analysis.api.resolution.KaReceiverValue
 import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleFunctionCall
-import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.resolution.symbol
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
@@ -310,7 +313,7 @@ internal class KaFe10Resolver(
                 resolvedCalls += resolvedCall
                 val partiallyAppliedSymbol =
                     resolvedCall.toPartiallyAppliedVariableSymbol(context) ?: return null
-                KaSimpleVariableAccessCall(
+                KaBaseSimpleVariableAccessCall(
                     partiallyAppliedSymbol,
                     resolvedCall.toTypeArgumentsMapping(partiallyAppliedSymbol),
                     KaBaseSimpleVariableWriteAccess(right),
@@ -380,7 +383,7 @@ internal class KaFe10Resolver(
         val resolvedSetCall = context[BindingContext.INDEXED_LVALUE_SET, arrayAccessExpression] ?: return null
         resolvedCalls += resolvedSetCall
         val setPartiallyAppliedSymbol = resolvedSetCall.toPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>(context) ?: return null
-        return KaCompoundArrayAccessCall(
+        return KaBaseCompoundArrayAccessCall(
             compoundAccess,
             arrayAccessExpression.indexExpressions,
             getPartiallyAppliedSymbol,
@@ -419,7 +422,7 @@ internal class KaFe10Resolver(
 
     private fun ResolvedCall<*>.toPropertyRead(context: BindingContext): KaVariableAccessCall? {
         val partiallyAppliedSymbol = toPartiallyAppliedVariableSymbol(context) ?: return null
-        return KaSimpleVariableAccessCall(
+        return KaBaseSimpleVariableAccessCall(
             partiallyAppliedSymbol,
             toTypeArgumentsMapping(partiallyAppliedSymbol),
             KaBaseSimpleVariableReadAccess,
@@ -433,14 +436,14 @@ internal class KaFe10Resolver(
             @Suppress("UNCHECKED_CAST")
             val partiallyAppliedConstructorSymbol = partiallyAppliedSymbol as KaPartiallyAppliedFunctionSymbol<KaConstructorSymbol>
             when (val callElement = call.callElement) {
-                is KtAnnotationEntry -> return KaAnnotationCall(partiallyAppliedSymbol, argumentMapping)
-                is KtConstructorDelegationCall -> return KaDelegatedConstructorCall(
+                is KtAnnotationEntry -> return KaBaseAnnotationCall(partiallyAppliedSymbol, argumentMapping)
+                is KtConstructorDelegationCall -> return KaBaseDelegatedConstructorCall(
                     partiallyAppliedConstructorSymbol,
                     if (callElement.isCallToThis) KaDelegatedConstructorCall.Kind.THIS_CALL else KaDelegatedConstructorCall.Kind.SUPER_CALL,
                     argumentMapping,
                     toTypeArgumentsMapping(partiallyAppliedSymbol)
                 )
-                is KtSuperTypeCallEntry -> return KaDelegatedConstructorCall(
+                is KtSuperTypeCallEntry -> return KaBaseDelegatedConstructorCall(
                     partiallyAppliedConstructorSymbol,
                     KaDelegatedConstructorCall.Kind.SUPER_CALL,
                     argumentMapping,
@@ -449,7 +452,7 @@ internal class KaFe10Resolver(
             }
         }
 
-        return KaSimpleFunctionCall(
+        return KaBaseSimpleFunctionCall(
             partiallyAppliedSymbol,
             argumentMapping,
             toTypeArgumentsMapping(partiallyAppliedSymbol),

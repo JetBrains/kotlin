@@ -2,6 +2,14 @@ KtCallExpression(43,66): 'generic<Int, String>(5)'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        argumentMapping = {
+          5 -> (KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = a: A
+            callableId = null)
+        }
         isImplicitInvoke = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = null
@@ -21,14 +29,6 @@ KtCallExpression(43,66): 'generic<Int, String>(5)'
             callableId = /generic
         typeArgumentsMapping = {
           A -> (kotlin.Int)
-        }
-        argumentMapping = {
-          5 -> (KaVariableSignature:
-            name = a
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = a: A
-            callableId = null)
         }
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with generic>
