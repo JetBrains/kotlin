@@ -4,7 +4,7 @@ public fun test() {
 
     }
 
-    <!NOT_YET_SUPPORTED_IN_INLINE!>inline<!> fun localFun2() {
+    <!NOT_YET_SUPPORTED_LOCAL_INLINE_FUNCTION!>inline<!> fun localFun2() {
         localFun()
     }
 

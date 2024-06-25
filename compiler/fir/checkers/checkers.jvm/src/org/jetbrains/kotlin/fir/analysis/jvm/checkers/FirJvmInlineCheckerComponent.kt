@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.FirInlineCheckerPlatformSpecif
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalMember
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
@@ -19,7 +20,7 @@ class FirJvmInlineCheckerComponent : FirInlineCheckerPlatformSpecificComponent()
     override fun isGenerallyOk(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter): Boolean {
         // local inline functions are prohibited
         return if (declaration.isLocalMember && context.containingDeclarations.lastOrNull() !is FirScript) {
-            reporter.reportOn(declaration.source, FirErrors.NOT_YET_SUPPORTED_IN_INLINE, "Local inline functions", context)
+            reporter.reportOn(declaration.source, FirJvmErrors.NOT_YET_SUPPORTED_LOCAL_INLINE_FUNCTION, context)
             false
         } else {
             true

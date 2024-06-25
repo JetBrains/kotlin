@@ -51,6 +51,8 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
             parameter<String>("overrideDescription")
             parameter<FirNamedFunctionSymbol>("regular")
         }
+
+        val NOT_YET_SUPPORTED_LOCAL_INLINE_FUNCTION by error<KtDeclaration>(PositioningStrategy.NOT_SUPPORTED_IN_INLINE_MOST_RELEVANT)
     }
 
     val TYPES by object : DiagnosticGroup("Types") {

@@ -17,7 +17,7 @@ fun find(): Any? {
 }
 
 fun find4(): Any? {
-    <!NOT_YET_SUPPORTED_IN_INLINE!>inline<!> fun visit(element: Any) {
+    <!NOT_YET_SUPPORTED_LOCAL_INLINE_FUNCTION!>inline<!> fun visit(element: Any) {
         <!RETURN_NOT_ALLOWED!>return@find4<!> element
     }
     return null

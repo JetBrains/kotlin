@@ -3749,6 +3749,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val regular: KaFunctionSymbol
     }
 
+    interface NotYetSupportedLocalInlineFunction : KaFirDiagnostic<KtDeclaration> {
+        override val diagnosticClass get() = NotYetSupportedLocalInlineFunction::class
+    }
+
     interface JavaTypeMismatch : KaFirDiagnostic<KtExpression> {
         override val diagnosticClass get() = JavaTypeMismatch::class
         val expectedType: KaType

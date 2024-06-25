@@ -4,7 +4,7 @@
 }
 
 fun outerFun() {
-    <!NOT_YET_SUPPORTED_IN_INLINE!>inline<!> fun localInlineFun() {}
+    <!NOT_YET_SUPPORTED_LOCAL_INLINE_FUNCTION!>inline<!> fun localInlineFun() {}
 }
 
 abstract class Base {
