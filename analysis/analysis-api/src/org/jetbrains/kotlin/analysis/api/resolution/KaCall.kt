@@ -170,7 +170,7 @@ public interface KaCompoundAccessCall {
     /**
      * The type of this compound access.
      */
-    public val compoundAccess: KaCompoundAccess
+    public val compoundAccess: KaCompoundOperation
 }
 
 /**
@@ -261,16 +261,16 @@ public interface KaCompoundVariableAccessCall : KaCall, KaCompoundAccessCall {
  * `m["a"]`, which is again a simple `KaFunctionCall` to `ThrowingMap.get`.
  */
 public class KaCompoundArrayAccessCall @KaImplementationDetail constructor(
-    compoundAccess: KaCompoundAccess,
+    compoundAccess: KaCompoundOperation,
     indexArguments: List<KtExpression>,
     getPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>,
     setPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>,
 ) : KaCall, KaCompoundAccessCall {
-    private val backingCompoundAccess: KaCompoundAccess = compoundAccess
+    private val backingCompoundAccess: KaCompoundOperation = compoundAccess
 
     override val token: KaLifetimeToken get() = backingCompoundAccess.token
 
-    override val compoundAccess: KaCompoundAccess get() = withValidityAssertion { backingCompoundAccess }
+    override val compoundAccess: KaCompoundOperation get() = withValidityAssertion { backingCompoundAccess }
 
     public val indexArguments: List<KtExpression> by validityAsserted(indexArguments)
 

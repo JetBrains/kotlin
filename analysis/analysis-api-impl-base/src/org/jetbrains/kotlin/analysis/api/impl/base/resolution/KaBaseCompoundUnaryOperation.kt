@@ -9,20 +9,20 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.validityAsserted
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundAccess
+import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundOperation
 import org.jetbrains.kotlin.analysis.api.resolution.KaPartiallyAppliedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 
 @KaImplementationDetail
 class KaBaseCompoundUnaryOperation(
     private val backingOperationPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>,
-    kind: KaCompoundAccess.IncOrDecOperation.Kind,
-    precedence: KaCompoundAccess.IncOrDecOperation.Precedence,
-) : KaCompoundAccess.IncOrDecOperation {
+    kind: KaCompoundOperation.IncOrDecOperation.Kind,
+    precedence: KaCompoundOperation.IncOrDecOperation.Precedence,
+) : KaCompoundOperation.IncOrDecOperation {
     override val token: KaLifetimeToken get() = backingOperationPartiallyAppliedSymbol.token
 
-    override val kind: KaCompoundAccess.IncOrDecOperation.Kind by validityAsserted(kind)
-    override val precedence: KaCompoundAccess.IncOrDecOperation.Precedence by validityAsserted(precedence)
+    override val kind: KaCompoundOperation.IncOrDecOperation.Kind by validityAsserted(kind)
+    override val precedence: KaCompoundOperation.IncOrDecOperation.Precedence by validityAsserted(precedence)
     override val operationPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>
         get() = withValidityAssertion { backingOperationPartiallyAppliedSymbol }
 }

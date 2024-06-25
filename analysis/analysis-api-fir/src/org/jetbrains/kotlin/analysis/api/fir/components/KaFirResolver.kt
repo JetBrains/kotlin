@@ -711,8 +711,8 @@ internal class KaFirResolver(
             }
         } else if (psi is KtUnaryExpression && psi.operationToken in KtTokens.INCREMENT_AND_DECREMENT) {
             val incDecPrecedence = when (psi) {
-                is KtPostfixExpression -> KaCompoundAccess.IncOrDecOperation.Precedence.POSTFIX
-                else -> KaCompoundAccess.IncOrDecOperation.Precedence.PREFIX
+                is KtPostfixExpression -> KaCompoundOperation.IncOrDecOperation.Precedence.POSTFIX
+                else -> KaCompoundOperation.IncOrDecOperation.Precedence.PREFIX
             }
             val incOrDecOperationKind = psi.getInOrDecOperationKind()
             val baseExpression = deparenthesize(psi.baseExpression)
@@ -800,12 +800,12 @@ internal class KaFirResolver(
     private fun getOperationPartiallyAppliedSymbolsForIncOrDecOperation(
         fir: FirFunctionCall,
         arrayAccessExpression: KtArrayAccessExpression,
-        incDecPrecedence: KaCompoundAccess.IncOrDecOperation.Precedence,
+        incDecPrecedence: KaCompoundOperation.IncOrDecOperation.Precedence,
     ): CompoundArrayAccessPartiallyAppliedSymbols? {
         val lastArg = fir.arguments.lastOrNull() ?: return null
         val setPartiallyAppliedSymbol = fir.toPartiallyAppliedSymbol(arrayAccessExpression.arrayExpression) ?: return null
         return when (incDecPrecedence) {
-            KaCompoundAccess.IncOrDecOperation.Precedence.PREFIX -> {
+            KaCompoundOperation.IncOrDecOperation.Precedence.PREFIX -> {
                 // For prefix case, the last argument is a call to get(...).inc().
                 val operationCall = lastArg as? FirFunctionCall ?: return null
                 val operationPartiallyAppliedSymbol = operationCall.toPartiallyAppliedSymbol(arrayAccessExpression) ?: return null
@@ -818,7 +818,7 @@ internal class KaFirResolver(
                     setPartiallyAppliedSymbol
                 )
             }
-            KaCompoundAccess.IncOrDecOperation.Precedence.POSTFIX -> {
+            KaCompoundOperation.IncOrDecOperation.Precedence.POSTFIX -> {
                 // For postfix case, the last argument is the operation call invoked on a synthetic local variable `<unary>`. This local
                 // variable is initialized by calling the `get` function.
                 val operationCall = lastArg as? FirFunctionCall ?: return null
