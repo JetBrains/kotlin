@@ -14,7 +14,7 @@ kotlinx-bcv = "0.13.2"
 # Version of compiler for analysis-descriptor is in sync with K2 because of updated intellij-platform in 2.0.20-dev-5055
 # can be changed to just 2.0.20 after release of Kotlin 2.0.20
 kotlin-compiler = "2.0.20-dev-5135"
-kotlin-compiler-k2 = "2.0.20-dev-6501"
+kotlin-compiler-k2 = "2.0.20-dev-6911"
 
 # MUST match the version of the intellij platform used in the kotlin compiler,
 # otherwise this will lead to different versions of psi API and implementations
@@ -94,7 +94,6 @@ kotlin-high-level-api-api = { module = "org.jetbrains.kotlin:high-level-api-for-
 kotlin-high-level-api-impl = { module = "org.jetbrains.kotlin:high-level-api-impl-base-for-ide", version.ref = "kotlin-compiler-k2" }
 kotlin-high-level-api-fir = { module = "org.jetbrains.kotlin:high-level-api-fir-for-ide", version.ref = "kotlin-compiler-k2" }
 kotlin-low-level-api-fir = { module = "org.jetbrains.kotlin:low-level-api-fir-for-ide", version.ref = "kotlin-compiler-k2" }
-kotlin-analysis-project-structure = { module = "org.jetbrains.kotlin:analysis-project-structure-for-ide", version.ref = "kotlin-compiler-k2" }
 kotlin-analysis-api-standalone = { module = "org.jetbrains.kotlin:analysis-api-standalone-for-ide", version.ref = "kotlin-compiler-k2" }
 kotlin-analysis-api-platform = { module = "org.jetbrains.kotlin:analysis-api-platform-interface-for-ide", version.ref = "kotlin-compiler-k2" }
 kotlin-symbol-light-classes = { module = "org.jetbrains.kotlin:symbol-light-classes-for-ide", version.ref = "kotlin-compiler-k2" }

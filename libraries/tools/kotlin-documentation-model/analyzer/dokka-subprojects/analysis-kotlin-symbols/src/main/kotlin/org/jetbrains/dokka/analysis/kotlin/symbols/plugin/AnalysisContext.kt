@@ -9,8 +9,8 @@ import com.intellij.openapi.util.Disposer
 import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.model.SourceSetDependent
 import org.jetbrains.dokka.plugability.DokkaContext
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISession
-import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import java.io.Closeable
 
 internal fun SamplesKotlinAnalysis(
@@ -31,7 +31,7 @@ internal fun ProjectKotlinAnalysis(
 )
 
 internal class KotlinAnalysis(
-    private val sourceModules: SourceSetDependent<KtSourceModule>,
+    private val sourceModules: SourceSetDependent<KaSourceModule>,
     private val analysisSession: StandaloneAnalysisAPISession,
     private val projectDisposable: Disposable
 ) : Closeable {

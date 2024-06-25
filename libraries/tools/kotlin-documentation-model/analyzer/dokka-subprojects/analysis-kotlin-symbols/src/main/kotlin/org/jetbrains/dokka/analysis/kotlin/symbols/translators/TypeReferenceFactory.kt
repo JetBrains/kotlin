@@ -25,7 +25,7 @@ private fun KaSession.getTypeReferenceFromPossiblyRecursive(
     }
 
     return when (type) {
-        is KaNonErrorClassType -> TypeConstructor(
+        is KaClassType -> TypeConstructor(
             type.classId.asFqNameString(),
             type.typeArguments.map {
                 getTypeReferenceFromTypeProjection(
@@ -55,7 +55,7 @@ private fun KaSession.getTypeReferenceFromPossiblyRecursive(
         )
 
         is KaDynamicType -> TypeConstructor("[dynamic]", emptyList())
-        is KaTypeErrorType -> TypeConstructor("$ERROR_CLASS_NAME $type", emptyList())
+        is KaErrorType -> TypeConstructor("$ERROR_CLASS_NAME $type", emptyList())
         // Non-denotable types, see https://kotlinlang.org/spec/type-system.html#type-kinds
 
         // By the definition [flexible types](https://kotlinlang.org/spec/type-system.html#flexible-types),

@@ -28,8 +28,8 @@ private fun CallableId.createDRI(receiver: TypeReference?, params: List<TypeRefe
     )
 )
 
-internal fun getDRIFromNonErrorClassType(nonErrorClassType: KaNonErrorClassType): DRI =
-    nonErrorClassType.classId.createDRI()
+internal fun getDRIFromClassType(classType: KaClassType): DRI =
+    classType.classId.createDRI()
 
 // because of compatibility with Dokka K1, DRI of entry is kept as non-callable
 internal fun getDRIFromEnumEntry(symbol: KaEnumEntrySymbol): DRI {
@@ -43,7 +43,7 @@ internal fun getDRIFromEnumEntry(symbol: KaEnumEntrySymbol): DRI {
 
 internal fun KaSession.getDRIFromTypeParameter(symbol: KaTypeParameterSymbol): DRI {
     val containingSymbol =
-        (symbol.getContainingSymbol() as? KaSymbolWithTypeParameters)
+        (symbol.containingSymbol as? KaSymbolWithTypeParameters)
             ?: throw IllegalStateException("Containing symbol is null for type parameter")
     val typeParameters = containingSymbol.typeParameters
     val index = typeParameters.indexOfFirst { symbol.name == it.name }
@@ -61,13 +61,13 @@ internal fun KaSession.getDRIFromConstructor(symbol: KaConstructorSymbol): DRI {
     )
 }
 
-internal fun KaSession.getDRIFromVariableLike(symbol: KaVariableLikeSymbol): DRI {
+internal fun KaSession.getDRIFromVariable(symbol: KaVariableSymbol): DRI {
     val callableId = symbol.callableId ?: throw IllegalStateException("Can not get callable Id due to it is local")
     val receiver = symbol.receiverType?.let(::getTypeReferenceFrom)
     return callableId.createDRI(receiver, emptyList())
 }
 
-internal fun KaSession.getDRIFromFunctionLike(symbol: KaFunctionLikeSymbol): DRI {
+internal fun KaSession.getDRIFromFunction(symbol: KaFunctionSymbol): DRI {
     val params = symbol.valueParameters.map { getTypeReferenceFrom(it.returnType) }
     val receiver = symbol.receiverType?.let {
         getTypeReferenceFrom(it)
@@ -82,10 +82,10 @@ internal fun getDRIFromPackage(symbol: KaPackageSymbol): DRI =
     DRI(packageName = symbol.fqName.asString())
 
 internal fun KaSession.getDRIFromValueParameter(symbol: KaValueParameterSymbol): DRI {
-    val function = (symbol.getContainingSymbol() as? KaFunctionLikeSymbol)
+    val function = (symbol.containingSymbol as? KaFunctionSymbol)
         ?: throw IllegalStateException("Containing symbol is null for type parameter")
     val index = function.valueParameters.indexOfFirst { it.name == symbol.name }
-    val funDRI = getDRIFromFunctionLike(function)
+    val funDRI = getDRIFromFunction(function)
     return funDRI.copy(target = PointingToCallableParameters(index))
 }
 
@@ -97,11 +97,10 @@ internal fun KaSession.getDRIFromReceiverParameter(receiverParameterSymbol: KaRe
 
 private fun KaSession.getDRIFromReceiverType(type: KaType): DRI {
     return when(type) {
-        is KaNonErrorClassType -> getDRIFromNonErrorClassType(type)
+        is KaClassType -> getDRIFromClassType(type)
         is KaTypeParameterType -> getDRIFromTypeParameter(type.symbol)
         is KaDefinitelyNotNullType -> getDRIFromReceiverType(type.original)
-        is KaTypeErrorType -> DRI(packageName = "", classNames = "$ERROR_CLASS_NAME $type")
-        is KaClassErrorType -> DRI(packageName = "", classNames = "$ERROR_CLASS_NAME $type")
+        is KaErrorType -> DRI(packageName = "", classNames = "$ERROR_CLASS_NAME $type")
         is KaDynamicType -> DRI(packageName = "", classNames = "$ERROR_CLASS_NAME $type") // prohibited by a compiler, but it's a possible input
 
         is KaCapturedType -> throw IllegalStateException("Unexpected non-denotable type while creating DRI $type")
@@ -116,8 +115,8 @@ internal fun KaSession.getDRIFromSymbol(symbol: KaSymbol): DRI =
         is KaTypeParameterSymbol -> getDRIFromTypeParameter(symbol)
         is KaConstructorSymbol -> getDRIFromConstructor(symbol)
         is KaValueParameterSymbol -> getDRIFromValueParameter(symbol)
-        is KaVariableLikeSymbol -> getDRIFromVariableLike(symbol)
-        is KaFunctionLikeSymbol -> getDRIFromFunctionLike(symbol)
+        is KaVariableSymbol -> getDRIFromVariable(symbol)
+        is KaFunctionSymbol -> getDRIFromFunction(symbol)
         is KaClassLikeSymbol -> getDRIFromClassLike(symbol)
         is KaPackageSymbol -> getDRIFromPackage(symbol)
         is KaReceiverParameterSymbol -> getDRIFromReceiverParameter(symbol)
@@ -126,7 +125,7 @@ internal fun KaSession.getDRIFromSymbol(symbol: KaSymbol): DRI =
 
 private fun KaSession.getDRIFromNonCallablePossibleLocalSymbol(symbol: KaSymbol): DRI {
     if (symbol.location == KaSymbolLocation.LOCAL) {
-        return symbol.getContainingSymbol()?.let { getDRIFromNonCallablePossibleLocalSymbol(it) }
+        return symbol.containingSymbol?.let { getDRIFromNonCallablePossibleLocalSymbol(it) }
             ?: throw IllegalStateException("Can't get containing symbol for local symbol")
     }
     return getDRIFromSymbol(symbol)
@@ -136,11 +135,11 @@ private fun KaSession.getDRIFromNonCallablePossibleLocalSymbol(symbol: KaSymbol)
  * Currently, it's used only for functions from enum entry,
  * For its members: `memberSymbol.callableIdIfNonLocal=null`
  */
-private fun KaSession.getDRIFromLocalFunction(symbol: KaFunctionLikeSymbol): DRI {
+private fun KaSession.getDRIFromLocalFunction(symbol: KaFunctionSymbol): DRI {
     /**
      * A function is inside local object
      */
-    val containingSymbolDRI = symbol.getContainingSymbol()?.let { getDRIFromNonCallablePossibleLocalSymbol(it) }
+    val containingSymbolDRI = symbol.containingSymbol?.let { getDRIFromNonCallablePossibleLocalSymbol(it) }
         ?: throw IllegalStateException("Can't get containing symbol for local function")
     return containingSymbolDRI.copy(
         callable = Callable(
