@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallCandidateInfo
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallInfo
 import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundAssignOperation
-import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundOperation
+import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundUnaryOperation
 import org.jetbrains.kotlin.analysis.api.resolution.KaExplicitReceiverValue
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -69,9 +69,9 @@ abstract class KaAbstractResolver<T : KaSession> : KaSessionComponent<T>(), KaRe
         else -> error("unexpected operator $operationToken")
     }
 
-    protected fun KtUnaryExpression.getInOrDecOperationKind(): KaCompoundOperation.KaCompoundUnaryOperation.Kind = when (operationToken) {
-        KtTokens.PLUSPLUS -> KaCompoundOperation.KaCompoundUnaryOperation.Kind.INC
-        KtTokens.MINUSMINUS -> KaCompoundOperation.KaCompoundUnaryOperation.Kind.DEC
+    protected fun KtUnaryExpression.getInOrDecOperationKind(): KaCompoundUnaryOperation.Kind = when (operationToken) {
+        KtTokens.PLUSPLUS -> KaCompoundUnaryOperation.Kind.INC
+        KtTokens.MINUSMINUS -> KaCompoundUnaryOperation.Kind.DEC
         else -> error("unexpected operator $operationToken")
     }
 
