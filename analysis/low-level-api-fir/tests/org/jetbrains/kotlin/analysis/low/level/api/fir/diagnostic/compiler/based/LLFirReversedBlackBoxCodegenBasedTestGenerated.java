@@ -39234,6 +39234,12 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
       }
 
       @Test
+      @TestMetadata("directJavaActualization.kt")
+      public void testDirectJavaActualization() {
+        runTest("compiler/testData/codegen/box/multiplatform/k2/directJavaActualization.kt");
+      }
+
+      @Test
       @TestMetadata("expectAnnotationAsTypeAlias.kt")
       public void testExpectAnnotationAsTypeAlias() {
         runTest("compiler/testData/codegen/box/multiplatform/k2/expectAnnotationAsTypeAlias.kt");
