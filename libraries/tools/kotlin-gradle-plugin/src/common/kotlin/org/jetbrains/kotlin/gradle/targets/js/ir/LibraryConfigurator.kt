@@ -28,11 +28,7 @@ class LibraryConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
             .all { binary ->
                 binary as Library
 
-                val npmProject = compilation.npmProject
-
                 val mode = binary.mode
-
-                val linkSyncTask = compilation.target.project.tasks.named<IncrementalSyncTask>(binary.npmProjectLinkSyncTaskName())
 
                 val distributionTask = subTarget.registerSubTargetTask<Copy>(
                     subTarget.disambiguateCamelCased(
@@ -40,13 +36,12 @@ class LibraryConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
                         DISTRIBUTION_TASK_NAME
                     )
                 ) {
-                    if (target.wasmTargetType != KotlinWasmTargetType.WASI) {
+                    if (subTarget is KotlinJsIrNpmBasedSubTarget && target.wasmTargetType != KotlinWasmTargetType.WASI) {
+                        val npmProject = compilation.npmProject
                         it.from(project.tasks.named(npmProject.publicPackageJsonTaskName))
-                        it.from(linkSyncTask)
-                    } else {
-                        it.from(binary.linkTask)
-                        it.from(project.tasks.named(compilation.processResourcesTaskName))
                     }
+
+                    it.from(project.tasks.named(subTarget.binarySyncTaskName(binary)))
 
                     it.into(binary.distribution.outputDirectory)
                 }

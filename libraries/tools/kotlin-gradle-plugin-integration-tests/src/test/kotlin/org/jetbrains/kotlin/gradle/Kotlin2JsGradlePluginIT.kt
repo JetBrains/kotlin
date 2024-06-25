@@ -264,7 +264,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
             fooTxt.deleteExisting()
 
 
-            build("compileDevelopmentExecutableKotlinJs") {
+            build("developmentExecutableCompileSync") {
                 assertTasksExecuted(":app:developmentExecutableCompileSync")
 
                 assertFileInProjectNotExists("build/js/packages/kotlin-js-browser-app/kotlin/foo/foo.txt")
@@ -327,14 +327,14 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
 
             buildAndFail("developmentExecutableCompileSync") {
                 assertTasksFailed(":developmentExecutableValidateGeneratedByCompilerTypeScript")
-                assertFileInProjectExists("build/js/packages/js-ir-validate-ts/kotlin/js-ir-validate-ts.js")
-                assertFileInProjectExists("build/js/packages/js-ir-validate-ts/kotlin/js-ir-validate-ts.d.ts")
+                assertFileInProjectExists("build/compileSync/js/main/developmentExecutable/kotlin/js-ir-validate-ts.js")
+                assertFileInProjectExists("build/compileSync/js/main/developmentExecutable/kotlin/js-ir-validate-ts.d.ts")
             }
 
             build("productionExecutableCompileSync") {
                 assertTasksExecuted(":productionExecutableValidateGeneratedByCompilerTypeScript")
-                assertFileInProjectExists("build/js/packages/js-ir-validate-ts/kotlin/js-ir-validate-ts.js")
-                assertFileInProjectExists("build/js/packages/js-ir-validate-ts/kotlin/js-ir-validate-ts.d.ts")
+                assertFileInProjectExists("build/compileSync/js/main/developmentExecutable/kotlin/js-ir-validate-ts.js")
+                assertFileInProjectExists("build/compileSync/js/main/developmentExecutable/kotlin/js-ir-validate-ts.d.ts")
             }
         }
     }

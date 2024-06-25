@@ -6,79 +6,26 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Action
-import org.gradle.api.file.DuplicatesStrategy
+import org.gradle.api.file.Directory
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalMainFunctionArgumentsDsl
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
-import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinWasmNode
 import org.jetbrains.kotlin.gradle.tasks.IncrementalSyncTask
-import org.jetbrains.kotlin.gradle.tasks.locateTask
-import org.jetbrains.kotlin.gradle.tasks.registerTask
-import org.jetbrains.kotlin.gradle.utils.mapToFile
+import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.gradle.utils.named
 import javax.inject.Inject
 
 abstract class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
-    KotlinJsIrSubTarget(target, "node"),
+    KotlinJsIrNpmBasedSubTarget(target, "node"),
     KotlinJsNodeDsl {
-
-    init {
-        if (target.wasmTargetType != KotlinWasmTargetType.WASI) {
-            target.compilations.all { compilation ->
-                compilation.binaries.all { binary ->
-                    if (project.locateTask<IncrementalSyncTask>(binary.npmProjectLinkSyncTaskName()) == null) {
-
-                        project.registerTask<DefaultIncrementalSyncTask>(
-                            binary.npmProjectLinkSyncTaskName()
-                        ) { task ->
-                            fun fromLinkTask() {
-                                task.from.from(
-                                    binary.linkTask.flatMap { linkTask ->
-                                        linkTask.destinationDirectory
-                                    }
-                                )
-                            }
-                            when (binary) {
-                                is ExecutableWasm -> {
-                                    if (compilation.isMain() && binary.mode == KotlinJsBinaryMode.PRODUCTION) {
-                                        task.from.from(binary.optimizeTask.flatMap { it.outputFileProperty.map { it.asFile.parentFile } })
-                                        task.dependsOn(binary.optimizeTask)
-                                    } else {
-                                        fromLinkTask()
-                                    }
-                                }
-                                is LibraryWasm -> {
-                                    if (compilation.isMain() && binary.mode == KotlinJsBinaryMode.PRODUCTION) {
-                                        task.from.from(binary.optimizeTask.flatMap { it.outputFileProperty.map { it.asFile.parentFile } })
-                                        task.dependsOn(binary.optimizeTask)
-                                    } else {
-                                        fromLinkTask()
-                                    }
-                                }
-                                else -> {
-                                    fromLinkTask()
-                                }
-                            }
-
-                            task.duplicatesStrategy = DuplicatesStrategy.WARN
-
-                            task.from.from(project.tasks.named(binary.compilation.processResourcesTaskName))
-
-                            task.destinationDirectory.set(binary.compilation.npmProject.dist.mapToFile())
-                        }
-                    }
-                }
-            }
-        }
-    }
 
     private val nodeJs = project.rootProject.kotlinNodeJsExtension
     private val nodeJsTaskProviders = project.rootProject.kotlinNodeJsExtension
@@ -111,19 +58,37 @@ abstract class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
         test.dependsOn(binary.linkTask)
     }
 
-    override fun mainInputFile(binary: JsIrBinary): Provider<RegularFile> {
+    override fun binaryInputFile(binary: JsIrBinary): Provider<RegularFile> {
         return if (target.wasmTargetType != KotlinWasmTargetType.WASI) {
-            binary.npmProjectMainFileSyncPath()
+            super.binaryInputFile(binary)
         } else {
-            binary.mainFile
+            project.objects.fileProperty().fileProvider(
+                project.tasks.named<IncrementalSyncTask>(binarySyncTaskName(binary)).map {
+                    it.destinationDirectory.get().resolve(binary.mainFileName.get())
+                }
+            )
         }
     }
 
-    override fun testInputFile(binary: JsIrBinary): Provider<RegularFile> {
+    override fun binarySyncTaskName(binary: JsIrBinary): String {
         return if (target.wasmTargetType != KotlinWasmTargetType.WASI) {
-            binary.npmProjectMainFileSyncPath()
+            super.binarySyncTaskName(binary)
         } else {
-            binary.mainFile
+            disambiguateCamelCased(
+                binary.compilation.name.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
+                binary.name,
+                COMPILE_SYNC
+            )
+        }
+    }
+
+    override fun binarySyncOutput(binary: JsIrBinary): Provider<Directory> {
+        return if (target.wasmTargetType != KotlinWasmTargetType.WASI) {
+            super.binarySyncOutput(binary)
+        } else {
+            project.objects.directoryProperty().fileProvider(
+                binary.linkTask.map { it.destinationDirectory.getFile().parentFile.resolve(disambiguationClassifier) }
+            )
         }
     }
 

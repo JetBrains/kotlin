@@ -25,9 +25,14 @@ class D8EnvironmentConfigurator(subTarget: KotlinJsIrSubTarget) :
 
         return D8Exec.create(binary.compilation, binaryRunName) {
             group = subTarget.taskGroupName
-            dependsOn(binary.linkTask)
+            dependsOn(project.tasks.named(subTarget.binarySyncTaskName(binary)))
+            val inputFile = project.objects.fileProperty().value(
+                subTarget.binarySyncOutput(binary).flatMap {
+                    it.file(binary.mainFileName)
+                }
+            )
             inputFileProperty.set(
-                binary.mainFile
+                inputFile
             )
             runTaskConfigurations.all {
                 it.execute(this)

@@ -6,13 +6,18 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Action
+import org.gradle.api.file.Directory
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.targets.js.d8.D8Exec
 import org.jetbrains.kotlin.gradle.targets.js.d8.D8RootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmD8Dsl
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinWasmD8
+import org.jetbrains.kotlin.gradle.tasks.IncrementalSyncTask
+import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.gradle.utils.named
 import javax.inject.Inject
 
 abstract class KotlinD8Ir @Inject constructor(target: KotlinJsIrTarget) :
@@ -40,11 +45,25 @@ abstract class KotlinD8Ir @Inject constructor(target: KotlinJsIrTarget) :
         test.dependsOn(d8.setupTaskProvider)
     }
 
-    override fun mainInputFile(binary: JsIrBinary): Provider<RegularFile> {
-        return binary.mainFile
+    override fun binaryInputFile(binary: JsIrBinary): Provider<RegularFile> {
+        return project.objects.fileProperty().fileProvider(
+            project.tasks.named<IncrementalSyncTask>(binarySyncTaskName(binary)).map {
+                it.destinationDirectory.get().resolve(binary.mainFileName.get())
+            }
+        )
     }
 
-    override fun testInputFile(binary: JsIrBinary): Provider<RegularFile> {
-        return binary.mainFile
+    override fun binarySyncTaskName(binary: JsIrBinary): String {
+        return disambiguateCamelCased(
+            binary.compilation.name.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
+            binary.name,
+            COMPILE_SYNC
+        )
+    }
+
+    override fun binarySyncOutput(binary: JsIrBinary): Provider<Directory> {
+        return project.objects.directoryProperty().fileProvider(
+            binary.linkTask.map { it.destinationDirectory.getFile().parentFile.resolve(disambiguationClassifier) }
+        )
     }
 }

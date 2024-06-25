@@ -29,60 +29,12 @@ import org.jetbrains.kotlin.gradle.utils.mapToFile
 import javax.inject.Inject
 
 abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
-    KotlinJsIrSubTarget(target, "browser"),
+    KotlinJsIrNpmBasedSubTarget(target, "browser"),
     KotlinJsBrowserDsl {
 
     private val nodeJs = project.rootProject.kotlinNodeJsExtension
 
     private val propertiesProvider = PropertiesProvider(project)
-
-    init {
-        target.compilations.all { compilation ->
-            compilation.binaries.all { binary ->
-                if (project.locateTask<IncrementalSyncTask>(binary.npmProjectLinkSyncTaskName()) == null) {
-
-                    project.registerTask<DefaultIncrementalSyncTask>(
-                        binary.npmProjectLinkSyncTaskName()
-                    ) { task ->
-                        fun fromLinkTask() {
-                            task.from.from(
-                                binary.linkTask.flatMap { linkTask ->
-                                    linkTask.destinationDirectory
-                                }
-                            )
-                        }
-                        when (binary) {
-                            is ExecutableWasm -> {
-                                if (compilation.isMain() && binary.mode == KotlinJsBinaryMode.PRODUCTION) {
-                                    task.from.from(binary.optimizeTask.flatMap { it.outputFileProperty.map { it.asFile.parentFile } })
-                                    task.dependsOn(binary.optimizeTask)
-                                } else {
-                                    fromLinkTask()
-                                }
-                            }
-                            is LibraryWasm -> {
-                                if (compilation.isMain() && binary.mode == KotlinJsBinaryMode.PRODUCTION) {
-                                    task.from.from(binary.optimizeTask.flatMap { it.outputFileProperty.map { it.asFile.parentFile } })
-                                    task.dependsOn(binary.optimizeTask)
-                                } else {
-                                    fromLinkTask()
-                                }
-                            }
-                            else -> {
-                                fromLinkTask()
-                            }
-                        }
-
-                        task.duplicatesStrategy = DuplicatesStrategy.WARN
-
-                        task.from.from(project.tasks.named(binary.compilation.processResourcesTaskName))
-
-                        task.destinationDirectory.set(binary.compilation.npmProject.dist.mapToFile())
-                    }
-                }
-            }
-        }
-    }
 
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside browser using karma and webpack"
@@ -107,14 +59,6 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
         if (test.enabled) {
             nodeJs.taskRequirements.addTaskRequirements(test)
         }
-    }
-
-    override fun mainInputFile(binary: JsIrBinary): Provider<RegularFile> {
-        return binary.npmProjectMainFileSyncPath()
-    }
-
-    override fun testInputFile(binary: JsIrBinary): Provider<RegularFile> {
-        return binary.npmProjectMainFileSyncPath()
     }
 
     override fun commonWebpackConfig(body: Action<KotlinWebpackConfig>) {

@@ -14,7 +14,8 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.utils.domainObjectSet
 
-abstract class JsEnvironmentConfigurator<RunTask : Task>(protected val subTarget: KotlinJsIrSubTarget) : SubTargetConfigurator<Copy, RunTask> {
+abstract class JsEnvironmentConfigurator<RunTask : Task>(protected val subTarget: KotlinJsIrSubTarget) :
+    SubTargetConfigurator<Copy, RunTask> {
     protected val project = subTarget.target.project
 
     protected val runTaskConfigurations = project.objects.domainObjectSet<Action<RunTask>>()
@@ -25,11 +26,7 @@ abstract class JsEnvironmentConfigurator<RunTask : Task>(protected val subTarget
             .matching { it is Executable }
             .all { productionExecutable ->
                 project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(
-                    if (productionExecutable is ExecutableWasm) {
-                        productionExecutable.optimizeTask
-                    } else {
-                        productionExecutable.linkTask
-                    }
+                    project.tasks.named(subTarget.binarySyncTaskName(productionExecutable))
                 )
             }
     }

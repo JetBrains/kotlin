@@ -30,7 +30,7 @@ class MppDslWasmIT : KGPBaseTest() {
                 val jsOutput = "$jsPackages/redefined-js-module-name/kotlin/"
                 assertFileInProjectExists("$jsOutput/redefined-js-module-name.js")
 
-                val wasmOutput = "$jsPackages/redefined-wasm-module-name/kotlin/"
+                val wasmOutput = "build/compileSync/wasmJs/main/productionExecutable/optimized"
                 assertFileInProjectExists("$wasmOutput/redefined-wasm-module-name.mjs")
                 assertFileInProjectExists("$wasmOutput/redefined-wasm-module-name.wasm")
             }
