@@ -75,7 +75,7 @@ FILE fqName:<root> fileName:/AnnotationInAnnotation.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:Test modality:FINAL visibility:public superTypes:[kotlin.Any]
     annotations:
-      State(name = "1", storages = [Storage(value = "HELLO")])
+      State(name = "1", storages = [Storage(value = "HELLO") type=<root>.Storage] type=kotlin.Array<<root>.Storage>)
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test
     CONSTRUCTOR visibility:public <> () returnType:<root>.Test [primary]
       BLOCK_BODY

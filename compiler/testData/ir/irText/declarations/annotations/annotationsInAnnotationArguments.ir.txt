@@ -95,5 +95,5 @@ FILE fqName:<root> fileName:/annotationsInAnnotationArguments.kt
   FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
     annotations:
       A2(a = A1(x = 42))
-      AA(xs = [A1(x = 1), A1(x = 2)])
+      AA(xs = [A1(x = 1) type=<root>.A1, A1(x = 2) type=<root>.A1] type=kotlin.Array<<root>.A1>)
     BLOCK_BODY

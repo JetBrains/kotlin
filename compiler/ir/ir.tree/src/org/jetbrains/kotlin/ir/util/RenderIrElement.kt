@@ -901,7 +901,9 @@ private fun StringBuilder.renderAsAnnotationArgument(irElement: IrElement?, rend
         is IrVararg -> {
             appendIterableWith(irElement.elements, prefix = "[", postfix = "]", separator = ", ") {
                 renderAsAnnotationArgument(it, renderer, options)
+                append(" type=${irElement.varargElementType.render()}")
             }
+            append(" type=${irElement.type.render()}")
         }
         else -> if (renderer != null) {
             append(irElement.accept(renderer, null))

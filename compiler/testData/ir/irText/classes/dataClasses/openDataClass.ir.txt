@@ -1,7 +1,7 @@
 FILE fqName:<root> fileName:/openDataClass.kt
   CLASS CLASS name:ValidatedProperties modality:OPEN visibility:public [data] superTypes:[kotlin.Any]
     annotations:
-      Suppress(names = ["INCOMPATIBLE_MODIFIERS"])
+      Suppress(names = ["INCOMPATIBLE_MODIFIERS" type=kotlin.String] type=kotlin.Array<out kotlin.String>)
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ValidatedProperties
     PROPERTY name:test1 visibility:public modality:OPEN [val]
       FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.String visibility:private [final]

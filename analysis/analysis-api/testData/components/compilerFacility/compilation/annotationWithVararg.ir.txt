@@ -2,7 +2,7 @@ MODULE_FRAGMENT
   FILE fqName:<root> fileName:main.kt
     FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Int
       annotations:
-        Anno(x = ["A", "B"])
+        Anno(x = ["A" type=kotlin.String, "B" type=kotlin.String] type=kotlin.Array<out kotlin.String>)
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun foo (): kotlin.Int declared in <root>'
           CONST Int type=kotlin.Int value=10

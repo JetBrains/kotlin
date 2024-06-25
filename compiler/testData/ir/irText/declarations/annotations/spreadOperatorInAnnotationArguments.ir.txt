@@ -32,5 +32,5 @@ FILE fqName:<root> fileName:/spreadOperatorInAnnotationArguments.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
     annotations:
-      A(xs = [["a"], ["b"]])
+      A(xs = [["a" type=kotlin.String] type=kotlin.String type=kotlin.String, ["b" type=kotlin.String] type=kotlin.String type=kotlin.String] type=kotlin.Array<out kotlin.String>)
     BLOCK_BODY

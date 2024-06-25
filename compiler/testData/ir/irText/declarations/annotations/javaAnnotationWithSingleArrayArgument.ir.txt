@@ -202,11 +202,11 @@ FILE fqName:<root> fileName:/C.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:test visibility:public modality:OPEN <> ($this:<root>.A) returnType:kotlin.Unit [fake_override]
       annotations:
-        Annos(value = [Anno(token = "OK")])
-        Strings(value = ["OK"])
-        Ints(value = [42])
-        Enums(value = [GET_ENUM 'ENUM_ENTRY name:EA' type=<root>.E])
-        Classes(value = [CLASS_REFERENCE 'CLASS CLASS name:Double modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]' type=kotlin.reflect.KClass<kotlin.Double>])
+        Annos(value = [Anno(token = "OK") type=<root>.Anno] type=kotlin.Array<<root>.Anno>)
+        Strings(value = ["OK" type=kotlin.String] type=kotlin.Array<kotlin.String>)
+        Ints(value = [42 type=kotlin.Int] type=kotlin.IntArray)
+        Enums(value = [GET_ENUM 'ENUM_ENTRY name:EA' type=<root>.E type=<root>.E] type=kotlin.Array<<root>.E>)
+        Classes(value = [CLASS_REFERENCE 'CLASS CLASS name:Double modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]' type=kotlin.reflect.KClass<kotlin.Double> type=kotlin.reflect.KClass<*>] type=kotlin.Array<kotlin.reflect.KClass<*>>)
       overridden:
         public open fun test (): kotlin.Unit declared in <root>.A
       $this: VALUE_PARAMETER name:<this> type:<root>.A
