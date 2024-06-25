@@ -59,13 +59,13 @@ abstract class KaAbstractResolver<T : KaSession> : KaSessionComponent<T>(), KaRe
         listOfNotNull(symbol)
     }
 
-    protected fun KtBinaryExpression.getCompoundAssignKind(): KaCompoundOperation.CompoundAssign.Kind {
+    protected fun KtBinaryExpression.getCompoundAssignKind(): KaCompoundOperation.KaCompoundAssignOperation.Kind {
         val compoundAssignKind = when (operationToken) {
-            KtTokens.PLUSEQ -> KaCompoundOperation.CompoundAssign.Kind.PLUS_ASSIGN
-            KtTokens.MINUSEQ -> KaCompoundOperation.CompoundAssign.Kind.MINUS_ASSIGN
-            KtTokens.MULTEQ -> KaCompoundOperation.CompoundAssign.Kind.TIMES_ASSIGN
-            KtTokens.PERCEQ -> KaCompoundOperation.CompoundAssign.Kind.REM_ASSIGN
-            KtTokens.DIVEQ -> KaCompoundOperation.CompoundAssign.Kind.DIV_ASSIGN
+            KtTokens.PLUSEQ -> KaCompoundOperation.KaCompoundAssignOperation.Kind.PLUS_ASSIGN
+            KtTokens.MINUSEQ -> KaCompoundOperation.KaCompoundAssignOperation.Kind.MINUS_ASSIGN
+            KtTokens.MULTEQ -> KaCompoundOperation.KaCompoundAssignOperation.Kind.TIMES_ASSIGN
+            KtTokens.PERCEQ -> KaCompoundOperation.KaCompoundAssignOperation.Kind.REM_ASSIGN
+            KtTokens.DIVEQ -> KaCompoundOperation.KaCompoundAssignOperation.Kind.DIV_ASSIGN
             else -> error("unexpected operator $operationToken")
         }
         return compoundAssignKind

@@ -17,12 +17,12 @@ import org.jetbrains.kotlin.psi.KtExpression
 @KaImplementationDetail
 class KaBaseCompoundAssignOperation(
     private val backingOperationPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>,
-    kind: KaCompoundOperation.CompoundAssign.Kind,
+    kind: KaCompoundOperation.KaCompoundAssignOperation.Kind,
     operand: KtExpression,
-) : KaCompoundOperation.CompoundAssign {
+) : KaCompoundOperation.KaCompoundAssignOperation {
     override val token: KaLifetimeToken get() = backingOperationPartiallyAppliedSymbol.token
 
-    override val kind: KaCompoundOperation.CompoundAssign.Kind by validityAsserted(kind)
+    override val kind: KaCompoundOperation.KaCompoundAssignOperation.Kind by validityAsserted(kind)
     override val operand: KtExpression by validityAsserted(operand)
     override val operationPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>
         get() = withValidityAssertion { backingOperationPartiallyAppliedSymbol }
