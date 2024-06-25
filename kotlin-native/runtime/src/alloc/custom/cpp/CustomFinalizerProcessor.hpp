@@ -29,7 +29,7 @@ struct FinalizerQueueTraits {
 
     static bool processSingle(FinalizerQueueSingle& queue) noexcept {
         if (auto* cell = queue.Pop()) {
-            auto* extraObject = cell->Data();
+            auto* extraObject = cell->extraObject();
             if (auto* baseObject = extraObject->GetBaseObject()) {
                 RunFinalizers(baseObject);
             } else {

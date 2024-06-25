@@ -24,7 +24,7 @@ ALWAYS_INLINE ArrayHeader* alloc::Allocator::ThreadData::allocateArray(const Typ
 
 ALWAYS_INLINE mm::ExtraObjectData& alloc::Allocator::ThreadData::allocateExtraObjectData(
         ObjHeader* object, const TypeInfo* typeInfo) noexcept {
-    return impl_->alloc().CreateExtraObjectDataForObject(object, typeInfo);
+    return *impl_->alloc().CreateExtraObjectDataForObject(object, typeInfo);
 }
 
 ALWAYS_INLINE void alloc::Allocator::ThreadData::destroyUnattachedExtraObjectData(mm::ExtraObjectData& extraObject) noexcept {

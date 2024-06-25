@@ -7,7 +7,6 @@
 
 #include <atomic>
 #include <cstdint>
-#include <cstring>
 #include <random>
 
 #include "AtomicStack.hpp"
@@ -36,7 +35,7 @@ void ExtraObjectPage::Destroy() noexcept {
     Free(this, EXTRA_OBJECT_PAGE_SIZE);
 }
 
-mm::ExtraObjectData* ExtraObjectPage::TryAllocate() noexcept {
+ALWAYS_INLINE uint8_t* ExtraObjectPage::TryAllocate() noexcept {
     auto* next = nextFree_.load(std::memory_order_relaxed);
     if (next >= cells_ + EXTRA_OBJECT_COUNT) {
         allocatedSizeTracker_.onPageOverflow(EXTRA_OBJECT_COUNT * sizeof(mm::ExtraObjectData));
@@ -44,8 +43,8 @@ mm::ExtraObjectData* ExtraObjectPage::TryAllocate() noexcept {
     }
     ExtraObjectCell* freeBlock = next;
     nextFree_.store(freeBlock->next_.load(std::memory_order_relaxed), std::memory_order_relaxed);
-    CustomAllocDebug("ExtraObjectPage(%p)::TryAllocate() = %p", this, freeBlock->Data());
-    return freeBlock->Data();
+    CustomAllocDebug("ExtraObjectPage(%p)::TryAllocate() = %p", this, freeBlock->data_);
+    return freeBlock->data_;
 }
 
 bool ExtraObjectPage::Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept {
@@ -61,7 +60,7 @@ bool ExtraObjectPage::Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizer
             nextFree = &cell->next_;
             continue;
         }
-        if (SweepExtraObject(cell->Data(), sweepHandle)) {
+        if (SweepExtraObject(cell->extraObject(), sweepHandle)) {
             // If the current cell was marked, it's alive
             aliveBytes += sizeof(mm::ExtraObjectData);
         } else {

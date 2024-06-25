@@ -34,6 +34,8 @@ interface ConfigChecks {
 
     fun shouldInlineSafepoints() = !config.target.needSmallBinary()
 
+    fun shouldInlineBoxing() = !config.target.needSmallBinary()
+
     fun useLazyFileInitializers() = config.propertyLazyInitialization
 
 }
