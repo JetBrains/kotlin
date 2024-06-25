@@ -215,6 +215,14 @@ object LightTreePositioningStrategies {
         }
     }
 
+    private fun findStartingASTNodeForDeclarationName(
+        tree: FlyweightCapableTreeStructure<LighterASTNode>,
+        node: LighterASTNode,
+    ): LighterASTNode =
+        tree.modifierList(node)?.let { modifierList -> tree.findChildByType(modifierList, ENUM_KEYWORD) }
+            ?: tree.findChildByType(node, TokenSet.create(CLASS_KEYWORD, KtTokens.OBJECT_KEYWORD))
+            ?: node
+
     val DECLARATION_NAME: LightTreePositioningStrategy = object : BaseDeclarationNameStrategy() {
         override fun markNameIdentifier(
             nameIdentifier: LighterASTNode,
@@ -224,11 +232,7 @@ object LightTreePositioningStrategies {
             node: LighterASTNode,
         ): List<TextRange> {
             if (node.tokenType == KtNodeTypes.CLASS || node.tokenType == KtNodeTypes.OBJECT_DECLARATION) {
-                val startElement =
-                    tree.modifierList(node)?.let { modifierList -> tree.findChildByType(modifierList, KtTokens.ENUM_KEYWORD) }
-                        ?: tree.findChildByType(node, TokenSet.create(KtTokens.CLASS_KEYWORD, KtTokens.OBJECT_KEYWORD))
-                        ?: node
-
+                val startElement = findStartingASTNodeForDeclarationName(tree, node)
                 return markRange(startElement, nameIdentifier, startOffset, endOffset, tree, node)
             }
             return markElement(nameIdentifier, startOffset, endOffset, tree, node)
@@ -804,18 +808,13 @@ object LightTreePositioningStrategies {
                 node.tokenType == KtNodeTypes.CLASS || node.tokenType == KtNodeTypes.OBJECT_DECLARATION -> {
                     val nameIdentifier = tree.nameIdentifier(node)
                     if (nameIdentifier != null) {
-                        val startElement =
-                            tree.modifierList(node)?.let { modifierList -> tree.findChildByType(modifierList, ENUM_KEYWORD) }
-                                ?: tree.findChildByType(node, TokenSet.create(CLASS_KEYWORD, KtTokens.OBJECT_KEYWORD))
-                                ?: node
-
+                        val startElement = findStartingASTNodeForDeclarationName(tree, node)
                         return markRange(startElement, nameIdentifier, startOffset, endOffset, tree, node)
                     }
                 }
                 node.tokenType != KtNodeTypes.DOT_QUALIFIED_EXPRESSION &&
                         node.tokenType != KtNodeTypes.SAFE_ACCESS_EXPRESSION &&
-                        node.tokenType != KtNodeTypes.CALLABLE_REFERENCE_EXPRESSION
-                -> {
+                        node.tokenType != KtNodeTypes.CALLABLE_REFERENCE_EXPRESSION -> {
                     return super.mark(node, startOffset, endOffset, tree)
                 }
             }
