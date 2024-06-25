@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
  * modules. For example, a change in the environment such as removing an SDK might affect all modules, so a global event is more
  * appropriate.
  *
- * #### Timing Guarantees
+ * ### Timing Guarantees
  *
  * All modification events are guaranteed to be published in the write action in which the modification happens. Beyond that, the exact
  * timing is not strictly defined for most modification events.
@@ -42,7 +42,40 @@ import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
  * Only [module state modification events][KotlinModuleStateModificationListener] guarantee that the event is published before the module is
  * affected. This allows subscribers to access the module's properties and dependencies to invalidate or update caches.
  *
- * #### Implementation Notes
+ * ### Out-of-block modification (OOBM)
+ *
+ * Out-of-block modification is a source code modification which may affect the state of other non-local declarations.
+ *
+ * #### Example 1
+ *
+ * ```
+ * val x = 10<caret>
+ * val z = x
+ * ```
+ *
+ * If we change the initializer of `x` to `"str"` the return type of `x` will become `String` instead of the initial `Int`. This will
+ * change the return type of `z` as it does not have an explicit type. So, it is an **out-of-block modification**.
+ *
+ * #### Example 2
+ *
+ * ```
+ * val x: Int = 10<caret>
+ * val z = x
+ * ```
+ *
+ * If we change `10` to `"str"` as in the first example, it would not change the type of `z`, so it is not an **out-of-block-modification**.
+ *
+ * #### Examples of out-of-block modifications
+ *
+ *  - Modifying the body of a non-local declaration which doesn't have an explicit return type specified
+ *  - Changing the package of a file
+ *  - Adding a new declaration
+ *  - Moving a declaration to another package
+ *
+ * Generally, all modifications which happen outside the body of a callable declaration (functions, accessors, or properties) with an
+ * explicit type are considered **out-of-block**.
+ *
+ * ### Implementation Notes
  *
  * Analysis API platforms need to take care of publishing modification topics via the [analysisMessageBus]. In general, if your platform
  * works with static code and static module structure, you do not need to publish any events. However, keep in mind the contracts of the

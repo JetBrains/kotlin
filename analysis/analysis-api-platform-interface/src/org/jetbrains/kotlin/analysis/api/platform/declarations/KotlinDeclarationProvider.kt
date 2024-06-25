@@ -13,9 +13,16 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
 /**
- * A declaration provider for a given scope. It can be created via [KotlinDeclarationProviderFactory].
+ * A [KotlinDeclarationProvider] provides Kotlin PSI declarations for the project as well as additional information about them. The
+ * declarations may come from sources, libraries in case of stubbing, or declaration generation.
  *
- * It may be called frequently, so implementations should cache the results.
+ * Declaration providers usually don't cover declarations of the whole project, but rather of a restricted context. This usually means being
+ * limited to a specific [scope][com.intellij.psi.search.GlobalSearchScope], but the details depend on the kind of declaration provider.
+ *
+ * The main kind of declaration providers is created via [KotlinDeclarationProviderFactory] and it is scope-based, but there are other kinds
+ * of declaration providers, such as those created by [KotlinForwardDeclarationProviderFactory].
+ *
+ * Declaration providers are critical for performance, so implementations should cache results.
  */
 public interface KotlinDeclarationProvider : KotlinComposableProvider {
     public fun getClassLikeDeclarationByClassId(classId: ClassId): KtClassLikeDeclaration?

@@ -12,6 +12,9 @@ import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformComponent
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
 public interface KotlinResolutionScopeProvider : KotlinPlatformComponent {
+    /**
+     * Returns a [GlobalSearchScope] which covers the resolvable content of [module].
+     */
     public fun getResolutionScope(module: KaModule): GlobalSearchScope
 
     public companion object {

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.platform.KotlinOptionalPlatformComponen
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
 /**
- * Declaration provider factory for Kotlin/Native forward declarations.
+ * [KotlinForwardDeclarationProviderFactory] creates [KotlinDeclarationProvider]s for Kotlin/Native forward declarations.
  *
  * The declarations from the provider are used as a source **representation** for forward declaration symbols.
  * The special provider is necessary because forward declarations are mere qualified names by themselves.
@@ -23,12 +23,10 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
  */
 public interface KotlinForwardDeclarationProviderFactory : KotlinOptionalPlatformComponent {
     /**
-     * Create a Kotlin/Native declaration provider for [module].
+     * Creates a Kotlin/Native forward declaration provider for [module], or `null` if the module cannot contain forward declarations.
      *
      * Generally, only Kotlin/Native KLIB libraries can declare forward declarations.
      * For other types of [KaModule]s the provider normally shouldn't be created.
-     *
-     * @return a declaration provider for [module] or `null` if the module cannot contain forward declarations
      */
     public fun createDeclarationProvider(module: KaModule): KotlinDeclarationProvider?
 
@@ -38,9 +36,9 @@ public interface KotlinForwardDeclarationProviderFactory : KotlinOptionalPlatfor
 }
 
 /**
- * Create a declaration provider for [module]'s forward declarations or `null` if the module cannot contain forward declarations.
+ * Creates a Kotlin/Native forward declaration provider for [module], or `null` if the module cannot contain forward declarations.
  *
- * @see [KotlinForwardDeclarationProviderFactory]
+ * @see KotlinForwardDeclarationProviderFactory
  */
 public fun Project.createForwardDeclarationProvider(module: KaModule): KotlinDeclarationProvider? =
     KotlinForwardDeclarationProviderFactory.getInstance(this)?.createDeclarationProvider(module)
