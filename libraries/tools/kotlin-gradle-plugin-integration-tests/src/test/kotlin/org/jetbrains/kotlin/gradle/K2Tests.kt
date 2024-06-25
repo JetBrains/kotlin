@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import kotlin.test.Ignore
+import kotlin.test.assertEquals
 
 @Disabled("Used for local testing only")
 @MppGradlePluginTests
@@ -199,6 +200,14 @@ class CustomK2Tests : KGPBaseTest() {
         ) {
             build("compileCommonMainKotlinMetadata") {
                 assertTasksExecuted(":compileCommonMainKotlinMetadata")
+                extractNativeTasksCommandLineArgumentsFromOutput(":compileCommonMainKotlinMetadata") {
+                    val stdlibCounts = args.count { it != "-nostdlib" && it.contains("stdlib") }
+                    assertEquals(
+                        1,
+                        stdlibCounts,
+                        "Expected a single stdlib in the command line arguments, but got $stdlibCounts"
+                    )
+                }
             }
         }
     }

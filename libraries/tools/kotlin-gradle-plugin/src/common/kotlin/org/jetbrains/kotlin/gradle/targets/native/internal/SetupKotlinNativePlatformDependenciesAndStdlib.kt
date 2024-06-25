@@ -8,12 +8,17 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.commonizer.*
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
+import org.jetbrains.kotlin.gradle.internal.KOTLIN_STDLIB_MODULE_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupCoroutine
+import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationSideEffectCoroutine
+import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.metadata.isNativeSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
@@ -23,25 +28,61 @@ import org.jetbrains.kotlin.gradle.utils.konanDistribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
-internal val SetupKotlinNativePlatformDependenciesAndStdlib =
-    KotlinCompilationSideEffectCoroutine<AbstractKotlinNativeCompilation> { compilation ->
-        val project = compilation.project
+internal val SetupKotlinNativePlatformDependenciesAndStdlib = KotlinProjectSetupAction {
+    val kotlin = multiplatformExtensionOrNull ?: return@KotlinProjectSetupAction
 
-        // Commonizer target must not be null for AbstractKotlinNativeCompilation, but we are graceful here and just return
-        val commonizerTarget = compilation.commonizerTarget.await() ?: return@KotlinCompilationSideEffectCoroutine
-        val nativeDistributionDependencies = project.getNativeDistributionDependencies(commonizerTarget)
-        val stdlib = project.files(project.konanDistribution.stdlib)
-
-        val updatedCompileDependencyFiles = project.files().from(
-            stdlib,
-            nativeDistributionDependencies,
-            compilation.compileDependencyFiles
-        )
-
-        compilation.compileDependencyFiles = updatedCompileDependencyFiles
+    val stdlib = project.files(project.konanDistribution.stdlib)
+    kotlin.targets.all { target ->
+        target.compilations.all { compilation ->
+            if (compilation is AbstractKotlinNativeCompilation) {
+                launch { compilation.configureStdlibAndPlatformDependencies(stdlib) }
+            }
+        }
     }
 
-internal val ExcludeDefaultPlatformDependenciesFromKotlinNativeCompileTasks = KotlinProjectSetupAction {
+    excludeDefaultPlatformDependenciesFromKotlinNativeCompileTasks()
+    launch { kotlin.excludeStdlibFromNativeSourceSetDependencies() }
+}
+
+private suspend fun AbstractKotlinNativeCompilation.configureStdlibAndPlatformDependencies(
+    stdlib: FileCollection
+) {
+    // Commonizer target must not be null for AbstractKotlinNativeCompilation, but we are graceful here and just return
+    val commonizerTarget = commonizerTarget.await() ?: return
+    val nativeDistributionDependencies = project.getNativeDistributionDependencies(commonizerTarget)
+
+    val updatedCompileDependencyFiles = project.files().from(
+        stdlib,
+        nativeDistributionDependencies,
+        compileDependencyFiles
+    )
+
+    compileDependencyFiles = updatedCompileDependencyFiles
+}
+
+/**
+ * Stdlib is added from Kotlin Native Distribution in [configureStdlibAndPlatformDependencies]
+ * But stdlib is also declared as dependency, to prevent from stdlib duplication, exclude it from dependency resolution
+ */
+private suspend fun KotlinMultiplatformExtension.excludeStdlibFromNativeSourceSetDependencies() {
+    awaitSourceSets().forEach { sourceSet ->
+        if (sourceSet.isNativeSourceSet.await()) {
+            sourceSet.internal
+                .resolvableMetadataConfiguration
+                .exclude(mapOf("group" to KOTLIN_MODULE_GROUP, "module" to KOTLIN_STDLIB_MODULE_NAME))
+        }
+    }
+}
+
+/**
+ * Platform dependencies are added to compilation "compile files" in [configureStdlibAndPlatformDependencies]
+ * So user code that integrates with Kotlin Native Compilations can safely rely on that classpath.
+ * However, for performance optimization reasons, Kotlin Native automatically loads Platform Dependencies from its distribution.
+ * And because of that KGP has to explicitly filter out these platform dependencies from tasks.
+ *
+ * NB: This is not applicable for Native Shared Metadata Compilation, they will receive commonized versions of platform libs.
+ */
+private fun Project.excludeDefaultPlatformDependenciesFromKotlinNativeCompileTasks() {
     tasks.withType<KotlinNativeLink>().configureEach { task ->
         @Suppress("DEPRECATION")
         val konanTarget = task.compilation.konanTarget
@@ -55,7 +96,7 @@ internal val ExcludeDefaultPlatformDependenciesFromKotlinNativeCompileTasks = Ko
     }
 }
 
-internal val SetupKotlinNativePlatformDependenciesForLegacyImport = KotlinProjectSetupCoroutine {
+internal val SetupKotlinNativeStdlibAndPlatformDependenciesImport = KotlinProjectSetupCoroutine {
     val multiplatform = multiplatformExtensionOrNull ?: return@KotlinProjectSetupCoroutine
     val sourceSets = multiplatform
         .awaitSourceSets()
