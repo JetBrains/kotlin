@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.processEqualsFunctions
 import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaAbstractResolver
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseCompoundAssignOperation
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseCompoundUnaryOperation
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseCompoundVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseExplicitReceiverValue
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseImplicitReceiverValue
@@ -679,7 +681,7 @@ internal class KaFirResolver(
                     )
                 } else {
                     KaCompoundArrayAccessCall(
-                        KaCompoundAccess.CompoundAssign(operationPartiallyAppliedSymbol, compoundAssignKind, rightOperandPsi),
+                        KaBaseCompoundAssignOperation(operationPartiallyAppliedSymbol, compoundAssignKind, rightOperandPsi),
                         leftOperandPsi.indexExpressions,
                         getPartiallyAppliedSymbol,
                         setPartiallyAppliedSymbol
@@ -703,7 +705,7 @@ internal class KaFirResolver(
                 } else {
                     KaBaseCompoundVariableAccessCall(
                         variablePartiallyAppliedSymbol,
-                        KaCompoundAccess.CompoundAssign(operationPartiallyAppliedSymbol, compoundAssignKind, rightOperandPsi),
+                        KaBaseCompoundAssignOperation(operationPartiallyAppliedSymbol, compoundAssignKind, rightOperandPsi),
                     )
                 }
             }
@@ -732,7 +734,7 @@ internal class KaFirResolver(
                     )
                 } else {
                     KaCompoundArrayAccessCall(
-                        KaCompoundAccess.IncOrDecOperation(operationPartiallyAppliedSymbol, incOrDecOperationKind, incDecPrecedence),
+                        KaBaseCompoundUnaryOperation(operationPartiallyAppliedSymbol, incOrDecOperationKind, incDecPrecedence),
                         baseExpression.indexExpressions,
                         getPartiallyAppliedSymbol,
                         setPartiallyAppliedSymbol
@@ -756,7 +758,7 @@ internal class KaFirResolver(
                 } else {
                     KaBaseCompoundVariableAccessCall(
                         variablePartiallyAppliedSymbol,
-                        KaCompoundAccess.IncOrDecOperation(operationPartiallyAppliedSymbol, incOrDecOperationKind, incDecPrecedence),
+                        KaBaseCompoundUnaryOperation(operationPartiallyAppliedSymbol, incOrDecOperationKind, incDecPrecedence),
                     )
                 }
             }

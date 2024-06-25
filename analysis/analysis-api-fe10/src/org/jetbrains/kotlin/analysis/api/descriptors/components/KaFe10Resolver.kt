@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KaFe10PsiSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.getResolutionScope
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaAbstractResolver
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseCompoundAssignOperation
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseCompoundUnaryOperation
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseCompoundVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseImplicitReceiverValue
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBasePartiallyAppliedSymbol
@@ -320,7 +322,7 @@ internal class KaFe10Resolver(
                 val operatorPartiallyAppliedSymbol =
                     operatorCall.toPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>(context) ?: return null
 
-                val compoundAccess = KaCompoundAccess.CompoundAssign(
+                val compoundAccess = KaBaseCompoundAssignOperation(
                     operatorPartiallyAppliedSymbol,
                     binaryExpression.getCompoundAssignKind(),
                     right
@@ -351,7 +353,7 @@ internal class KaFe10Resolver(
             is KtPrefixExpression -> KaCompoundAccess.IncOrDecOperation.Precedence.PREFIX
             else -> error("unexpected KtUnaryExpression $unaryExpression")
         }
-        val compoundAccess = KaCompoundAccess.IncOrDecOperation(operatorPartiallyAppliedSymbol, kind, precedence)
+        val compoundAccess = KaBaseCompoundUnaryOperation(operatorPartiallyAppliedSymbol, kind, precedence)
         return if (baseExpression is KtArrayAccessExpression) {
             createCompoundArrayAccessCall(context, baseExpression, compoundAccess, resolvedCalls)
         } else {

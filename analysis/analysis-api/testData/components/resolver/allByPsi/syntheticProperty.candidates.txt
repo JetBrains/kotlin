@@ -954,7 +954,6 @@ KtPostfixExpression(166,187): 'javaClass.something++'
     candidate = KaCompoundVariableAccessCall:
       compoundAccess = IncOrDecOperation:
         kind = INC
-        precedence = POSTFIX
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaExplicitReceiverValue:
             expression = javaClass.something
@@ -967,6 +966,7 @@ KtPostfixExpression(166,187): 'javaClass.something++'
             symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
             valueParameters = []
             callableId = kotlin/Int.inc
+        precedence = POSTFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
           expression = javaClass
@@ -1040,7 +1040,6 @@ KtOperationReferenceExpression(185,187): '++'
     candidate = KaCompoundVariableAccessCall:
       compoundAccess = IncOrDecOperation:
         kind = INC
-        precedence = POSTFIX
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaExplicitReceiverValue:
             expression = javaClass.something
@@ -1053,6 +1052,7 @@ KtOperationReferenceExpression(185,187): '++'
             symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
             valueParameters = []
             callableId = kotlin/Int.inc
+        precedence = POSTFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
           expression = javaClass
@@ -1072,7 +1072,6 @@ KtPrefixExpression(192,213): '--javaClass.something'
     candidate = KaCompoundVariableAccessCall:
       compoundAccess = IncOrDecOperation:
         kind = DEC
-        precedence = PREFIX
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaExplicitReceiverValue:
             expression = javaClass.something
@@ -1085,6 +1084,7 @@ KtPrefixExpression(192,213): '--javaClass.something'
             symbol = kotlin/Int.dec(<dispatch receiver>: kotlin.Int): kotlin.Int
             valueParameters = []
             callableId = kotlin/Int.dec
+        precedence = PREFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
           expression = javaClass
@@ -1104,7 +1104,6 @@ KtOperationReferenceExpression(192,194): '--'
     candidate = KaCompoundVariableAccessCall:
       compoundAccess = IncOrDecOperation:
         kind = DEC
-        precedence = PREFIX
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaExplicitReceiverValue:
             expression = javaClass.something
@@ -1117,6 +1116,7 @@ KtOperationReferenceExpression(192,194): '--'
             symbol = kotlin/Int.dec(<dispatch receiver>: kotlin.Int): kotlin.Int
             valueParameters = []
             callableId = kotlin/Int.dec
+        precedence = PREFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
           expression = javaClass
@@ -1191,7 +1191,6 @@ KtPostfixExpression(219,230): 'something++'
     candidate = KaCompoundVariableAccessCall:
       compoundAccess = IncOrDecOperation:
         kind = INC
-        precedence = POSTFIX
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaExplicitReceiverValue:
             expression = something
@@ -1204,6 +1203,7 @@ KtPostfixExpression(219,230): 'something++'
             symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
             valueParameters = []
             callableId = kotlin/Int.inc
+        precedence = POSTFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -1256,7 +1256,6 @@ KtOperationReferenceExpression(228,230): '++'
     candidate = KaCompoundVariableAccessCall:
       compoundAccess = IncOrDecOperation:
         kind = INC
-        precedence = POSTFIX
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaExplicitReceiverValue:
             expression = something
@@ -1269,6 +1268,7 @@ KtOperationReferenceExpression(228,230): '++'
             symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
             valueParameters = []
             callableId = kotlin/Int.inc
+        precedence = POSTFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -1295,7 +1295,6 @@ KtPostfixExpression(235,248): '(something)++'
     candidate = KaCompoundVariableAccessCall:
       compoundAccess = IncOrDecOperation:
         kind = INC
-        precedence = POSTFIX
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaExplicitReceiverValue:
             expression = something
@@ -1308,6 +1307,7 @@ KtPostfixExpression(235,248): '(something)++'
             symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
             valueParameters = []
             callableId = kotlin/Int.inc
+        precedence = POSTFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -1363,7 +1363,6 @@ KtOperationReferenceExpression(246,248): '++'
     candidate = KaCompoundVariableAccessCall:
       compoundAccess = IncOrDecOperation:
         kind = INC
-        precedence = POSTFIX
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaExplicitReceiverValue:
             expression = something
@@ -1376,6 +1375,7 @@ KtOperationReferenceExpression(246,248): '++'
             symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
             valueParameters = []
             callableId = kotlin/Int.inc
+        precedence = POSTFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:

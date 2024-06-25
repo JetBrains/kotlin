@@ -765,7 +765,6 @@ KtPrefixExpression(183,192): '--list[i]'
     candidate = KaCompoundArrayAccessCall:
       compoundAccess = IncOrDecOperation:
         kind = DEC
-        precedence = PREFIX
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaExplicitReceiverValue:
             expression = list[i]
@@ -778,6 +777,7 @@ KtPrefixExpression(183,192): '--list[i]'
             symbol = kotlin/Int.dec(<dispatch receiver>: kotlin.Int): kotlin.Int
             valueParameters = []
             callableId = kotlin/Int.dec
+        precedence = PREFIX
       getPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
           expression = list
@@ -832,7 +832,6 @@ KtOperationReferenceExpression(183,185): '--'
     candidate = KaCompoundArrayAccessCall:
       compoundAccess = IncOrDecOperation:
         kind = DEC
-        precedence = PREFIX
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaExplicitReceiverValue:
             expression = list[i]
@@ -845,6 +844,7 @@ KtOperationReferenceExpression(183,185): '--'
             symbol = kotlin/Int.dec(<dispatch receiver>: kotlin.Int): kotlin.Int
             valueParameters = []
             callableId = kotlin/Int.dec
+        precedence = PREFIX
       getPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
           expression = list
