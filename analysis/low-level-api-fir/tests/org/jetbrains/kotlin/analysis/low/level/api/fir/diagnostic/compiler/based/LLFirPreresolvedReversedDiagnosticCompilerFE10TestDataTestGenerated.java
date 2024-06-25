@@ -28047,6 +28047,40 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Nested
+      @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/implicitActualization")
+      @TestDataPath("$PROJECT_ROOT")
+      public class ImplicitActualization {
+        @Test
+        public void testAllFilesPresentInImplicitActualization() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/implicitActualization"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        }
+
+        @Test
+        @TestMetadata("implicitJavaActualizationAllowed.kt")
+        public void testImplicitJavaActualizationAllowed() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/implicitActualization/implicitJavaActualizationAllowed.kt");
+        }
+
+        @Test
+        @TestMetadata("implicitJavaActualizationDisallowed.kt")
+        public void testImplicitJavaActualizationDisallowed() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/implicitActualization/implicitJavaActualizationDisallowed.kt");
+        }
+
+        @Test
+        @TestMetadata("implicitJavaActualization_multipleActuals.kt")
+        public void testImplicitJavaActualization_multipleActuals() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/implicitActualization/implicitJavaActualization_multipleActuals.kt");
+        }
+
+        @Test
+        @TestMetadata("implicitJavaActualization_oldLanguageVersion.kt")
+        public void testImplicitJavaActualization_oldLanguageVersion() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/implicitActualization/implicitJavaActualization_oldLanguageVersion.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/inlineClasses")
       @TestDataPath("$PROJECT_ROOT")
       public class InlineClasses {
@@ -28099,30 +28133,6 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         @TestMetadata("flexibleTypes.kt")
         public void testFlexibleTypes() {
           runTest("compiler/testData/diagnostics/tests/multiplatform/java/flexibleTypes.kt");
-        }
-
-        @Test
-        @TestMetadata("implicitJavaActualizationAllowed.kt")
-        public void testImplicitJavaActualizationAllowed() {
-          runTest("compiler/testData/diagnostics/tests/multiplatform/java/implicitJavaActualizationAllowed.kt");
-        }
-
-        @Test
-        @TestMetadata("implicitJavaActualizationDisallowed.kt")
-        public void testImplicitJavaActualizationDisallowed() {
-          runTest("compiler/testData/diagnostics/tests/multiplatform/java/implicitJavaActualizationDisallowed.kt");
-        }
-
-        @Test
-        @TestMetadata("implicitJavaActualization_multipleActuals.kt")
-        public void testImplicitJavaActualization_multipleActuals() {
-          runTest("compiler/testData/diagnostics/tests/multiplatform/java/implicitJavaActualization_multipleActuals.kt");
-        }
-
-        @Test
-        @TestMetadata("implicitJavaActualization_oldLanguageVersion.kt")
-        public void testImplicitJavaActualization_oldLanguageVersion() {
-          runTest("compiler/testData/diagnostics/tests/multiplatform/java/implicitJavaActualization_oldLanguageVersion.kt");
         }
 
         @Test
