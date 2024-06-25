@@ -473,8 +473,12 @@ open class FirSupertypeResolverVisitor(
                 }
             }.also {
                 addSupertypesFromExtensions(classLikeDeclaration, it, transformer, scopeDeclaration)
+                /**
+                 * TODO: Supertype resolution for generated classes is not supported in AA (KT-69404)
+                 * `resolveRecursively` is set to `true` in the compiler and to `false` in the AA
+                 */
                 @OptIn(PrivateForInline::class)
-                if (transformer.currentFile != null && classLikeDeclaration is FirRegularClass) {
+                if (resolveRecursively && transformer.currentFile != null && classLikeDeclaration is FirRegularClass) {
                     addSupertypesToGeneratedNestedClasses(classLikeDeclaration, transformer, scopeDeclaration)
                 }
             }
