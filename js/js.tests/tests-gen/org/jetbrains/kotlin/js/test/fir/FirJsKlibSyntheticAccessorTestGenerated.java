@@ -178,6 +178,12 @@ public class FirJsKlibSyntheticAccessorTestGenerated extends AbstractFirJsKlibSy
       public void testLeakingPrivateVarThroughPrivateInlineVarChain() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateVarThroughPrivateInlineVarChain.kt");
       }
+
+      @Test
+      @TestMetadata("usePrivateConstValFromInternalInline.kt")
+      public void testUsePrivateConstValFromInternalInline() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/usePrivateConstValFromInternalInline.kt");
+      }
     }
 
     @Nested
@@ -295,6 +301,12 @@ public class FirJsKlibSyntheticAccessorTestGenerated extends AbstractFirJsKlibSy
       @TestMetadata("leakingPrivateVarThroughPrivateInlineVarChain.kt")
       public void testLeakingPrivateVarThroughPrivateInlineVarChain() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateVarThroughPrivateInlineVarChain.kt");
+      }
+
+      @Test
+      @TestMetadata("usePrivateConstValFromInternalInline.kt")
+      public void testUsePrivateConstValFromInternalInline() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/usePrivateConstValFromInternalInline.kt");
       }
     }
 
@@ -470,6 +482,12 @@ public class FirJsKlibSyntheticAccessorTestGenerated extends AbstractFirJsKlibSy
       public void testPotentiallyClashingVarAccessors() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/potentiallyClashingVarAccessors.kt");
       }
+
+      @Test
+      @TestMetadata("usePrivateTopLevelConstValFromInternalInline.kt")
+      public void testUsePrivateTopLevelConstValFromInternalInline() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/usePrivateTopLevelConstValFromInternalInline.kt");
+      }
     }
 
     @Nested
@@ -575,6 +593,12 @@ public class FirJsKlibSyntheticAccessorTestGenerated extends AbstractFirJsKlibSy
       @TestMetadata("potentiallyClashingVarAccessors.kt")
       public void testPotentiallyClashingVarAccessors() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/potentiallyClashingVarAccessors.kt");
+      }
+
+      @Test
+      @TestMetadata("usePrivateTopLevelConstValFromInternalInline.kt")
+      public void testUsePrivateTopLevelConstValFromInternalInline() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/usePrivateTopLevelConstValFromInternalInline.kt");
       }
     }
 

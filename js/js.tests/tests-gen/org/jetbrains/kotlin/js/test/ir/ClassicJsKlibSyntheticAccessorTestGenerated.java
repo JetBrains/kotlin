@@ -179,12 +179,18 @@ public class ClassicJsKlibSyntheticAccessorTestGenerated extends AbstractClassic
                 runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateVarThroughPrivateInlineFunChain.kt");
             }
 
-            @Test
-            @TestMetadata("leakingPrivateVarThroughPrivateInlineVarChain.kt")
-            public void testLeakingPrivateVarThroughPrivateInlineVarChain() {
-                runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateVarThroughPrivateInlineVarChain.kt");
-            }
-        }
+      @Test
+      @TestMetadata("leakingPrivateVarThroughPrivateInlineVarChain.kt")
+      public void testLeakingPrivateVarThroughPrivateInlineVarChain() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateVarThroughPrivateInlineVarChain.kt");
+      }
+
+      @Test
+      @TestMetadata("usePrivateConstValFromInternalInline.kt")
+      public void testUsePrivateConstValFromInternalInline() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/usePrivateConstValFromInternalInline.kt");
+      }
+    }
 
         @Nested
         @TestMetadata("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak")
@@ -293,12 +299,18 @@ public class ClassicJsKlibSyntheticAccessorTestGenerated extends AbstractClassic
                 runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateVarThroughPrivateInlineFunChain.kt");
             }
 
-            @Test
-            @TestMetadata("leakingPrivateVarThroughPrivateInlineVarChain.kt")
-            public void testLeakingPrivateVarThroughPrivateInlineVarChain() {
-                runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateVarThroughPrivateInlineVarChain.kt");
-            }
-        }
+      @Test
+      @TestMetadata("leakingPrivateVarThroughPrivateInlineVarChain.kt")
+      public void testLeakingPrivateVarThroughPrivateInlineVarChain() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateVarThroughPrivateInlineVarChain.kt");
+      }
+
+      @Test
+      @TestMetadata("usePrivateConstValFromInternalInline.kt")
+      public void testUsePrivateConstValFromInternalInline() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/usePrivateConstValFromInternalInline.kt");
+      }
+    }
 
         @Nested
         @TestMetadata("compiler/testData/klib/syntheticAccessors/privateMember/singleFile")
@@ -473,12 +485,18 @@ public class ClassicJsKlibSyntheticAccessorTestGenerated extends AbstractClassic
                 runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/potentiallyClashingFunAccessors.kt");
             }
 
-            @Test
-            @TestMetadata("potentiallyClashingVarAccessors.kt")
-            public void testPotentiallyClashingVarAccessors() {
-                runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/potentiallyClashingVarAccessors.kt");
-            }
-        }
+      @Test
+      @TestMetadata("potentiallyClashingVarAccessors.kt")
+      public void testPotentiallyClashingVarAccessors() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/potentiallyClashingVarAccessors.kt");
+      }
+
+      @Test
+      @TestMetadata("usePrivateTopLevelConstValFromInternalInline.kt")
+      public void testUsePrivateTopLevelConstValFromInternalInline() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/usePrivateTopLevelConstValFromInternalInline.kt");
+      }
+    }
 
         @Nested
         @TestMetadata("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak")
@@ -581,12 +599,18 @@ public class ClassicJsKlibSyntheticAccessorTestGenerated extends AbstractClassic
                 runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/potentiallyClashingFunAccessors.kt");
             }
 
-            @Test
-            @TestMetadata("potentiallyClashingVarAccessors.kt")
-            public void testPotentiallyClashingVarAccessors() {
-                runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/potentiallyClashingVarAccessors.kt");
-            }
-        }
+      @Test
+      @TestMetadata("potentiallyClashingVarAccessors.kt")
+      public void testPotentiallyClashingVarAccessors() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/potentiallyClashingVarAccessors.kt");
+      }
+
+      @Test
+      @TestMetadata("usePrivateTopLevelConstValFromInternalInline.kt")
+      public void testUsePrivateTopLevelConstValFromInternalInline() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/usePrivateTopLevelConstValFromInternalInline.kt");
+      }
+    }
 
         @Nested
         @TestMetadata("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile")
