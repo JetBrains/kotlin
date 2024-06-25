@@ -3975,6 +3975,20 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.IMPLICIT_ACTUAL_IS_INCOMPATIBLE_WITH_EXPECT) { firDiagnostic ->
+        ImplicitActualIsIncompatibleWithExpectImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firDiagnostic.b.mapKeys { (expectActualCompatibility, _) ->
+                expectActualCompatibility
+            }.mapValues { (_, collection) -> 
+                collection.map { firBasedSymbol ->
+                                    firSymbolBuilder.buildSymbol(firBasedSymbol)
+                                }
+            },
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.AMBIGUOUS_EXPECTS) { firDiagnostic ->
         AmbiguousExpectsImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
@@ -3987,6 +4001,22 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS) { firDiagnostic ->
         NoActualClassMemberForExpectedClassImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firDiagnostic.b.map { pair ->
+                firSymbolBuilder.buildSymbol(pair.first) to pair.second.mapKeys { (mismatchOrIncompatible, _) ->
+                                    mismatchOrIncompatible
+                                }.mapValues { (_, collection) -> 
+                                    collection.map { firBasedSymbol ->
+                                                            firSymbolBuilder.buildSymbol(firBasedSymbol)
+                                                        }
+                                }
+            },
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.IMPLICIT_ACTUAL_NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS) { firDiagnostic ->
+        ImplicitActualNoActualClassMemberForExpectedClassImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firDiagnostic.b.map { pair ->
                 firSymbolBuilder.buildSymbol(pair.first) to pair.second.mapKeys { (mismatchOrIncompatible, _) ->
