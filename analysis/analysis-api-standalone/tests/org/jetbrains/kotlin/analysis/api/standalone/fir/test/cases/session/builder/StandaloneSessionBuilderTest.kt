@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaLocalVariableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
+import org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISession
+import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSdkModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModule
@@ -281,6 +283,88 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
                 )
             }
         }
+        checkOtherModuleUsage(session, sourceModule)
+    }
+
+    @Test
+    fun testKotlinBinaryModuleSessionWithVirtualFile() {
+        val root = "otherModuleUsage"
+        lateinit var sourceModule: KaSourceModule
+        val session = buildStandaloneAnalysisAPISession(disposable) {
+            buildKtModuleProvider {
+                platform = JvmPlatforms.defaultJvmPlatform
+                val compiledJar = compileToJar(testDataPath(root).resolve("dependent"))
+                val dep = addModule(
+                    buildKtLibraryModule {
+                        // addBinaryRoot(compiledJar)
+                        // Instead, add [VirtualFile]
+                        val virtualFiles =
+                            StandaloneProjectFactory.getVirtualFilesForLibraryRoots(listOf(compiledJar), kotlinCoreProjectEnvironment)
+                        addBinaryVirtualFiles(virtualFiles)
+                        platform = JvmPlatforms.defaultJvmPlatform
+                        libraryName = "dependent"
+                    }
+                )
+                sourceModule = addModule(
+                    buildKtSourceModule {
+                        addSourceRoot(testDataPath(root).resolve("main"))
+                        addRegularDependency(dep)
+                        platform = JvmPlatforms.defaultJvmPlatform
+                        moduleName = "main"
+                    }
+                )
+            }
+        }
+        checkOtherModuleUsage(session, sourceModule)
+    }
+
+    @Test
+    fun testKotlinSourceAndBinaryModuleSessionWithVirtualFile() {
+        val root = "otherModuleUsage"
+        lateinit var sourceModule: KaSourceModule
+        val session = buildStandaloneAnalysisAPISession(disposable) {
+            buildKtModuleProvider {
+                platform = JvmPlatforms.defaultJvmPlatform
+                val compiledJar = compileToJar(testDataPath(root).resolve("dependent"))
+                val dep = addModule(
+                    buildKtLibraryModule {
+                        // addBinaryRoot(compiledJar)
+                        // Instead, add [VirtualFile]
+                        val virtualFiles =
+                            StandaloneProjectFactory.getVirtualFilesForLibraryRoots(listOf(compiledJar), kotlinCoreProjectEnvironment)
+                        addBinaryVirtualFiles(virtualFiles)
+                        platform = JvmPlatforms.defaultJvmPlatform
+                        libraryName = "dependent"
+                    }
+                )
+                sourceModule = addModule(
+                    buildKtSourceModule {
+                        // addSourceRoot(testDataPath(root).resolve("main"))
+                        // Instead, add [VirtualFile] on-the-fly
+                        val virtualFile = createDumbVirtualFile(
+                            project,
+                            "test.kt",
+                            """
+                                fun main() {
+                                    foo()
+                                }
+                            """.trimIndent()
+                        )
+                        addSourceVirtualFile(virtualFile)
+                        addRegularDependency(dep)
+                        platform = JvmPlatforms.defaultJvmPlatform
+                        moduleName = "main"
+                    }
+                )
+            }
+        }
+        checkOtherModuleUsage(session, sourceModule)
+    }
+
+    private fun checkOtherModuleUsage(
+        session: StandaloneAnalysisAPISession,
+        sourceModule: KaSourceModule,
+    ) {
         val ktFile = session.modulesWithFiles.getValue(sourceModule).single() as KtFile
         val ktCallExpression = ktFile.findDescendantOfType<KtCallExpression>()!!
         ktCallExpression.assertIsCallOf(CallableId(FqName.ROOT, Name.identifier("foo")))

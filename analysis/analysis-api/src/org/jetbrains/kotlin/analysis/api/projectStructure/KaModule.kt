@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.analysis.api.projectStructure
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
@@ -139,6 +140,12 @@ public interface KaLibraryModule : KaModule {
      * ```
      */
     public val binaryRoots: Collection<Path>
+
+    /**
+     * A list of binary files in [VirtualFile] form if the library module represents a library in in-memory file system.
+     */
+    @KaExperimentalApi
+    public val binaryVirtualFiles: Collection<VirtualFile>
 
     /**
      * A library source, if any. If current module is a binary JAR, then [librarySources] corresponds to the sources JAR.

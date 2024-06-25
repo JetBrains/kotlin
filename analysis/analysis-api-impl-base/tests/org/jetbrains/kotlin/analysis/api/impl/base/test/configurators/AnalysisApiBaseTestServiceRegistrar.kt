@@ -124,10 +124,14 @@ object AnalysisApiBaseTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
             testServices.environmentManager.getProjectEnvironment(),
         ).distinct()
 
+        val mainBinaryVirtualFiles = mainBinaryModules.flatMap { it.binaryVirtualFiles }.distinct()
+
         val sharedBinaryRoots = StandaloneProjectFactory.getVirtualFilesForLibraryRoots(
             sharedBinaryDependencies.flatMap { binary -> binary.binaryRoots },
             testServices.environmentManager.getProjectEnvironment()
         ).distinct()
+
+        val sharedBinaryVirtualFiles = sharedBinaryDependencies.flatMap { it.binaryVirtualFiles }.distinct()
 
         project.apply {
             registerService(KotlinAnnotationsResolverFactory::class.java, KotlinStandaloneAnnotationsResolverFactory(project, testKtFiles))
@@ -143,8 +147,8 @@ object AnalysisApiBaseTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
                 val declarationProviderFactory = KotlinStandaloneDeclarationProviderFactory(
                     project,
                     testKtFiles,
-                    binaryRoots = mainBinaryRoots,
-                    sharedBinaryRoots = sharedBinaryRoots,
+                    binaryRoots = mainBinaryRoots + mainBinaryVirtualFiles,
+                    sharedBinaryRoots = sharedBinaryRoots + sharedBinaryVirtualFiles,
                     skipBuiltins = testServices.moduleStructure.allDirectives.contains(NO_RUNTIME),
                     shouldBuildStubsForBinaryLibraries = shouldBuildStubsForBinaryLibraries,
                 )

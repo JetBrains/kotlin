@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaSymbolRelationProvider
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
@@ -167,6 +169,9 @@ internal class KaFe10SymbolRelationProvider(
             override val librarySources: KaLibrarySourceModule? = null
             override val isSdk: Boolean = false
             override val binaryRoots: Collection<Path> = listOf(libraryPath)
+
+            @KaExperimentalApi
+            override val binaryVirtualFiles: Collection<VirtualFile> = emptyList()
             override val directRegularDependencies: List<KaModule> = emptyList()
             override val directDependsOnDependencies: List<KaModule> = emptyList()
             override val transitiveDependsOnDependencies: List<KaModule> = emptyList()

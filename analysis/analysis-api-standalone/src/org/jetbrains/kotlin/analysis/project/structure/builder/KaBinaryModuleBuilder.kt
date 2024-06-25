@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.project.structure.builder
 
+import com.intellij.openapi.vfs.VirtualFile
 import java.nio.file.Path
 
 @KtModuleBuilderDsl
 public abstract class KtBinaryModuleBuilder : KtModuleBuilder() {
     private val binaryRoots: MutableList<Path> = mutableListOf()
+    private val binaryVirtualFiles: MutableList<VirtualFile> = mutableListOf()
 
     /**
      * Adds a [root] to the current library.
@@ -36,4 +38,14 @@ public abstract class KtBinaryModuleBuilder : KtModuleBuilder() {
     }
 
     protected fun getBinaryRoots(): List<Path> = binaryRoots.distinct()
+
+    public fun addBinaryVirtualFile(virtualFile: VirtualFile) {
+        binaryVirtualFiles.add(virtualFile)
+    }
+
+    public fun addBinaryVirtualFiles(virtualFiles: Collection<VirtualFile>) {
+        binaryVirtualFiles.addAll(virtualFiles)
+    }
+
+    protected fun getBinaryVirtualFiles(): List<VirtualFile> = binaryVirtualFiles.distinct()
 }
