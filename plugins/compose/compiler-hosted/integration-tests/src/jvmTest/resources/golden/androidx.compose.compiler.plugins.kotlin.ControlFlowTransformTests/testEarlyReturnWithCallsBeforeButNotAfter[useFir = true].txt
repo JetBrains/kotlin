@@ -26,17 +26,23 @@ fun Example(x: Int) {
 @Composable
 fun Example(x: Int, %composer: Composer?, %changed: Int) {
   %composer.startReplaceGroup(<>)
-  sourceInformation(%composer, "C(Example)<A()>:Test.kt")
+  sourceInformation(%composer, "C(Example):Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
   if (x > 0) {
+    %composer.startReplaceGroup(<>)
+    sourceInformation(%composer, "<A()>")
     A(%composer, 0)
+    %composer.endReplaceGroup()
     if (isTraceInProgress()) {
       traceEventEnd()
     }
     %composer.endReplaceGroup()
     return
+  } else {
+    %composer.startReplaceGroup(<>)
+    %composer.endReplaceGroup()
   }
   print("hello")
   if (isTraceInProgress()) {

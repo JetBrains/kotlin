@@ -25,18 +25,24 @@ fun Example(x: Int): Int {
 @Composable
 fun Example(x: Int, %composer: Composer?, %changed: Int): Int {
   %composer.startReplaceGroup(<>)
-  sourceInformation(%composer, "C(Example)<A()>:Test.kt")
+  sourceInformation(%composer, "C(Example):Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
   if (x > 0) {
+    %composer.startReplaceGroup(<>)
+    sourceInformation(%composer, "<A()>")
     A(%composer, 0)
     val tmp1_return = 1
+    %composer.endReplaceGroup()
     if (isTraceInProgress()) {
       traceEventEnd()
     }
     %composer.endReplaceGroup()
     return tmp1_return
+  } else {
+    %composer.startReplaceGroup(<>)
+    %composer.endReplaceGroup()
   }
   val tmp0 = 2
   if (isTraceInProgress()) {
