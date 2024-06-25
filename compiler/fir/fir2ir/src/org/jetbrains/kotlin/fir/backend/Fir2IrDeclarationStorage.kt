@@ -122,7 +122,7 @@ class Fir2IrDeclarationStorage(
         fun getOriginal(fir: FirProperty): IrPropertySymbol? {
             return if (fir.origin == FirDeclarationOrigin.CommonArtefact || fir.moduleData.isFromCommonArtefact) {
                 when (fir) {
-                    is FirSyntheticProperty -> synthetic.getCachedIrSymbolByCommonFunction(fir.cacheKey)
+                    is FirSyntheticProperty -> synthetic.getCachedPairByCommonFunction(fir.cacheKey)?.value
                     else -> normal.getCachedIrSymbolByCommonCallable(fir)
                 }
             } else null
@@ -317,7 +317,13 @@ class Fir2IrDeclarationStorage(
         }
         val cachedIrCallable =
             if (function.origin == FirDeclarationOrigin.CommonArtefact || function.moduleData.isFromCommonArtefact) {
-                functionCache.getCachedIrSymbolByCommonFunction(function)
+                val isFakeOverride = function.isFakeOverrideOrDelegated(fakeOverrideOwnerLookupTag)
+                if (isFakeOverride) {
+                    val key = fakeOverrideIdentifier(function, fakeOverrideOwnerLookupTag)
+                    irForFirSessionDependantDeclarationMap[key] as? IrSimpleFunctionSymbol
+                } else {
+                    functionCache.getCachedPairByCommonFunction(function)?.value
+                }
             } else {
                 getCachedIrCallableSymbol(
                     function,
@@ -326,6 +332,23 @@ class Fir2IrDeclarationStorage(
                 )
             }
         return cachedIrCallable?.let(symbolsMappingForLazyClasses::remapFunctionSymbol)
+    }
+
+    private fun Fir2IrDeclarationStorage.fakeOverrideIdentifier(
+        function: FirFunction,
+        fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?,
+    ): FakeOverrideIdentifier {
+        val originalFunction = function.unwrapFakeOverridesOrDelegated()
+        val originalNotFromCommonArtefact =
+            if (originalFunction.origin == FirDeclarationOrigin.CommonArtefact || originalFunction.moduleData.isFromCommonArtefact) {
+                functionCache.getCachedPairByCommonFunction(originalFunction)?.key ?: originalFunction
+            } else originalFunction
+        val key = FakeOverrideIdentifier(
+            originalNotFromCommonArtefact.symbol,
+            fakeOverrideOwnerLookupTag ?: function.containingClassLookupTag()!!,
+            c
+        )
+        return key
     }
 
     private fun getDataClassGeneratedFunctionsStorage(containingClass: FirRegularClass) =
@@ -407,12 +430,7 @@ class Fir2IrDeclarationStorage(
             }
 
             function.isFakeOverrideOrDelegated(fakeOverrideOwnerLookupTag) -> {
-                val originalFunction = function.unwrapFakeOverridesOrDelegated()
-                val key = FakeOverrideIdentifier(
-                    originalFunction.symbol,
-                    fakeOverrideOwnerLookupTag ?: function.containingClassLookupTag()!!,
-                    c
-                )
+                val key = fakeOverrideIdentifier(function, fakeOverrideOwnerLookupTag)
                 irForFirSessionDependantDeclarationMap[key] = irFunctionSymbol
             }
 
@@ -456,7 +474,7 @@ class Fir2IrDeclarationStorage(
 
     fun getCachedIrConstructorSymbol(constructor: FirConstructor): IrConstructorSymbol? {
         return if (constructor.origin == FirDeclarationOrigin.CommonArtefact || constructor.moduleData.isFromCommonArtefact) {
-            constructorCache.getCachedIrSymbolByCommonFunction(constructor)
+            constructorCache.getCachedPairByCommonFunction(constructor)?.value
         } else constructorCache.get(constructor)
     }
 
@@ -1430,12 +1448,12 @@ private fun FirCallableDeclaration.isFakeOverrideImpl(fakeOverrideOwnerLookupTag
 
 internal inline fun <reified FD : FirDeclaration, reified IS : IrSymbol> Map<FD, IS>.getCachedIrSymbolByCommonDeclaration(
     isSame: (FD) -> Boolean
-): IS? {
+): Map.Entry<FD, IS>? {
     return asIterable().find {
         isSame(it.key)
     }/*?.also {
         require(it.key.origin != FirDeclarationOrigin.CommonArtefact)
-    }*/?.value
+    }*/
 }
 
 private fun FirValueParameter.getTypeOrTypeParameterId() =
@@ -1444,9 +1462,9 @@ private fun FirValueParameter.getTypeOrTypeParameterId() =
         else -> type to null
     }
 
-private inline fun <reified FF : FirFunction, reified IS : IrSymbol> Map<FF, IS>.getCachedIrSymbolByCommonFunction(
+private inline fun <reified FF : FirFunction, reified IS : IrSymbol> Map<FF, IS>.getCachedPairByCommonFunction(
     firFunction: FF
-): IS? {
+): Map.Entry<FF, IS>? {
     val callableId = firFunction.symbol.callableId
     val receiver = firFunction.receiverParameter?.typeRef?.coneType
     val typeParameterIds = firFunction.typeParameters.map { it.symbol.fir.getContaininingId() }
@@ -1467,7 +1485,7 @@ internal inline fun <reified FC : FirCallableDeclaration, reified IS : IrSymbol>
     return getCachedIrSymbolByCommonDeclaration {
         it.symbol.callableId == callableId && it.receiverParameter?.typeRef?.coneType == receiver &&
                 it.symbol.isExpect == firCallable.symbol.isExpect
-    }
+    }?.value
 }
 
 private object IsStubPropertyForPureFieldKey : FirDeclarationDataKey()

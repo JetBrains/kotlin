@@ -433,7 +433,7 @@ internal inline fun <reified FP : FirClassLikeDeclaration, reified IS : IrSymbol
         val classId = firclassLike.symbol.classId
         return getCachedIrSymbolByCommonDeclaration {
             it.symbol.classId == classId && it.symbol.isExpect == firclassLike.symbol.isExpect
-        }
+        }?.value
     } else {
         get(firclassLike)
     }
