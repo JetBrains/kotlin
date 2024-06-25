@@ -31,7 +31,9 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val JVM_STATIC_ON_CONST_OR_JVM_FIELD by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE)
         val JVM_STATIC_ON_EXTERNAL_IN_INTERFACE by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE)
 
-        val INAPPLICABLE_JVM_NAME by error<PsiElement>()
+        val INAPPLICABLE_JVM_NAME by error<PsiElement>() {
+            isSuppressible = true
+        }
         val ILLEGAL_JVM_NAME by error<PsiElement>()
 
         val FUNCTION_DELEGATE_MEMBER_NAME_CLASH by error<PsiElement>(PositioningStrategy.DECLARATION_NAME)
@@ -145,6 +147,7 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE by error<PsiElement>() {
             parameter<String>("moduleName")
             parameter<String>("packageName")
+            isSuppressible = true
         }
     }
 
