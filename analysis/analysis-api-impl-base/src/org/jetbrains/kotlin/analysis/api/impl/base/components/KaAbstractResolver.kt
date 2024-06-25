@@ -71,13 +71,10 @@ abstract class KaAbstractResolver<T : KaSession> : KaSessionComponent<T>(), KaRe
         return compoundAssignKind
     }
 
-    protected fun KtUnaryExpression.getInOrDecOperationKind(): KaCompoundOperation.IncOrDecOperation.Kind {
-        val incOrDecOperationKind = when (operationToken) {
-            KtTokens.PLUSPLUS -> KaCompoundOperation.IncOrDecOperation.Kind.INC
-            KtTokens.MINUSMINUS -> KaCompoundOperation.IncOrDecOperation.Kind.DEC
-            else -> error("unexpected operator $operationToken")
-        }
-        return incOrDecOperationKind
+    protected fun KtUnaryExpression.getInOrDecOperationKind(): KaCompoundOperation.KaCompoundUnaryOperation.Kind = when (operationToken) {
+        KtTokens.PLUSPLUS -> KaCompoundOperation.KaCompoundUnaryOperation.Kind.INC
+        KtTokens.MINUSMINUS -> KaCompoundOperation.KaCompoundUnaryOperation.Kind.DEC
+        else -> error("unexpected operator $operationToken")
     }
 
     protected fun KtExpression.toExplicitReceiverValue(type: KaType): KaExplicitReceiverValue =

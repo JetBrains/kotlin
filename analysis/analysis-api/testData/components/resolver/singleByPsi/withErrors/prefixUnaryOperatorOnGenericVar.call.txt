@@ -1,7 +1,7 @@
 KtPrefixExpression(47,58): '++foo.value'
   KaSuccessCallInfo:
     call = KaCompoundVariableAccessCall:
-      compoundOperation = IncOrDecOperation:
+      compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaExplicitReceiverValue:

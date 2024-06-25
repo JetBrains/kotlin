@@ -987,7 +987,7 @@ KtDotQualifiedExpression(137,156): 'javaClass.something'
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     candidate = KaSimpleFunctionCall:
@@ -1046,7 +1046,7 @@ KtNameReferenceExpression(137,146): 'javaClass'
         T -> (JavaClass)
       }
     isInBestCandidates = false
-
+  
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1126,7 +1126,7 @@ KtConstantExpression(160,161): '1'
 KtPostfixExpression(166,187): 'javaClass.something++'
   KaApplicableCallCandidateInfo:
     candidate = KaCompoundVariableAccessCall:
-      compoundOperation = IncOrDecOperation:
+      compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaExplicitReceiverValue:
@@ -1173,7 +1173,7 @@ KtDotQualifiedExpression(166,185): 'javaClass.something'
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     candidate = KaSimpleFunctionCall:
@@ -1232,7 +1232,7 @@ KtNameReferenceExpression(166,175): 'javaClass'
         T -> (JavaClass)
       }
     isInBestCandidates = false
-
+  
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1270,7 +1270,7 @@ KtNameReferenceExpression(176,185): 'something'
 KtOperationReferenceExpression(185,187): '++'
   KaApplicableCallCandidateInfo:
     candidate = KaCompoundVariableAccessCall:
-      compoundOperation = IncOrDecOperation:
+      compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaExplicitReceiverValue:
@@ -1302,7 +1302,7 @@ KtOperationReferenceExpression(185,187): '++'
 KtPrefixExpression(192,213): '--javaClass.something'
   KaApplicableCallCandidateInfo:
     candidate = KaCompoundVariableAccessCall:
-      compoundOperation = IncOrDecOperation:
+      compoundOperation = KaCompoundUnaryOperation:
         kind = DEC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaExplicitReceiverValue:
@@ -1334,7 +1334,7 @@ KtPrefixExpression(192,213): '--javaClass.something'
 KtOperationReferenceExpression(192,194): '--'
   KaApplicableCallCandidateInfo:
     candidate = KaCompoundVariableAccessCall:
-      compoundOperation = IncOrDecOperation:
+      compoundOperation = KaCompoundUnaryOperation:
         kind = DEC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaExplicitReceiverValue:
@@ -1381,7 +1381,7 @@ KtDotQualifiedExpression(194,213): 'javaClass.something'
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     candidate = KaSimpleFunctionCall:
@@ -1440,7 +1440,7 @@ KtNameReferenceExpression(194,203): 'javaClass'
         T -> (JavaClass)
       }
     isInBestCandidates = false
-
+  
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1478,7 +1478,7 @@ KtNameReferenceExpression(204,213): 'something'
 KtPostfixExpression(219,230): 'something++'
   KaApplicableCallCandidateInfo:
     candidate = KaCompoundVariableAccessCall:
-      compoundOperation = IncOrDecOperation:
+      compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaExplicitReceiverValue:
@@ -1543,7 +1543,7 @@ KtNameReferenceExpression(219,228): 'something'
 KtOperationReferenceExpression(228,230): '++'
   KaApplicableCallCandidateInfo:
     candidate = KaCompoundVariableAccessCall:
-      compoundOperation = IncOrDecOperation:
+      compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaExplicitReceiverValue:
@@ -1582,7 +1582,7 @@ KtOperationReferenceExpression(228,230): '++'
 KtPostfixExpression(235,248): '(something)++'
   KaApplicableCallCandidateInfo:
     candidate = KaCompoundVariableAccessCall:
-      compoundOperation = IncOrDecOperation:
+      compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaExplicitReceiverValue:
@@ -1650,7 +1650,7 @@ KtNameReferenceExpression(236,245): 'something'
 KtOperationReferenceExpression(246,248): '++'
   KaApplicableCallCandidateInfo:
     candidate = KaCompoundVariableAccessCall:
-      compoundOperation = IncOrDecOperation:
+      compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaExplicitReceiverValue:
