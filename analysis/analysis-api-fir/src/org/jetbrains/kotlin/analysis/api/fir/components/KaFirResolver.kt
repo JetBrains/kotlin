@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseApplicableCa
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseCompoundAssignOperation
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseCompoundUnaryOperation
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseCompoundVariableAccessCall
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseErrorCallInfo
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseExplicitReceiverValue
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseImplicitReceiverValue
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseInapplicableCallCandidateInfo
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBasePartiallyApp
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSimpleVariableReadAccess
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSimpleVariableWriteAccess
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSmartCastedReceiverValue
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSuccessCallInfo
 import org.jetbrains.kotlin.analysis.api.impl.base.util.KaNonBoundToPsiErrorDiagnostic
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.*
@@ -129,7 +131,7 @@ internal class KaFirResolver(
             val ktCallInfos = getCallInfo(
                 psi,
                 getErrorCallInfo = { psiToResolve ->
-                    listOf(KaErrorCallInfo(emptyList(), createKtDiagnostic(psiToResolve), token))
+                    listOf(KaBaseErrorCallInfo(emptyList(), createKtDiagnostic(psiToResolve)))
                 },
                 getCallInfo = { psiToResolve, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall ->
                     listOfNotNull(
@@ -214,7 +216,7 @@ internal class KaFirResolver(
             if (callExpression != null) {
                 val constructors = findQualifierConstructors()
                 val calls = toKtCalls(constructors)
-                return KaErrorCallInfo(calls, inapplicableCandidateDiagnostic(), token)
+                return KaBaseErrorCallInfo(calls, inapplicableCandidateDiagnostic())
             }
         }
 
@@ -254,7 +256,7 @@ internal class KaFirResolver(
             val ktDiagnostic = calleeReference.createKtDiagnostic(psi)
 
             if (diagnostic is ConeHiddenCandidateError)
-                return KaErrorCallInfo(emptyList(), ktDiagnostic, token)
+                return KaBaseErrorCallInfo(emptyList(), ktDiagnostic)
 
             val candidateCalls = mutableListOf<KaCall>()
             if (diagnostic is ConeDiagnosticWithCandidates) {
@@ -264,7 +266,7 @@ internal class KaFirResolver(
             } else {
                 candidateCalls.addIfNotNull(createKtCall(psi, call, calleeReference, null, resolveFragmentOfCall))
             }
-            return KaErrorCallInfo(candidateCalls, ktDiagnostic, token)
+            return KaBaseErrorCallInfo(candidateCalls, ktDiagnostic)
         }
 
         return when (this) {
@@ -277,7 +279,7 @@ internal class KaFirResolver(
                         // `FirPropertyAccessExpression` (which is `FirResolvable`).
                         is FirCallableSymbol<*> -> {
                             val call = createKtCall(psi, this, calleeReference, null, resolveFragmentOfCall)
-                            call?.let(::KaSuccessCallInfo)
+                            call?.let(::KaBaseSuccessCallInfo)
                         }
                         else -> null
                     }
@@ -288,7 +290,7 @@ internal class KaFirResolver(
                         val errorTypeRef = delegatedConstructorCall.constructedTypeRef as? FirErrorTypeRef ?: return null
                         val psiSource = psi.toKtPsiSourceElement()
                         val ktDiagnostic = errorTypeRef.diagnostic.asKtDiagnostic(source ?: psiSource, psiSource) ?: return null
-                        KaErrorCallInfo(emptyList(), ktDiagnostic, token)
+                        KaBaseErrorCallInfo(emptyList(), ktDiagnostic)
                     }
                     else -> null
                 }
@@ -1248,7 +1250,7 @@ internal class KaFirResolver(
                         null,
                         null,
                     )
-                    KaErrorCallInfo(
+                    KaBaseErrorCallInfo(
                         listOf(
                             KaSimpleFunctionCall(
                                 partiallyAppliedSymbol,
@@ -1262,7 +1264,6 @@ internal class KaFirResolver(
                             defaultMessage = "type of arrayOf call is not resolved",
                             token = token
                         ),
-                        token
                     )
                 }
             val call = arrayTypeToArrayOfCall[type.lookupTag.classId] ?: arrayOf
@@ -1274,7 +1275,7 @@ internal class KaFirResolver(
             null,
             null,
         )
-        return KaSuccessCallInfo(
+        return KaBaseSuccessCallInfo(
             KaSimpleFunctionCall(
                 partiallyAppliedSymbol,
                 createArgumentMapping(arrayOfSymbol, substitutor),
@@ -1304,7 +1305,7 @@ internal class KaFirResolver(
 
                 val equalsSymbol = getEqualsSymbol() ?: return null
                 val kaSignature = equalsSymbol.toKaSignature()
-                KaSuccessCallInfo(
+                KaBaseSuccessCallInfo(
                     KaSimpleFunctionCall(
                         KaBasePartiallyAppliedSymbol(
                             kaSignature,
