@@ -2023,6 +2023,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
     }
 
     @Test
+    @TestMetadata("implicitActualization_noActualForExpect.kt")
+    public void testImplicitActualization_noActualForExpect() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/implicitActualization/implicitActualization_noActualForExpect.kt");
+    }
+
+    @Test
     @TestMetadata("implicitJavaActualizationAllowed.kt")
     public void testImplicitJavaActualizationAllowed() {
       runTest("compiler/testData/diagnostics/tests/multiplatform/implicitActualization/implicitJavaActualizationAllowed.kt");
@@ -2035,6 +2041,18 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
     }
 
     @Test
+    @TestMetadata("implicitJavaActualization_annotationOnlyOnExpect.kt")
+    public void testImplicitJavaActualization_annotationOnlyOnExpect() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/implicitActualization/implicitJavaActualization_annotationOnlyOnExpect.kt");
+    }
+
+    @Test
+    @TestMetadata("implicitJavaActualization_classifierIncompatibilities.kt")
+    public void testImplicitJavaActualization_classifierIncompatibilities() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/implicitActualization/implicitJavaActualization_classifierIncompatibilities.kt");
+    }
+
+    @Test
     @TestMetadata("implicitJavaActualization_multipleActuals.kt")
     public void testImplicitJavaActualization_multipleActuals() {
       runTest("compiler/testData/diagnostics/tests/multiplatform/implicitActualization/implicitJavaActualization_multipleActuals.kt");
@@ -2044,6 +2062,18 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
     @TestMetadata("implicitJavaActualization_oldLanguageVersion.kt")
     public void testImplicitJavaActualization_oldLanguageVersion() {
       runTest("compiler/testData/diagnostics/tests/multiplatform/implicitActualization/implicitJavaActualization_oldLanguageVersion.kt");
+    }
+
+    @Test
+    @TestMetadata("implicitJavaActualization_requiresOptIn.kt")
+    public void testImplicitJavaActualization_requiresOptIn() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/implicitActualization/implicitJavaActualization_requiresOptIn.kt");
+    }
+
+    @Test
+    @TestMetadata("implicitKotlinActualization_defaultParamsInActual.kt")
+    public void testImplicitKotlinActualization_defaultParamsInActual() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/implicitActualization/implicitKotlinActualization_defaultParamsInActual.kt");
     }
   }
 
