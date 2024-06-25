@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.resolve.extensions
 
 import com.intellij.openapi.Disposable
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.name.FqName
 
 /**
@@ -41,6 +42,7 @@ import org.jetbrains.kotlin.name.FqName
  * @see KaResolveExtensionFile
  * @see KaResolveExtensionProvider
  */
+@KaExperimentalApi
 public abstract class KaResolveExtension : Disposable {
     /**
      * Get the list of files that should be generated for the module. Returned files should contain valid Kotlin code.
@@ -89,5 +91,6 @@ public abstract class KaResolveExtension : Disposable {
     }
 }
 
+@KaExperimentalApi
 @Deprecated("Use 'KaResolveExtension' instead", ReplaceWith("KaResolveExtension"))
 public typealias KtResolveExtension = KaResolveExtension
