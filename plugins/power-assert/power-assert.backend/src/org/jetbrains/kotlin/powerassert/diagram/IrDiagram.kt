@@ -189,7 +189,11 @@ private fun typeOperatorOffset(
     source: String,
 ): Int {
     return when (expression.operator) {
-        IrTypeOperator.INSTANCEOF, IrTypeOperator.NOT_INSTANCEOF -> binaryOperatorOffset(expression.argument, sourceRangeInfo, source)
+        IrTypeOperator.INSTANCEOF,
+        IrTypeOperator.NOT_INSTANCEOF,
+        IrTypeOperator.SAFE_CAST,
+            -> binaryOperatorOffset(expression.argument, sourceRangeInfo, source)
+
         else -> 0
     }
 }
