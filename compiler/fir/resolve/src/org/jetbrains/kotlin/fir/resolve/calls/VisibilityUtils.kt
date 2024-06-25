@@ -67,7 +67,7 @@ fun FirVisibilityChecker.isVisible(
 ): Boolean {
     val callInfo = candidate.callInfo
 
-    if (!isVisible(declaration, callInfo, candidate.dispatchReceiver, skipCheckForContainingClassVisibility)) {
+    if (!isVisible(declaration, callInfo, candidate.dispatchReceiver?.expression, skipCheckForContainingClassVisibility)) {
         // There are some examples when applying smart cast makes a callable invisible
         // open class A {
         //     private fun foo() {}
@@ -84,7 +84,7 @@ fun FirVisibilityChecker.isVisible(
         // }
         // In both these examples (see !!! above) we should try to drop smart cast to B and repeat a visibility check
         val dispatchReceiverWithoutSmartCastType =
-            removeSmartCastTypeForAttemptToFitVisibility(candidate.dispatchReceiver, candidate.callInfo.session) ?: return false
+            removeSmartCastTypeForAttemptToFitVisibility(candidate.dispatchReceiver?.expression, candidate.callInfo.session) ?: return false
 
         if (!isVisible(declaration, callInfo, dispatchReceiverWithoutSmartCastType, skipCheckForContainingClassVisibility)) return false
 
@@ -102,14 +102,19 @@ fun FirVisibilityChecker.isVisible(
         //    if (param is Info) param.status
         // }
         // Here smart cast is still necessary, because without it 'status' cannot be resolved at all
-        if (!isVisible(declaration, callInfo, candidate.dispatchReceiver, skipCheckForContainingClassVisibility = true)) {
-            candidate.dispatchReceiver = dispatchReceiverWithoutSmartCastType
+        if (!isVisible(declaration, callInfo, candidate.dispatchReceiver?.expression, skipCheckForContainingClassVisibility = true)) {
+            candidate.dispatchReceiver = ConeCallAtom.createRawAtom(dispatchReceiverWithoutSmartCastType)
         }
     }
 
     val backingField = declaration.getBackingFieldIfApplicable()
     if (backingField != null) {
-        candidate.hasVisibleBackingField = isVisible(backingField, callInfo, candidate.dispatchReceiver, skipCheckForContainingClassVisibility)
+        candidate.hasVisibleBackingField = isVisible(
+            backingField,
+            callInfo,
+            candidate.dispatchReceiver?.expression,
+            skipCheckForContainingClassVisibility
+        )
     }
 
     return true

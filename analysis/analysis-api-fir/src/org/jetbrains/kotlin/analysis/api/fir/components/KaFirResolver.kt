@@ -519,15 +519,15 @@ internal class KaFirResolver(
             ) {
                 // Implicit invoke (e.g., `x()`) will have a different callee symbol (e.g., `x`) than the candidate (e.g., `invoke`).
                 createKtPartiallyAppliedSymbolForImplicitInvoke(
-                    candidate.dispatchReceiver,
-                    candidate.chosenExtensionReceiver,
+                    candidate.dispatchReceiver?.expression,
+                    candidate.chosenExtensionReceiver?.expression,
                     candidate.explicitReceiverKind
                 )
             } else {
                 KaPartiallyAppliedSymbol(
                     with(analysisSession) { unsubstitutedKtSignature.substitute(substitutor) },
-                    candidate.dispatchReceiver?.toKtReceiverValue(),
-                    candidate.chosenExtensionReceiver?.toKtReceiverValue(),
+                    candidate.dispatchReceiver?.expression?.toKtReceiverValue(),
+                    candidate.chosenExtensionReceiver?.expression?.toKtReceiverValue(),
                 )
             }
         } else if (fir is FirImplicitInvokeCall) {

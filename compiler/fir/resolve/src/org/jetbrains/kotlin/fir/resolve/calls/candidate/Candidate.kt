@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.util.CodeFragmentAdjustment
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
-import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class Candidate(
     symbol: FirBasedSymbol<*>,
@@ -40,10 +39,10 @@ class Candidate(
     // - in case a use-site receiver is explicit
     // - in some cases with static entities, no matter is a use-site receiver explicit or not
     // OR we may have here a kind of ImplicitReceiverValue (non-statics only)
-    override var dispatchReceiver: FirExpression?,
+    override var dispatchReceiver: ConeCallAtom?,
     // In most cases, it contains zero or single element
     // More than one, only in case of context receiver group
-    val givenExtensionReceiverOptions: List<FirExpression>,
+    val givenExtensionReceiverOptions: List<ConeCallAtom>,
     override val explicitReceiverKind: ExplicitReceiverKind,
     private val constraintSystemFactory: InferenceComponents.ConstraintSystemFactory,
     private val baseSystem: ConstraintStorage,
@@ -232,22 +231,22 @@ class Candidate(
 
     // ---------------------------------------- Receivers ----------------------------------------
 
-    override var chosenExtensionReceiver: FirExpression? = givenExtensionReceiverOptions.singleOrNull()
+    override var chosenExtensionReceiver: ConeCallAtom? = givenExtensionReceiverOptions.singleOrNull()
 
-    var contextReceiverArguments: List<FirExpression>? = null
+    var contextReceiverArguments: List<ConeCallAtom>? = null
 
     // FirExpressionStub can be located here in case of callable reference resolution
     fun dispatchReceiverExpression(): FirExpression? {
-        return dispatchReceiver?.takeIf { it !is FirExpressionStub }
+        return dispatchReceiver?.expression?.takeIf { it !is FirExpressionStub }
     }
 
     // FirExpressionStub can be located here in case of callable reference resolution
     fun chosenExtensionReceiverExpression(): FirExpression? {
-        return chosenExtensionReceiver?.takeIf { it !is FirExpressionStub }
+        return chosenExtensionReceiver?.expression?.takeIf { it !is FirExpressionStub }
     }
 
     fun contextReceiverArguments(): List<FirExpression> {
-        return contextReceiverArguments ?: emptyList()
+        return contextReceiverArguments?.map { it.expression } ?: emptyList()
     }
 
     private var sourcesWereUpdated = false
@@ -263,18 +262,26 @@ class Candidate(
         contextReceiverArguments = contextReceiverArguments?.map { it.tryToSetSourceForImplicitReceiver() }
     }
 
-    private fun FirExpression.tryToSetSourceForImplicitReceiver(): FirExpression {
-        return when {
-            this is FirSmartCastExpression -> {
-                this.apply { replaceOriginalExpression(this.originalExpression.tryToSetSourceForImplicitReceiver()) }
-            }
-            this is FirThisReceiverExpression && isImplicit -> {
-                buildThisReceiverExpressionCopy(this) {
-                    source = callInfo.callSite.source?.fakeElement(KtFakeSourceElementKind.ImplicitReceiver)
+    private fun ConeCallAtom.tryToSetSourceForImplicitReceiver(): ConeCallAtom {
+        if (this !is ConeResolvedAtom) return this
+
+        fun FirExpression.tryToSetSourceForImplicitReceiver(): FirExpression? {
+            return when {
+                this is FirSmartCastExpression -> {
+                    val newOriginal = this.originalExpression.tryToSetSourceForImplicitReceiver() ?: return null
+                    this.apply { replaceOriginalExpression(newOriginal) }
                 }
+                this is FirThisReceiverExpression && isImplicit -> {
+                    buildThisReceiverExpressionCopy(this) {
+                        source = callInfo.callSite.source?.fakeElement(KtFakeSourceElementKind.ImplicitReceiver)
+                    }
+                }
+                else -> null
             }
-            else -> this
         }
+
+        val newExpression = this.expression.tryToSetSourceForImplicitReceiver() ?: return this
+        return ConeResolvedAtom(newExpression)
     }
 
     // ---------------------------------------- Backing field ----------------------------------------
