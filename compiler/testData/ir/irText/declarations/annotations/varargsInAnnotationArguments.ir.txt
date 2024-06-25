@@ -94,13 +94,13 @@ FILE fqName:<root> fileName:/varargsInAnnotationArguments.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     annotations:
-      A1(xs = [1, 2, 3])
-      A2(xs = ["a", "b", "c"])
-      AA(xs = [A1(xs = [4]), A1(xs = [5]), A1(xs = [6])])
+      A1(xs = [1, 2, 3] type=kotlin.IntArray varargElementType=kotlin.Int)
+      A2(xs = ["a", "b", "c"] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String)
+      AA(xs = [A1(xs = [4] type=kotlin.IntArray varargElementType=kotlin.Int), A1(xs = [5] type=kotlin.IntArray varargElementType=kotlin.Int), A1(xs = [6] type=kotlin.IntArray varargElementType=kotlin.Int)] type=kotlin.Array<out <root>.A1> varargElementType=<root>.A1)
     BLOCK_BODY
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     annotations:
-      A1(xs = [])
-      A2(xs = [])
-      AA(xs = [])
+      A1(xs = [] type=kotlin.IntArray varargElementType=kotlin.Array<kotlin.IntArray>)
+      A2(xs = [] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.Array<kotlin.Array<out kotlin.String>>)
+      AA(xs = [] type=kotlin.Array<out <root>.A1> varargElementType=kotlin.Array<kotlin.Array<out <root>.A1>>)
     BLOCK_BODY

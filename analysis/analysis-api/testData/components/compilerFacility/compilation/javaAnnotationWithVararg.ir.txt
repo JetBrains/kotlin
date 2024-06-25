@@ -21,7 +21,7 @@ MODULE_FRAGMENT
         $this: VALUE_PARAMETER name:<this> type:p2.Parent
         VALUE_PARAMETER name:p0 index:0 type:kotlin.Int
           annotations:
-            Anno(value = ["UnknownNullness", "MissingNullability"])
+            Anno(value = ["UnknownNullness", "MissingNullability"] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String)
       FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
         overridden:
           public open fun toString (): kotlin.String [fake_override] declared in p2.Parent
