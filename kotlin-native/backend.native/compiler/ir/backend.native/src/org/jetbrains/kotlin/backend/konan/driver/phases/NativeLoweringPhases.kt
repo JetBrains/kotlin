@@ -155,11 +155,7 @@ private val arrayConstructorPhase = createFileLoweringPhase(
 )
 
 private val lateinitPhase = createFileLoweringPhase(
-        { context, irFile ->
-            NullableFieldsForLateinitCreationLowering(context).lower(irFile)
-            NullableFieldsDeclarationLowering(context).lower(irFile)
-            LateinitUsageLowering(context).lower(irFile)
-        },
+        ::LateinitLowering,
         name = "Lateinit",
 )
 

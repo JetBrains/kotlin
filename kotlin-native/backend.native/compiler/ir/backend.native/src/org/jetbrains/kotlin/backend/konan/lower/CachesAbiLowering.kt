@@ -42,9 +42,6 @@ internal val INTERNAL_ABI_ORIGIN = IrDeclarationOriginImpl("INTERNAL_ABI")
  * and we have to explicitly add an external declaration.
  */
 internal class CachesAbiSupport(mapping: Mapping, private val irFactory: IrFactory) {
-    private val lateInitFieldToNullableField = mapping.lateInitFieldToNullableField
-
-
     fun getOuterThisAccessor(irClass: IrClass): IrSimpleFunction {
         require(irClass.isInner) { "Expected an inner class but was: ${irClass.render()}" }
         return irClass::outerThisAccessor.getOrSetIfNull {
@@ -83,12 +80,11 @@ internal class CachesAbiSupport(mapping: Mapping, private val irFactory: IrFacto
         require(irProperty.isLateinit) { "Expected a lateinit property but was: ${irProperty.render()}" }
         return irProperty::lateinitPropertyAccessor.getOrSetIfNull {
             val backingField = irProperty.backingField ?: error("Lateinit property ${irProperty.render()} should have a backing field")
-            val actualField = lateInitFieldToNullableField[backingField] ?: backingField
             val owner = irProperty.parent
             irFactory.buildFun {
                 name = getMangledNameFor("${irProperty.name}_field", owner)
                 origin = INTERNAL_ABI_ORIGIN
-                returnType = actualField.type
+                returnType = backingField.type
             }.apply {
                 parent = irProperty.getPackageFragment()
                 attributeOwnerId = irProperty // To be able to get the file.

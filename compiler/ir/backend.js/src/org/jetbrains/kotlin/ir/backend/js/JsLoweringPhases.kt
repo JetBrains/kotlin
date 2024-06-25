@@ -146,19 +146,9 @@ private val stringConcatenationLoweringPhase = makeIrModulePhase(
     name = "JsStringConcatenationLowering",
 )
 
-private val lateinitNullableFieldsPhase = makeIrModulePhase(
-    ::NullableFieldsForLateinitCreationLowering,
-    name = "LateinitNullableFields",
-)
-
-private val lateinitDeclarationLoweringPhase = makeIrModulePhase(
-    ::NullableFieldsDeclarationLowering,
-    name = "LateinitDeclarations",
-)
-
-private val lateinitUsageLoweringPhase = makeIrModulePhase(
-    ::LateinitUsageLowering,
-    name = "LateinitUsage",
+private val lateinitPhase = makeIrModulePhase(
+    ::LateinitLowering,
+    name = "LateinitLowering",
 )
 
 private val kotlinNothingValueExceptionPhase = makeIrModulePhase(
@@ -192,7 +182,7 @@ private val sharedVariablesLoweringPhase = makeIrModulePhase(
         SharedVariablesLowering(JsSharedVariablesManager(context.irBuiltIns, context.dynamicType, context.intrinsics))
     },
     name = "SharedVariablesLowering",
-    prerequisite = setOf(lateinitDeclarationLoweringPhase, lateinitUsageLoweringPhase)
+    prerequisite = setOf(lateinitPhase)
 )
 
 private val outerThisSpecialAccessorInInlineFunctionsPhase = makeIrModulePhase(
@@ -753,9 +743,7 @@ fun getJsLowerings(
     // BEGIN: Common Native/JS prefix.
     validateIrBeforeLowering,
     jsCodeOutliningPhase,
-    lateinitNullableFieldsPhase,
-    lateinitDeclarationLoweringPhase,
-    lateinitUsageLoweringPhase,
+    lateinitPhase,
     sharedVariablesLoweringPhase,
     outerThisSpecialAccessorInInlineFunctionsPhase,
     localClassesInInlineLambdasPhase,

@@ -62,19 +62,9 @@ private val stringConcatenationLowering = makeIrModulePhase(
     name = "StringConcatenation",
 )
 
-private val lateinitNullableFieldsPhase = makeIrModulePhase(
-    ::NullableFieldsForLateinitCreationLowering,
-    name = "LateinitNullableFields",
-)
-
-private val lateinitDeclarationLoweringPhase = makeIrModulePhase(
-    ::NullableFieldsDeclarationLowering,
-    name = "LateinitDeclarations",
-)
-
-private val lateinitUsageLoweringPhase = makeIrModulePhase(
-    ::LateinitUsageLowering,
-    name = "LateinitUsage",
+private val lateinitPhase = makeIrModulePhase(
+    ::LateinitLowering,
+    name = "LateinitLowering",
 )
 
 private val rangeContainsLoweringPhase = makeIrModulePhase(
@@ -96,10 +86,7 @@ private val arrayConstructorPhase = makeIrModulePhase(
 private val sharedVariablesLoweringPhase = makeIrModulePhase(
     { context: WasmBackendContext -> SharedVariablesLowering(WasmSharedVariablesManager(context.wasmSymbols)) },
     name = "SharedVariablesLowering",
-    prerequisite = setOf(
-        lateinitDeclarationLoweringPhase,
-        lateinitUsageLoweringPhase
-    )
+    prerequisite = setOf(lateinitPhase)
 )
 
 private val localClassesInInlineLambdasPhase = makeIrModulePhase(
@@ -547,9 +534,7 @@ fun getWasmLowerings(
     excludeDeclarationsFromCodegenPhase,
     expectDeclarationsRemovingPhase,
 
-    lateinitNullableFieldsPhase,
-    lateinitDeclarationLoweringPhase,
-    lateinitUsageLoweringPhase,
+    lateinitPhase,
     rangeContainsLoweringPhase,
 
     sharedVariablesLoweringPhase,
