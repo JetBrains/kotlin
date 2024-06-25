@@ -2080,6 +2080,70 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeWithLatestLanguageVersionT
   }
 
   @Nested
+  @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/implicitActualization")
+  @TestDataPath("$PROJECT_ROOT")
+  public class ImplicitActualization {
+    @Test
+    public void testAllFilesPresentInImplicitActualization() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/implicitActualization"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), TargetBackend.JVM_IR, true);
+    }
+
+    @Test
+    @TestMetadata("implicitActualization_noActualForExpect.kt")
+    public void testImplicitActualization_noActualForExpect() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/implicitActualization/implicitActualization_noActualForExpect.kt");
+    }
+
+    @Test
+    @TestMetadata("implicitJavaActualizationAllowed.kt")
+    public void testImplicitJavaActualizationAllowed() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/implicitActualization/implicitJavaActualizationAllowed.kt");
+    }
+
+    @Test
+    @TestMetadata("implicitJavaActualizationDisallowed.kt")
+    public void testImplicitJavaActualizationDisallowed() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/implicitActualization/implicitJavaActualizationDisallowed.kt");
+    }
+
+    @Test
+    @TestMetadata("implicitJavaActualization_annotationOnlyOnExpect.kt")
+    public void testImplicitJavaActualization_annotationOnlyOnExpect() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/implicitActualization/implicitJavaActualization_annotationOnlyOnExpect.kt");
+    }
+
+    @Test
+    @TestMetadata("implicitJavaActualization_classifierIncompatibilities.kt")
+    public void testImplicitJavaActualization_classifierIncompatibilities() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/implicitActualization/implicitJavaActualization_classifierIncompatibilities.kt");
+    }
+
+    @Test
+    @TestMetadata("implicitJavaActualization_multipleActuals.kt")
+    public void testImplicitJavaActualization_multipleActuals() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/implicitActualization/implicitJavaActualization_multipleActuals.kt");
+    }
+
+    @Test
+    @TestMetadata("implicitJavaActualization_oldLanguageVersion.kt")
+    public void testImplicitJavaActualization_oldLanguageVersion() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/implicitActualization/implicitJavaActualization_oldLanguageVersion.kt");
+    }
+
+    @Test
+    @TestMetadata("implicitJavaActualization_requiresOptIn.kt")
+    public void testImplicitJavaActualization_requiresOptIn() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/implicitActualization/implicitJavaActualization_requiresOptIn.kt");
+    }
+
+    @Test
+    @TestMetadata("implicitKotlinActualization_defaultParamsInActual.kt")
+    public void testImplicitKotlinActualization_defaultParamsInActual() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/implicitActualization/implicitKotlinActualization_defaultParamsInActual.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/inlineClasses")
   @TestDataPath("$PROJECT_ROOT")
   public class InlineClasses {
@@ -2132,30 +2196,6 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeWithLatestLanguageVersionT
     @TestMetadata("flexibleTypes.kt")
     public void testFlexibleTypes() {
       runTest("compiler/testData/diagnostics/tests/multiplatform/java/flexibleTypes.kt");
-    }
-
-    @Test
-    @TestMetadata("implicitJavaActualizationAllowed.kt")
-    public void testImplicitJavaActualizationAllowed() {
-      runTest("compiler/testData/diagnostics/tests/multiplatform/java/implicitJavaActualizationAllowed.kt");
-    }
-
-    @Test
-    @TestMetadata("implicitJavaActualizationDisallowed.kt")
-    public void testImplicitJavaActualizationDisallowed() {
-      runTest("compiler/testData/diagnostics/tests/multiplatform/java/implicitJavaActualizationDisallowed.kt");
-    }
-
-    @Test
-    @TestMetadata("implicitJavaActualization_multipleActuals.kt")
-    public void testImplicitJavaActualization_multipleActuals() {
-      runTest("compiler/testData/diagnostics/tests/multiplatform/java/implicitJavaActualization_multipleActuals.kt");
-    }
-
-    @Test
-    @TestMetadata("implicitJavaActualization_oldLanguageVersion.kt")
-    public void testImplicitJavaActualization_oldLanguageVersion() {
-      runTest("compiler/testData/diagnostics/tests/multiplatform/java/implicitJavaActualization_oldLanguageVersion.kt");
     }
 
     @Test

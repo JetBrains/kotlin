@@ -2085,7 +2085,13 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
   public class ImplicitActualization {
     @Test
     public void testAllFilesPresentInImplicitActualization() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/implicitActualization"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/implicitActualization"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), TargetBackend.JVM_IR, true);
+    }
+
+    @Test
+    @TestMetadata("implicitActualization_noActualForExpect.kt")
+    public void testImplicitActualization_noActualForExpect() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/implicitActualization/implicitActualization_noActualForExpect.kt");
     }
 
     @Test
@@ -2101,6 +2107,18 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("implicitJavaActualization_annotationOnlyOnExpect.kt")
+    public void testImplicitJavaActualization_annotationOnlyOnExpect() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/implicitActualization/implicitJavaActualization_annotationOnlyOnExpect.kt");
+    }
+
+    @Test
+    @TestMetadata("implicitJavaActualization_classifierIncompatibilities.kt")
+    public void testImplicitJavaActualization_classifierIncompatibilities() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/implicitActualization/implicitJavaActualization_classifierIncompatibilities.kt");
+    }
+
+    @Test
     @TestMetadata("implicitJavaActualization_multipleActuals.kt")
     public void testImplicitJavaActualization_multipleActuals() {
       runTest("compiler/testData/diagnostics/tests/multiplatform/implicitActualization/implicitJavaActualization_multipleActuals.kt");
@@ -2110,6 +2128,18 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
     @TestMetadata("implicitJavaActualization_oldLanguageVersion.kt")
     public void testImplicitJavaActualization_oldLanguageVersion() {
       runTest("compiler/testData/diagnostics/tests/multiplatform/implicitActualization/implicitJavaActualization_oldLanguageVersion.kt");
+    }
+
+    @Test
+    @TestMetadata("implicitJavaActualization_requiresOptIn.kt")
+    public void testImplicitJavaActualization_requiresOptIn() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/implicitActualization/implicitJavaActualization_requiresOptIn.kt");
+    }
+
+    @Test
+    @TestMetadata("implicitKotlinActualization_defaultParamsInActual.kt")
+    public void testImplicitKotlinActualization_defaultParamsInActual() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/implicitActualization/implicitKotlinActualization_defaultParamsInActual.kt");
     }
   }
 
