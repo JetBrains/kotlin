@@ -18,22 +18,6 @@ public sealed interface KaCompoundOperation : KaLifetimeOwner {
      * function. If the access is `++`, this is the resolved `inc` function.
      */
     public val operationPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>
-
-    /**
-     * A compound access that read, increment or decrement, and write the computed value back.
-     */
-    public interface KaCompoundUnaryOperation : KaCompoundOperation {
-        public val kind: Kind
-        public val precedence: Precedence
-
-        public enum class Kind {
-            INC, DEC
-        }
-
-        public enum class Precedence {
-            PREFIX, POSTFIX
-        }
-    }
 }
 
 /**
@@ -45,6 +29,22 @@ public interface KaCompoundAssignOperation : KaCompoundOperation {
 
     public enum class Kind {
         PLUS_ASSIGN, MINUS_ASSIGN, TIMES_ASSIGN, DIV_ASSIGN, REM_ASSIGN
+    }
+}
+
+/**
+ * A compound access that read, increment or decrement, and write the computed value back.
+ */
+public interface KaCompoundUnaryOperation : KaCompoundOperation {
+    public val kind: Kind
+    public val precedence: Precedence
+
+    public enum class Kind {
+        INC, DEC
+    }
+
+    public enum class Precedence {
+        PREFIX, POSTFIX
     }
 }
 

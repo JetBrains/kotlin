@@ -349,10 +349,11 @@ internal class KaFe10Resolver(
         val baseExpression = unaryExpression.baseExpression
         val kind = unaryExpression.getInOrDecOperationKind()
         val precedence = when (unaryExpression) {
-            is KtPostfixExpression -> KaCompoundOperation.KaCompoundUnaryOperation.Precedence.POSTFIX
-            is KtPrefixExpression -> KaCompoundOperation.KaCompoundUnaryOperation.Precedence.PREFIX
+            is KtPostfixExpression -> KaCompoundUnaryOperation.Precedence.POSTFIX
+            is KtPrefixExpression -> KaCompoundUnaryOperation.Precedence.PREFIX
             else -> error("unexpected KtUnaryExpression $unaryExpression")
         }
+
         val compoundAccess = KaBaseCompoundUnaryOperation(operatorPartiallyAppliedSymbol, kind, precedence)
         return if (baseExpression is KtArrayAccessExpression) {
             createCompoundArrayAccessCall(context, baseExpression, compoundAccess, resolvedCalls)
