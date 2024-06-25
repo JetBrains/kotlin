@@ -1,6 +1,5 @@
 KtArrayAccessExpression(44,48): '1[2]'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with get>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -31,4 +30,5 @@ KtArrayAccessExpression(44,48): '1[2]'
           symbol = index: kotlin.Int
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with get>
     isInBestCandidates = true

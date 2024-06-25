@@ -1,6 +1,5 @@
 KtConstructorCalleeExpression(126,127): 'A'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'constructor(): A'.>
     candidate = KaDelegatedConstructorCall:
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -14,10 +13,10 @@ KtConstructorCalleeExpression(126,127): 'A'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'constructor(): A'.>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<INVISIBLE_REFERENCE: Cannot access 'constructor(p: String): A': it is private in '/A'.>
     candidate = KaDelegatedConstructorCall:
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -38,6 +37,7 @@ KtConstructorCalleeExpression(126,127): 'A'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<INVISIBLE_REFERENCE: Cannot access 'constructor(p: String): A': it is private in '/A'.>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:

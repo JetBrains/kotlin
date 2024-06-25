@@ -126,7 +126,6 @@ KtBinaryExpression(28,46): '1.compareTo(2) > 0'
 
 KtDotQualifiedExpression(28,42): '1.compareTo(2)'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Byte>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -157,10 +156,10 @@ KtDotQualifiedExpression(28,42): '1.compareTo(2)'
           symbol = other: kotlin.Byte
           callableId = null)
       }
+    diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Byte>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Double>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -191,10 +190,10 @@ KtDotQualifiedExpression(28,42): '1.compareTo(2)'
           symbol = other: kotlin.Double
           callableId = null)
       }
+    diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Double>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Float>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -225,6 +224,7 @@ KtDotQualifiedExpression(28,42): '1.compareTo(2)'
           symbol = other: kotlin.Float
           callableId = null)
       }
+    diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Float>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:
@@ -261,7 +261,6 @@ KtDotQualifiedExpression(28,42): '1.compareTo(2)'
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Long>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -292,10 +291,10 @@ KtDotQualifiedExpression(28,42): '1.compareTo(2)'
           symbol = other: kotlin.Long
           callableId = null)
       }
+    diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Long>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Short>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -326,6 +325,7 @@ KtDotQualifiedExpression(28,42): '1.compareTo(2)'
           symbol = other: kotlin.Short
           callableId = null)
       }
+    diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Short>
     isInBestCandidates = false
 
 KtConstantExpression(28,29): '1'
@@ -333,7 +333,6 @@ KtConstantExpression(28,29): '1'
 
 KtCallExpression(30,42): 'compareTo(2)'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Byte>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -364,10 +363,10 @@ KtCallExpression(30,42): 'compareTo(2)'
           symbol = other: kotlin.Byte
           callableId = null)
       }
+    diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Byte>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Double>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -398,10 +397,10 @@ KtCallExpression(30,42): 'compareTo(2)'
           symbol = other: kotlin.Double
           callableId = null)
       }
+    diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Double>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Float>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -432,6 +431,7 @@ KtCallExpression(30,42): 'compareTo(2)'
           symbol = other: kotlin.Float
           callableId = null)
       }
+    diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Float>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:
@@ -468,7 +468,6 @@ KtCallExpression(30,42): 'compareTo(2)'
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Long>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -499,10 +498,10 @@ KtCallExpression(30,42): 'compareTo(2)'
           symbol = other: kotlin.Long
           callableId = null)
       }
+    diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Long>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Short>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -533,11 +532,11 @@ KtCallExpression(30,42): 'compareTo(2)'
           symbol = other: kotlin.Short
           callableId = null)
       }
+    diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Short>
     isInBestCandidates = false
 
 KtNameReferenceExpression(30,39): 'compareTo'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with compareTo>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -568,10 +567,10 @@ KtNameReferenceExpression(30,39): 'compareTo'
           symbol = other: kotlin.Byte
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with compareTo>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with compareTo>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -602,10 +601,10 @@ KtNameReferenceExpression(30,39): 'compareTo'
           symbol = other: kotlin.Double
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with compareTo>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with compareTo>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -636,6 +635,7 @@ KtNameReferenceExpression(30,39): 'compareTo'
           symbol = other: kotlin.Float
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with compareTo>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:
@@ -672,7 +672,6 @@ KtNameReferenceExpression(30,39): 'compareTo'
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with compareTo>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -703,10 +702,10 @@ KtNameReferenceExpression(30,39): 'compareTo'
           symbol = other: kotlin.Long
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with compareTo>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with compareTo>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -737,6 +736,7 @@ KtNameReferenceExpression(30,39): 'compareTo'
           symbol = other: kotlin.Short
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with compareTo>
     isInBestCandidates = false
 
 KtValueArgumentList(39,42): '(2)'

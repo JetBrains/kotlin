@@ -393,7 +393,6 @@ KtCallableReferenceExpression(497,520): 'MyClass::memberFunction'
 
 KtNameReferenceExpression(497,504): 'MyClass'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -407,6 +406,7 @@ KtNameReferenceExpression(497,504): 'MyClass'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(506,520): 'memberFunction'
@@ -560,7 +560,6 @@ KtCallableReferenceExpression(543,566): 'MyClass::memberProperty'
 
 KtNameReferenceExpression(543,550): 'MyClass'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -574,6 +573,7 @@ KtNameReferenceExpression(543,550): 'MyClass'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(552,566): 'memberProperty'
@@ -651,7 +651,6 @@ KtCallableReferenceExpression(577,598): 'Child::memberFunction'
 
 KtNameReferenceExpression(577,582): 'Child'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -665,6 +664,7 @@ KtNameReferenceExpression(577,582): 'Child'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(584,598): 'memberFunction'
@@ -818,7 +818,6 @@ KtCallableReferenceExpression(619,640): 'Child::memberProperty'
 
 KtNameReferenceExpression(619,624): 'Child'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -832,6 +831,7 @@ KtNameReferenceExpression(619,624): 'Child'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(626,640): 'memberProperty'
@@ -878,7 +878,6 @@ KtCallableReferenceExpression(659,690): 'pack.MyClass::extensionFunction'
 
 KtDotQualifiedExpression(659,671): 'pack.MyClass'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -892,11 +891,11 @@ KtDotQualifiedExpression(659,671): 'pack.MyClass'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(659,663): 'pack'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -910,11 +909,11 @@ KtNameReferenceExpression(659,663): 'pack'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(664,671): 'MyClass'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -928,6 +927,7 @@ KtNameReferenceExpression(664,671): 'MyClass'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(673,690): 'extensionFunction'
@@ -954,7 +954,6 @@ KtCallableReferenceExpression(703,729): 'MyClass::extensionProperty'
 
 KtNameReferenceExpression(703,710): 'MyClass'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -968,6 +967,7 @@ KtNameReferenceExpression(703,710): 'MyClass'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(712,729): 'extensionProperty'
@@ -995,7 +995,6 @@ KtCallableReferenceExpression(744,768): 'Child::extensionFunction'
 
 KtNameReferenceExpression(744,749): 'Child'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1009,6 +1008,7 @@ KtNameReferenceExpression(744,749): 'Child'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(751,768): 'extensionFunction'
@@ -1035,7 +1035,6 @@ KtCallableReferenceExpression(782,811): 'pack.Child::extensionProperty'
 
 KtDotQualifiedExpression(782,792): 'pack.Child'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1049,11 +1048,11 @@ KtDotQualifiedExpression(782,792): 'pack.Child'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(782,786): 'pack'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1067,11 +1066,11 @@ KtNameReferenceExpression(782,786): 'pack'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(787,792): 'Child'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1085,6 +1084,7 @@ KtNameReferenceExpression(787,792): 'Child'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(794,811): 'extensionProperty'
@@ -1128,7 +1128,6 @@ KtCallableReferenceExpression(817,848): 'ChildWithType::functionWithType'
 
 KtNameReferenceExpression(817,830): 'ChildWithType'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1142,6 +1141,7 @@ KtNameReferenceExpression(817,830): 'ChildWithType'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(832,848): 'functionWithType'
@@ -1218,7 +1218,6 @@ KtCallableReferenceExpression(858,889): 'ChildWithType::propertyWithType'
 
 KtNameReferenceExpression(858,871): 'ChildWithType'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1232,6 +1231,7 @@ KtNameReferenceExpression(858,871): 'ChildWithType'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(873,889): 'propertyWithType'

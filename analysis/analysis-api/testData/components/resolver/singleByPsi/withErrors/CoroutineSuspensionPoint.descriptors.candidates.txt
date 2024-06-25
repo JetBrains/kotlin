@@ -1,6 +1,5 @@
 KtNameReferenceExpression(183,194): 'suspendHere'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'x'>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -31,4 +30,5 @@ KtNameReferenceExpression(183,194): 'suspendHere'
           callableId = /Controller.suspendHere
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'x'>
     isInBestCandidates = true

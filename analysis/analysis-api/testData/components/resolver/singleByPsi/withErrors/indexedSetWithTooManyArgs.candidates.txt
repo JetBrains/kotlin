@@ -1,6 +1,5 @@
 KtArrayAccessExpression(93,110): 'c[1, "foo", 3.14]'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun set(a: Int, b: String, value: Boolean): Unit'.>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -55,4 +54,5 @@ KtArrayAccessExpression(93,110): 'c[1, "foo", 3.14]'
           symbol = value: kotlin.Boolean
           callableId = null)
       }
+    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun set(a: Int, b: String, value: Boolean): Unit'.>
     isInBestCandidates = true

@@ -184,7 +184,6 @@ KtDotQualifiedExpression(44,69): 'AnnotationTarget.PROPERTY'
 
 KtNameReferenceExpression(44,60): 'AnnotationTarget'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -198,6 +197,7 @@ KtNameReferenceExpression(44,60): 'AnnotationTarget'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(61,69): 'PROPERTY'
@@ -243,7 +243,6 @@ KtDotQualifiedExpression(75,106): 'AnnotationTarget.TYPE_PARAMETER'
 
 KtNameReferenceExpression(75,91): 'AnnotationTarget'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -257,6 +256,7 @@ KtNameReferenceExpression(75,91): 'AnnotationTarget'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(92,106): 'TYPE_PARAMETER'
@@ -302,7 +302,6 @@ KtDotQualifiedExpression(112,137): 'AnnotationTarget.FUNCTION'
 
 KtNameReferenceExpression(112,128): 'AnnotationTarget'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -316,6 +315,7 @@ KtNameReferenceExpression(112,128): 'AnnotationTarget'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(129,137): 'FUNCTION'
@@ -361,7 +361,6 @@ KtDotQualifiedExpression(143,175): 'AnnotationTarget.VALUE_PARAMETER'
 
 KtNameReferenceExpression(143,159): 'AnnotationTarget'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -375,6 +374,7 @@ KtNameReferenceExpression(143,159): 'AnnotationTarget'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(160,175): 'VALUE_PARAMETER'
@@ -420,7 +420,6 @@ KtDotQualifiedExpression(181,213): 'AnnotationTarget.PROPERTY_GETTER'
 
 KtNameReferenceExpression(181,197): 'AnnotationTarget'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -434,6 +433,7 @@ KtNameReferenceExpression(181,197): 'AnnotationTarget'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(198,213): 'PROPERTY_GETTER'
@@ -479,7 +479,6 @@ KtDotQualifiedExpression(219,251): 'AnnotationTarget.PROPERTY_SETTER'
 
 KtNameReferenceExpression(219,235): 'AnnotationTarget'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -493,6 +492,7 @@ KtNameReferenceExpression(219,235): 'AnnotationTarget'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(236,251): 'PROPERTY_SETTER'
@@ -538,7 +538,6 @@ KtDotQualifiedExpression(257,278): 'AnnotationTarget.TYPE'
 
 KtNameReferenceExpression(257,273): 'AnnotationTarget'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -552,6 +551,7 @@ KtNameReferenceExpression(257,273): 'AnnotationTarget'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(274,278): 'TYPE'
@@ -2058,7 +2058,6 @@ KtNameReferenceExpression(828,832): 'prop'
 
 KtNameReferenceExpression(844,848): 'Unit'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -2072,4 +2071,5 @@ KtNameReferenceExpression(844,848): 'Unit'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false

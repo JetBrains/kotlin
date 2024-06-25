@@ -1,6 +1,5 @@
 KtArrayAccessExpression(44,48): '1[2]'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OPERATOR_MODIFIER_REQUIRED: 'operator' modifier is required on 'FirNamedFunctionSymbol /get' in 'get'.>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -31,4 +30,5 @@ KtArrayAccessExpression(44,48): '1[2]'
           symbol = index: kotlin.Int
           callableId = null)
       }
+    diagnostic = ERROR<OPERATOR_MODIFIER_REQUIRED: 'operator' modifier is required on 'FirNamedFunctionSymbol /get' in 'get'.>
     isInBestCandidates = true

@@ -1,6 +1,5 @@
 KtCallExpression(110,117): 'x(true)'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The boolean literal does not conform to the expected type Int>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -31,10 +30,10 @@ KtCallExpression(110,117): 'x(true)'
           symbol = i: kotlin.Int
           callableId = null)
       }
+    diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The boolean literal does not conform to the expected type Int>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The boolean literal does not conform to the expected type Char>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -62,6 +61,7 @@ KtCallExpression(110,117): 'x(true)'
           symbol = c: kotlin.Char
           callableId = null)
       }
+    diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The boolean literal does not conform to the expected type Char>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:

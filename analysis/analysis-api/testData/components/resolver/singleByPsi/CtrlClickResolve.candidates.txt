@@ -30,7 +30,6 @@ KtNameReferenceExpression(202,210): 'IntArray'
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NON_VARARG_SPREAD: The spread operator (*foo) can only be applied in a vararg position.>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -58,10 +57,10 @@ KtNameReferenceExpression(202,210): 'IntArray'
           symbol = size: kotlin.Int
           callableId = null)
       }
+    diagnostic = ERROR<NON_VARARG_SPREAD: The spread operator (*foo) can only be applied in a vararg position.>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NON_VARARG_SPREAD: The spread operator (*foo) can only be applied in a vararg position.>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -95,4 +94,5 @@ KtNameReferenceExpression(202,210): 'IntArray'
           symbol = size: kotlin.Int
           callableId = null)
       }
+    diagnostic = ERROR<NON_VARARG_SPREAD: The spread operator (*foo) can only be applied in a vararg position.>
     isInBestCandidates = false

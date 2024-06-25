@@ -1,6 +1,5 @@
 KtWhenConditionInRange(169,181): 'in MyClass()'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun contains(str: String): Boolean>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -31,6 +30,7 @@ KtWhenConditionInRange(169,181): 'in MyClass()'
           symbol = str: kotlin.String
           callableId = null)
       }
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun contains(str: String): Boolean>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:

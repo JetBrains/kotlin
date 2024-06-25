@@ -201,9 +201,8 @@ KtConstructorDelegationCall(170,179): 'super(ci)'
           callableId = null)
       }
     isInBestCandidates = true
-
+  
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.String' was expected.>
     candidate = KaDelegatedConstructorCall:
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -224,6 +223,7 @@ KtConstructorDelegationCall(170,179): 'super(ci)'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.String' was expected.>
     isInBestCandidates = false
 
 KtConstructorDelegationReferenceExpression(170,175): 'super'
@@ -256,9 +256,8 @@ KtConstructorDelegationReferenceExpression(170,175): 'super'
           callableId = null)
       }
     isInBestCandidates = true
-
+  
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.String' was expected.>
     candidate = KaDelegatedConstructorCall:
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -279,6 +278,7 @@ KtConstructorDelegationReferenceExpression(170,175): 'super'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.String' was expected.>
     isInBestCandidates = false
 
 KtValueArgumentList(175,179): '(ci)'
@@ -323,7 +323,6 @@ KtNameReferenceExpression(200,206): 'String'
 
 KtConstructorDelegationCall(210,219): 'super(cs)'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.String', but 'kotlin.Int' was expected.>
     candidate = KaDelegatedConstructorCall:
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -344,8 +343,9 @@ KtConstructorDelegationCall(210,219): 'super(cs)'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.String', but 'kotlin.Int' was expected.>
     isInBestCandidates = false
-
+  
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       kind = SUPER_CALL
@@ -378,7 +378,6 @@ KtConstructorDelegationCall(210,219): 'super(cs)'
 
 KtConstructorDelegationReferenceExpression(210,215): 'super'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.String', but 'kotlin.Int' was expected.>
     candidate = KaDelegatedConstructorCall:
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -399,8 +398,9 @@ KtConstructorDelegationReferenceExpression(210,215): 'super'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.String', but 'kotlin.Int' was expected.>
     isInBestCandidates = false
-
+  
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       kind = SUPER_CALL
@@ -573,9 +573,8 @@ KtSuperTypeCallEntry(294,307): 'BaseClass(42)'
           callableId = null)
       }
     isInBestCandidates = true
-
+  
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.String' was expected.>
     candidate = KaDelegatedConstructorCall:
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -596,6 +595,7 @@ KtSuperTypeCallEntry(294,307): 'BaseClass(42)'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.String' was expected.>
     isInBestCandidates = false
 
 KtConstructorCalleeExpression(294,303): 'BaseClass'
@@ -628,9 +628,8 @@ KtConstructorCalleeExpression(294,303): 'BaseClass'
           callableId = null)
       }
     isInBestCandidates = true
-
+  
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.String' was expected.>
     candidate = KaDelegatedConstructorCall:
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -651,6 +650,7 @@ KtConstructorCalleeExpression(294,303): 'BaseClass'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.String' was expected.>
     isInBestCandidates = false
 
 KtTypeReference(294,303): 'BaseClass'
@@ -708,9 +708,8 @@ KtConstructorDelegationCall(339,345): 'this()'
       typeArgumentsMapping = {}
       argumentMapping = {}
     isInBestCandidates = true
-
+  
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 's'.>
     candidate = KaDelegatedConstructorCall:
       kind = THIS_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -731,6 +730,7 @@ KtConstructorDelegationCall(339,345): 'this()'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 's'.>
     isInBestCandidates = false
 
 KtConstructorDelegationReferenceExpression(339,343): 'this'
@@ -749,9 +749,8 @@ KtConstructorDelegationReferenceExpression(339,343): 'this'
       typeArgumentsMapping = {}
       argumentMapping = {}
     isInBestCandidates = true
-
+  
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 's'.>
     candidate = KaDelegatedConstructorCall:
       kind = THIS_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -772,6 +771,7 @@ KtConstructorDelegationReferenceExpression(339,343): 'this'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 's'.>
     isInBestCandidates = false
 
 KtValueArgumentList(343,345): '()'

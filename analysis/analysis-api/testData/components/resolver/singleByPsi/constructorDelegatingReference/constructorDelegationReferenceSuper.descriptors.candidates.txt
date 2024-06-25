@@ -30,7 +30,6 @@ KtConstructorDelegationReferenceExpression(145,150): 'super'
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     candidate = KaDelegatedConstructorCall:
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -58,4 +57,5 @@ KtConstructorDelegationReferenceExpression(145,150): 'super'
           symbol = s: kotlin.String
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     isInBestCandidates = false

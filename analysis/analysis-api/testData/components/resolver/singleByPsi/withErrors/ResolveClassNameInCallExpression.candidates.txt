@@ -1,6 +1,5 @@
 KtNameReferenceExpression(327,331): 'Test'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -16,4 +15,5 @@ KtNameReferenceExpression(327,331): 'Test'
         T -> (kotlin.Int)
       }
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false

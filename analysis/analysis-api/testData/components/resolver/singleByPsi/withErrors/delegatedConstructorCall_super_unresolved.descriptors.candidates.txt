@@ -1,6 +1,5 @@
 KtConstructorDelegationCall(108,116): 'super(s)'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is String but Int was expected>
     candidate = KaDelegatedConstructorCall:
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -28,4 +27,5 @@ KtConstructorDelegationCall(108,116): 'super(s)'
           symbol = p1: kotlin.Int
           callableId = null)
       }
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is String but Int was expected>
     isInBestCandidates = true

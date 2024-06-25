@@ -1,6 +1,5 @@
 KtConstructorDelegationCall(115,132): 'this(i, j, i * j)'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'constructor(i: Int, j: Int): Sub'.>
     candidate = KaDelegatedConstructorCall:
       kind = THIS_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -27,10 +26,10 @@ KtConstructorDelegationCall(115,132): 'this(i, j, i * j)'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'constructor(i: Int, j: Int): Sub'.>
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'constructor(p: Int): Sub'.>
     candidate = KaDelegatedConstructorCall:
       kind = THIS_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -51,4 +50,5 @@ KtConstructorDelegationCall(115,132): 'this(i, j, i * j)'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'constructor(p: Int): Sub'.>
     isInBestCandidates = true

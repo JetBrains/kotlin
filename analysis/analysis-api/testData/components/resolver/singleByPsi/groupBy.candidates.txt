@@ -49,7 +49,6 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun <T, K> Iterable<T>.groupBy(keySelector: (T) -> K): Map<K, List<T>>'.>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -83,10 +82,10 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           symbol = keySelector: kotlin.Function1<T, K>
           callableId = null)
       }
+    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun <T, K> Iterable<T>.groupBy(keySelector: (T) -> K): Map<K, List<T>>'.>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun <K> List<Pair<Int, Int>>.groupBy(keySelector: (Pair<Int, Int>) -> K, valueTransform: (Pair<Int, Int>) -> Int): Map<K, List<Int>>>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -131,4 +130,5 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           symbol = valueTransform: kotlin.Function1<kotlin.Pair<kotlin.Int, kotlin.Int>, kotlin.Int>
           callableId = null)
       }
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun <K> List<Pair<Int, Int>>.groupBy(keySelector: (Pair<Int, Int>) -> K, valueTransform: (Pair<Int, Int>) -> Int): Map<K, List<Int>>>
     isInBestCandidates = false

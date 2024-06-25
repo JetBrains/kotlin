@@ -458,7 +458,6 @@ KtCallExpression(297,318): 'IntProgression(1, 10)'
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<INVISIBLE_REFERENCE: Cannot access 'constructor(start: Int, endInclusive: Int, step: Int): IntProgression': it is internal in 'kotlin/ranges/IntProgression'.>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -491,6 +490,7 @@ KtCallExpression(297,318): 'IntProgression(1, 10)'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<INVISIBLE_REFERENCE: Cannot access 'constructor(start: Int, endInclusive: Int, step: Int): IntProgression': it is internal in 'kotlin/ranges/IntProgression'.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(297,311): 'IntProgression'
@@ -537,7 +537,6 @@ KtNameReferenceExpression(297,311): 'IntProgression'
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<INVISIBLE_REFERENCE: Cannot access 'constructor(start: Int, endInclusive: Int, step: Int): IntProgression': it is internal in 'kotlin/ranges/IntProgression'.>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -570,6 +569,7 @@ KtNameReferenceExpression(297,311): 'IntProgression'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<INVISIBLE_REFERENCE: Cannot access 'constructor(start: Int, endInclusive: Int, step: Int): IntProgression': it is internal in 'kotlin/ranges/IntProgression'.>
     isInBestCandidates = false
 
 KtValueArgumentList(311,318): '(1, 10)'

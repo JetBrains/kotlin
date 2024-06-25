@@ -69,7 +69,6 @@ KtCallExpression(78,104): 'print(javaClass.something)'
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Boolean was expected>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -97,10 +96,10 @@ KtCallExpression(78,104): 'print(javaClass.something)'
           symbol = message: kotlin.Boolean
           callableId = null)
       }
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Boolean was expected>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Byte was expected>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -128,10 +127,10 @@ KtCallExpression(78,104): 'print(javaClass.something)'
           symbol = message: kotlin.Byte
           callableId = null)
       }
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Byte was expected>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Char was expected>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -159,10 +158,10 @@ KtCallExpression(78,104): 'print(javaClass.something)'
           symbol = message: kotlin.Char
           callableId = null)
       }
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Char was expected>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but CharArray was expected>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -190,10 +189,10 @@ KtCallExpression(78,104): 'print(javaClass.something)'
           symbol = message: kotlin.CharArray
           callableId = null)
       }
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but CharArray was expected>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Double was expected>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -221,10 +220,10 @@ KtCallExpression(78,104): 'print(javaClass.something)'
           symbol = message: kotlin.Double
           callableId = null)
       }
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Double was expected>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Float was expected>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -252,6 +251,7 @@ KtCallExpression(78,104): 'print(javaClass.something)'
           symbol = message: kotlin.Float
           callableId = null)
       }
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Float was expected>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:
@@ -285,7 +285,6 @@ KtCallExpression(78,104): 'print(javaClass.something)'
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Long was expected>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -313,10 +312,10 @@ KtCallExpression(78,104): 'print(javaClass.something)'
           symbol = message: kotlin.Long
           callableId = null)
       }
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Long was expected>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Short was expected>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -344,6 +343,7 @@ KtCallExpression(78,104): 'print(javaClass.something)'
           symbol = message: kotlin.Short
           callableId = null)
       }
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Short was expected>
     isInBestCandidates = false
 
 KtNameReferenceExpression(78,83): 'print'
@@ -378,7 +378,6 @@ KtNameReferenceExpression(78,83): 'print'
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with print>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -406,10 +405,10 @@ KtNameReferenceExpression(78,83): 'print'
           symbol = message: kotlin.Boolean
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with print>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with print>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -437,10 +436,10 @@ KtNameReferenceExpression(78,83): 'print'
           symbol = message: kotlin.Byte
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with print>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with print>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -468,10 +467,10 @@ KtNameReferenceExpression(78,83): 'print'
           symbol = message: kotlin.Char
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with print>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with print>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -499,10 +498,10 @@ KtNameReferenceExpression(78,83): 'print'
           symbol = message: kotlin.CharArray
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with print>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with print>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -530,10 +529,10 @@ KtNameReferenceExpression(78,83): 'print'
           symbol = message: kotlin.Double
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with print>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with print>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -561,6 +560,7 @@ KtNameReferenceExpression(78,83): 'print'
           symbol = message: kotlin.Float
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with print>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:
@@ -594,7 +594,6 @@ KtNameReferenceExpression(78,83): 'print'
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with print>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -622,10 +621,10 @@ KtNameReferenceExpression(78,83): 'print'
           symbol = message: kotlin.Long
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with print>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with print>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -653,6 +652,7 @@ KtNameReferenceExpression(78,83): 'print'
           symbol = message: kotlin.Short
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with print>
     isInBestCandidates = false
 
 KtValueArgumentList(83,104): '(javaClass.something)'
@@ -681,7 +681,6 @@ KtDotQualifiedExpression(84,103): 'javaClass.something'
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -708,11 +707,11 @@ KtDotQualifiedExpression(84,103): 'javaClass.something'
         R -> (ERROR_TYPE)
       }
       argumentMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     isInBestCandidates = false
 
 KtNameReferenceExpression(84,93): 'javaClass'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -737,6 +736,7 @@ KtNameReferenceExpression(84,93): 'javaClass'
       typeArgumentsMapping = {
         T -> (JavaClass)
       }
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:
@@ -814,7 +814,6 @@ KtDotQualifiedExpression(109,128): 'javaClass.something'
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -841,11 +840,11 @@ KtDotQualifiedExpression(109,128): 'javaClass.something'
         R -> (ERROR_TYPE)
       }
       argumentMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     isInBestCandidates = false
 
 KtNameReferenceExpression(109,118): 'javaClass'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -870,6 +869,7 @@ KtNameReferenceExpression(109,118): 'javaClass'
       typeArgumentsMapping = {
         T -> (JavaClass)
       }
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:
@@ -989,7 +989,6 @@ KtDotQualifiedExpression(137,156): 'javaClass.something'
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1016,11 +1015,11 @@ KtDotQualifiedExpression(137,156): 'javaClass.something'
         R -> (ERROR_TYPE)
       }
       argumentMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     isInBestCandidates = false
 
 KtNameReferenceExpression(137,146): 'javaClass'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1045,6 +1044,7 @@ KtNameReferenceExpression(137,146): 'javaClass'
       typeArgumentsMapping = {
         T -> (JavaClass)
       }
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:
@@ -1175,7 +1175,6 @@ KtDotQualifiedExpression(166,185): 'javaClass.something'
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1202,11 +1201,11 @@ KtDotQualifiedExpression(166,185): 'javaClass.something'
         R -> (ERROR_TYPE)
       }
       argumentMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     isInBestCandidates = false
 
 KtNameReferenceExpression(166,175): 'javaClass'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1231,6 +1230,7 @@ KtNameReferenceExpression(166,175): 'javaClass'
       typeArgumentsMapping = {
         T -> (JavaClass)
       }
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:
@@ -1383,7 +1383,6 @@ KtDotQualifiedExpression(194,213): 'javaClass.something'
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1410,11 +1409,11 @@ KtDotQualifiedExpression(194,213): 'javaClass.something'
         R -> (ERROR_TYPE)
       }
       argumentMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     isInBestCandidates = false
 
 KtNameReferenceExpression(194,203): 'javaClass'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1439,6 +1438,7 @@ KtNameReferenceExpression(194,203): 'javaClass'
       typeArgumentsMapping = {
         T -> (JavaClass)
       }
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:
@@ -1817,7 +1817,6 @@ KtDotQualifiedExpression(274,293): 'javaClass.something'
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1844,11 +1843,11 @@ KtDotQualifiedExpression(274,293): 'javaClass.something'
         R -> (ERROR_TYPE)
       }
       argumentMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     isInBestCandidates = false
 
 KtNameReferenceExpression(274,283): 'javaClass'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1873,6 +1872,7 @@ KtNameReferenceExpression(274,283): 'javaClass'
       typeArgumentsMapping = {
         T -> (JavaClass)
       }
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:

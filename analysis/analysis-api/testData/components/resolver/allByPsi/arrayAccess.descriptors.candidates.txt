@@ -172,7 +172,6 @@ KtArrayAccessExpression(74,81): 'list[0]'
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with get>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -206,10 +205,10 @@ KtArrayAccessExpression(74,81): 'list[0]'
           symbol = key: K
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with get>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type String>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -240,6 +239,7 @@ KtArrayAccessExpression(74,81): 'list[0]'
           symbol = name: kotlin.String
           callableId = null)
       }
+    diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type String>
     isInBestCandidates = false
 
 KtNameReferenceExpression(74,78): 'list'
@@ -302,7 +302,6 @@ KtDotQualifiedExpression(106,129): 'list.get(implicitIndex)'
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with get>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -336,10 +335,10 @@ KtDotQualifiedExpression(106,129): 'list.get(implicitIndex)'
           symbol = key: K
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with get>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but String was expected>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -370,6 +369,7 @@ KtDotQualifiedExpression(106,129): 'list.get(implicitIndex)'
           symbol = name: kotlin.String
           callableId = null)
       }
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but String was expected>
     isInBestCandidates = false
 
 KtNameReferenceExpression(106,110): 'list'
@@ -423,7 +423,6 @@ KtCallExpression(111,129): 'get(implicitIndex)'
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with get>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -457,10 +456,10 @@ KtCallExpression(111,129): 'get(implicitIndex)'
           symbol = key: K
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with get>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but String was expected>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -491,6 +490,7 @@ KtCallExpression(111,129): 'get(implicitIndex)'
           symbol = name: kotlin.String
           callableId = null)
       }
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but String was expected>
     isInBestCandidates = false
 
 KtNameReferenceExpression(111,114): 'get'
@@ -528,7 +528,6 @@ KtNameReferenceExpression(111,114): 'get'
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with get>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -562,10 +561,10 @@ KtNameReferenceExpression(111,114): 'get'
           symbol = key: K
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with get>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with get>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -596,6 +595,7 @@ KtNameReferenceExpression(111,114): 'get'
           symbol = name: kotlin.String
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with get>
     isInBestCandidates = false
 
 KtValueArgumentList(114,129): '(implicitIndex)'
@@ -929,7 +929,6 @@ KtArrayAccessExpression(185,192): 'list[i]'
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with get>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -963,10 +962,10 @@ KtArrayAccessExpression(185,192): 'list[i]'
           symbol = key: K
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with get>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but String was expected>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -997,6 +996,7 @@ KtArrayAccessExpression(185,192): 'list[i]'
           symbol = name: kotlin.String
           callableId = null)
       }
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but String was expected>
     isInBestCandidates = false
 
 KtNameReferenceExpression(185,189): 'list'

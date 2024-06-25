@@ -1,6 +1,5 @@
 KtArrayAccessExpression(93,110): 'c[1, "foo", 3.14]'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The floating-point literal does not conform to the expected type Boolean>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -55,4 +54,5 @@ KtArrayAccessExpression(93,110): 'c[1, "foo", 3.14]'
           symbol = value: kotlin.Boolean
           callableId = null)
       }
+    diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The floating-point literal does not conform to the expected type Boolean>
     isInBestCandidates = true

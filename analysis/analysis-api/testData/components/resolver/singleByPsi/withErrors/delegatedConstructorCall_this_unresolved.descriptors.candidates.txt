@@ -1,6 +1,5 @@
 KtConstructorDelegationCall(115,132): 'this(i, j, i * j)'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public constructor Sub(i: Int, j: Int) defined in Sub>
     candidate = KaDelegatedConstructorCall:
       kind = THIS_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -40,10 +39,10 @@ KtConstructorDelegationCall(115,132): 'this(i, j, i * j)'
           symbol = j: kotlin.Int
           callableId = null)
       }
+    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public constructor Sub(i: Int, j: Int) defined in Sub>
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public constructor Sub(p: Int) defined in Sub>
     candidate = KaDelegatedConstructorCall:
       kind = THIS_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -71,4 +70,5 @@ KtConstructorDelegationCall(115,132): 'this(i, j, i * j)'
           symbol = p: kotlin.Int
           callableId = null)
       }
+    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public constructor Sub(p: Int) defined in Sub>
     isInBestCandidates = true

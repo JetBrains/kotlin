@@ -1,6 +1,5 @@
 KtCallExpression(61,99): 'generic<String, String>("a", "b", "c")'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun <A, B, C> generic(a: A, b: B, c: C): Unit>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -56,4 +55,5 @@ KtCallExpression(61,99): 'generic<String, String>("a", "b", "c")'
           symbol = c: C
           callableId = null)
       }
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun <A, B, C> generic(a: A, b: B, c: C): Unit>
     isInBestCandidates = true
