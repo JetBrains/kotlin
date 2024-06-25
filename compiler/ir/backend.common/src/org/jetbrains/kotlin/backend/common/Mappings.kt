@@ -32,7 +32,6 @@ var IrSimpleFunction.suspendFunction: IrSimpleFunction? by irAttribute(followAtt
 
 open class Mapping {
     val defaultArgumentsOriginalFunction: MapBasedMapping<IrFunction, IrFunction> = MapBasedMapping()
-    val lateInitFieldToNullableField: DeclarationMapping<IrField, IrField> by AttributeBasedMappingDelegate()
     val capturedConstructors: MapBasedMapping<IrConstructor, IrConstructor> = MapBasedMapping()
 
     abstract class DeclarationMapping<K : IrDeclaration, V> {

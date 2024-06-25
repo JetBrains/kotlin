@@ -44,9 +44,7 @@ internal class NativeInlineFunctionResolver(
 
         NativeAssertionWrapperLowering(context).lower(function)
 
-        NullableFieldsForLateinitCreationLowering(context).lowerWithLocalDeclarations(function)
-        NullableFieldsDeclarationLowering(context).lowerWithLocalDeclarations(function)
-        LateinitUsageLowering(context).lower(body, function)
+        LateinitLowering(context).lower(body)
 
         SharedVariablesLowering(context).lower(body, function)
 
