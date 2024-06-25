@@ -1,6 +1,5 @@
 KtCallExpression(98,109): 'function(1)'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Char>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -28,10 +27,10 @@ KtCallExpression(98,109): 'function(1)'
           symbol = a: kotlin.Char
           callableId = null)
       }
+    diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Char>
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Boolean>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -59,10 +58,10 @@ KtCallExpression(98,109): 'function(1)'
           symbol = b: kotlin.Boolean
           callableId = null)
       }
+    diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Boolean>
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type String>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -90,4 +89,5 @@ KtCallExpression(98,109): 'function(1)'
           symbol = c: kotlin.String
           callableId = null)
       }
+    diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type String>
     isInBestCandidates = true

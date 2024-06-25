@@ -16,7 +16,6 @@ KtNameReferenceExpression(75,83): 'Conflict'
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i'>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -37,4 +36,5 @@ KtNameReferenceExpression(75,83): 'Conflict'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i'>
     isInBestCandidates = false

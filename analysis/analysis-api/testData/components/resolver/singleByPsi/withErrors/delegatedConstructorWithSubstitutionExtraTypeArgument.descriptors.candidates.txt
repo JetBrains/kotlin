@@ -1,6 +1,5 @@
 KtConstructorDelegationCall(103,111): 'super(1)'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public constructor Any() defined in kotlin.Any>
     candidate = KaDelegatedConstructorCall:
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -14,4 +13,5 @@ KtConstructorDelegationCall(103,111): 'super(1)'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public constructor Any() defined in kotlin.Any>
     isInBestCandidates = true

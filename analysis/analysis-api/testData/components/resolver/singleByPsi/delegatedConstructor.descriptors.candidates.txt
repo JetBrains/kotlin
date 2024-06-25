@@ -1,6 +1,5 @@
 KtConstructorCalleeExpression(126,127): 'A'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     candidate = KaDelegatedConstructorCall:
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -14,10 +13,10 @@ KtConstructorCalleeExpression(126,127): 'A'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     candidate = KaDelegatedConstructorCall:
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -45,6 +44,7 @@ KtConstructorCalleeExpression(126,127): 'A'
           symbol = p: kotlin.String
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:

@@ -1,6 +1,5 @@
 KtArrayAccessExpression(100,104): 'c[1]'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'b'.>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -37,4 +36,5 @@ KtArrayAccessExpression(100,104): 'c[1]'
           symbol = a: kotlin.Int
           callableId = null)
       }
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'b'.>
     isInBestCandidates = true

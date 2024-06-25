@@ -1,6 +1,5 @@
 KtNameReferenceExpression(20,29): 'compareTo'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Byte' was expected.>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -31,10 +30,10 @@ KtNameReferenceExpression(20,29): 'compareTo'
           symbol = other: kotlin.Byte
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Byte' was expected.>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Double' was expected.>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -65,10 +64,10 @@ KtNameReferenceExpression(20,29): 'compareTo'
           symbol = other: kotlin.Double
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Double' was expected.>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Float' was expected.>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -99,6 +98,7 @@ KtNameReferenceExpression(20,29): 'compareTo'
           symbol = other: kotlin.Float
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Float' was expected.>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:
@@ -135,7 +135,6 @@ KtNameReferenceExpression(20,29): 'compareTo'
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Long' was expected.>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -166,10 +165,10 @@ KtNameReferenceExpression(20,29): 'compareTo'
           symbol = other: kotlin.Long
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Long' was expected.>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Short' was expected.>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -200,4 +199,5 @@ KtNameReferenceExpression(20,29): 'compareTo'
           symbol = other: kotlin.Short
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Short' was expected.>
     isInBestCandidates = false

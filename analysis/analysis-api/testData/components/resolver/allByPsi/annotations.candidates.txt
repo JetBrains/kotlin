@@ -853,7 +853,6 @@ KtClassLiteralExpression(533,554): 'AnnoWithKClass::class'
 
 KtNameReferenceExpression(533,547): 'AnnoWithKClass'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -874,6 +873,7 @@ KtNameReferenceExpression(533,547): 'AnnoWithKClass'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtAnnotation(556,600): '@[AnnoWithKClass(one.AnnoWithKClass::class)]'
@@ -959,7 +959,6 @@ KtClassLiteralExpression(573,598): 'one.AnnoWithKClass::class'
 
 KtDotQualifiedExpression(573,591): 'one.AnnoWithKClass'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -980,11 +979,11 @@ KtDotQualifiedExpression(573,591): 'one.AnnoWithKClass'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(573,576): 'one'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1005,11 +1004,11 @@ KtNameReferenceExpression(573,576): 'one'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(577,591): 'AnnoWithKClass'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1030,6 +1029,7 @@ KtNameReferenceExpression(577,591): 'AnnoWithKClass'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtAnnotationEntry(601,675): '@AnnoWithArrayOfKClass([AnnoWithKClass::class, one.AnnoWithKClass::class])'
@@ -1151,7 +1151,6 @@ KtClassLiteralExpression(625,646): 'AnnoWithKClass::class'
 
 KtNameReferenceExpression(625,639): 'AnnoWithKClass'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1172,6 +1171,7 @@ KtNameReferenceExpression(625,639): 'AnnoWithKClass'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtClassLiteralExpression(648,673): 'one.AnnoWithKClass::class'
@@ -1179,7 +1179,6 @@ KtClassLiteralExpression(648,673): 'one.AnnoWithKClass::class'
 
 KtDotQualifiedExpression(648,666): 'one.AnnoWithKClass'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1200,11 +1199,11 @@ KtDotQualifiedExpression(648,666): 'one.AnnoWithKClass'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(648,651): 'one'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1225,11 +1224,11 @@ KtNameReferenceExpression(648,651): 'one'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(652,666): 'AnnoWithKClass'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1250,6 +1249,7 @@ KtNameReferenceExpression(652,666): 'AnnoWithKClass'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtAnnotationEntry(676,783): '@AnnoWithAnotherAnnotation(arrayOf(one.AnnoWithArray([10, 11, 12]), AnnoWithArray(intArrayOf(13, 14, 15))))'
@@ -1851,7 +1851,7 @@ KtBinaryExpression(800,825): 'stringConstant + " 1.2.3"'
           callableId = null)
       }
     isInBestCandidates = true
-
+  
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
@@ -1934,7 +1934,7 @@ KtOperationReferenceExpression(815,816): '+'
           callableId = null)
       }
     isInBestCandidates = true
-
+  
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false

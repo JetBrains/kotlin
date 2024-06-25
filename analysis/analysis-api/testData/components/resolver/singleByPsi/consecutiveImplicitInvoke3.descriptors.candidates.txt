@@ -19,7 +19,6 @@ KtCallExpression(135,142): 'i()()()'
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Double but Int was expected>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -36,10 +35,10 @@ KtCallExpression(135,142): 'i()()()'
           callableId = /invoke
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Double but Int was expected>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Double but Long was expected>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -56,4 +55,5 @@ KtCallExpression(135,142): 'i()()()'
           callableId = /invoke
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Double but Long was expected>
     isInBestCandidates = false

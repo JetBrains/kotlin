@@ -1,6 +1,5 @@
 KtOperationReferenceExpression(169,171): 'in'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun contains(str: String): Boolean>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -31,6 +30,7 @@ KtOperationReferenceExpression(169,171): 'in'
           symbol = str: kotlin.String
           callableId = null)
       }
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun contains(str: String): Boolean>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:

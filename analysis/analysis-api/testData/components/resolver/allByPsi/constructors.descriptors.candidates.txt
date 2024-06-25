@@ -203,7 +203,6 @@ KtConstructorDelegationCall(170,179): 'super(ci)'
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but String was expected>
     candidate = KaDelegatedConstructorCall:
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -231,6 +230,7 @@ KtConstructorDelegationCall(170,179): 'super(ci)'
           symbol = s: kotlin.String
           callableId = null)
       }
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but String was expected>
     isInBestCandidates = false
 
 KtConstructorDelegationReferenceExpression(170,175): 'super'
@@ -265,7 +265,6 @@ KtConstructorDelegationReferenceExpression(170,175): 'super'
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     candidate = KaDelegatedConstructorCall:
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -293,6 +292,7 @@ KtConstructorDelegationReferenceExpression(170,175): 'super'
           symbol = s: kotlin.String
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     isInBestCandidates = false
 
 KtValueArgumentList(175,179): '(ci)'
@@ -337,7 +337,6 @@ KtNameReferenceExpression(200,206): 'String'
 
 KtConstructorDelegationCall(210,219): 'super(cs)'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is String but Int was expected>
     candidate = KaDelegatedConstructorCall:
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -365,6 +364,7 @@ KtConstructorDelegationCall(210,219): 'super(cs)'
           symbol = i: kotlin.Int
           callableId = null)
       }
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is String but Int was expected>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:
@@ -399,7 +399,6 @@ KtConstructorDelegationCall(210,219): 'super(cs)'
 
 KtConstructorDelegationReferenceExpression(210,215): 'super'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     candidate = KaDelegatedConstructorCall:
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -427,6 +426,7 @@ KtConstructorDelegationReferenceExpression(210,215): 'super'
           symbol = i: kotlin.Int
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:
@@ -603,7 +603,6 @@ KtSuperTypeCallEntry(294,307): 'BaseClass(42)'
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type String>
     candidate = KaDelegatedConstructorCall:
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -631,6 +630,7 @@ KtSuperTypeCallEntry(294,307): 'BaseClass(42)'
           symbol = s: kotlin.String
           callableId = null)
       }
+    diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type String>
     isInBestCandidates = false
 
 KtConstructorCalleeExpression(294,303): 'BaseClass'
@@ -665,7 +665,6 @@ KtConstructorCalleeExpression(294,303): 'BaseClass'
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     candidate = KaDelegatedConstructorCall:
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -693,6 +692,7 @@ KtConstructorCalleeExpression(294,303): 'BaseClass'
           symbol = s: kotlin.String
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     isInBestCandidates = false
 
 KtTypeReference(294,303): 'BaseClass'
@@ -733,7 +733,6 @@ KtNameReferenceExpression(294,303): 'BaseClass'
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     candidate = KaDelegatedConstructorCall:
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -761,6 +760,7 @@ KtNameReferenceExpression(294,303): 'BaseClass'
           symbol = s: kotlin.String
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     isInBestCandidates = false
 
 KtValueArgumentList(303,307): '(42)'
@@ -811,7 +811,6 @@ KtConstructorDelegationCall(339,345): 'this()'
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 's'>
     candidate = KaDelegatedConstructorCall:
       kind = THIS_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -832,6 +831,7 @@ KtConstructorDelegationCall(339,345): 'this()'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 's'>
     isInBestCandidates = false
 
 KtConstructorDelegationReferenceExpression(339,343): 'this'
@@ -852,7 +852,6 @@ KtConstructorDelegationReferenceExpression(339,343): 'this'
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 's'>
     candidate = KaDelegatedConstructorCall:
       kind = THIS_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -873,6 +872,7 @@ KtConstructorDelegationReferenceExpression(339,343): 'this'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 's'>
     isInBestCandidates = false
 
 KtValueArgumentList(343,345): '()'

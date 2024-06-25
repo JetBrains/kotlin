@@ -1,6 +1,5 @@
 KtCallExpression(45,70): 'generic<String, String>()'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with generic>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -18,4 +17,5 @@ KtCallExpression(45,70): 'generic<String, String>()'
         C -> (ERROR_TYPE)
       }
       argumentMapping = {}
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with generic>
     isInBestCandidates = true

@@ -30,7 +30,6 @@ KtConstructorDelegationReferenceExpression(90,94): 'this'
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     candidate = KaDelegatedConstructorCall:
       kind = THIS_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -58,4 +57,5 @@ KtConstructorDelegationReferenceExpression(90,94): 'this'
           symbol = s: kotlin.String
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     isInBestCandidates = false

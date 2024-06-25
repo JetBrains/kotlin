@@ -1,6 +1,5 @@
 KtCallExpression(110,117): 'x(true)'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Boolean', but 'kotlin.Int' was expected.>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -31,10 +30,10 @@ KtCallExpression(110,117): 'x(true)'
           symbol = i: kotlin.Int
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Boolean', but 'kotlin.Int' was expected.>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Boolean', but 'kotlin.Char' was expected.>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -62,6 +61,7 @@ KtCallExpression(110,117): 'x(true)'
           symbol = c: kotlin.Char
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Boolean', but 'kotlin.Char' was expected.>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:

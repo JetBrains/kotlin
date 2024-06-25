@@ -30,7 +30,6 @@ KtConstructorDelegationCall(144,152): 'super(1)'
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'str'>
     candidate = KaDelegatedConstructorCall:
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -64,4 +63,5 @@ KtConstructorDelegationCall(144,152): 'super(1)'
           symbol = i: T
           callableId = null)
       }
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'str'>
     isInBestCandidates = false

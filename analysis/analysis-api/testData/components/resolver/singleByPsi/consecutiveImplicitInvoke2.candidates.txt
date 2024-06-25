@@ -1,7 +1,5 @@
 KtCallExpression(135,140): 'i()()'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    fun Double.invoke(): Unit>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -18,11 +16,11 @@ KtCallExpression(135,140): 'i()()'
           callableId = /invoke
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun Double.invoke(): Unit>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    fun Int.invoke(): Long>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -39,6 +37,8 @@ KtCallExpression(135,140): 'i()()'
           callableId = /invoke
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun Int.invoke(): Long>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:

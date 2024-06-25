@@ -1,6 +1,5 @@
 KtDotQualifiedExpression(68,76): 's.action'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<FUNCTION_CALL_EXPECTED: Function invocation 'action(...)' expected.>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -27,4 +26,5 @@ KtDotQualifiedExpression(68,76): 's.action'
           callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<FUNCTION_CALL_EXPECTED: Function invocation 'action(...)' expected.>
     isInBestCandidates = true

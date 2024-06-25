@@ -484,7 +484,6 @@ KtDotQualifiedExpression(325,350): 'EnumWithConstructor.Entry'
 
 KtNameReferenceExpression(325,344): 'EnumWithConstructor'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -505,6 +504,7 @@ KtNameReferenceExpression(325,344): 'EnumWithConstructor'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(345,350): 'Entry'
@@ -566,7 +566,6 @@ KtDotQualifiedExpression(355,380): 'EnumWithConstructor.Entry'
 
 KtNameReferenceExpression(355,374): 'EnumWithConstructor'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -587,6 +586,7 @@ KtNameReferenceExpression(355,374): 'EnumWithConstructor'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(375,380): 'Entry'
@@ -648,7 +648,6 @@ KtDotQualifiedExpression(390,423): 'EnumWithConstructor.EntryWithBody'
 
 KtNameReferenceExpression(390,409): 'EnumWithConstructor'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -669,6 +668,7 @@ KtNameReferenceExpression(390,409): 'EnumWithConstructor'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(410,423): 'EntryWithBody'
@@ -730,7 +730,6 @@ KtDotQualifiedExpression(428,461): 'EnumWithConstructor.EntryWithBody'
 
 KtNameReferenceExpression(428,447): 'EnumWithConstructor'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -751,6 +750,7 @@ KtNameReferenceExpression(428,447): 'EnumWithConstructor'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(448,461): 'EntryWithBody'
@@ -812,7 +812,6 @@ KtDotQualifiedExpression(469,499): 'EnumWithoutConstructor.entries'
 
 KtNameReferenceExpression(469,491): 'EnumWithoutConstructor'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -826,6 +825,7 @@ KtNameReferenceExpression(469,491): 'EnumWithoutConstructor'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(492,499): 'entries'
@@ -868,7 +868,6 @@ KtDotQualifiedExpression(504,532): 'EnumWithoutConstructor.Entry'
 
 KtNameReferenceExpression(504,526): 'EnumWithoutConstructor'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -882,6 +881,7 @@ KtNameReferenceExpression(504,526): 'EnumWithoutConstructor'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(527,532): 'Entry'
@@ -924,7 +924,6 @@ KtDotQualifiedExpression(537,573): 'EnumWithoutConstructor.EntryWithBody'
 
 KtNameReferenceExpression(537,559): 'EnumWithoutConstructor'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -938,6 +937,7 @@ KtNameReferenceExpression(537,559): 'EnumWithoutConstructor'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(560,573): 'EntryWithBody'

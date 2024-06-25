@@ -1,6 +1,5 @@
 KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -33,10 +32,10 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           symbol = action: kotlin.Function1<T, kotlin.Unit>
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -67,10 +66,10 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           symbol = action: kotlin.Function1<kotlin.Boolean, kotlin.Unit>
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -101,10 +100,10 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           symbol = action: kotlin.Function1<kotlin.Byte, kotlin.Unit>
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -135,10 +134,10 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           symbol = action: kotlin.Function1<kotlin.Char, kotlin.Unit>
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -169,10 +168,10 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           symbol = action: kotlin.Function1<kotlin.Char, kotlin.Unit>
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -203,10 +202,10 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           symbol = action: kotlin.Function1<kotlin.Double, kotlin.Unit>
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -237,10 +236,10 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           symbol = action: kotlin.Function1<kotlin.Float, kotlin.Unit>
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -271,10 +270,10 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -305,10 +304,10 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           symbol = action: kotlin.Function1<kotlin.Long, kotlin.Unit>
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -339,10 +338,10 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           symbol = action: kotlin.Function1<kotlin.Short, kotlin.Unit>
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -373,10 +372,10 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           symbol = action: kotlin.Function1<kotlin.UByte, kotlin.Unit>
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -407,10 +406,10 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           symbol = action: kotlin.Function1<kotlin.UInt, kotlin.Unit>
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -441,10 +440,10 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           symbol = action: kotlin.Function1<kotlin.ULong, kotlin.Unit>
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -475,6 +474,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           symbol = action: kotlin.Function1<kotlin.UShort, kotlin.Unit>
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:
@@ -513,7 +513,6 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -546,6 +545,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           symbol = operation: kotlin.Function1<T, kotlin.Unit>
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:
@@ -582,7 +582,6 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -616,10 +615,10 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           symbol = action: kotlin.Function1<kotlin.collections.Map.Entry<K, V>, kotlin.Unit>
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -653,10 +652,10 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           symbol = action: kotlin.Function1<kotlin.collections.Map.Entry<K, V>, kotlin.Unit>
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -689,4 +688,5 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           symbol = action: kotlin.Function1<T, kotlin.Unit>
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false

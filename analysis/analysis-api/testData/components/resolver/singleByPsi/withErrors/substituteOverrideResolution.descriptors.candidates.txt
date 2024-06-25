@@ -21,7 +21,6 @@ KtDotQualifiedExpression(162,171): 'b.clear()'
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with clear>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -40,4 +39,5 @@ KtDotQualifiedExpression(162,171): 'b.clear()'
           callableId = kotlin/text/clear
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with clear>
     isInBestCandidates = false

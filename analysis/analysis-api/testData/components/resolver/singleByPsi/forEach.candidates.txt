@@ -35,7 +35,6 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun List<Int>.forEach(action: (Int) -> Unit): Unit>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -66,4 +65,5 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
           callableId = null)
       }
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun List<Int>.forEach(action: (Int) -> Unit): Unit>
     isInBestCandidates = false

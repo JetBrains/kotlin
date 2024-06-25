@@ -1,6 +1,5 @@
 KtNameReferenceExpression(114,123): 'compareTo'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun compareTo(value: MyClass): Int>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -31,6 +30,7 @@ KtNameReferenceExpression(114,123): 'compareTo'
           symbol = value: MyClass
           callableId = null)
       }
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun compareTo(value: MyClass): Int>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:

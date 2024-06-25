@@ -430,7 +430,6 @@ KtDotQualifiedExpression(307,319): 'with.ordinal'
 
 KtNameReferenceExpression(307,311): 'with'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'receiver'>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -460,6 +459,7 @@ KtNameReferenceExpression(307,311): 'with'
         R -> (ERROR_TYPE)
       }
       argumentMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'receiver'>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:

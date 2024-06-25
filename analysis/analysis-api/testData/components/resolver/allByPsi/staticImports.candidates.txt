@@ -174,7 +174,6 @@ KtProperty(302,348): 'val explicitTopObject = one.two.TopLevelObject'
 
 KtDotQualifiedExpression(326,348): 'one.two.TopLevelObject'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -188,11 +187,11 @@ KtDotQualifiedExpression(326,348): 'one.two.TopLevelObject'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtDotQualifiedExpression(326,333): 'one.two'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -206,11 +205,11 @@ KtDotQualifiedExpression(326,333): 'one.two'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(326,329): 'one'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -224,11 +223,11 @@ KtNameReferenceExpression(326,329): 'one'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(330,333): 'two'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -242,11 +241,11 @@ KtNameReferenceExpression(330,333): 'two'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(334,348): 'TopLevelObject'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -260,6 +259,7 @@ KtNameReferenceExpression(334,348): 'TopLevelObject'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtProperty(353,391): 'val importedTopObject = TopLevelObject'
@@ -267,7 +267,6 @@ KtProperty(353,391): 'val importedTopObject = TopLevelObject'
 
 KtNameReferenceExpression(377,391): 'TopLevelObject'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -281,6 +280,7 @@ KtNameReferenceExpression(377,391): 'TopLevelObject'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtProperty(397,435): 'val explicitFoo = TopLevelObject.foo()'
@@ -308,7 +308,6 @@ KtDotQualifiedExpression(415,435): 'TopLevelObject.foo()'
 
 KtNameReferenceExpression(415,429): 'TopLevelObject'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -322,6 +321,7 @@ KtNameReferenceExpression(415,429): 'TopLevelObject'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtCallExpression(430,435): 'foo()'
@@ -435,7 +435,6 @@ KtDotQualifiedExpression(487,505): 'TopLevelObject.bar'
 
 KtNameReferenceExpression(487,501): 'TopLevelObject'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -449,6 +448,7 @@ KtNameReferenceExpression(487,501): 'TopLevelObject'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(502,505): 'bar'
@@ -496,7 +496,6 @@ KtProperty(537,591): 'val explicitNestedObject = TopLevelObject.NestedObject'
 
 KtDotQualifiedExpression(564,591): 'TopLevelObject.NestedObject'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -510,11 +509,11 @@ KtDotQualifiedExpression(564,591): 'TopLevelObject.NestedObject'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(564,578): 'TopLevelObject'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -528,11 +527,11 @@ KtNameReferenceExpression(564,578): 'TopLevelObject'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(579,591): 'NestedObject'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -546,6 +545,7 @@ KtNameReferenceExpression(579,591): 'NestedObject'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtProperty(596,635): 'val importedNestedObject = NestedObject'
@@ -553,7 +553,6 @@ KtProperty(596,635): 'val importedNestedObject = NestedObject'
 
 KtNameReferenceExpression(623,635): 'NestedObject'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -567,6 +566,7 @@ KtNameReferenceExpression(623,635): 'NestedObject'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtProperty(641,692): 'val explicitBaz = TopLevelObject.NestedObject.baz()'
@@ -594,7 +594,6 @@ KtDotQualifiedExpression(659,692): 'TopLevelObject.NestedObject.baz()'
 
 KtDotQualifiedExpression(659,686): 'TopLevelObject.NestedObject'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -608,11 +607,11 @@ KtDotQualifiedExpression(659,686): 'TopLevelObject.NestedObject'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(659,673): 'TopLevelObject'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -626,11 +625,11 @@ KtNameReferenceExpression(659,673): 'TopLevelObject'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(674,686): 'NestedObject'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -644,6 +643,7 @@ KtNameReferenceExpression(674,686): 'NestedObject'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtCallExpression(687,692): 'baz()'
@@ -714,7 +714,6 @@ KtDotQualifiedExpression(721,739): 'NestedObject.baz()'
 
 KtNameReferenceExpression(721,733): 'NestedObject'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -728,6 +727,7 @@ KtNameReferenceExpression(721,733): 'NestedObject'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtCallExpression(734,739): 'baz()'
@@ -841,7 +841,6 @@ KtDotQualifiedExpression(791,822): 'TopLevelObject.NestedObject.doo'
 
 KtDotQualifiedExpression(791,818): 'TopLevelObject.NestedObject'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -855,11 +854,11 @@ KtDotQualifiedExpression(791,818): 'TopLevelObject.NestedObject'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(791,805): 'TopLevelObject'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -873,11 +872,11 @@ KtNameReferenceExpression(791,805): 'TopLevelObject'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(806,818): 'NestedObject'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -891,6 +890,7 @@ KtNameReferenceExpression(806,818): 'NestedObject'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(819,822): 'doo'
@@ -936,7 +936,6 @@ KtDotQualifiedExpression(851,867): 'NestedObject.doo'
 
 KtNameReferenceExpression(851,863): 'NestedObject'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -950,6 +949,7 @@ KtNameReferenceExpression(851,863): 'NestedObject'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(864,867): 'doo'

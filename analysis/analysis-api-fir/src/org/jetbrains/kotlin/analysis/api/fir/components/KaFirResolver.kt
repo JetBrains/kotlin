@@ -18,11 +18,13 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.processEqualsFunctions
 import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaAbstractResolver
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseApplicableCallCandidateInfo
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseCompoundAssignOperation
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseCompoundUnaryOperation
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseCompoundVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseExplicitReceiverValue
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseImplicitReceiverValue
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseInapplicableCallCandidateInfo
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBasePartiallyAppliedSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSimpleVariableReadAccess
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSimpleVariableWriteAccess
@@ -1055,7 +1057,7 @@ internal class KaFirResolver(
 
     private fun FirResolvedQualifier.toKtCallCandidateInfos(): List<KaCallCandidateInfo> {
         return toKtCalls(findQualifierConstructors()).map {
-            KaInapplicableCallCandidateInfo(
+            KaBaseInapplicableCallCandidateInfo(
                 it,
                 isInBestCandidates = false,
                 diagnostic = inapplicableCandidateDiagnostic()
@@ -1168,8 +1170,8 @@ internal class KaFirResolver(
 
     private fun KaCallInfo?.toKtCallCandidateInfos(): List<KaCallCandidateInfo> {
         return when (this) {
-            is KaSuccessCallInfo -> listOf(KaApplicableCallCandidateInfo(call, isInBestCandidates = true))
-            is KaErrorCallInfo -> candidateCalls.map { KaInapplicableCallCandidateInfo(it, isInBestCandidates = true, diagnostic) }
+            is KaSuccessCallInfo -> listOf(KaBaseApplicableCallCandidateInfo(call, isInBestCandidates = true))
+            is KaErrorCallInfo -> candidateCalls.map { KaBaseInapplicableCallCandidateInfo(it, isInBestCandidates = true, diagnostic) }
             null -> emptyList()
         }
     }
@@ -1186,8 +1188,8 @@ internal class KaFirResolver(
             ?: error("expect `createKtCall` to succeed for candidate")
 
         if (candidate.isSuccessful) {
-            return KaApplicableCallCandidateInfo(
-                candidate = call,
+            return KaBaseApplicableCallCandidateInfo(
+                call,
                 isInBestCandidates = if (isUnwrappedImplicitInvokeCall) {
                     (call as? KaSimpleFunctionCall)?.isImplicitInvoke == true
                 } else {
@@ -1201,7 +1203,7 @@ internal class KaFirResolver(
         val ktDiagnostic =
             resolvable.source?.let { diagnostic.asKtDiagnostic(it, element.toKtPsiSourceElement()) }
                 ?: KaNonBoundToPsiErrorDiagnostic(factoryName = FirErrors.OTHER_ERROR.name, diagnostic.reason, token)
-        return KaInapplicableCallCandidateInfo(call, isInBestCandidates, ktDiagnostic)
+        return KaBaseInapplicableCallCandidateInfo(call, isInBestCandidates, ktDiagnostic)
     }
 
     private val FirResolvable.calleeOrCandidateName: Name?

@@ -458,7 +458,6 @@ KtCallExpression(297,318): 'IntProgression(1, 10)'
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<INVISIBLE_MEMBER: Cannot access '<init>': it is internal in 'IntProgression'>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -504,6 +503,7 @@ KtCallExpression(297,318): 'IntProgression(1, 10)'
           symbol = endInclusive: kotlin.Int
           callableId = null)
       }
+    diagnostic = ERROR<INVISIBLE_MEMBER: Cannot access '<init>': it is internal in 'IntProgression'>
     isInBestCandidates = false
 
 KtNameReferenceExpression(297,311): 'IntProgression'
@@ -550,7 +550,6 @@ KtNameReferenceExpression(297,311): 'IntProgression'
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'step'>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -596,6 +595,7 @@ KtNameReferenceExpression(297,311): 'IntProgression'
           symbol = endInclusive: kotlin.Int
           callableId = null)
       }
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'step'>
     isInBestCandidates = false
 
 KtValueArgumentList(311,318): '(1, 10)'

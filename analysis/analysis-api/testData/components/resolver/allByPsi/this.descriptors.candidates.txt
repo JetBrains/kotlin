@@ -2390,7 +2390,6 @@ KtCallExpression(1272,1282): 'body(this)'
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'p2'>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -2427,6 +2426,7 @@ KtCallExpression(1272,1282): 'body(this)'
           symbol = p1: P1
           callableId = null)
       }
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'p2'>
     isInBestCandidates = false
 
 KtNameReferenceExpression(1272,1276): 'body'

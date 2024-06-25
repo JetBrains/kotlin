@@ -2205,7 +2205,6 @@ KtOperationReferenceExpression(714,716): '=='
 
 KtNameReferenceExpression(717,724): 'myClass'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'm1'>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -2232,6 +2231,7 @@ KtNameReferenceExpression(717,724): 'myClass'
           callableId = /myClass
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'm1'>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:
@@ -2375,7 +2375,6 @@ KtValueArgument(742,749): 'myClass'
 
 KtNameReferenceExpression(742,749): 'myClass'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'm1'>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -2402,6 +2401,7 @@ KtNameReferenceExpression(742,749): 'myClass'
           callableId = /myClass
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'm1'>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:
@@ -2455,7 +2455,6 @@ KtBinaryExpression(755,771): 'myClass != child'
 
 KtNameReferenceExpression(755,762): 'myClass'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'm1'>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -2482,6 +2481,7 @@ KtNameReferenceExpression(755,762): 'myClass'
           callableId = /myClass
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'm1'>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:
@@ -2625,7 +2625,6 @@ KtDotQualifiedExpression(777,798): 'myClass.equals(child)'
 
 KtNameReferenceExpression(777,784): 'myClass'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'm1'>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -2652,6 +2651,7 @@ KtNameReferenceExpression(777,784): 'myClass'
           callableId = /myClass
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'm1'>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:
@@ -3405,7 +3405,6 @@ KtOperationReferenceExpression(907,909): '=='
 
 KtNameReferenceExpression(910,917): 'myClass'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'm1'>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -3432,6 +3431,7 @@ KtNameReferenceExpression(910,917): 'myClass'
           callableId = /myClass
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'm1'>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:
@@ -3591,7 +3591,6 @@ KtValueArgument(937,944): 'myClass'
 
 KtNameReferenceExpression(937,944): 'myClass'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'm1'>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -3618,6 +3617,7 @@ KtNameReferenceExpression(937,944): 'myClass'
           callableId = /myClass
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'm1'>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:
@@ -3671,7 +3671,6 @@ KtBinaryExpression(950,968): 'myClass != another'
 
 KtNameReferenceExpression(950,957): 'myClass'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'm1'>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -3698,6 +3697,7 @@ KtNameReferenceExpression(950,957): 'myClass'
           callableId = /myClass
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'm1'>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:
@@ -3857,7 +3857,6 @@ KtDotQualifiedExpression(974,997): 'myClass.equals(another)'
 
 KtNameReferenceExpression(974,981): 'myClass'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'm1'>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -3884,6 +3883,7 @@ KtNameReferenceExpression(974,981): 'myClass'
           callableId = /myClass
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'm1'>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:

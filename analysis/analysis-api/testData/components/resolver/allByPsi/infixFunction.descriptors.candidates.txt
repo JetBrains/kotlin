@@ -413,7 +413,6 @@ KtProperty(176,249): 'val explicitForm = newParameter.plus(parameter.myMinus(one
 
 KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreParameter))'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Double was expected>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -444,10 +443,10 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
           symbol = other: kotlin.Double
           callableId = null)
       }
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Double was expected>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Float was expected>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -478,10 +477,10 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
           symbol = other: kotlin.Float
           callableId = null)
       }
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Float was expected>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Byte was expected>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -512,6 +511,7 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
           symbol = other: kotlin.Byte
           callableId = null)
       }
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Byte was expected>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:
@@ -548,7 +548,6 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Short was expected>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -579,10 +578,10 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
           symbol = other: kotlin.Short
           callableId = null)
       }
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Short was expected>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Long was expected>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -613,10 +612,10 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
           symbol = other: kotlin.Long
           callableId = null)
       }
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Long was expected>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with plus>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -647,6 +646,7 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
           symbol = other: kotlin.Any?
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with plus>
     isInBestCandidates = false
 
 KtNameReferenceExpression(195,207): 'newParameter'
@@ -667,7 +667,6 @@ KtNameReferenceExpression(195,207): 'newParameter'
 
 KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Double was expected>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -698,10 +697,10 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
           symbol = other: kotlin.Double
           callableId = null)
       }
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Double was expected>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Float was expected>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -732,10 +731,10 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
           symbol = other: kotlin.Float
           callableId = null)
       }
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Float was expected>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Byte was expected>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -766,6 +765,7 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
           symbol = other: kotlin.Byte
           callableId = null)
       }
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Byte was expected>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:
@@ -802,7 +802,6 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Short was expected>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -833,10 +832,10 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
           symbol = other: kotlin.Short
           callableId = null)
       }
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Short was expected>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Long was expected>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -867,10 +866,10 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
           symbol = other: kotlin.Long
           callableId = null)
       }
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Long was expected>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with plus>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -901,11 +900,11 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
           symbol = other: kotlin.Any?
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with plus>
     isInBestCandidates = false
 
 KtNameReferenceExpression(208,212): 'plus'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with plus>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -936,10 +935,10 @@ KtNameReferenceExpression(208,212): 'plus'
           symbol = other: kotlin.Double
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with plus>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with plus>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -970,10 +969,10 @@ KtNameReferenceExpression(208,212): 'plus'
           symbol = other: kotlin.Float
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with plus>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with plus>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1004,6 +1003,7 @@ KtNameReferenceExpression(208,212): 'plus'
           symbol = other: kotlin.Byte
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with plus>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:
@@ -1040,7 +1040,6 @@ KtNameReferenceExpression(208,212): 'plus'
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with plus>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1071,10 +1070,10 @@ KtNameReferenceExpression(208,212): 'plus'
           symbol = other: kotlin.Short
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with plus>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with plus>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1105,10 +1104,10 @@ KtNameReferenceExpression(208,212): 'plus'
           symbol = other: kotlin.Long
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with plus>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with plus>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1139,6 +1138,7 @@ KtNameReferenceExpression(208,212): 'plus'
           symbol = other: kotlin.Any?
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with plus>
     isInBestCandidates = false
 
 KtValueArgumentList(212,249): '(parameter.myMinus(oneMoreParameter))'

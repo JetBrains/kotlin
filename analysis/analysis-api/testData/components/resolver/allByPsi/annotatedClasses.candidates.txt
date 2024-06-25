@@ -109,7 +109,6 @@ KtDotQualifiedExpression(23,44): 'AnnotationTarget.TYPE'
 
 KtNameReferenceExpression(23,39): 'AnnotationTarget'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -123,6 +122,7 @@ KtNameReferenceExpression(23,39): 'AnnotationTarget'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(40,44): 'TYPE'

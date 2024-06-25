@@ -1,6 +1,5 @@
 KtCallExpression(71,80): 'Test<Bar>'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -16,4 +15,5 @@ KtCallExpression(71,80): 'Test<Bar>'
         T -> (test.Bar)
       }
       argumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false

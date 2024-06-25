@@ -1,6 +1,5 @@
 KtCallExpression(39,64): 'generic<String, String>()'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun <A> generic(): Unit>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -16,4 +15,5 @@ KtCallExpression(39,64): 'generic<String, String>()'
         A -> (kotlin.String)
       }
       argumentMapping = {}
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun <A> generic(): Unit>
     isInBestCandidates = true

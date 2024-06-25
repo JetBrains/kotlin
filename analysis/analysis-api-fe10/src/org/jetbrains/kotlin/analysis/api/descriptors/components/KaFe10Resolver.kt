@@ -20,10 +20,12 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KaFe10PsiSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.getResolutionScope
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaAbstractResolver
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseApplicableCallCandidateInfo
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseCompoundAssignOperation
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseCompoundUnaryOperation
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseCompoundVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseImplicitReceiverValue
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseInapplicableCallCandidateInfo
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBasePartiallyAppliedSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSimpleVariableReadAccess
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSimpleVariableWriteAccess
@@ -265,8 +267,8 @@ internal class KaFe10Resolver(
 
     private fun KaCallInfo?.toKaCallCandidateInfos(): List<KaCallCandidateInfo> {
         return when (this) {
-            is KaSuccessCallInfo -> listOf(KaApplicableCallCandidateInfo(call, isInBestCandidates = true))
-            is KaErrorCallInfo -> candidateCalls.map { KaInapplicableCallCandidateInfo(it, isInBestCandidates = true, diagnostic) }
+            is KaSuccessCallInfo -> listOf(KaBaseApplicableCallCandidateInfo(call, isInBestCandidates = true))
+            is KaErrorCallInfo -> candidateCalls.map { KaBaseInapplicableCallCandidateInfo(it, isInBestCandidates = true, diagnostic) }
             null -> emptyList()
         }
     }
@@ -287,10 +289,10 @@ internal class KaFe10Resolver(
 
         return when (this) {
             is KaSuccessCallInfo -> {
-                listOf(KaApplicableCallCandidateInfo(call, call.isInBestCandidates()))
+                listOf(KaBaseApplicableCallCandidateInfo(call, call.isInBestCandidates()))
             }
             is KaErrorCallInfo -> candidateCalls.map {
-                KaInapplicableCallCandidateInfo(it, it.isInBestCandidates(), diagnostic)
+                KaBaseInapplicableCallCandidateInfo(it, it.isInBestCandidates(), diagnostic)
             }
             null -> emptyList()
         }

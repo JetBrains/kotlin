@@ -120,7 +120,6 @@ KtValueArgument(39,60): 'AnnotationTarget.TYPE'
 
 KtDotQualifiedExpression(39,60): 'AnnotationTarget.TYPE'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -147,6 +146,7 @@ KtDotQualifiedExpression(39,60): 'AnnotationTarget.TYPE'
         R -> (ERROR_TYPE)
       }
       argumentMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     isInBestCandidates = false
 
 KtNameReferenceExpression(39,55): 'AnnotationTarget'
@@ -1937,7 +1937,6 @@ KtNameReferenceExpression(569,574): 'inner'
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1950,6 +1949,7 @@ KtNameReferenceExpression(569,574): 'inner'
           callableId = second/inner
       simpleAccess = Read
       typeArgumentsMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     isInBestCandidates = false
 
 KtUserType(576,608): 'Second<@Anno(10 + inner) String>'
@@ -2162,7 +2162,6 @@ KtNameReferenceExpression(594,599): 'inner'
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -2175,6 +2174,7 @@ KtNameReferenceExpression(594,599): 'inner'
           callableId = second/inner
       simpleAccess = Read
       typeArgumentsMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     isInBestCandidates = false
 
 KtUserType(601,607): 'String'

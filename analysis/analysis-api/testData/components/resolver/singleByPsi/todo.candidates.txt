@@ -1,6 +1,5 @@
 KtNameReferenceExpression(55,59): 'TODO'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for '@InlineOnly() fun TODO(): Nothing'.>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -14,6 +13,7 @@ KtNameReferenceExpression(55,59): 'TODO'
           callableId = kotlin/TODO
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for '@InlineOnly() fun TODO(): Nothing'.>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:

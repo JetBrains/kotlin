@@ -228,7 +228,6 @@ KtValueArgument(44,69): 'AnnotationTarget.PROPERTY'
 
 KtDotQualifiedExpression(44,69): 'AnnotationTarget.PROPERTY'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -255,6 +254,7 @@ KtDotQualifiedExpression(44,69): 'AnnotationTarget.PROPERTY'
         R -> (ERROR_TYPE)
       }
       argumentMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     isInBestCandidates = false
 
 KtNameReferenceExpression(44,60): 'AnnotationTarget'
@@ -268,7 +268,6 @@ KtValueArgument(75,106): 'AnnotationTarget.TYPE_PARAMETER'
 
 KtDotQualifiedExpression(75,106): 'AnnotationTarget.TYPE_PARAMETER'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -295,6 +294,7 @@ KtDotQualifiedExpression(75,106): 'AnnotationTarget.TYPE_PARAMETER'
         R -> (ERROR_TYPE)
       }
       argumentMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     isInBestCandidates = false
 
 KtNameReferenceExpression(75,91): 'AnnotationTarget'
@@ -308,7 +308,6 @@ KtValueArgument(112,137): 'AnnotationTarget.FUNCTION'
 
 KtDotQualifiedExpression(112,137): 'AnnotationTarget.FUNCTION'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -335,6 +334,7 @@ KtDotQualifiedExpression(112,137): 'AnnotationTarget.FUNCTION'
         R -> (ERROR_TYPE)
       }
       argumentMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     isInBestCandidates = false
 
 KtNameReferenceExpression(112,128): 'AnnotationTarget'
@@ -348,7 +348,6 @@ KtValueArgument(143,175): 'AnnotationTarget.VALUE_PARAMETER'
 
 KtDotQualifiedExpression(143,175): 'AnnotationTarget.VALUE_PARAMETER'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -375,6 +374,7 @@ KtDotQualifiedExpression(143,175): 'AnnotationTarget.VALUE_PARAMETER'
         R -> (ERROR_TYPE)
       }
       argumentMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     isInBestCandidates = false
 
 KtNameReferenceExpression(143,159): 'AnnotationTarget'
@@ -388,7 +388,6 @@ KtValueArgument(181,213): 'AnnotationTarget.PROPERTY_GETTER'
 
 KtDotQualifiedExpression(181,213): 'AnnotationTarget.PROPERTY_GETTER'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -415,6 +414,7 @@ KtDotQualifiedExpression(181,213): 'AnnotationTarget.PROPERTY_GETTER'
         R -> (ERROR_TYPE)
       }
       argumentMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     isInBestCandidates = false
 
 KtNameReferenceExpression(181,197): 'AnnotationTarget'
@@ -428,7 +428,6 @@ KtValueArgument(219,251): 'AnnotationTarget.PROPERTY_SETTER'
 
 KtDotQualifiedExpression(219,251): 'AnnotationTarget.PROPERTY_SETTER'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -455,6 +454,7 @@ KtDotQualifiedExpression(219,251): 'AnnotationTarget.PROPERTY_SETTER'
         R -> (ERROR_TYPE)
       }
       argumentMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     isInBestCandidates = false
 
 KtNameReferenceExpression(219,235): 'AnnotationTarget'
@@ -468,7 +468,6 @@ KtValueArgument(257,278): 'AnnotationTarget.TYPE'
 
 KtDotQualifiedExpression(257,278): 'AnnotationTarget.TYPE'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -495,6 +494,7 @@ KtDotQualifiedExpression(257,278): 'AnnotationTarget.TYPE'
         R -> (ERROR_TYPE)
       }
       argumentMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     isInBestCandidates = false
 
 KtNameReferenceExpression(257,273): 'AnnotationTarget'

@@ -1,6 +1,5 @@
 KtConstructorDelegationReferenceExpression(38,42): 'this'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     candidate = KaDelegatedConstructorCall:
       kind = THIS_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -14,6 +13,7 @@ KtConstructorDelegationReferenceExpression(38,42): 'this'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:
