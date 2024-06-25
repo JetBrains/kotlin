@@ -817,7 +817,7 @@ KtConstantExpression(131,132): '1'
 KtBinaryExpression(137,161): 'javaClass.something += 1'
   KaApplicableCallCandidateInfo:
     candidate = KaCompoundVariableAccessCall:
-      compoundOperation = CompoundAssign:
+      compoundOperation = KaCompoundAssignOperation:
         kind = PLUS_ASSIGN
         operand = 1
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -910,7 +910,7 @@ KtNameReferenceExpression(147,156): 'something'
 KtOperationReferenceExpression(157,159): '+='
   KaApplicableCallCandidateInfo:
     candidate = KaCompoundVariableAccessCall:
-      compoundOperation = CompoundAssign:
+      compoundOperation = KaCompoundAssignOperation:
         kind = PLUS_ASSIGN
         operand = 1
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:

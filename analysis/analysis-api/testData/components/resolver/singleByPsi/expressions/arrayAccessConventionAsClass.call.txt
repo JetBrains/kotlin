@@ -1,7 +1,7 @@
 KtBinaryExpression(238,262): 'variable[0] += MyClass()'
   KaSuccessCallInfo:
     call = KaCompoundArrayAccessCall:
-      compoundOperation = CompoundAssign:
+      compoundOperation = KaCompoundAssignOperation:
         kind = PLUS_ASSIGN
         operand = MyClass()
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:

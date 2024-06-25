@@ -22,7 +22,7 @@ public sealed interface KaCompoundOperation : KaLifetimeOwner {
     /**
      * A compound access that read, compute, and write the computed value back. Note that calls to `<op>Assign` is not represented by this.
      */
-    public interface CompoundAssign : KaCompoundOperation {
+    public interface KaCompoundAssignOperation : KaCompoundOperation {
         public val kind: Kind
         public val operand: KtExpression
 

@@ -1,7 +1,7 @@
 KtBinaryExpression(182,193): 'm["a"] += 1'
   KaSuccessCallInfo:
     call = KaCompoundArrayAccessCall:
-      compoundOperation = CompoundAssign:
+      compoundOperation = KaCompoundAssignOperation:
         kind = PLUS_ASSIGN
         operand = 1
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
