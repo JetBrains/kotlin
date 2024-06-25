@@ -365,7 +365,7 @@ private val inlinePhase = createFileLoweringPhase(
 
                         override fun visitFunction(declaration: IrFunction) {
                             if (declaration.isInline)
-                                context.context.inlineFunctionsSupport.savePartiallyLoweredInlineFunction(declaration)
+                                context.context.inlineFunctionsSupport.saveLoweredInlineFunction(declaration)
                             declaration.acceptChildrenVoid(this)
                         }
                     })
