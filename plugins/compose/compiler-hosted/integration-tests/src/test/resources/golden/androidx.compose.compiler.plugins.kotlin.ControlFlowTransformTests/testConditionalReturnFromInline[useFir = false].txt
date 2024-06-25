@@ -41,27 +41,31 @@ fun Test(test: Boolean, %composer: Composer?, %changed: Int) {
     Column({ %composer: Composer?, %changed: Int ->
       %composer.startReplaceGroup(<>)
       sourceInformation(%composer, "C<Text("...>:Test.kt")
-      %composer.startReplaceGroup(<>)
-      sourceInformation(%composer, "<Text("...>")
       if (!test) {
+        %composer.startReplaceGroup(<>)
+        sourceInformation(%composer, "<Text("...>")
         Text("Say", %composer, 0b0110)
         %composer.endReplaceGroup()
         %composer.endReplaceGroup()
         return@Column
+      } else {
+        %composer.startReplaceGroup(<>)
+        %composer.endReplaceGroup()
       }
-      %composer.endReplaceGroup()
       Text("Hello", %composer, 0b0110)
       %composer.endReplaceGroup()
     }, %composer, 0)
     NonComposable {
-      %composer.startReplaceGroup(<>)
-      sourceInformation(%composer, "<Text("...>")
       if (!test) {
+        %composer.startReplaceGroup(<>)
+        sourceInformation(%composer, "<Text("...>")
         Text("Say", %composer, 0b0110)
         %composer.endReplaceGroup()
         return@NonComposable
+      } else {
+        %composer.startReplaceGroup(<>)
+        %composer.endReplaceGroup()
       }
-      %composer.endReplaceGroup()
       Text("Hello", %composer, 0b0110)
     }
     if (isTraceInProgress()) {

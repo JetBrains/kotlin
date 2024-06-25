@@ -32,8 +32,6 @@ fun Example(x: Int, %composer: Composer?, %changed: Int) {
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
-  %composer.startReplaceGroup(<>)
-  sourceInformation(%composer, "")
   when {
     %composer.startReplaceGroup(<>)
     sourceInformation(%composer, "<R(a)>")
@@ -49,11 +47,12 @@ fun Example(x: Int, %composer: Composer?, %changed: Int) {
     tmp1_group -> {
       NA()
     }
-    else -> {
+    %composer.startReplaceGroup(<>)
+    %composer.endReplaceGroup()
+    true -> {
       NA()
     }
   }
-  %composer.endReplaceGroup()
   A(%composer, 0)
   if (isTraceInProgress()) {
     traceEventEnd()

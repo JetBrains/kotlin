@@ -26,21 +26,23 @@ fun app(x: Boolean, %composer: Composer?, %changed: Int) {
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
-  val a = <block>{
+  val a = if (x) {
     %composer.startReplaceGroup(<>)
     sourceInformation(%composer, "<rememb...>")
-    val tmp1_group = if (x) {
+    val tmp1_group = <block>{
       sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
       val tmp0_group = %composer.cache(false) {
         1
       }
       sourceInformationMarkerEnd(%composer)
       tmp0_group
-    } else {
-      2
     }
     %composer.endReplaceGroup()
     tmp1_group
+  } else {
+    %composer.startReplaceGroup(<>)
+    %composer.endReplaceGroup()
+    2
   }
   val b = <block>{
     sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")

@@ -161,69 +161,76 @@ fun Optional(one: Function2<Composer, Int, Unit>?, two: Function2<Composer, Int,
     }
     one(%composer, 0b1110 and %dirty)
     val tmp0_safe_receiver = two
-    %composer.startReplaceGroup(<>)
-    sourceInformation(%composer, "<invoke...>")
-    val tmp0_group = when {
+    when {
       tmp0_safe_receiver == null -> {
+        %composer.startReplaceGroup(<>)
+        %composer.endReplaceGroup()
         null
       }
       else -> {
+        %composer.startReplaceGroup(<>)
+        sourceInformation(%composer, "<invoke...>")
         tmp0_safe_receiver(%composer, 0b1110 and %dirty shr 0b0011)
+        %composer.endReplaceGroup()
       }
     }
-    %composer.endReplaceGroup()
-    tmp0_group
     val tmp1_safe_receiver = three
-    %composer.startReplaceGroup(<>)
-    sourceInformation(%composer, "*<it()>")
-    val tmp1_group = when {
+    when {
       tmp1_safe_receiver == null -> {
+        %composer.startReplaceGroup(<>)
+        %composer.endReplaceGroup()
         null
       }
       else -> {
+        %composer.startReplaceGroup(<>)
+        sourceInformation(%composer, "*<it()>")
         tmp1_safe_receiver.let { it: Function2<Composer, Int, Unit> ->
           it(%composer, 0)
         }
+        %composer.endReplaceGroup()
       }
     }
-    %composer.endReplaceGroup()
-    tmp1_group
     val tmp2_safe_receiver = four
-    %composer.startReplaceGroup(<>)
-    sourceInformation(%composer, "*<four()>")
-    val tmp2_group = when {
+    when {
       tmp2_safe_receiver == null -> {
+        %composer.startReplaceGroup(<>)
+        %composer.endReplaceGroup()
         null
       }
       else -> {
+        %composer.startReplaceGroup(<>)
+        sourceInformation(%composer, "*<four()>")
         tmp2_safe_receiver.let { it: Function2<Composer, Int, Unit> ->
           four(%composer, 0b1110 and %dirty shr 0b1001)
         }
+        %composer.endReplaceGroup()
       }
     }
-    %composer.endReplaceGroup()
-    tmp2_group
-    %composer.startReplaceGroup(<>)
-    sourceInformation(%composer, "<five()>")
     if (five != null) {
+      %composer.startReplaceGroup(<>)
+      sourceInformation(%composer, "<five()>")
       five(%composer, 0b1110 and %dirty shr 0b1100)
+      %composer.endReplaceGroup()
+    } else {
+      %composer.startReplaceGroup(<>)
+      %composer.endReplaceGroup()
     }
-    %composer.endReplaceGroup()
     val tmp3_safe_receiver = six
-    %composer.startReplaceGroup(<>)
-    sourceInformation(%composer, "*<Wrappe...>")
-    val tmp3_group = when {
+    when {
       tmp3_safe_receiver == null -> {
+        %composer.startReplaceGroup(<>)
+        %composer.endReplaceGroup()
         null
       }
       else -> {
+        %composer.startReplaceGroup(<>)
+        sourceInformation(%composer, "*<Wrappe...>")
         tmp3_safe_receiver.let { it: Function2<Composer, Int, Unit> ->
           Wrapper(it, %composer, 0)
         }
+        %composer.endReplaceGroup()
       }
     }
-    %composer.endReplaceGroup()
-    tmp3_group
     content(%composer, 0b1110 and %dirty shr 0b00010010)
     if (isTraceInProgress()) {
       traceEventEnd()
