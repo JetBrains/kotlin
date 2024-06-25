@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.resolution
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.psi.KtExpression
@@ -23,6 +24,7 @@ public sealed interface KaCompoundOperation : KaLifetimeOwner {
 /**
  * A compound access that read, compute, and write the computed value back. Note that calls to `<op>Assign` is not represented by this.
  */
+@KaExperimentalApi
 public interface KaCompoundAssignOperation : KaCompoundOperation {
     public val kind: Kind
     public val operand: KtExpression
@@ -35,6 +37,7 @@ public interface KaCompoundAssignOperation : KaCompoundOperation {
 /**
  * A compound access that read, increment or decrement, and write the computed value back.
  */
+@KaExperimentalApi
 public interface KaCompoundUnaryOperation : KaCompoundOperation {
     public val kind: Kind
     public val precedence: Precedence
