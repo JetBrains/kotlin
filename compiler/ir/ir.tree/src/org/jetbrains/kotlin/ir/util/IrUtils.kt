@@ -1623,3 +1623,8 @@ fun IrModuleFragment.addFile(file: IrFile) {
     files.add(file)
     file.module = this
 }
+
+fun IrFunctionAccessExpression.receiverAndArgs(): List<IrExpression> {
+    return (arrayListOf(this.dispatchReceiver, this.extensionReceiver) +
+            symbol.owner.valueParameters.mapIndexed { i, _ -> getValueArgument(i) }).filterNotNull()
+}

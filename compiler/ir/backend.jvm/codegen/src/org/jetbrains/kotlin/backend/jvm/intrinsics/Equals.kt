@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.intrinsics
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.backend.jvm.codegen.*
 import org.jetbrains.kotlin.backend.jvm.ir.isSmartcastFromHigherThanNullable
-import org.jetbrains.kotlin.backend.jvm.ir.receiverAndArgs
+import org.jetbrains.kotlin.ir.util.receiverAndArgs
 import org.jetbrains.kotlin.backend.jvm.mapping.mapTypeAsDeclaration
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
