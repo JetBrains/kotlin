@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseExplicitRece
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallCandidateInfo
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallInfo
+import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundAssignOperation
 import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundOperation
 import org.jetbrains.kotlin.analysis.api.resolution.KaExplicitReceiverValue
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
@@ -59,16 +60,13 @@ abstract class KaAbstractResolver<T : KaSession> : KaSessionComponent<T>(), KaRe
         listOfNotNull(symbol)
     }
 
-    protected fun KtBinaryExpression.getCompoundAssignKind(): KaCompoundOperation.KaCompoundAssignOperation.Kind {
-        val compoundAssignKind = when (operationToken) {
-            KtTokens.PLUSEQ -> KaCompoundOperation.KaCompoundAssignOperation.Kind.PLUS_ASSIGN
-            KtTokens.MINUSEQ -> KaCompoundOperation.KaCompoundAssignOperation.Kind.MINUS_ASSIGN
-            KtTokens.MULTEQ -> KaCompoundOperation.KaCompoundAssignOperation.Kind.TIMES_ASSIGN
-            KtTokens.PERCEQ -> KaCompoundOperation.KaCompoundAssignOperation.Kind.REM_ASSIGN
-            KtTokens.DIVEQ -> KaCompoundOperation.KaCompoundAssignOperation.Kind.DIV_ASSIGN
-            else -> error("unexpected operator $operationToken")
-        }
-        return compoundAssignKind
+    protected fun KtBinaryExpression.getCompoundAssignKind(): KaCompoundAssignOperation.Kind = when (operationToken) {
+        KtTokens.PLUSEQ -> KaCompoundAssignOperation.Kind.PLUS_ASSIGN
+        KtTokens.MINUSEQ -> KaCompoundAssignOperation.Kind.MINUS_ASSIGN
+        KtTokens.MULTEQ -> KaCompoundAssignOperation.Kind.TIMES_ASSIGN
+        KtTokens.PERCEQ -> KaCompoundAssignOperation.Kind.REM_ASSIGN
+        KtTokens.DIVEQ -> KaCompoundAssignOperation.Kind.DIV_ASSIGN
+        else -> error("unexpected operator $operationToken")
     }
 
     protected fun KtUnaryExpression.getInOrDecOperationKind(): KaCompoundOperation.KaCompoundUnaryOperation.Kind = when (operationToken) {
