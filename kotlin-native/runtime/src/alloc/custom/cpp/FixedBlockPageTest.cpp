@@ -30,12 +30,24 @@ void mark(void* obj) {
 }
 
 uint8_t* alloc(FixedBlockPage* page, size_t blockSize) {
-    uint8_t* ptr = page->TryAllocate();
+    uint8_t* ptr = page->TryAllocate(blockSize);
     if (ptr) {
         EXPECT_TRUE(ptr[0] == 0 && memcmp(ptr, ptr + 1, blockSize * 8 - 1) == 0);
         reinterpret_cast<uint64_t*>(ptr)[1] = reinterpret_cast<uint64_t>(&fakeType);
     }
     return ptr;
+}
+
+TEST(CustomAllocTest, FixedBlockPageBuckets) {
+    for (uint32_t size = 2; size <= FixedBlockPage::MAX_BLOCK_SIZE; ++size) {
+        uint32_t bucket = FixedBlockPage::BucketIndex(size);
+        uint32_t bucketSize = FixedBlockPage::BucketSize(size);
+        EXPECT_LE(size, bucketSize);
+        uint32_t nextBucket = FixedBlockPage::BucketIndex(size + 1);
+        EXPECT_TRUE(nextBucket == bucket || (nextBucket == bucket + 1 && bucketSize == size));
+    }
+    EXPECT_EQ(FixedBlockPage::MAX_BUCKET, FixedBlockPage::BucketIndex(FixedBlockPage::MAX_BLOCK_SIZE));
+    EXPECT_EQ(FixedBlockPage::MAX_BUCKET+1, FixedBlockPage::BucketIndex(FixedBlockPage::MAX_BLOCK_SIZE+1));
 }
 
 TEST(CustomAllocTest, FixedBlockPageConsequtiveAlloc) {

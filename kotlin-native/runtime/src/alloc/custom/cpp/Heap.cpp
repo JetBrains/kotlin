@@ -16,6 +16,7 @@
 #include "CustomLogging.hpp"
 #include "ExtraObjectData.hpp"
 #include "ExtraObjectPage.hpp"
+#include "FixedBlockPage.hpp"
 #include "GCApi.hpp"
 #include "Memory.h"
 #include "ThreadRegistry.hpp"
@@ -26,8 +27,8 @@ void Heap::PrepareForGC() noexcept {
     CustomAllocDebug("Heap::PrepareForGC()");
     nextFitPages_.PrepareForGC();
     singleObjectPages_.PrepareForGC();
-    for (int blockSize = 0; blockSize <= FixedBlockPage::MAX_BLOCK_SIZE; ++blockSize) {
-        fixedBlockPages_[blockSize].PrepareForGC();
+    for (auto& pageStore : fixedBlockPages_) {
+        pageStore.PrepareForGC();
     }
     extraObjectPages_.PrepareForGC();
 }
@@ -38,8 +39,8 @@ FinalizerQueue Heap::Sweep(gc::GCHandle gcHandle) noexcept {
     CustomAllocDebug("Heap::Sweep()");
     {
         auto sweepHandle = gcHandle.sweep();
-        for (int blockSize = 0; blockSize <= FixedBlockPage::MAX_BLOCK_SIZE; ++blockSize) {
-            fixedBlockPages_[blockSize].Sweep(sweepHandle, finalizerQueue);
+        for (auto& pageStore : fixedBlockPages_) {
+            pageStore.Sweep(sweepHandle, finalizerQueue);
         }
         nextFitPages_.Sweep(sweepHandle, finalizerQueue);
         singleObjectPages_.Sweep(sweepHandle, finalizerQueue);
@@ -62,9 +63,9 @@ NextFitPage* Heap::GetNextFitPage(uint32_t cellCount, FinalizerQueue& finalizerQ
     return nextFitPages_.GetPage(cellCount, finalizerQueue, concurrentSweepersCount_);
 }
 
-FixedBlockPage* Heap::GetFixedBlockPage(uint32_t cellCount, FinalizerQueue& finalizerQueue) noexcept {
+FixedBlockPage* Heap::GetFixedBlockPage(uint32_t bucket, uint32_t bucketSize, FinalizerQueue& finalizerQueue) noexcept {
     CustomAllocDebug("Heap::GetFixedBlockPage()");
-    return fixedBlockPages_[cellCount].GetPage(cellCount, finalizerQueue, concurrentSweepersCount_);
+    return fixedBlockPages_[bucket].GetPage(bucketSize, finalizerQueue, concurrentSweepersCount_);
 }
 
 SingleObjectPage* Heap::GetSingleObjectPage(uint64_t cellCount, FinalizerQueue& finalizerQueue) noexcept {
@@ -89,8 +90,8 @@ FinalizerQueue Heap::ExtractFinalizerQueue() noexcept {
 
 std::vector<ObjHeader*> Heap::GetAllocatedObjects() noexcept {
     std::vector<ObjHeader*> allocated;
-    for (int blockSize = 0; blockSize <= FixedBlockPage::MAX_BLOCK_SIZE; ++blockSize) {
-        for (auto* page : fixedBlockPages_[blockSize].GetPages()) {
+    for (auto& pageStore : fixedBlockPages_) {
+        for (auto* page : pageStore.GetPages()) {
             for (auto* block : page->GetAllocatedBlocks()) {
                 allocated.push_back(reinterpret_cast<CustomHeapObject*>(block)->object());
             }
@@ -116,8 +117,8 @@ std::vector<ObjHeader*> Heap::GetAllocatedObjects() noexcept {
 }
 
 void Heap::ClearForTests() noexcept {
-    for (int blockSize = 0; blockSize <= FixedBlockPage::MAX_BLOCK_SIZE; ++blockSize) {
-        fixedBlockPages_[blockSize].Clear();
+    for (auto& pageStore : fixedBlockPages_) {
+        pageStore.Clear();
     }
     nextFitPages_.Clear();
     singleObjectPages_.Clear();

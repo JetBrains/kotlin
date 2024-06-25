@@ -33,7 +33,7 @@ public:
     // seen by one sweeper.
     FinalizerQueue Sweep(gc::GCHandle gcHandle) noexcept;
 
-    FixedBlockPage* GetFixedBlockPage(uint32_t cellCount, FinalizerQueue& finalizerQueue) noexcept;
+    FixedBlockPage* GetFixedBlockPage(uint32_t bucket, uint32_t bucketSize, FinalizerQueue& finalizerQueue) noexcept;
     NextFitPage* GetNextFitPage(uint32_t cellCount, FinalizerQueue& finalizerQueue) noexcept;
     SingleObjectPage* GetSingleObjectPage(uint64_t cellCount, FinalizerQueue& finalizerQueue) noexcept;
     ExtraObjectPage* GetExtraObjectPage(FinalizerQueue& finalizerQueue) noexcept;
@@ -49,7 +49,7 @@ public:
 
     template <typename T>
     void TraverseAllocatedObjects(T process) noexcept(noexcept(process(std::declval<ObjHeader*>()))) {
-        for (int blockSize = 0; blockSize <= FixedBlockPage::MAX_BLOCK_SIZE; ++blockSize) {
+        for (uint32_t blockSize = 0; blockSize <= FixedBlockPage::MAX_BLOCK_SIZE; ++blockSize) {
             fixedBlockPages_[blockSize].TraversePages([process](auto *page) {
                 page->TraverseAllocatedBlocks([process](auto *block) {
                     process(reinterpret_cast<CustomHeapObject*>(block)->object());
@@ -76,7 +76,7 @@ public:
     }
 
 private:
-    PageStore<FixedBlockPage> fixedBlockPages_[FixedBlockPage::MAX_BLOCK_SIZE + 1];
+    PageStore<FixedBlockPage> fixedBlockPages_[FixedBlockPage::MAX_BUCKET + 1];
     PageStore<NextFitPage> nextFitPages_;
     PageStore<SingleObjectPage> singleObjectPages_;
     PageStore<ExtraObjectPage> extraObjectPages_;

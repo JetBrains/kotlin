@@ -39,10 +39,10 @@ TEST(CustomAllocTest, SmallAllocNonNull) {
 
 TEST(CustomAllocTest, SmallAllocSameFixedBlockPage) {
     const int N = FixedBlockPage::cellCount() / FixedBlockPage::MAX_BLOCK_SIZE;
-    for (int blocks = MIN_BLOCK_SIZE; blocks < FixedBlockPage::MAX_BLOCK_SIZE; ++blocks) {
+    for (uint32_t blocks = MIN_BLOCK_SIZE; blocks < FixedBlockPage::MAX_BLOCK_SIZE; ++blocks) {
         Heap heap;
         CustomAllocator ca(heap);
-        TypeInfo fakeType = {.typeInfo_ = &fakeType, .instanceSize_ = 8 * blocks, .flags_ = 0};
+        TypeInfo fakeType = {.typeInfo_ = &fakeType, .instanceSize_ = static_cast<int>(8 * blocks), .flags_ = 0};
         uint8_t* first = reinterpret_cast<uint8_t*>(ca.CreateObject(&fakeType));
         for (int i = 1; i < N; ++i) {
             uint8_t* obj = reinterpret_cast<uint8_t*>(ca.CreateObject(&fakeType));
@@ -84,7 +84,7 @@ TEST(CustomAllocTest, TwoAllocatorsDifferentPages) {
         Heap heap;
         CustomAllocator ca1(heap);
         CustomAllocator ca2(heap);
-        TypeInfo fakeType = {.typeInfo_ = &fakeType, .instanceSize_ = 8 * blocks, .flags_ = 0};
+        TypeInfo fakeType = {.typeInfo_ = &fakeType, .instanceSize_ = static_cast<int>(8 * blocks), .flags_ = 0};
         uint8_t* obj1 = reinterpret_cast<uint8_t*>(ca1.CreateObject(&fakeType));
         uint8_t* obj2 = reinterpret_cast<uint8_t*>(ca2.CreateObject(&fakeType));
         uint64_t dist = abs(obj2 - obj1);

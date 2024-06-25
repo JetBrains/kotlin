@@ -12,6 +12,7 @@
 
 #include "Constants.hpp"
 #include "AtomicStack.hpp"
+#include "Common.h"
 #include "ExtraObjectPage.hpp"
 #include "GCStatistics.hpp"
 #include "AnyPage.hpp"
@@ -35,7 +36,11 @@ class alignas(kPageAlignment) FixedBlockPage : public MultiObjectPage<FixedBlock
 public:
     static inline constexpr const size_t SIZE = 256 * KiB;
 
-    static inline constexpr const int MAX_BLOCK_SIZE = 128;
+    static inline constexpr const uint32_t MAX_BLOCK_SIZE = 127;
+    // MAX_BUCKET should ideally be computed as BucketIndex(MAX_BLOCK_SIZE), but the
+    // bit-tricks in that function can only be made constexpr with C++20. It is
+    // instead hand set and validated by FixedBlockPageTest.
+    static inline constexpr const uint32_t MAX_BUCKET = 23;
 
     static inline constexpr size_t cellCount() {
         return (SIZE - sizeof(FixedBlockPage)) / sizeof(FixedBlockCell);
@@ -47,10 +52,13 @@ public:
 
     static FixedBlockPage* Create(uint32_t blockSize) noexcept;
 
+    ALWAYS_INLINE static uint32_t BucketIndex(uint32_t blockSize) noexcept;
+    ALWAYS_INLINE static uint32_t BucketSize(uint32_t blockSize) noexcept;
+
     void Destroy() noexcept;
 
     // Tries to allocate in current page, returns null if no free block in page
-    uint8_t* TryAllocate() noexcept;
+    uint8_t* TryAllocate(uint32_t blockSize) noexcept;
 
     bool Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept;
 

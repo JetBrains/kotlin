@@ -139,16 +139,18 @@ uint8_t* CustomAllocator::AllocateInNextFitPage(uint32_t cellCount) noexcept {
 
 uint8_t* CustomAllocator::AllocateInFixedBlockPage(uint32_t cellCount) noexcept {
     CustomAllocDebug("CustomAllocator::AllocateInFixedBlockPage(%u)", cellCount);
-    FixedBlockPage* page = fixedBlockPages_[cellCount];
+    uint32_t bucket = FixedBlockPage::BucketIndex(cellCount);
+    uint32_t bucketSize = FixedBlockPage::BucketSize(cellCount);
+    FixedBlockPage* page = fixedBlockPages_[bucket];
     if (page) {
-        uint8_t* block = page->TryAllocate();
+        uint8_t* block = page->TryAllocate(bucketSize);
         if (block) return block;
     }
     CustomAllocDebug("Failed to allocate in current FixedBlockPage");
-    while ((page = heap_.GetFixedBlockPage(cellCount, finalizerQueue_))) {
-        uint8_t* block = page->TryAllocate();
+    while ((page = heap_.GetFixedBlockPage(bucket, bucketSize, finalizerQueue_))) {
+        uint8_t* block = page->TryAllocate(bucketSize);
         if (block) {
-            fixedBlockPages_[cellCount] = page;
+            fixedBlockPages_[bucket] = page;
             return block;
         }
     }
