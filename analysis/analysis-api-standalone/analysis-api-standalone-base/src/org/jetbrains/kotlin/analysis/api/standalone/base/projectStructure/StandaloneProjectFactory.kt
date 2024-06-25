@@ -20,6 +20,7 @@ import com.intellij.openapi.roots.PackageIndex
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.psi.*
 import com.intellij.psi.impl.file.impl.JavaFileManager
 import com.intellij.psi.impl.smartPointers.PsiClassReferenceTypePointerFactory
@@ -342,10 +343,13 @@ object StandaloneProjectFactory {
         .flatMap { it.getJavaRoots(environment) }
 
     fun createSearchScopeByLibraryRoots(
-        roots: Collection<Path>,
+        binaryRoots: Collection<Path>,
+        binaryVirtualFiles: Collection<VirtualFile>,
         environment: KotlinCoreProjectEnvironment,
     ): GlobalSearchScope {
-        val virtualFileUrls = getVirtualFileUrlsForLibraryRootsRecursively(roots, environment)
+        val virtualFileUrlsFromBinaryRoots = getVirtualFileUrlsForLibraryRootsRecursively(binaryRoots, environment)
+        val virtualFileUrlsFromBinaryVirtualFiles = getVirtualFileUrlsForLibraryRootsRecursively(binaryVirtualFiles)
+        val virtualFileUrls = virtualFileUrlsFromBinaryRoots + virtualFileUrlsFromBinaryVirtualFiles
 
         return object : GlobalSearchScope(environment.project) {
             override fun contains(file: VirtualFile): Boolean = file.url in virtualFileUrls
@@ -366,6 +370,17 @@ object StandaloneProjectFactory {
         buildSet {
             for (root in getVirtualFilesForLibraryRoots(roots, environment)) {
                 LibraryUtils.getAllVirtualFilesFromRoot(root, includeRoot = true)
+                    .mapTo(this) { it.url }
+            }
+        }
+
+    @OptIn(KaImplementationDetail::class)
+    private fun getVirtualFileUrlsForLibraryRootsRecursively(
+        binaryVirtualFiles: Collection<VirtualFile>
+    ): Set<String> =
+        buildSet {
+            for (vf in binaryVirtualFiles) {
+                LibraryUtils.getAllVirtualFilesFromRoot(vf, includeRoot = true)
                     .mapTo(this) { it.url }
             }
         }
@@ -420,10 +435,12 @@ object StandaloneProjectFactory {
         }
     }
 
+    @OptIn(KaExperimentalApi::class)
     private fun KaLibraryModule.getJavaRoots(
         environment: KotlinCoreProjectEnvironment,
     ): List<JavaRoot> {
-        return getVirtualFilesForLibraryRoots(binaryRoots, environment).map { root ->
+        val binaryRootsAsVirtualFiles = getVirtualFilesForLibraryRoots(binaryRoots, environment) + binaryVirtualFiles
+        return binaryRootsAsVirtualFiles.map { root ->
             JavaRoot(root, JavaRoot.RootType.BINARY)
         }
     }

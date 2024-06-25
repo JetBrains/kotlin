@@ -219,6 +219,7 @@ object TestModuleStructureFactory {
     fun getScopeForLibraryByRoots(roots: Collection<Path>, testServices: TestServices): GlobalSearchScope {
         return StandaloneProjectFactory.createSearchScopeByLibraryRoots(
             roots,
+            emptyList(),
             testServices.environmentManager.getProjectEnvironment()
         )
     }

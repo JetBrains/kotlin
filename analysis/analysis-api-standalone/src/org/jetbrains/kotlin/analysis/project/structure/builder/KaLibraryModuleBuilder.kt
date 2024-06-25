@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.project.structure.builder
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
@@ -23,9 +24,12 @@ public open class KtLibraryModuleBuilder(
 
     override fun build(): KaLibraryModule = build(isSdk = false)
 
+    @OptIn(KaExperimentalApi::class)
     protected fun build(isSdk: Boolean): KaLibraryModule {
         val binaryRoots = getBinaryRoots()
-        val contentScope = StandaloneProjectFactory.createSearchScopeByLibraryRoots(binaryRoots, kotlinCoreProjectEnvironment)
+        val binaryVirtualFiles = getBinaryVirtualFiles()
+        val contentScope =
+            StandaloneProjectFactory.createSearchScopeByLibraryRoots(binaryRoots, binaryVirtualFiles, kotlinCoreProjectEnvironment)
         return KaLibraryModuleImpl(
             directRegularDependencies,
             directDependsOnDependencies,
@@ -34,6 +38,7 @@ public open class KtLibraryModuleBuilder(
             platform,
             kotlinCoreProjectEnvironment.project,
             binaryRoots,
+            binaryVirtualFiles,
             libraryName,
             librarySources,
             isSdk,
