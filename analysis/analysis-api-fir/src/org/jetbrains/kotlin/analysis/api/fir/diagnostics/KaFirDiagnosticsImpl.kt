@@ -3352,6 +3352,13 @@ internal class ActualWithoutExpectImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ActualWithoutExpect
 
+internal class ImplicitActualIsIncompatibleWithExpectImpl(
+    override val actualDeclaration: KaSymbol,
+    override val compatibility: Map<ExpectActualCompatibility<FirBasedSymbol<*>>, List<KaSymbol>>,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ImplicitActualIsIncompatibleWithExpect
+
 internal class AmbiguousExpectsImpl(
     override val declaration: KaSymbol,
     override val modules: List<FirModuleData>,
@@ -3365,6 +3372,13 @@ internal class NoActualClassMemberForExpectedClassImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.NoActualClassMemberForExpectedClass
+
+internal class ImplicitActualNoActualClassMemberForExpectedClassImpl(
+    override val declaration: KaSymbol,
+    override val members: List<Pair<KaSymbol, Map<MismatchOrIncompatible<FirBasedSymbol<*>>, List<KaSymbol>>>>,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ImplicitActualNoActualClassMemberForExpectedClass
 
 internal class ActualMissingImpl(
     firDiagnostic: KtPsiDiagnostic,
@@ -3385,6 +3399,11 @@ internal class ExpectActualOptInAnnotationImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualOptInAnnotation
+
+internal class ImplicitActualOptInAnnotationImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ImplicitActualOptInAnnotation
 
 internal class ActualTypealiasToSpecialAnnotationImpl(
     override val typealiasedClassId: ClassId,
