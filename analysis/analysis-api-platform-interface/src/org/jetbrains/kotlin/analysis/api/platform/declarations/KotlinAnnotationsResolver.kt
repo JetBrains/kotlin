@@ -29,10 +29,10 @@ import org.jetbrains.kotlin.psi.KtElement
  */
 public interface KotlinAnnotationsResolver {
     /**
-     * Returns an approximate set of [KtAnnotated] declarations which have an annotation with the given [queriedAnnotation] applied to them.
+     * Returns an approximate set of [KtAnnotated] declarations which have an annotation with the given [annotationClassId] applied to them.
      * The set may contain both false positives and false negatives.
      */
-    public fun declarationsByAnnotation(queriedAnnotation: ClassId): Set<KtAnnotated>
+    public fun declarationsByAnnotation(annotationClassId: ClassId): Set<KtAnnotated>
 
     /**
      * Returns an approximate set of annotation [ClassId]s which have been applied to [declaration]. The set may contain both false

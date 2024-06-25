@@ -55,9 +55,9 @@ private class KotlinStandaloneAnnotationsResolver(
         result
     }
 
-    override fun declarationsByAnnotation(queriedAnnotation: ClassId): Set<KtAnnotated> {
+    override fun declarationsByAnnotation(annotationClassId: ClassId): Set<KtAnnotated> {
         return allDeclarations.asSequence()
-            .filter { queriedAnnotation in annotationsOnDeclaration(it) }
+            .filter { annotationClassId in annotationsOnDeclaration(it) }
             .toSet()
     }
 
