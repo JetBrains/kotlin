@@ -318,7 +318,7 @@ class BuildReportsIT : KGPBaseTest() {
                 "-Pkotlin.build.report.build_scan.custom_values_limit=0",
                 "--scan"
             ) {
-                assertOutputContains("Can't add any more custom values into build scan")
+                assertOutputContains(CAN_NOT_ADD_CUSTOM_VALUES_TO_BUILD_SCAN_MESSAGE)
             }
         }
     }
@@ -338,7 +338,7 @@ class BuildReportsIT : KGPBaseTest() {
                 "compileKotlin",
                 "-Pkotlin.build.report.build_scan.custom_values_limit=0",
             ) {
-                assertOutputDoesNotContain("Can't add any more custom values into build scan")
+                assertOutputDoesNotContain(CAN_NOT_ADD_CUSTOM_VALUES_TO_BUILD_SCAN_MESSAGE)
             }
         }
     }
@@ -648,6 +648,35 @@ class BuildReportsIT : KGPBaseTest() {
             }
             assertEquals(10, reportFolder.listFiles()?.size)
         }
+    }
+
+    @DisplayName("build scan with project isolation")
+    @GradleTestVersions(
+        minVersion = TestVersions.Gradle.G_8_0,
+        //There is an exception for gradle 7.6 with project isolation:
+        //Plugin 'com.gradle.enterprise': Cannot access project ':app' from project ':'
+    )
+    @GradleTest
+    fun testBuildScanReportWithProjectIsolation(gradleVersion: GradleVersion) {
+        project(
+            "incrementalMultiproject", gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                logLevel = LogLevel.DEBUG,
+                projectIsolation = true,
+                configurationCache = null,
+                buildReport = listOf(BuildReportType.BUILD_SCAN)
+            )
+        ) {
+            build(
+                "compileKotlin", "--scan"
+            ) {
+                assertOutputContains("Build report creation in the build scan format is not yet supported when the isolated projects feature is enabled.")
+            }
+        }
+    }
+
+    companion object {
+        private const val CAN_NOT_ADD_CUSTOM_VALUES_TO_BUILD_SCAN_MESSAGE = "Can't add any more custom values into build scan"
     }
 
 }

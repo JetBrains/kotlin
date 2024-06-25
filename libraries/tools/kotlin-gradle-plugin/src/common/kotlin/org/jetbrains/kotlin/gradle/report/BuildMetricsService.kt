@@ -39,6 +39,7 @@ import java.util.concurrent.ConcurrentLinkedQueue
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.StatisticsBuildFlowManager
 import org.jetbrains.kotlin.gradle.plugin.internal.isConfigurationCacheEnabled
+import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationEnabled
 import java.lang.management.ManagementFactory
 
 internal interface UsesBuildMetricsService : Task {
@@ -61,7 +62,6 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
         val buildConfigurationTags: ListProperty<StatTag>
     }
 
-    private val log = Logging.getLogger(this.javaClass)
     private val buildReportService = BuildReportsService()
 
     // Tasks and transforms' records
@@ -72,7 +72,11 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
     private val taskPathToMetricsReporter = ConcurrentHashMap<String, BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>>()
     private val taskPathToTaskClass = ConcurrentHashMap<String, String>()
 
-    open fun addTask(taskPath: String, taskClass: Class<*>, metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>) {
+    open fun addTask(
+        taskPath: String,
+        taskClass: Class<*>,
+        metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
+    ) {
         taskPathToMetricsReporter.put(taskPath, metricsReporter).also {
             if (it != null) log.warn("Duplicate task path: $taskPath") // Should never happen but log it just in case
         }
@@ -88,7 +92,7 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
         startTimeMs: Long,
         totalTimeMs: Long,
         buildMetrics: BuildMetrics<GradleBuildTime, GradleBuildPerformanceMetric>,
-        failureMessage: String?
+        failureMessage: String?,
     ) {
         buildOperationRecords.add(
             TransformRecord(transformPath, transformClass.name, isKotlinTransform, startTimeMs, totalTimeMs, buildMetrics)
@@ -147,6 +151,7 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
     companion object {
         private val serviceClass = BuildMetricsService::class.java
         private val serviceName = "${serviceClass.name}_${serviceClass.classLoader.hashCode()}"
+        private val log = Logging.getLogger(BuildMetricsService::class.java)
 
         private fun Parameters.toBuildReportParameters() = BuildReportParameters(
             startParameters = startParameters.get(),
@@ -218,19 +223,35 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
             project: Project,
             buildMetricServiceProvider: Provider<BuildMetricsService>,
         ): BuildScanExtensionHolder? {
-            val buildScanReportSettings = buildMetricServiceProvider.get().parameters.reportingSettings.orNull?.buildScanReportSettings
-            if (buildScanReportSettings != null) {
-                // BuildScanExtension cant be parameter nor BuildService's field
-                val buildScanExtension = project.rootProject.extensions.findByName("buildScan")
-                return buildScanExtension?.let { BuildScanExtensionHolder(it) }
+            buildMetricServiceProvider.get().parameters.reportingSettings.orNull?.buildScanReportSettings ?: return null
+
+            val rootProject = if (project.isProjectIsolationEnabled) {
+                project
+            } else {
+                project.rootProject
             }
-            return null
+
+            val buildScanExtension = rootProject.extensions.findByName("buildScan")
+            val buildScanExtensionHolder = buildScanExtension?.let { BuildScanExtensionHolder(it) }
+
+            when {
+                buildScanExtensionHolder == null && project.isProjectIsolationEnabled ->
+                    log.warn(
+                        "Build report creation in the build scan format is not yet supported when the isolated projects feature is enabled." +
+                                " Follow https://youtrack.jetbrains.com/issue/KT-68847 for the updates." +
+                                " Build report for build scan won't be created."
+                    )
+                buildScanExtensionHolder == null -> log.debug("Build scan is not enabled. Build report for build scan won't be created.")
+                else -> log.debug("Build report for build scan is configured.")
+            }
+
+            return buildScanExtensionHolder
         }
 
         private fun subscribeForTaskEventsForBuildScan(
             project: Project,
             buildMetricServiceProvider: Provider<BuildMetricsService>,
-            buildScanHolder: BuildScanExtensionHolder
+            buildScanHolder: BuildScanExtensionHolder,
         ) {
             when {
                 GradleVersion.current().baseVersion < GradleVersion.version("8.0") -> {
@@ -319,7 +340,7 @@ private class TransformRecord(
     override val isFromKotlinPlugin: Boolean,
     override val startTimeMs: Long,
     override val totalTimeMs: Long,
-    override val buildMetrics: BuildMetrics<GradleBuildTime, GradleBuildPerformanceMetric>
+    override val buildMetrics: BuildMetrics<GradleBuildTime, GradleBuildPerformanceMetric>,
 ) : BuildOperationRecord {
     override val didWork: Boolean = true
     override val skipMessage: String? = null
