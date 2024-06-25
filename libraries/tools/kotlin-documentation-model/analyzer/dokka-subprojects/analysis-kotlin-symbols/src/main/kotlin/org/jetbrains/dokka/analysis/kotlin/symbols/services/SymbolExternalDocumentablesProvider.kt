@@ -18,9 +18,9 @@ import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.plugability.plugin
 import org.jetbrains.dokka.plugability.querySingle
 import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.dokka.plugability.query
 import org.jetbrains.dokka.analysis.kotlin.documentable.ExternalDocumentableProvider
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 
 internal class SymbolExternalDocumentablesProvider(val context: DokkaContext) : ExternalDocumentableProvider {
     private val kotlinAnalysis = context.plugin<SymbolsAnalysisPlugin>().querySingle { kotlinAnalysis }
@@ -29,7 +29,7 @@ internal class SymbolExternalDocumentablesProvider(val context: DokkaContext) : 
         val classId = getClassIdFromDRI(dri)
 
         return analyze(kotlinAnalysis.getModule(sourceSet)) {
-            val symbol = getClassOrObjectSymbolByClassId(classId) as? KtNamedClassOrObjectSymbol?: return@analyze null
+            val symbol = findClass(classId) as? KaNamedClassSymbol ?: return@analyze null
             val javadocParser =
                 if (sourceSet.analysisPlatform == Platform.jvm)
                     JavadocParser(
@@ -39,9 +39,9 @@ internal class SymbolExternalDocumentablesProvider(val context: DokkaContext) : 
                 else null
             val translator = DokkaSymbolVisitor(sourceSet, sourceSet.displayName, kotlinAnalysis, logger = context.logger, javadocParser)
 
-            val parentDRI = symbol.getContainingSymbol()?.let { getDRIFromSymbol(it) } ?: /* top level */ DRI(dri.packageName)
+            val parentDRI = symbol.containingSymbol?.let { getDRIFromSymbol(it) } ?: /* top level */ DRI(dri.packageName)
             with(translator) {
-                return@analyze visitNamedClassOrObjectSymbol(symbol, parentDRI)
+                return@analyze visitClassSymbol(symbol, parentDRI)
             }
         }
     }
