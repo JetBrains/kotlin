@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -57,7 +56,7 @@ abstract class InlineCallableReferenceToLambdaPhase(
         if (inlineFunctionResolver.needsInlining(function)) {
             for (parameter in function.valueParameters) {
                 if (parameter.isInlineParameter()) {
-                    expression.putValueArgument(parameter.index, expression.getValueArgument(parameter.index)?.transform(data))
+                    expression.putValueArgument(parameter.index, expression.getValueArgument(parameter.index)?.transformToLambda(data))
                 }
             }
         }
@@ -65,7 +64,7 @@ abstract class InlineCallableReferenceToLambdaPhase(
         return expression
     }
 
-    protected fun IrExpression.transform(scope: IrDeclarationParent?) = when {
+    protected fun IrExpression.transformToLambda(scope: IrDeclarationParent?) = when {
         this is IrBlock && origin.isInlinable -> apply {
             // Already a lambda or similar, just mark it with an origin.
             val reference = statements.last() as IrFunctionReference
