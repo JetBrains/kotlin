@@ -1091,8 +1091,15 @@ open class FirDeclarationsResolveTransformer(
                     data.expectedReturnTypeRef ?: anonymousFunction.returnTypeRef.takeUnless { it is FirImplicitTypeRef }
                 transformAnonymousFunctionBody(anonymousFunction, expectedReturnTypeRef, data)
             }
-            is ResolutionMode.WithExpectedType ->
-                transformAnonymousFunctionWithExpectedType(anonymousFunction, data.expectedTypeRef, data)
+            is ResolutionMode.WithExpectedType -> {
+                when (data.forceFullCompletion) {
+                    true -> transformAnonymousFunctionWithExpectedType(anonymousFunction, data.expectedTypeRef, data)
+                    false -> {
+                        context.storeContextForAnonymousFunction(anonymousFunction)
+                        anonymousFunction
+                    }
+                }
+            }
 
             is ResolutionMode.ContextIndependent,
             is ResolutionMode.AssignmentLValue,
