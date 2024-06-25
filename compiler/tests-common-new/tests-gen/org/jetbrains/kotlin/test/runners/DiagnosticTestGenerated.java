@@ -27715,6 +27715,58 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Nested
+      @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization")
+      @TestDataPath("$PROJECT_ROOT")
+      public class DirectJavaActualization {
+        @Test
+        public void testAllFilesPresentInDirectJavaActualization() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+        }
+
+        @Test
+        @TestMetadata("directJavaActualization_actualWithoutExpect.kt")
+        public void testDirectJavaActualization_actualWithoutExpect() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_actualWithoutExpect.kt");
+        }
+
+        @Test
+        @TestMetadata("directJavaActualization_annotationOnlyOnExpect.kt")
+        public void testDirectJavaActualization_annotationOnlyOnExpect() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_annotationOnlyOnExpect.kt");
+        }
+
+        @Test
+        @TestMetadata("directJavaActualization_classifierIncompatibilities.kt")
+        public void testDirectJavaActualization_classifierIncompatibilities() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_classifierIncompatibilities.kt");
+        }
+
+        @Test
+        @TestMetadata("directJavaActualization_missingAnnotationOnJava.kt")
+        public void testDirectJavaActualization_missingAnnotationOnJava() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_missingAnnotationOnJava.kt");
+        }
+
+        @Test
+        @TestMetadata("directJavaActualization_multipleActuals.kt")
+        public void testDirectJavaActualization_multipleActuals() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_multipleActuals.kt");
+        }
+
+        @Test
+        @TestMetadata("directJavaActualization_requiresOptIn.kt")
+        public void testDirectJavaActualization_requiresOptIn() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_requiresOptIn.kt");
+        }
+
+        @Test
+        @TestMetadata("directJavaActualization_simple.kt")
+        public void testDirectJavaActualization_simple() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_simple.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/enum")
       @TestDataPath("$PROJECT_ROOT")
       public class Enum {
