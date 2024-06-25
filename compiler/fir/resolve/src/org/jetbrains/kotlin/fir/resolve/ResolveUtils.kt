@@ -728,8 +728,11 @@ fun createConeDiagnosticForCandidateWithError(
                 // We report the nearest invisible containing declaration, otherwise we'll get a confusing diagnostic like
                 // Cannot access 'foo', it is public in 'Bar'.
                 declaration
-                    .parentDeclarationSequence(session, candidate.dispatchReceiver, candidate.callInfo.containingDeclarations)
-                    ?.firstOrNull {
+                    .parentDeclarationSequence(
+                        session,
+                        candidate.dispatchReceiver?.expression,
+                        candidate.callInfo.containingDeclarations
+                    )?.firstOrNull {
                         !session.visibilityChecker.isVisible(
                             it,
                             session,

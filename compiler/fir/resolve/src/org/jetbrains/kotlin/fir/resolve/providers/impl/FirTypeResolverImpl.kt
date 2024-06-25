@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.AbstractCallInfo
 import org.jetbrains.kotlin.fir.resolve.calls.AbstractCandidate
+import org.jetbrains.kotlin.fir.resolve.calls.ConeCallAtom
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionDiagnostic
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -495,10 +496,10 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         override val applicability: CandidateApplicability
     ) : AbstractCandidate() {
 
-        override val dispatchReceiver: FirExpression?
+        override val dispatchReceiver: ConeCallAtom?
             get() = null
 
-        override val chosenExtensionReceiver: FirExpression?
+        override val chosenExtensionReceiver: ConeCallAtom?
             get() = null
 
         override val explicitReceiverKind: ExplicitReceiverKind
