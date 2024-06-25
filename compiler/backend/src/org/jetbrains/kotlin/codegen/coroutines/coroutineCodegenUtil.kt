@@ -87,6 +87,9 @@ val CONTINUATION_PARAMETER_NAME = Name.identifier("continuation")
 
 const val CONTINUATION_VARIABLE_NAME = "\$continuation"
 
+private val DEBUG_PROBES_INTERNAL_NAME =
+    COROUTINES_JVM_INTERNAL_PACKAGE_FQ_NAME.child(Name.identifier("DebugProbesKt")).topLevelClassInternalName()
+
 // Resolved calls to suspension function contain descriptors as they visible within coroutines:
 // E.g. `fun <V> await(f: CompletableFuture<V>): V` instead of `fun <V> await(f: CompletableFuture<V>, machine: Continuation<V>): Unit`
 // See `createJvmSuspendFunctionView` and it's usages for clarification
@@ -335,7 +338,7 @@ fun createMethodNodeForSuspendCoroutineUninterceptedOrReturn(): MethodNode {
         load(1, OBJECT_TYPE) // continuation
         checkcast(CONTINUATION_ASM_TYPE)
         invokestatic(
-            COROUTINES_JVM_INTERNAL_PACKAGE_FQ_NAME.child(Name.identifier("DebugProbesKt")).topLevelClassAsmType().internalName,
+            DEBUG_PROBES_INTERNAL_NAME,
             "probeCoroutineSuspended",
             "($CONTINUATION_ASM_TYPE)V",
             false
@@ -449,4 +452,13 @@ fun FunctionDescriptor.isInvokeSuspendOfLambda(): Boolean {
         name.asString() != INVOKE_SUSPEND_METHOD_NAME
     ) return false
     return containingDeclaration is SyntheticClassDescriptorForLambda
+}
+
+fun InstructionAdapter.invokeNullOutSpilledVariable() {
+    invokestatic(
+        DEBUG_PROBES_INTERNAL_NAME,
+        "nullOutSpilledVariable",
+        "($OBJECT_TYPE)$OBJECT_TYPE",
+        false
+    )
 }
