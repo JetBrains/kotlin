@@ -33,7 +33,7 @@ internal fun KaSession.getJavaDocDocumentationFrom(
         }
     } else if (symbol.origin == KaSymbolOrigin.SOURCE && symbol is KaCallableSymbol) {
         // Note: javadocParser searches in overridden JAVA declarations for JAVA method, not Kotlin
-        symbol.getAllOverriddenSymbols().forEach { overrider ->
+        symbol.allOverriddenSymbols.forEach { overrider ->
             if (overrider.origin == KaSymbolOrigin.JAVA_SOURCE)
                 return@getJavaDocDocumentationFrom (overrider.psi as? PsiNamedElement)?.let {
                     javadocParser.parseDocumentation(it)
@@ -49,7 +49,7 @@ internal fun KaSession.getKDocDocumentationFrom(symbol: KaSymbol, logger: DokkaL
     val kdocLocation = ktElement?.containingFile?.name?.let {
         val name = when(symbol) {
             is KaCallableSymbol -> symbol.callableId?.toString()
-            is KaClassOrObjectSymbol -> symbol.classId?.toString()
+            is KaClassSymbol -> symbol.classId?.toString()
             is KaNamedSymbol -> symbol.name.asString()
             else -> null
         }?.replace('/', '.') // replace to be compatible with K1
@@ -76,13 +76,13 @@ internal data class KDocContent(
     val sections: List<KDocSection>
 )
 
-internal fun KaSession.findKDoc(symbol: KtSymbol): KDocContent? {
+internal fun KaSession.findKDoc(symbol: KaSymbol): KDocContent? {
     // Dokka's HACK: primary constructors can be generated
     // so [KtSymbol.psi] is undefined for [KtSymbolOrigin.SOURCE_MEMBER_GENERATED] origin
     // we need to get psi of a containing class
-    if(symbol is KtConstructorSymbol && symbol.isPrimary) {
-        val containingClass = symbol.originalContainingClassForOverride
-        if (containingClass?.origin != KtSymbolOrigin.SOURCE) return null
+    if(symbol is KaConstructorSymbol && symbol.isPrimary) {
+        val containingClass = symbol.fakeOverrideOriginal.containingSymbol as? KaClassSymbol
+        if (containingClass?.origin != KaSymbolOrigin.SOURCE) return null
         val kdoc = (containingClass.psi as? KtDeclaration)?.docComment ?: return null
         val constructorSection = kdoc.findSectionByTag(KDocKnownTag.CONSTRUCTOR)
         if (constructorSection != null) {
@@ -96,7 +96,7 @@ internal fun KaSession.findKDoc(symbol: KtSymbol): KDocContent? {
     }
 
     // for generated function (e.g. `copy`) [KtSymbol.psi] is undefined (although actually returns a class psi), see test `data class kdocs over generated methods`
-    if (symbol.origin != KtSymbolOrigin.SOURCE) return null
+    if (symbol.origin != KaSymbolOrigin.SOURCE) return null
 
 
     val ktElement = symbol.psi as? KtElement
@@ -104,8 +104,8 @@ internal fun KaSession.findKDoc(symbol: KtSymbol): KDocContent? {
         return it
     }
 
-    if (symbol is KtCallableSymbol) {
-        symbol.getAllOverriddenSymbols().forEach { overrider ->
+    if (symbol is KaCallableSymbol) {
+        symbol.allOverriddenSymbols.forEach { overrider ->
             findKDoc(overrider)?.let {
                 return it
             }

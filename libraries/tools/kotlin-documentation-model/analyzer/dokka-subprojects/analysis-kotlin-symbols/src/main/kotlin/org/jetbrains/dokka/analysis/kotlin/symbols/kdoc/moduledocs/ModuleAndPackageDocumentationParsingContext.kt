@@ -39,8 +39,8 @@ internal fun ModuleAndPackageDocumentationParsingContext(
         val sourceModule = kotlinAnalysis.getModule(sourceSet)
         val contextPsi = analyze(sourceModule) {
             val contextSymbol = when (fragment.classifier) {
-                Module -> ROOT_PACKAGE_SYMBOL
-                Package -> getPackageSymbolIfPackageExists(FqName(fragment.name))
+                Module -> rootPackageSymbol
+                Package -> findPackage(FqName(fragment.name))
             }
             contextSymbol?.psi
         }
