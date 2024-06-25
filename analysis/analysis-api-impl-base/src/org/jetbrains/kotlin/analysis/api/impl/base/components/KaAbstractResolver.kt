@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseExplicitRece
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallCandidateInfo
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallInfo
-import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundAccess
+import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundOperation
 import org.jetbrains.kotlin.analysis.api.resolution.KaExplicitReceiverValue
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -59,22 +59,22 @@ abstract class KaAbstractResolver<T : KaSession> : KaSessionComponent<T>(), KaRe
         listOfNotNull(symbol)
     }
 
-    protected fun KtBinaryExpression.getCompoundAssignKind(): KaCompoundAccess.CompoundAssign.Kind {
+    protected fun KtBinaryExpression.getCompoundAssignKind(): KaCompoundOperation.CompoundAssign.Kind {
         val compoundAssignKind = when (operationToken) {
-            KtTokens.PLUSEQ -> KaCompoundAccess.CompoundAssign.Kind.PLUS_ASSIGN
-            KtTokens.MINUSEQ -> KaCompoundAccess.CompoundAssign.Kind.MINUS_ASSIGN
-            KtTokens.MULTEQ -> KaCompoundAccess.CompoundAssign.Kind.TIMES_ASSIGN
-            KtTokens.PERCEQ -> KaCompoundAccess.CompoundAssign.Kind.REM_ASSIGN
-            KtTokens.DIVEQ -> KaCompoundAccess.CompoundAssign.Kind.DIV_ASSIGN
+            KtTokens.PLUSEQ -> KaCompoundOperation.CompoundAssign.Kind.PLUS_ASSIGN
+            KtTokens.MINUSEQ -> KaCompoundOperation.CompoundAssign.Kind.MINUS_ASSIGN
+            KtTokens.MULTEQ -> KaCompoundOperation.CompoundAssign.Kind.TIMES_ASSIGN
+            KtTokens.PERCEQ -> KaCompoundOperation.CompoundAssign.Kind.REM_ASSIGN
+            KtTokens.DIVEQ -> KaCompoundOperation.CompoundAssign.Kind.DIV_ASSIGN
             else -> error("unexpected operator $operationToken")
         }
         return compoundAssignKind
     }
 
-    protected fun KtUnaryExpression.getInOrDecOperationKind(): KaCompoundAccess.IncOrDecOperation.Kind {
+    protected fun KtUnaryExpression.getInOrDecOperationKind(): KaCompoundOperation.IncOrDecOperation.Kind {
         val incOrDecOperationKind = when (operationToken) {
-            KtTokens.PLUSPLUS -> KaCompoundAccess.IncOrDecOperation.Kind.INC
-            KtTokens.MINUSMINUS -> KaCompoundAccess.IncOrDecOperation.Kind.DEC
+            KtTokens.PLUSPLUS -> KaCompoundOperation.IncOrDecOperation.Kind.INC
+            KtTokens.MINUSMINUS -> KaCompoundOperation.IncOrDecOperation.Kind.DEC
             else -> error("unexpected operator $operationToken")
         }
         return incOrDecOperationKind

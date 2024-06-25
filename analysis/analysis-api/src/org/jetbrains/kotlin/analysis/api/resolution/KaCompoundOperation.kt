@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 /**
  * The type of access to a variable or using the array access convention.
  */
-public sealed interface KaCompoundAccess : KaLifetimeOwner {
+public sealed interface KaCompoundOperation : KaLifetimeOwner {
     /**
      * The function that compute the value for this compound access. For example, if the access is `+=`, this is the resolved `plus`
      * function. If the access is `++`, this is the resolved `inc` function.
@@ -22,7 +22,7 @@ public sealed interface KaCompoundAccess : KaLifetimeOwner {
     /**
      * A compound access that read, compute, and write the computed value back. Note that calls to `<op>Assign` is not represented by this.
      */
-    public interface CompoundAssign : KaCompoundAccess {
+    public interface CompoundAssign : KaCompoundOperation {
         public val kind: Kind
         public val operand: KtExpression
 
@@ -34,7 +34,7 @@ public sealed interface KaCompoundAccess : KaLifetimeOwner {
     /**
      * A compound access that read, increment or decrement, and write the computed value back.
      */
-    public interface IncOrDecOperation : KaCompoundAccess {
+    public interface IncOrDecOperation : KaCompoundOperation {
         public val kind: Kind
         public val precedence: Precedence
 
@@ -47,3 +47,6 @@ public sealed interface KaCompoundAccess : KaLifetimeOwner {
         }
     }
 }
+
+@Deprecated("Use `KaCompoundOperation` instead", ReplaceWith("KaCompoundOperation"))
+public typealias KaCompoundAccess = KaCompoundOperation

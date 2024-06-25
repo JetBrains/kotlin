@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.validityAsserted
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundAccess
+import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundOperation
 import org.jetbrains.kotlin.analysis.api.resolution.KaPartiallyAppliedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.psi.KtExpression
@@ -17,12 +17,12 @@ import org.jetbrains.kotlin.psi.KtExpression
 @KaImplementationDetail
 class KaBaseCompoundAssignOperation(
     private val backingOperationPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>,
-    kind: KaCompoundAccess.CompoundAssign.Kind,
+    kind: KaCompoundOperation.CompoundAssign.Kind,
     operand: KtExpression,
-) : KaCompoundAccess.CompoundAssign {
+) : KaCompoundOperation.CompoundAssign {
     override val token: KaLifetimeToken get() = backingOperationPartiallyAppliedSymbol.token
 
-    override val kind: KaCompoundAccess.CompoundAssign.Kind by validityAsserted(kind)
+    override val kind: KaCompoundOperation.CompoundAssign.Kind by validityAsserted(kind)
     override val operand: KtExpression by validityAsserted(operand)
     override val operationPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>
         get() = withValidityAssertion { backingOperationPartiallyAppliedSymbol }
