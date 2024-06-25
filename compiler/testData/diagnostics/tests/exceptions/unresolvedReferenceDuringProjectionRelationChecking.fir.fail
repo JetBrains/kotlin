@@ -1,0 +1,7 @@
+Caused by: java.lang.IllegalStateException: Shouldn't be here
+	at org.jetbrains.kotlin.fir.analysis.checkers.type.FirProjectionRelationChecker.check(FirProjectionRelationChecker.kt:40)
+	at org.jetbrains.kotlin.fir.analysis.collectors.components.TypeCheckersDiagnosticComponent.check(TypeCheckersDiagnosticComponent.kt:81)
+	at org.jetbrains.kotlin.fir.analysis.collectors.components.TypeCheckersDiagnosticComponent.visitErrorTypeRef(TypeCheckersDiagnosticComponent.kt:57)
+	at org.jetbrains.kotlin.fir.analysis.collectors.components.TypeCheckersDiagnosticComponent.visitErrorTypeRef(TypeCheckersDiagnosticComponent.kt:19)
+	at org.jetbrains.kotlin.fir.types.FirErrorTypeRef.accept(FirErrorTypeRef.kt:31)
+...

@@ -13399,6 +13399,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       public void testTransformErrorTypeChildrenWhileTransformingPartiallyResolvedType() {
         runTest("compiler/testData/diagnostics/tests/exceptions/transformErrorTypeChildrenWhileTransformingPartiallyResolvedType.kt");
       }
+
+      @Test
+      @TestMetadata("unresolvedReferenceDuringProjectionRelationChecking.kt")
+      public void testUnresolvedReferenceDuringProjectionRelationChecking() {
+        runTest("compiler/testData/diagnostics/tests/exceptions/unresolvedReferenceDuringProjectionRelationChecking.kt");
+      }
     }
 
     @Nested
