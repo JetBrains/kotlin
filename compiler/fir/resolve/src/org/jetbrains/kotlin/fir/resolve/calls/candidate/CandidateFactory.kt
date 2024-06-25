@@ -276,7 +276,7 @@ fun processConstraintStorageFromExpression(statement: FirStatement, processor: (
             var wasAny = false
 
             // Might be `.any {` call, but we should process all the items
-            statement.returnExpressions().forEach {
+            statement.lastExpression?.let {
                 if (processConstraintStorageFromExpression(it, processor)) {
                     wasAny = true
                 }

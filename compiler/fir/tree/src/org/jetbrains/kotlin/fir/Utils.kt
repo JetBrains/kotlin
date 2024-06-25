@@ -34,8 +34,8 @@ import org.jetbrains.kotlin.util.OperatorNameConventions.STATEMENT_LIKE_OPERATOR
 import org.jetbrains.kotlin.util.wrapIntoFileAnalysisExceptionIfNeeded
 import org.jetbrains.kotlin.util.wrapIntoSourceCodeAnalysisExceptionIfNeeded
 
-// TODO: rewrite
-fun FirBlock.returnExpressions(): List<FirExpression> = listOfNotNull(statements.lastOrNull() as? FirExpression)
+val FirBlock.lastExpression: FirExpression?
+    get() = statements.lastOrNull() as? FirExpression
 
 fun <R : FirTypeRef> R.copyWithNewSourceKind(newKind: KtFakeSourceElementKind): R {
     if (source == null) return this

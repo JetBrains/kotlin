@@ -62,7 +62,6 @@ import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
-import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import kotlin.collections.component1
@@ -1120,7 +1119,7 @@ class FirCallCompletionResultsWriterTransformer(
             if (diagnostic is ConeConstraintSystemHasContradiction) {
                 val candidate = diagnostic.candidate as Candidate
                 val argumentTypes = candidate.argumentMapping.keys.map {
-                    val lastBlockExpression = (it.expression as? FirBlock)?.returnExpressions()?.lastOrNull()
+                    val lastBlockExpression = (it.expression as? FirBlock)?.lastExpression
                     lastBlockExpression?.resolvedType ?: it.expression.resolvedType
                 }
                 val newSyntheticCallType = session.typeContext.commonSuperTypeOrNull(argumentTypes)
