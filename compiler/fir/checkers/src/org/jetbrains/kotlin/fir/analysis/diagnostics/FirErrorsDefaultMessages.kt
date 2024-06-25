@@ -317,6 +317,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_SUSPEND_F
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_SUSPEND_PROPERTY_ACCESS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_UNDERSCORE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLEMENTATION_BY_DELEGATION_IN_EXPECT_CLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLICIT_ACTUAL_IS_INCOMPATIBLE_WITH_EXPECT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLICIT_ACTUAL_NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLICIT_ACTUAL_OPT_IN_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLICIT_BOXING_IN_IDENTITY_EQUALS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLICIT_NOTHING_PROPERTY_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLICIT_NOTHING_RETURN_TYPE
@@ -2240,10 +2243,22 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             SYMBOL,
             FirPlatformIncompatibilityDiagnosticRenderer.TEXT
         )
+        map.put(
+            IMPLICIT_ACTUAL_IS_INCOMPATIBLE_WITH_EXPECT,
+            "Implicit actual ''{0}'' is incompatible with this expect{1}",
+            SYMBOL,
+            FirPlatformIncompatibilityDiagnosticRenderer.TEXT
+        )
         map.put(AMBIGUOUS_EXPECTS, "''{0}'' has several compatible expect declarations in modules {1}.", SYMBOL, COLLECTION(MODULE_DATA))
         map.put(
             NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS,
             "''{0}'' has no corresponding members for expected class members:{1}",
+            SYMBOL,
+            FirIncompatibleExpectedActualClassScopesRenderer.TEXT
+        )
+        map.put(
+            IMPLICIT_ACTUAL_NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS,
+            "Implicit actual ''{0}'' has no corresponding members for expected class members:{1}",
             SYMBOL,
             FirIncompatibleExpectedActualClassScopesRenderer.TEXT
         )
@@ -2256,6 +2271,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(NOT_A_MULTIPLATFORM_COMPILATION, "'expect' and 'actual' declarations can be used only in multiplatform projects. Learn more about Kotlin Multiplatform: https://kotl.in/multiplatform-setup")
         map.put(EXPECT_ACTUAL_OPT_IN_ANNOTATION, "Opt-in annotations are prohibited to be 'expect' or 'actual'. Instead, declare annotation once in common sources.")
+        map.put(IMPLICIT_ACTUAL_OPT_IN_ANNOTATION, "Implicit actual is marked with '@RequiresOptIn'. Opt-in annotations are prohibited to be 'expect' or 'actual'. Instead, declare annotation once in common sources.")
         map.put(
             ACTUAL_TYPEALIAS_TO_SPECIAL_ANNOTATION,
             "''actual typealias'' to annotation which affects code compilation can lead to incorrect behavior. Instead, use ''{0}'' annotation directly.",
