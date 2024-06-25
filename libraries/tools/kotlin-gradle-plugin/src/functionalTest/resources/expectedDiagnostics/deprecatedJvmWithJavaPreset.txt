@@ -10,3 +10,7 @@ After this change, please move the Java sources to the Kotlin source set directo
 For example, if the JVM target is given the default name 'jvm':
  * instead of 'src/main/java', use 'src/jvmMain/java'
  * instead of 'src/test/java', use 'src/jvmTest/java'
+----
+[DeprecatedInKMPJavaPluginsDiagnostic | WARNING] 'java' Gradle plugin is not compatible with 'org.jetbrains.kotlin.multiplatform' plugin.
+
+Consider adding a new subproject with 'java' plugin where the KMP project is added as a dependency.
