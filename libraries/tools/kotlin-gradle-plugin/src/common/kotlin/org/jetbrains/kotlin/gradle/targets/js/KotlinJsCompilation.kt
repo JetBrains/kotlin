@@ -57,17 +57,9 @@ open class KotlinJsCompilation @Inject internal constructor(
     private fun buildNpmProjectName(): String {
         val project = target.project
 
-        val moduleName = (target as KotlinJsIrTarget).moduleName
-
         val compilationName = if (compilation.name != KotlinCompilation.MAIN_COMPILATION_NAME) {
             compilation.name
         } else null
-
-        if (moduleName != null) {
-            return sequenceOf(moduleName, compilationName)
-                .filterNotNull()
-                .joinToString("-")
-        }
 
         val rootProjectName = project.rootProject.name
 

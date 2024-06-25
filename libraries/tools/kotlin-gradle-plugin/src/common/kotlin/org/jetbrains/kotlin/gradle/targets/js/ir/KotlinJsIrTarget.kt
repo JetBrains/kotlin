@@ -67,10 +67,18 @@ constructor(
 
     override var moduleName: String? = null
         set(value) {
-            check(!isBrowserConfigured && !isNodejsConfigured) {
-                "Please set moduleName before initialize browser() or nodejs()"
-            }
             field = value
+            compilations.all { compilation ->
+                val compilationName = if (compilation.name != MAIN_COMPILATION_NAME) {
+                    compilation.name
+                } else null
+
+                val name = sequenceOf(moduleName, compilationName)
+                    .filterNotNull()
+                    .joinToString("-")
+
+                compilation.outputModuleName.set(name)
+            }
         }
 
     override val kotlinComponents: Set<KotlinTargetComponent> by lazy {

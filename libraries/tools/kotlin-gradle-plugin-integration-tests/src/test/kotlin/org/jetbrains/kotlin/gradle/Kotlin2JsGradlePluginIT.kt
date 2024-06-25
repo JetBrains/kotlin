@@ -192,7 +192,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
 
             val filesModified: MutableMap<String, Long> = mutableMapOf()
 
-            build("compileDevelopmentExecutableKotlinJs") {
+            build("developmentExecutableCompileSync") {
                 assertTasksExecuted(":app:developmentExecutableCompileSync")
 
                 projectPath.resolve("build/js/packages/kotlin-js-browser-app")
@@ -212,7 +212,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
             fooTxt.parent.toFile().mkdirs()
             fooTxt.createFile().writeText("foo")
 
-            build("compileDevelopmentExecutableKotlinJs") {
+            build("developmentExecutableCompileSync") {
                 assertTasksExecuted(":app:developmentExecutableCompileSync")
 
                 val modified = projectPath.resolve("build/js/packages/kotlin-js-browser-app")
@@ -242,7 +242,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
 
             fooTxt.writeText("bar")
 
-            build("compileDevelopmentExecutableKotlinJs") {
+            build("developmentExecutableCompileSync") {
                 assertTasksExecuted(":app:developmentExecutableCompileSync")
 
                 val modified = projectPath.resolve("build/js/packages/kotlin-js-browser-app")
@@ -325,13 +325,13 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                """.trimMargin()
             )
 
-            buildAndFail("compileDevelopmentExecutableKotlinJs") {
+            buildAndFail("developmentExecutableCompileSync") {
                 assertTasksFailed(":developmentExecutableValidateGeneratedByCompilerTypeScript")
                 assertFileInProjectExists("build/js/packages/js-ir-validate-ts/kotlin/js-ir-validate-ts.js")
                 assertFileInProjectExists("build/js/packages/js-ir-validate-ts/kotlin/js-ir-validate-ts.d.ts")
             }
 
-            build("compileProductionExecutableKotlinJs") {
+            build("productionExecutableCompileSync") {
                 assertTasksExecuted(":productionExecutableValidateGeneratedByCompilerTypeScript")
                 assertFileInProjectExists("build/js/packages/js-ir-validate-ts/kotlin/js-ir-validate-ts.js")
                 assertFileInProjectExists("build/js/packages/js-ir-validate-ts/kotlin/js-ir-validate-ts.d.ts")
@@ -754,7 +754,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testKotlinJsSourceMap(gradleVersion: GradleVersion) {
         project("kotlin2JsProjectWithSourceMap", gradleVersion) {
-            build("compileDevelopmentExecutableKotlinJs") {
+            build("developmentExecutableCompileSync") {
                 val appSourceMap = subProject("app").projectPath
                     .resolve("build/compileSync/js/main/developmentExecutable/kotlin/$projectName-app.js.map")
                 assertFileContains(
@@ -841,7 +841,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 |
                 """.trimMargin()
             )
-            build("compileDevelopmentExecutableKotlinJs") {
+            build("developmentExecutableCompileSync") {
                 val jsFilePath = projectPath.resolve("build/js/packages/$projectName-app/kotlin/$projectName-app.js")
                 assertFileExists(jsFilePath)
                 assertFileNotExists(Path("$jsFilePath.map"))
@@ -871,7 +871,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 |
                 """.trimMargin()
             )
-            build("compileDevelopmentExecutableKotlinJs") {
+            build("developmentExecutableCompileSync") {
                 val mapFilePath = projectPath.resolve("build/js/packages/$projectName-app/kotlin/$projectName-app.js.map")
                 assertFileContains(
                     mapFilePath,
@@ -904,7 +904,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 |
                 """.trimMargin()
             )
-            build("compileDevelopmentExecutableKotlinJs") {
+            build("developmentExecutableCompileSync") {
                 val mapFilePath = projectPath.resolve("build/js/packages/$projectName-app/kotlin/$projectName-app.js.map")
                 assertFileDoesNotContain(
                     mapFilePath,
