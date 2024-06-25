@@ -13,33 +13,28 @@ import org.jetbrains.kotlin.analysis.api.impl.base.permissions.KaBaseWriteAction
 import org.jetbrains.kotlin.analysis.api.session.KaSessionProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
-import org.jetbrains.kotlin.analysis.api.platform.lifetime.KaLifetimeTokenFactory
-import org.jetbrains.kotlin.analysis.api.platform.lifetime.KotlinLifetimeTokenProvider
+import org.jetbrains.kotlin.analysis.api.platform.lifetime.KotlinLifetimeTokenFactory
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.analysis.api.platform.permissions.KaAnalysisPermissionChecker
 
 abstract class KaBaseSessionProvider(project: Project) : KaSessionProvider(project) {
-    /**
-     * Caches [KaAnalysisPermissionChecker] to avoid repeated [Project.getService] calls in [analyze].
-     */
+    // We cache several services to avoid repeated `getService` calls in `analyze`.
     @KaCachedService
     private val permissionChecker by lazy(LazyThreadSafetyMode.PUBLICATION) {
         KaAnalysisPermissionChecker.getInstance(project)
     }
 
-    /**
-     * Caches [KaBaseLifetimeTracker] to avoid repeated [Project.getService] calls in [analyze].
-     */
     @KaCachedService
     private val lifetimeTracker by lazy(LazyThreadSafetyMode.PUBLICATION) {
         KaBaseLifetimeTracker.getInstance(project)
     }
 
-    private val writeActionStartedChecker = KaBaseWriteActionStartedChecker(this)
-
-    protected val tokenFactory: KaLifetimeTokenFactory by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        KotlinLifetimeTokenProvider.getInstance(project).getLifetimeTokenFactory()
+    @KaCachedService
+    protected val tokenFactory by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        KotlinLifetimeTokenFactory.getInstance(project)
     }
+
+    private val writeActionStartedChecker = KaBaseWriteActionStartedChecker(this)
 
     override fun beforeEnteringAnalysis(session: KaSession, useSiteElement: KtElement) {
         // Catch issues with analysis on invalid PSI as early as possible.

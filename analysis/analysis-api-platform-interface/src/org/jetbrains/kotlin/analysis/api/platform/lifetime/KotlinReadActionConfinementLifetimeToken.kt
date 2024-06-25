@@ -22,15 +22,10 @@ public class KotlinReadActionConfinementLifetimeToken(
 ) : KaLifetimeToken() {
     private val onCreatedTimeStamp = modificationTracker.modificationCount
 
-    /**
-     * Caches [KaAnalysisPermissionChecker] to avoid repeated [Project.getService] calls in validity assertions.
-     */
+    // We cache several services to avoid repeated `getService` calls in validity assertions.
     @KaCachedService
     private val permissionChecker = KaAnalysisPermissionChecker.getInstance(project)
 
-    /**
-     * Caches [KaLifetimeTracker] to avoid repeated [Project.getService] calls in validity assertions.
-     */
     @KaCachedService
     private val lifetimeTracker = KaLifetimeTracker.getInstance(project)
 
@@ -63,15 +58,9 @@ public class KotlinReadActionConfinementLifetimeToken(
     }
 }
 
-public object KotlinReadActionConfinementLifetimeTokenFactory : KaLifetimeTokenFactory {
+public class KotlinReadActionConfinementLifetimeTokenFactory : KotlinLifetimeTokenFactory {
     override val identifier: KClass<out KaLifetimeToken> = KotlinReadActionConfinementLifetimeToken::class
 
     override fun create(project: Project, modificationTracker: ModificationTracker): KaLifetimeToken =
         KotlinReadActionConfinementLifetimeToken(project, modificationTracker)
-}
-
-public class KotlinReadActionConfinementLifetimeTokenProvider : KotlinLifetimeTokenProvider {
-    override fun getLifetimeTokenFactory(): KaLifetimeTokenFactory {
-        return KotlinReadActionConfinementLifetimeTokenFactory
-    }
 }

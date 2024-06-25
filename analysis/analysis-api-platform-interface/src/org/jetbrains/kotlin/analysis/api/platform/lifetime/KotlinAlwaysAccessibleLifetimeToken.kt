@@ -33,15 +33,9 @@ public class KotlinAlwaysAccessibleLifetimeToken(project: Project) : KaLifetimeT
     }
 }
 
-public object KotlinAlwaysAccessibleLifetimeTokenFactory : KaLifetimeTokenFactory {
+public class KotlinAlwaysAccessibleLifetimeTokenFactory : KotlinLifetimeTokenFactory {
     override val identifier: KClass<out KaLifetimeToken> = KotlinAlwaysAccessibleLifetimeToken::class
 
     override fun create(project: Project, modificationTracker: ModificationTracker): KaLifetimeToken =
         KotlinAlwaysAccessibleLifetimeToken(project)
-}
-
-public class KotlinAlwaysAccessibleLifetimeTokenProvider : KotlinLifetimeTokenProvider {
-    override fun getLifetimeTokenFactory(): KaLifetimeTokenFactory {
-        return KotlinAlwaysAccessibleLifetimeTokenFactory
-    }
 }
