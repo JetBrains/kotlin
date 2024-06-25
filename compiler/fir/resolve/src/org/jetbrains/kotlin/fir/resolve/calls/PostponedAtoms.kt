@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,15 +7,18 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
-import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
+import org.jetbrains.kotlin.fir.expressions.FirResolvable
+import org.jetbrains.kotlin.fir.expressions.FirSpreadArgumentExpression
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.candidate
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeVariableForLambdaReturnType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
@@ -26,14 +29,39 @@ import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
-//  --------------------------- Variables ---------------------------
+@JvmName("createRawAtomNullable")
+fun ConeCallAtom.Companion.createRawAtom(expression: FirExpression?): ConeCallAtom? {
+    return expression?.let { createRawAtom(it) }
+}
 
+fun ConeCallAtom.Companion.createRawAtom(expression: FirExpression): ConeCallAtom {
+    return when (expression) {
+        is FirAnonymousFunctionExpression -> ConeRawLambdaAtom(expression)
+        is FirCallableReferenceAccess -> when {
+            expression.isResolved -> ConeResolvedAtom(expression)
+            else -> ConeRawCallableReferenceAtom(expression)
+        }
+        is FirResolvable -> when (val candidate = expression.candidate()) {
+            null -> ConeResolvedAtom(expression)
+            else -> ConeAtomWithCandidate(expression, candidate)
+        }
+        is FirNamedArgumentExpression -> ConeNamedArgumentAtom(expression, createRawAtom(expression.expression))
+        is FirSpreadArgumentExpression -> ConeSpreadExpressionAtom(expression, createRawAtom(expression.expression))
+        else -> ConeResolvedAtom(expression)
+    }
+}
 
 //  -------------------------- Atoms --------------------------
 
-sealed class ConePostponedResolvedAtom : PostponedResolvedAtomMarker {
-    abstract val fir: FirElement
-    abstract val expression: FirExpression
+class ConeAtomWithCandidate(
+    override val fir: FirResolvable,
+    val candidate: Candidate
+) : ConeCallAtom() {
+    override val expression: FirExpression
+        get() = fir as FirExpression
+}
+
+sealed class ConePostponedResolvedAtom : ConeCallAtom(), PostponedResolvedAtomMarker {
     abstract override val inputTypes: Collection<ConeKotlinType>
     abstract override val outputType: ConeKotlinType?
     override var analyzed: Boolean = false

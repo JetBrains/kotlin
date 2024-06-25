@@ -70,6 +70,7 @@ import org.jetbrains.kotlin.fir.resolve.createConeDiagnosticForCandidateWithErro
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithCandidates
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeHiddenCandidateError
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.resolve.transformers.unwrapAtoms
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -633,7 +634,7 @@ internal class KaFirResolver(
             is FirFunctionCall -> {
                 if (unsubstitutedKtSignature.symbol !is KaFunctionSymbol) return null
                 val argumentMapping = if (candidate is Candidate) {
-                    runIf(candidate.argumentMappingInitialized) { candidate.argumentMapping }
+                    runIf(candidate.argumentMappingInitialized) { candidate.argumentMapping.unwrapAtoms() }
                 } else {
                     fir.resolvedArgumentMapping
                 }

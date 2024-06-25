@@ -117,7 +117,8 @@ private fun ConeDiagnostic.toKtDiagnostic(
             if (it !is AbstractCallCandidate) return@all false
             // Ambiguous candidates may be not fully processed, so argument mapping may be not initialized
             if (!it.argumentMappingInitialized) return@all false
-            it.argumentMapping.keys.any { arg ->
+            it.argumentMapping.keys.any { atom ->
+                val arg = atom.expression
                 arg.resolvedType.hasError() && arg !is FirAnonymousFunctionExpression && arg !is FirCallableReferenceAccess
             }
         } -> null

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
-import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.expressions.CoercionStrategy
@@ -15,7 +14,7 @@ internal class CallableReferenceAdaptation(
     val argumentTypes: Array<ConeKotlinType>,
     val coercionStrategy: CoercionStrategy,
     val defaults: Int,
-    val mappedArguments: CallableReferenceMappedArguments<FirExpression>,
+    val mappedArguments: CallableReferenceMappedArguments<ConeCallAtom>,
     val suspendConversionStrategy: CallableReferenceConversionStrategy,
 ) {
     init {

@@ -328,7 +328,8 @@ class FirCallCompleter(
             val lambdaArgument: FirAnonymousFunction = lambdaAtom.fir
             val needItParam = lambdaArgument.valueParameters.isEmpty() && parameters.size == 1
 
-            val matchedParameter = candidate.argumentMapping.firstNotNullOfOrNull { (currentArgument, currentValueParameter) ->
+            val matchedParameter = candidate.argumentMapping.firstNotNullOfOrNull { (currentAtom, currentValueParameter) ->
+                val currentArgument = currentAtom.expression
                 val currentLambdaArgument =
                     (currentArgument as? FirAnonymousFunctionExpression)?.anonymousFunction
                 if (currentLambdaArgument === lambdaArgument) {

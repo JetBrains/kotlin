@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.util.CodeFragmentAdjustment
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class Candidate(
     symbol: FirBasedSymbol<*>,
@@ -147,19 +148,27 @@ class Candidate(
 
     // ---------------------------------------- Argument mapping ----------------------------------------
 
-    private var _argumentMapping: LinkedHashMap<FirExpression, FirValueParameter>? = null
+    private var _arguments: List<ConeCallAtom>? = null
+    val arguments: List<ConeCallAtom>
+        get() = _arguments ?: error("Argument list is not initialized yet")
+
+    private var _argumentMapping: LinkedHashMap<ConeCallAtom, FirValueParameter>? = null
     override val argumentMappingInitialized: Boolean
         get() = _argumentMapping != null
-    override val argumentMapping: LinkedHashMap<FirExpression, FirValueParameter>
+    override val argumentMapping: LinkedHashMap<ConeCallAtom, FirValueParameter>
         get() = _argumentMapping ?: error("Argument mapping is not initialized yet")
 
-    fun initializeArgumentMapping(argumentMapping: LinkedHashMap<FirExpression, FirValueParameter>) {
+    fun initializeArgumentMapping(
+        arguments: List<ConeCallAtom>,
+        argumentMapping: LinkedHashMap<ConeCallAtom, FirValueParameter>,
+    ) {
         require(_argumentMapping == null) { "Argument mapping already initialized" }
         _argumentMapping = argumentMapping
+        _arguments = arguments
     }
 
     @UpdatingCandidateInvariants
-    fun updateArgumentMapping(argumentMapping: LinkedHashMap<FirExpression, FirValueParameter>) {
+    fun updateArgumentMapping(argumentMapping: LinkedHashMap<ConeCallAtom, FirValueParameter>) {
         _argumentMapping = argumentMapping
     }
 

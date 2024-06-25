@@ -97,6 +97,6 @@ internal object NoTypeArguments : ResolutionStage() {
 
 internal object InitializeEmptyArgumentMap : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
-        candidate.initializeArgumentMapping(LinkedHashMap())
+        candidate.initializeArgumentMapping(arguments = emptyList(), argumentMapping = LinkedHashMap())
     }
 }

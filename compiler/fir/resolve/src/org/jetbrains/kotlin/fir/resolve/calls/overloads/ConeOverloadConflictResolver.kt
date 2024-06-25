@@ -587,7 +587,7 @@ class ConeOverloadConflictResolver(
     private fun FirValueParameter.toFunctionTypeForSamOrNull(call: Candidate): ConeKotlinType? {
         val functionTypesOfSamConversions = call.functionTypesOfSamConversions ?: return null
         return call.argumentMapping.entries.firstNotNullOfOrNull {
-            runIf(it.value == this) { functionTypesOfSamConversions[it.key.unwrapArgument()]?.functionalType }
+            runIf(it.value == this) { functionTypesOfSamConversions[it.key.expression.unwrapArgument()]?.functionalType }
         }
     }
 
