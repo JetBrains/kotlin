@@ -3,7 +3,6 @@ KtPrefixExpression(47,58): '++foo.value'
     candidate = KaCompoundVariableAccessCall:
       compoundAccess = IncOrDecOperation:
         kind = INC
-        precedence = PREFIX
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaExplicitReceiverValue:
             expression = foo.value
@@ -16,6 +15,7 @@ KtPrefixExpression(47,58): '++foo.value'
             symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
             valueParameters = []
             callableId = kotlin/Int.inc
+        precedence = PREFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:

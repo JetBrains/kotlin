@@ -3,7 +3,6 @@ KtPrefixExpression(182,190): '++m["a"]'
     candidate = KaCompoundArrayAccessCall:
       compoundAccess = IncOrDecOperation:
         kind = INC
-        precedence = PREFIX
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaExplicitReceiverValue:
             expression = m["a"]
@@ -16,6 +15,7 @@ KtPrefixExpression(182,190): '++m["a"]'
             symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
             valueParameters = []
             callableId = kotlin/Int.inc
+        precedence = PREFIX
       getPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
           expression = m

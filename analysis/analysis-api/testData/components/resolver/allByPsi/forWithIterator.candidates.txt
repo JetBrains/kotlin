@@ -321,7 +321,6 @@ KtPostfixExpression(256,265): 'current++'
     candidate = KaCompoundVariableAccessCall:
       compoundAccess = IncOrDecOperation:
         kind = INC
-        precedence = POSTFIX
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaExplicitReceiverValue:
             expression = current
@@ -334,6 +333,7 @@ KtPostfixExpression(256,265): 'current++'
             symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
             valueParameters = []
             callableId = kotlin/Int.inc
+        precedence = POSTFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = <anonymous>
@@ -370,7 +370,6 @@ KtOperationReferenceExpression(263,265): '++'
     candidate = KaCompoundVariableAccessCall:
       compoundAccess = IncOrDecOperation:
         kind = INC
-        precedence = POSTFIX
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaExplicitReceiverValue:
             expression = current
@@ -383,6 +382,7 @@ KtOperationReferenceExpression(263,265): '++'
             symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
             valueParameters = []
             callableId = kotlin/Int.inc
+        precedence = POSTFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = <anonymous>
