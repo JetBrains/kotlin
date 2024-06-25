@@ -35,9 +35,9 @@ internal class TestCompilationFactory {
     private data class TestBundleCacheKey(val sourceModules: Set<TestModule>)
 
     // A pair of compilations for a KLIB itself and for its static cache that are created together.
-    private data class KlibCompilations(val klib: TestCompilation<KLIB>, val staticCache: TestCompilation<KLIBStaticCache>?, val headerCache: TestCompilation<KLIBStaticCache>?)
+    data class KlibCompilations(val klib: TestCompilation<KLIB>, val staticCache: TestCompilation<KLIBStaticCache>?, val headerCache: TestCompilation<KLIBStaticCache>?)
 
-    private data class CompilationDependencies(
+    data class CompilationDependencies(
         private val klibDependencies: List<CompiledDependency<KLIB>>,
         private val staticCacheDependencies: List<CompiledDependency<KLIBStaticCache>>,
         private val staticCacheHeaderDependencies: List<CompiledDependency<KLIBStaticCache>>
@@ -61,7 +61,7 @@ internal class TestCompilationFactory {
             (klibDependencies.asSequence() + staticCacheDependencies + listOfNotNull(includedKlib, includedKlibStaticCache)).asIterable()
     }
 
-    private sealed interface ProduceStaticCache {
+    sealed interface ProduceStaticCache {
         object No : ProduceStaticCache
 
         sealed class Yes(val options: StaticCacheCompilation.Options) : ProduceStaticCache {
@@ -250,7 +250,7 @@ internal class TestCompilationFactory {
             }
         }
 
-    private fun modulesToKlib(
+    fun modulesToKlib(
         sourceModules: Set<TestModule>,
         freeCompilerArgs: TestCompilerArgs,
         produceStaticCache: ProduceStaticCache,
@@ -360,7 +360,7 @@ internal class TestCompilationFactory {
         }
     }
 
-    private fun collectDependencies(
+    fun collectDependencies(
         sourceModules: Set<TestModule>,
         freeCompilerArgs: TestCompilerArgs,
         settings: Settings

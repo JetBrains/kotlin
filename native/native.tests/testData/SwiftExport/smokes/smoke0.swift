@@ -41,6 +41,10 @@ func smoke() throws {
     try assertEquals(actual: org.kotlin.xor(a: false, b: false), expected: false ^ false)
 }
 
+func SmokesDependencies() throws {
+    try assertEquals(actual: dependency_usage(), expected: 5)
+}
+
 class Smoke0Tests : TestProvider {
     var tests: [TestCase] = []
 
@@ -48,6 +52,7 @@ class Smoke0Tests : TestProvider {
         providers.append(self)
         tests = [
             TestCase(name: "Smokes", method: withAutorelease(smoke)),
+            TestCase(name: "SmokesDependencies", method: withAutorelease(SmokesDependencies)),
         ]
     }
 }

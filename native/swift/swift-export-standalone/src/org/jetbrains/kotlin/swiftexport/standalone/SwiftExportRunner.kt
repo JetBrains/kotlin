@@ -145,6 +145,7 @@ public fun createDummyLogger(): SwiftExportLogger = object : SwiftExportLogger {
  */
 public fun runSwiftExport(
     input: InputModule.Binary,
+    dependencies: List<InputModule.Binary> = emptyList(),
     config: SwiftExportConfig,
 ): Result<List<SwiftExportModule>> = runCatching {
     val stableDeclarationsOrder = config.settings.containsKey(STABLE_DECLARATIONS_ORDER)
@@ -157,7 +158,7 @@ public fun runSwiftExport(
         DEFAULT_BRIDGE_MODULE_NAME
     }
     val unsupportedDeclarationReporter = config.unsupportedDeclarationReporterKind.toReporter()
-    val buildResult = buildSwiftModule(input, config, unsupportedDeclarationReporter)
+    val buildResult = buildSwiftModule(input, dependencies, config, unsupportedDeclarationReporter)
     val bridgeGenerator = createBridgeGenerator(object : SirTypeNamer {
         override fun swiftFqName(type: SirType): String = type.swiftName
         override fun kotlinFqName(type: SirType): String {

@@ -1,6 +1,6 @@
 // KIND: STANDALONE
 // FREE_COMPILER_ARGS: -opt-in=kotlin.native.internal.InternalForKotlinNative
-// MODULE: ReferenceTypes
+// MODULE: ReferenceTypes(deps)
 // FILE: Bar.kt
 class Bar(var foo: Foo) {
     fun getAndSetFoo(newFoo: Foo): Foo {
@@ -92,3 +92,17 @@ val mainObject: Any get() = instance
 fun isMainPermanentObject(obj: Any): Boolean = obj == Object
 
 fun getMainPermanentObject(): Any = Object
+
+// FILE: dependency_usage.kt
+import dependency.*
+
+val deps_instance: Any = DepsFoo()
+
+fun isDepsObject(obj: Any): Boolean = obj is DepsFoo
+fun isSavedDepsObject(obj: Any): Boolean = obj == deps_instance
+
+// MODULE: deps
+// FILE: deps_file.kt
+package dependency
+
+class DepsFoo

@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.konan.test.blackbox
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule.Companion.allDependsOnDependencies
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.SwiftCompilation
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationFactory
+import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationFactory.ProduceStaticCache
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
@@ -26,6 +28,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
 import org.jetbrains.kotlin.swiftexport.standalone.*
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.utils.KotlinNativePaths
+import org.jetbrains.kotlin.wasm.ir.convertors.sanitizeWatIdentifier
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.extension.ExtendWith
 import java.io.File
@@ -66,21 +69,26 @@ abstract class AbstractNativeSwiftExportTest {
             ?.getByName(testCaseId)!!
 
         // run swift export
+        val (swiftExportInput, klibDeps) = originalTestCase.constructSwiftInput()
         val swiftExportOutput = runSwiftExport(
-            originalTestCase.constructSwiftInput(),
-            constructSwiftExportConfig(originalTestCase.modules.first())
+            swiftExportInput,
+            klibDeps,
+            constructSwiftExportConfig(originalTestCase.rootModules.first())
         ).getOrThrow().first() as SwiftExportModule.BridgesToKotlin
 
         // compile kotlin into binary
         val additionalKtFiles: Set<Path> = mutableSetOf<Path>()
             .apply { swiftExportOutput.collectKotlinBridgeFilesRecursively(into = this) }
 
-        val kotlinFiles = originalTestCase.modules.first().files.map { it.location }
-
-
+        val kotlinFiles = originalTestCase.rootModules.first().files.map { it.location }
         val kotlinBinaryLibraryName = testPathFull.name + "Kotlin"
 
-        val resultingTestCase = generateSwiftExportTestCase(testPathFull, kotlinBinaryLibraryName, kotlinFiles + additionalKtFiles.map { it.toFile() })
+        val resultingTestCase = generateSwiftExportTestCase(
+            testPathFull,
+            kotlinBinaryLibraryName,
+            kotlinFiles + additionalKtFiles.map { it.toFile() },
+            dependencies = originalTestCase.rootModules.first().allRegularDependencies.filterIsInstance<TestModule.Exclusive>().toSet(),
+        )
 
         val kotlinBinaryLibrary = testCompilationFactory.testCaseToBinaryLibrary(
             resultingTestCase, testRunSettings,
@@ -104,13 +112,37 @@ abstract class AbstractNativeSwiftExportTest {
         )
     }
 
-    private fun TestCase.constructSwiftInput(): InputModule.Binary {
-        val klib = testCompilationFactory
-            .testCaseToKLib(this, testRunSettings)
-            .result.assertSuccess().resultingArtifact
-        return InputModule.Binary(
-            path = Path(klib.path),
-            name = modules.first().name
+    private data class SwiftInputModules(
+        val moduleToTranslate: InputModule.Binary,
+        val dependencies: List<InputModule.Binary>
+    )
+
+    private fun TestCase.constructSwiftInput(): SwiftInputModules {
+        val moduleToTranslate =
+            if (rootModules.count() == 1) rootModules.first() else error("We are not ready to consume more than one module: $rootModules")
+        val klibToTranslate = testCompilationFactory.modulesToKlib(
+            sourceModules = setOf(moduleToTranslate),
+            freeCompilerArgs = freeCompilerArgs,
+            settings = testRunSettings,
+            produceStaticCache = ProduceStaticCache.No,
+        )
+        return SwiftInputModules(
+            moduleToTranslate = InputModule.Binary(
+                path = Path(klibToTranslate.klib.result.assertSuccess().resultingArtifact.path),
+                name = moduleToTranslate.name
+            ),
+            dependencies = moduleToTranslate.allRegularDependencies.map {
+                val klib = testCompilationFactory.modulesToKlib(
+                    sourceModules = setOf(it),
+                    freeCompilerArgs = freeCompilerArgs,
+                    settings = testRunSettings,
+                    produceStaticCache = ProduceStaticCache.No,
+                ).klib.result.assertSuccess().resultingArtifact
+                InputModule.Binary(
+                    path = Path(klib.path),
+                    name = it.name
+                )
+            }
         )
     }
 
@@ -214,7 +246,12 @@ abstract class AbstractNativeSwiftExportTest {
         ).result.assertSuccess().resultingArtifact
     }
 
-    private fun generateSwiftExportTestCase(testPathFull: File, testName: String = testPathFull.name, sources: List<File>): TestCase {
+    private fun generateSwiftExportTestCase(
+        testPathFull: File,
+        testName: String = testPathFull.name,
+        sources: List<File>,
+        dependencies: Set<TestModule.Exclusive>,
+    ): TestCase {
         val module = TestModule.Exclusive(DEFAULT_MODULE_NAME, emptySet(), emptySet(), emptySet())
         sources.forEach { module.files += TestFile.createCommitted(it, module) }
 
@@ -229,7 +266,7 @@ abstract class AbstractNativeSwiftExportTest {
         return TestCase(
             id = TestCaseId.Named(testName),
             kind = TestKind.STANDALONE_NO_TR,
-            modules = setOf(module),
+            modules = setOf(module) + dependencies,
             freeCompilerArgs = TestCompilerArgs(
                 listOf(
                     "-opt-in", "kotlin.experimental.ExperimentalNativeApi",

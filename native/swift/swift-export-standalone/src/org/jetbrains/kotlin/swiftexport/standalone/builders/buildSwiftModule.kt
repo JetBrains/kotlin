@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISe
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
+import org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleProviderBuilder
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModule
 import org.jetbrains.kotlin.konan.target.Distribution
@@ -41,11 +42,12 @@ internal class SwiftModuleBuildResults(
 
 internal fun buildSwiftModule(
     input: InputModule.Binary,
+    dependencies: List<InputModule.Binary>,
     config: SwiftExportConfig,
     unsupportedDeclarationReporter: UnsupportedDeclarationReporter,
 ): SwiftModuleBuildResults {
     val (useSiteModule, mainModule, scopeProvider) =
-        createModuleWithScopeProviderFromBinary(config.distribution, input)
+        createModuleWithScopeProviderFromBinary(config.distribution, input, dependencies)
     val moduleProvider = when (config.multipleModulesHandlingStrategy) {
         MultipleModulesHandlingStrategy.OneToOneModuleMapping -> SirOneToOneModuleProvider(mainModuleName = input.name)
         MultipleModulesHandlingStrategy.IntoSingleModule -> SirSingleModuleProvider(swiftModuleName = input.name)
@@ -107,6 +109,7 @@ private data class ModuleWithScopeProvider(
 private fun createModuleWithScopeProviderFromBinary(
     kotlinDistribution: Distribution,
     input: InputModule.Binary,
+    dependencies: List<InputModule.Binary>,
 ): ModuleWithScopeProvider {
     lateinit var binaryModule: KaLibraryModule
     lateinit var fakeSourceModule: KaSourceModule
@@ -121,14 +124,10 @@ private fun createModuleWithScopeProviderFromBinary(
                     libraryName = "stdlib"
                 }
             )
-            binaryModule = addModule(
-                buildKtLibraryModule {
-                    addBinaryRoot(input.path)
-                    platform = NativePlatforms.unspecifiedNativePlatform
-                    libraryName = input.name
-                    addRegularDependency(stdlib)
-                }
-            )
+            binaryModule = addModule(addModuleForSwiftExportConsumption(input, stdlib))
+            val kaDeps = dependencies.map {
+                addModule(addModuleForSwiftExportConsumption(it, stdlib))
+            }
             // It's a pure hack: Analysis API does not properly work without root source modules.
             fakeSourceModule = addModule(
                 buildKtSourceModule {
@@ -136,6 +135,7 @@ private fun createModuleWithScopeProviderFromBinary(
                     moduleName = "fakeSourceModule"
                     addRegularDependency(binaryModule)
                     addRegularDependency(stdlib)
+                    kaDeps.forEach { addRegularDependency(it) }
                 }
             )
         }
@@ -143,4 +143,14 @@ private fun createModuleWithScopeProviderFromBinary(
     return ModuleWithScopeProvider(fakeSourceModule, binaryModule) { analysisSession ->
         listOf(KlibScope(binaryModule, analysisSession))
     }
+}
+
+private fun KtModuleProviderBuilder.addModuleForSwiftExportConsumption(
+    input: InputModule.Binary,
+    stdlib: KaLibraryModule,
+): KaLibraryModule = buildKtLibraryModule {
+    addBinaryRoot(input.path)
+    platform = NativePlatforms.unspecifiedNativePlatform
+    libraryName = input.name
+    addRegularDependency(stdlib)
 }

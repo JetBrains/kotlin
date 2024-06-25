@@ -183,6 +183,13 @@ func anyPersistsAsProperty() throws {
     try assertTrue(foo.storage === baz)
 }
 
+func depsObjectsTravelBridgeAsAny() throws {
+    let obj: KotlinBase = deps_instance
+    try assertTrue((obj as Any) is KotlinBase)
+    try assertTrue(isDepsObject(obj: obj))
+    try assertTrue(isSavedDepsObject(obj: obj))
+}
+
 class ReferenceTypesTests : TestProvider {
     var tests: [TestCase] = []
 
@@ -214,6 +221,7 @@ class ReferenceTypesTests : TestProvider {
             TestCase(name: "objectsTravelBridgeAsAny", method: withAutorelease(objectsTravelBridgeAsAny)),
             TestCase(name: "permanentObjectsTravelBridgeAsAny", method: withAutorelease(permanentObjectsTravelBridgeAsAny)),
             TestCase(name: "anyPersistsAsProperty", method: withAutorelease(anyPersistsAsProperty)),
+            TestCase(name: "depsObjectsTravelBridgeAsAny", method: withAutorelease(depsObjectsTravelBridgeAsAny)),
         ]
     }
 }
