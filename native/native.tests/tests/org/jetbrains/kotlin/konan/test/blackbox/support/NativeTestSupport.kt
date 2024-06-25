@@ -100,7 +100,10 @@ class KlibSyntheticAccessorTestSupport : BeforeEachCallback {
             +CodegenTestDirectives.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING
 
             // Don't run LLVM, stop after the last IR lowering.
-            TestDirectives.FREE_COMPILER_ARGS with listOf("-Xdisable-phases=LinkBitcodeDependencies,WriteBitcodeFile,ObjectFiles,Linker")
+            TestDirectives.FREE_COMPILER_ARGS with listOf(
+                "-Xdisable-phases=LinkBitcodeDependencies,WriteBitcodeFile,ObjectFiles,Linker",
+                "-Xklib-double-inlining"
+            )
         }
 
         Assumptions.assumeTrue(settings.get<CacheMode>() == CacheMode.WithoutCache)
