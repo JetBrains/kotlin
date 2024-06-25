@@ -10,9 +10,8 @@ import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.DokkaSourceSetID
 import org.jetbrains.dokka.Platform
 import org.jetbrains.dokka.utilities.DokkaLogger
-import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
-import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleBuilder
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSdkModule
@@ -57,28 +56,27 @@ internal fun getLanguageVersionSettings(
     )
 }
 
-@OptIn(KtAnalysisApiInternals::class)
 internal fun createAnalysisSession(
     sourceSets: List<DokkaConfiguration.DokkaSourceSet>,
     logger: DokkaLogger,
     projectDisposable: Disposable = Disposer.newDisposable("StandaloneAnalysisAPISession.project"),
     isSampleProject: Boolean = false
 ): KotlinAnalysis {
-    val sourcesModule = mutableMapOf<DokkaConfiguration.DokkaSourceSet, KtSourceModule>()
+    val sourcesModule = mutableMapOf<DokkaConfiguration.DokkaSourceSet, KaSourceModule>()
 
     val analysisSession = buildStandaloneAnalysisAPISession(
         projectDisposable = projectDisposable,
     ) {
         val sortedSourceSets = topologicalSortByDependantSourceSets(sourceSets, logger)
 
-        val sourcesModuleBySourceSetId = mutableMapOf<DokkaSourceSetID, KtSourceModule>()
+        val sourcesModuleBySourceSetId = mutableMapOf<DokkaSourceSetID, KaSourceModule>()
 
         buildKtModuleProvider {
             val jdkModule = getJdkHomeFromSystemProperty(logger)?.let { jdkHome ->
                 buildKtSdkModule {
                     this.platform = Platform.jvm.toTargetPlatform()
                     addBinaryRootsFromJdkHome(jdkHome.toPath(), isJre = true)
-                    sdkName = "JDK"
+                    libraryName = "JDK"
                 }
             }
 

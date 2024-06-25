@@ -22,7 +22,7 @@ internal fun KaSession.hasGeneratedKDocDocumentation(symbol: KaSymbol): Boolean 
 private fun KaSession.getDocumentationTemplatePath(symbol: KaSymbol): String? =
     when (symbol) {
         is KaPropertySymbol -> if (isEnumEntriesProperty(symbol)) ENUM_ENTRIES_TEMPLATE_PATH else null
-        is KaFunctionSymbol -> {
+        is KaNamedFunctionSymbol -> {
             when {
                 isEnumValuesMethod(symbol) -> ENUM_VALUES_TEMPLATE_PATH
                 isEnumValueOfMethod(symbol) -> ENUM_VALUEOF_TEMPLATE_PATH
@@ -35,15 +35,15 @@ private fun KaSession.getDocumentationTemplatePath(symbol: KaSymbol): String? =
 
 private fun KaSession.isEnumSpecialMember(symbol: KaPossibleMemberSymbol): Boolean =
     symbol.origin == KaSymbolOrigin.SOURCE_MEMBER_GENERATED
-            && (symbol.getContainingSymbol() as? KaClassOrObjectSymbol)?.classKind == KaClassKind.ENUM_CLASS
+            && (symbol.containingSymbol as? KaClassSymbol)?.classKind == KaClassKind.ENUM_CLASS
 
 private fun KaSession.isEnumEntriesProperty(symbol: KaPropertySymbol): Boolean =
     symbol.name == StandardNames.ENUM_ENTRIES && isEnumSpecialMember(symbol)
 
-private fun KaSession.isEnumValuesMethod(symbol: KaFunctionSymbol): Boolean =
+private fun KaSession.isEnumValuesMethod(symbol: KaNamedFunctionSymbol): Boolean =
     symbol.name == StandardNames.ENUM_VALUES && isEnumSpecialMember(symbol)
 
-private fun KaSession.isEnumValueOfMethod(symbol: KaFunctionSymbol): Boolean =
+private fun KaSession.isEnumValueOfMethod(symbol: KaNamedFunctionSymbol): Boolean =
     symbol.name == StandardNames.ENUM_VALUE_OF && isEnumSpecialMember(symbol)
 
 internal fun KaSession.getGeneratedKDocDocumentationFrom(symbol: KaSymbol): DocumentationNode? {
