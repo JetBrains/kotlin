@@ -27,7 +27,7 @@ FILE: entriesPropertyInCompanionClashOn.fir.kt
     public final fun test(): R|kotlin/Unit| {
         Q|A|.R|/A.Companion.entries|
         Q|A.Companion|.R|/A.Companion.entries|
-        R|kotlin/with<Inapplicable(INAPPLICABLE): kotlin/with>#|<R|A.Companion|, <ERROR TYPE REF: Cannot infer argument for type parameter R>>(Q|A|, <L> = with@fun R|A.Companion|.<anonymous>(): <ERROR TYPE REF: Cannot infer argument for type parameter R> <inline=Inline, kind=EXACTLY_ONCE>  {
+        R|kotlin/with<Inapplicable(INAPPLICABLE): kotlin/with>#|<R|A.Companion|, <ERROR TYPE REF: Cannot infer argument for type parameter R>>(Q|A|, <L> = with@fun R|A.Companion|.<anonymous>(): <ERROR TYPE REF: Unresolved name: values> <inline=Inline, kind=EXACTLY_ONCE>  {
             this@R|special/anonymous|.R|/A.Companion.entries|
             this@R|special/anonymous|.R|/A.Companion.entries|
             ^ <Unresolved name: values>#()

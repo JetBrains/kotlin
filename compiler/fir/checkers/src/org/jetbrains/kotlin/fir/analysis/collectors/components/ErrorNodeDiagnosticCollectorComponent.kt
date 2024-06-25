@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.delegatedPropertySourceOrThis
+import org.jetbrains.kotlin.fir.analysis.checkers.getReturnedExpressions
 import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostics
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
 import org.jetbrains.kotlin.fir.declarations.FirErrorPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.FirErrorProperty
@@ -35,8 +37,29 @@ class ErrorNodeDiagnosticCollectorComponent(
     }
 
     override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef, data: CheckerContext) {
-        val source = errorTypeRef.source
-        reportFirDiagnostic(errorTypeRef.diagnostic, source, data)
+        if (errorTypeRef.isLambdaReturnTypeRefThatDoesntNeedReporting(data)) return
+
+        reportFirDiagnostic(errorTypeRef.diagnostic, errorTypeRef.source, data)
+    }
+
+    /**
+     * Returns true if this [FirErrorTypeRef] is the implicit return type ref of a lambda and the diagnostic doesn't need to be reported.
+     * More specifically, the diagnostic can be skipped if it's duplicated in the outer call or in a return expression of the lambda.
+     */
+    private fun FirErrorTypeRef.isLambdaReturnTypeRefThatDoesntNeedReporting(data: CheckerContext): Boolean {
+        if (source?.kind != KtFakeSourceElementKind.ImplicitFunctionReturnType) return false
+
+        val containingDeclaration = data.containingDeclarations.lastOrNull()
+        if (containingDeclaration !is FirAnonymousFunction || containingDeclaration.returnTypeRef != this) return false
+
+        return containingDeclaration.getReturnedExpressions().any { it.hasDiagnostic(diagnostic) } ||
+                data.callsOrAssignments.any { it is FirExpression && it.hasDiagnostic(diagnostic) }
+    }
+
+    private fun FirExpression.hasDiagnostic(diagnostic: ConeDiagnostic): Boolean {
+        if ((resolvedType as? ConeErrorType)?.diagnostic == diagnostic) return true
+        if ((toReference(session) as? FirDiagnosticHolder)?.diagnostic == diagnostic) return true
+        return false
     }
 
     override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: CheckerContext) {
@@ -144,7 +167,7 @@ class ErrorNodeDiagnosticCollectorComponent(
         diagnostic: ConeDiagnostic,
         source: KtSourceElement?,
         context: CheckerContext,
-        callOrAssignmentSource: KtSourceElement? = null
+        callOrAssignmentSource: KtSourceElement? = null,
     ) {
         // Will be handled by [FirDestructuringDeclarationChecker]
         if (source?.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY) {

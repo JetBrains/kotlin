@@ -11,7 +11,7 @@ fun main() {
     val number: Int = 5 // doesn't work
 //    val number: Long = 5 // works
 
-    <!CANNOT_INFER_PARAMETER_TYPE!>with<!> (WrapperFunctions()) <!CANNOT_INFER_PARAMETER_TYPE!>{
+    <!CANNOT_INFER_PARAMETER_TYPE!>with<!> (WrapperFunctions()) {
         wrapper <!NONE_APPLICABLE!>greaterEq<!> number
-    }<!>
+    }
 }

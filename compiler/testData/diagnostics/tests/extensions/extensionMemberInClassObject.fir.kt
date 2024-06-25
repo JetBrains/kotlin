@@ -9,9 +9,9 @@ class Foo {
 }
 
 fun main() {
-    <!CANNOT_INFER_PARAMETER_TYPE!>with<!>("", <!CANNOT_INFER_PARAMETER_TYPE!>{
+    <!CANNOT_INFER_PARAMETER_TYPE!>with<!>("", {
         Foo.<!UNRESOLVED_REFERENCE!>findByName<!>("")
-    }<!>)
+    })
     with(Foo) {
         findByName("")
     }

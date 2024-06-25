@@ -137,6 +137,13 @@ internal fun FirAnonymousFunction.computeReturnType(
     // TODO: Consider simplifying the code once we've got some resolution on KT-67869
     val commonSuperType = session.typeContext.commonSuperTypeOrNull(returnExpressions.map { it.expression.resolvedType })
         ?: unitType
+
+    // If both expected and return expression CSTs are error types, prefer the return expression CST.
+    // This helps us skip duplicate diagnostics on implicit lambda return type refs.
+    if (expandedExpectedReturnType is ConeErrorType && commonSuperType is ConeErrorType) {
+        return commonSuperType
+    }
+
     return if (isPassedAsFunctionArgument && !commonSuperType.fullyExpandedType(session).isUnit) {
         expectedReturnType ?: commonSuperType
     } else {
