@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.resolve.substitution.chain
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.unwrapAnonymousFunctionExpression
+import org.jetbrains.kotlin.fir.resolve.transformers.unwrapAtoms
 import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
@@ -972,7 +973,7 @@ abstract class FirDataFlowAnalyzer(
         return when (this) {
             is FirFunctionCall -> {
                 // Processing case with a candidate might be necessary for PCLA, because even top-level calls might be not fully completed
-                val argumentToParameter = resolvedArgumentMapping ?: candidate()?.argumentMapping ?: return null
+                val argumentToParameter = resolvedArgumentMapping ?: candidate()?.argumentMapping?.unwrapAtoms() ?: return null
                 val parameterToArgument = argumentToParameter.entries.associate { it.value to it.key.unwrapArgument() }
                 Array(callee.valueParameters.size + 1) { i ->
                     if (i > 0) parameterToArgument[callee.valueParameters[i - 1]] else receiver

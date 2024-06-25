@@ -227,12 +227,13 @@ private fun BodyResolveComponents.getCallableReferenceAdaptation(
      */
     var defaults = 0
     var varargMappingState = VarargMappingState.UNMAPPED
-    val mappedArguments = linkedMapOf<FirValueParameter, ResolvedCallArgument<FirExpression>>()
-    val mappedVarargElements = linkedMapOf<FirValueParameter, MutableList<FirExpression>>()
+    val mappedArguments = linkedMapOf<FirValueParameter, ResolvedCallArgument<ConeCallAtom>>()
+    val mappedVarargElements = linkedMapOf<FirValueParameter, MutableList<ConeCallAtom>>()
     val mappedArgumentTypes = arrayOfNulls<ConeKotlinType?>(fakeArguments.size)
 
     for ((valueParameter, resolvedArgument) in argumentMapping.parameterToCallArgumentMap) {
-        for (fakeArgument in resolvedArgument.arguments) {
+        for (fakeArgumentAtom in resolvedArgument.arguments) {
+            val fakeArgument = fakeArgumentAtom.expression
             val index = fakeArgument.index
             val substitutedParameter = function.valueParameters.getOrNull(function.indexOf(valueParameter)) ?: continue
 
@@ -249,10 +250,10 @@ private fun BodyResolveComponents.getCallableReferenceAdaptation(
                 when (newVarargMappingState) {
                     VarargMappingState.MAPPED_WITH_ARRAY -> {
                         // If we've already mapped an argument to this value parameter, it'll always be a type mismatch.
-                        mappedArguments[valueParameter] = ResolvedCallArgument.SimpleArgument(fakeArgument)
+                        mappedArguments[valueParameter] = ResolvedCallArgument.SimpleArgument(fakeArgumentAtom)
                     }
                     VarargMappingState.MAPPED_WITH_PLAIN_ARGS -> {
-                        mappedVarargElements.getOrPut(valueParameter) { ArrayList() }.add(fakeArgument)
+                        mappedVarargElements.getOrPut(valueParameter) { ArrayList() }.add(fakeArgumentAtom)
                     }
                     VarargMappingState.UNMAPPED -> {
                     }
@@ -384,7 +385,7 @@ private fun createFakeArgumentsForReference(
     expectedArgumentCount: Int,
     inputTypes: List<ConeKotlinType>,
     unboundReceiverCount: Int
-): List<FirExpression> {
+): List<ConeCallAtom> {
     var afterVararg = false
     var varargComponentType: ConeKotlinType? = null
     var vararg = false
@@ -404,7 +405,7 @@ private fun createFakeArgumentsForReference(
             varargComponentType = inputType
             vararg = true
         }
-        if (name != null) {
+        val argument = if (name != null) {
             buildNamedArgumentExpression {
                 expression = FirFakeArgumentForCallableReference(index)
                 this.name = name
@@ -413,6 +414,7 @@ private fun createFakeArgumentsForReference(
         } else {
             FirFakeArgumentForCallableReference(index)
         }
+        ConeCallAtom.createRawAtom(argument)
     }
 }
 

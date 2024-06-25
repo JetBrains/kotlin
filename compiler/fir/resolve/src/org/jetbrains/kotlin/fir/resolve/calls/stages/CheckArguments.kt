@@ -29,11 +29,12 @@ internal object CheckArguments : ResolutionStage() {
         val argumentMapping = candidate.argumentMapping
         val isInvokeFromExtensionFunctionType = candidate.isInvokeFromExtensionFunctionType
 
-        for ((index, argument) in callInfo.arguments.withIndex()) {
+        for ((index, argument) in candidate.arguments.withIndex()) {
+            val parameter = argumentMapping[argument]
             candidate.resolveArgument(
                 callInfo,
-                argument,
-                argumentMapping[argument],
+                argument.expression,
+                parameter,
                 isReceiver = index == 0 && isInvokeFromExtensionFunctionType,
                 sink = sink,
                 context = context

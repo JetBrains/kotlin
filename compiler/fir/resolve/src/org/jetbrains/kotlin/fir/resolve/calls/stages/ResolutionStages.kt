@@ -363,7 +363,7 @@ object CheckDslScopeViolation : ResolutionStage() {
         if (candidate.dispatchReceiver?.resolvedType?.fullyExpandedType(context.session)?.isSomeFunctionType(context.session) == true &&
             (candidate.symbol as? FirNamedFunctionSymbol)?.name == OperatorNameConventions.INVOKE
         ) {
-            val firstArg = candidate.argumentMapping.keys.firstOrNull() as? FirThisReceiverExpression ?: return
+            val firstArg = candidate.argumentMapping.keys.firstOrNull()?.expression as? FirThisReceiverExpression ?: return
             if (!firstArg.isImplicit) return
             checkImpl(
                 candidate,
@@ -496,17 +496,25 @@ internal object MapArguments : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         val symbol = candidate.symbol as? FirFunctionSymbol<*> ?: return sink.reportDiagnostic(HiddenCandidate)
         val function = symbol.fir
+        val arguments = callInfo.arguments.map { ConeCallAtom.createRawAtom(it) }
         val mapping = context.bodyResolveComponents.mapArguments(
-            callInfo.arguments,
+            arguments,
             function,
             candidate.originScope,
             callSiteIsOperatorCall = (callInfo.callSite as? FirFunctionCall)?.origin == FirFunctionCallOrigin.Operator
         )
-        candidate.initializeArgumentMapping(mapping.toArgumentToParameterMapping())
+        candidate.initializeArgumentMapping(
+            arguments.unwrapNamedArgumentsForDynamicCall(function),
+            mapping.toArgumentToParameterMapping()
+        )
         candidate.numDefaults = mapping.numDefaults()
-
         mapping.diagnostics.forEach(sink::reportDiagnostic)
         sink.yieldIfNeed()
+    }
+
+    private fun List<ConeCallAtom>.unwrapNamedArgumentsForDynamicCall(function: FirFunction): List<ConeCallAtom> {
+        if (function.origin != FirDeclarationOrigin.DynamicScope) return this
+        return map { (it as? ConeNamedArgumentAtom)?.subAtom ?: it }
     }
 }
 

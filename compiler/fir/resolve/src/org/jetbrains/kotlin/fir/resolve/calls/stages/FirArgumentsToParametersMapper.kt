@@ -39,11 +39,11 @@ data class ArgumentMapping(
     //      fun foo(a: Int, b: Int) {}
     //      foo(b = bar(), a = qux())
     // parameterToCallArgumentMap.values() should be [ 'bar()', 'foo()' ]
-    val parameterToCallArgumentMap: LinkedHashMap<FirValueParameter, ResolvedCallArgument<FirExpression>>,
+    val parameterToCallArgumentMap: LinkedHashMap<FirValueParameter, ResolvedCallArgument<ConeCallAtom>>,
     val diagnostics: List<ResolutionDiagnostic>,
 ) {
-    fun toArgumentToParameterMapping(): LinkedHashMap<FirExpression, FirValueParameter> {
-        val argumentToParameterMapping = linkedMapOf<FirExpression, FirValueParameter>()
+    fun toArgumentToParameterMapping(): LinkedHashMap<ConeCallAtom, FirValueParameter> {
+        val argumentToParameterMapping = linkedMapOf<ConeCallAtom, FirValueParameter>()
         parameterToCallArgumentMap.forEach { (valueParameter, resolvedArgument) ->
             when (resolvedArgument) {
                 is ResolvedCallArgument.SimpleArgument -> argumentToParameterMapping[resolvedArgument.callArgument] = valueParameter
@@ -65,7 +65,7 @@ data class ArgumentMapping(
 private val EmptyArgumentMapping = ArgumentMapping(linkedMapOf(), emptyList())
 
 fun BodyResolveComponents.mapArguments(
-    arguments: List<FirExpression>,
+    arguments: List<ConeCallAtom>,
     function: FirFunction,
     originScope: FirScope?,
     callSiteIsOperatorCall: Boolean,
@@ -74,11 +74,12 @@ fun BodyResolveComponents.mapArguments(
         return EmptyArgumentMapping
     }
 
-    val nonLambdaArguments: MutableList<FirExpression> = mutableListOf()
-    val excessLambdaArguments: MutableList<FirExpression> = mutableListOf()
-    var externalArgument: FirExpression? = null
+    val nonLambdaArguments: MutableList<ConeCallAtom> = mutableListOf()
+    val excessLambdaArguments: MutableList<ConeCallAtom> = mutableListOf()
+    var externalArgument: ConeCallAtom? = null
     for (argument in arguments) {
-        if (argument is FirAnonymousFunctionExpression && argument.isTrailingLambda) {
+        val argumentExpression = argument.expression
+        if (argumentExpression is FirAnonymousFunctionExpression && argumentExpression.isTrailingLambda) {
             if (externalArgument == null) {
                 externalArgument = argument
             } else {
@@ -117,14 +118,14 @@ private class FirCallArgumentsProcessor(
 ) {
     private var state = State.POSITION_ARGUMENTS
     private var currentPositionedParameterIndex = 0
-    private var varargArguments: MutableList<FirExpression>? = null
+    private var varargArguments: MutableList<ConeCallAtom>? = null
     private var nameToParameter: Map<Name, FirValueParameter>? = null
     private var namedDynamicArgumentsNamesImpl: MutableSet<Name>? = null
     private val namedDynamicArgumentsNames: MutableSet<Name>
         get() = namedDynamicArgumentsNamesImpl ?: mutableSetOf<Name>().also { namedDynamicArgumentsNamesImpl = it }
     var diagnostics: MutableList<ResolutionDiagnostic>? = null
         private set
-    val result: LinkedHashMap<FirValueParameter, ResolvedCallArgument<FirExpression>> = LinkedHashMap(function.valueParameters.size)
+    val result: LinkedHashMap<FirValueParameter, ResolvedCallArgument<ConeCallAtom>> = LinkedHashMap(function.valueParameters.size)
 
     val forbiddenNamedArgumentsTarget: ForbiddenNamedArgumentsTarget? by lazy {
         function.forbiddenNamedArgumentsTargetOrNull(originScope as? FirTypeScope)
@@ -136,7 +137,7 @@ private class FirCallArgumentsProcessor(
         NAMED_ONLY_ARGUMENTS
     }
 
-    fun processNonLambdaArguments(arguments: List<FirExpression>) {
+    fun processNonLambdaArguments(arguments: List<ConeCallAtom>) {
         for ((argumentIndex, argument) in arguments.withIndex()) {
             processNonLambdaArgument(argument, isLastArgument = argumentIndex == arguments.lastIndex)
         }
@@ -145,10 +146,10 @@ private class FirCallArgumentsProcessor(
         }
     }
 
-    private fun processNonLambdaArgument(argument: FirExpression, isLastArgument: Boolean) {
+    private fun processNonLambdaArgument(argument: ConeCallAtom, isLastArgument: Boolean) {
         when {
             // process position argument
-            argument !is FirNamedArgumentExpression -> {
+            argument !is ConeNamedArgumentAtom -> {
                 if (state == State.VARARG_POSITION && isIndexedSetOperator && isLastArgument) {
                     // The last argument of an indexed set operator should be reserved for the last argument (the assigned value).
                     // That's why if vararg presented, they should be completed
@@ -158,9 +159,9 @@ private class FirCallArgumentsProcessor(
             }
             // process named argument
             function.origin == FirDeclarationOrigin.DynamicScope -> {
-                processPositionArgument(argument.expression, isLastArgument)
+                processPositionArgument(argument.subAtom, isLastArgument)
                 if (!namedDynamicArgumentsNames.add(argument.name)) {
-                    addDiagnostic(ArgumentPassedTwice(argument))
+                    addDiagnostic(ArgumentPassedTwice(argument.expression))
                 }
             }
             else -> {
@@ -172,9 +173,9 @@ private class FirCallArgumentsProcessor(
         }
     }
 
-    private fun processPositionArgument(argument: FirExpression, isLastArgument: Boolean) {
+    private fun processPositionArgument(argument: ConeCallAtom, isLastArgument: Boolean) {
         if (state == State.NAMED_ONLY_ARGUMENTS) {
-            addDiagnostic(MixingNamedAndPositionArguments(argument))
+            addDiagnostic(MixingNamedAndPositionArguments(argument.expression))
             return
         }
 
@@ -198,7 +199,7 @@ private class FirCallArgumentsProcessor(
         }
         val parameter = parameters.getOrNull(assignedParameterIndex)
         if (parameter == null) {
-            addDiagnostic(TooManyArguments(argument, function))
+            addDiagnostic(TooManyArguments(argument.expression, function))
             return
         }
 
@@ -215,9 +216,9 @@ private class FirCallArgumentsProcessor(
         }
     }
 
-    private fun processNamedArgument(argument: FirNamedArgumentExpression) {
+    private fun processNamedArgument(argument: ConeNamedArgumentAtom) {
         forbiddenNamedArgumentsTarget?.let {
-            addDiagnostic(NamedArgumentNotAllowed(argument, function, it))
+            addDiagnostic(NamedArgumentNotAllowed(argument.expression, function, it))
         }
 
         val stateAllowsMixedNamedAndPositionArguments = state != State.NAMED_ONLY_ARGUMENTS
@@ -225,7 +226,7 @@ private class FirCallArgumentsProcessor(
         val parameter = findParameterByName(argument) ?: return
 
         result[parameter]?.let {
-            addDiagnostic(ArgumentPassedTwice(argument))
+            addDiagnostic(ArgumentPassedTwice(argument.expression))
             return
         }
 
@@ -237,22 +238,23 @@ private class FirCallArgumentsProcessor(
         }
     }
 
-    fun processExternalArgument(externalArgument: FirExpression) {
+    fun processExternalArgument(externalArgument: ConeCallAtom) {
+        val argumentExpression = externalArgument.expression
         val lastParameter = parameters.lastOrNull()
         if (lastParameter == null) {
-            addDiagnostic(TooManyArguments(externalArgument, function))
+            addDiagnostic(TooManyArguments(argumentExpression, function))
             return
         }
 
         if (function.origin != FirDeclarationOrigin.DynamicScope) {
             if (lastParameter.isVararg) {
-                addDiagnostic(VarargArgumentOutsideParentheses(externalArgument, lastParameter))
+                addDiagnostic(VarargArgumentOutsideParentheses(argumentExpression, lastParameter))
                 return
             }
 
             val previousOccurrence = result[lastParameter]
             if (previousOccurrence != null) {
-                addDiagnostic(TooManyArguments(externalArgument, function))
+                addDiagnostic(TooManyArguments(argumentExpression, function))
                 return
             }
 
@@ -267,8 +269,8 @@ private class FirCallArgumentsProcessor(
         }
     }
 
-    fun processExcessLambdaArguments(excessLambdaArguments: List<FirExpression>) {
-        excessLambdaArguments.forEach { arg -> addDiagnostic(ManyLambdaExpressionArguments(arg)) }
+    fun processExcessLambdaArguments(excessLambdaArguments: List<ConeCallAtom>) {
+        excessLambdaArguments.forEach { arg -> addDiagnostic(ManyLambdaExpressionArguments(arg.expression)) }
     }
 
     fun processDefaultsAndRunChecks() {
@@ -279,12 +281,12 @@ private class FirCallArgumentsProcessor(
                         withFirEntry("parameter", parameter)
                         withEntryGroup("arguments") {
                             for ((index, argument) in resolvedArgument.arguments.withIndex()) {
-                                withFirEntry("argument$index", argument)
+                                withFirEntry("argument$index", argument.expression)
                             }
                         }
                     }
                 } else if (resolvedArgument.callArgument.isSpread) {
-                    addDiagnostic(NonVarargSpread(resolvedArgument.callArgument))
+                    addDiagnostic(NonVarargSpread(resolvedArgument.callArgument.expression))
                 }
             }
         }
@@ -312,7 +314,7 @@ private class FirCallArgumentsProcessor(
         result[parameter] = ResolvedCallArgument.VarargArgument(varargArguments!!)
     }
 
-    private fun addVarargArgument(argument: FirExpression) {
+    private fun addVarargArgument(argument: ConeCallAtom) {
         if (varargArguments == null) {
             varargArguments = ArrayList()
         }
@@ -349,7 +351,7 @@ private class FirCallArgumentsProcessor(
         return nameToParameter!![name]
     }
 
-    private fun findParameterByName(argument: FirNamedArgumentExpression): FirValueParameter? {
+    private fun findParameterByName(argument: ConeNamedArgumentAtom): FirValueParameter? {
         var parameter = getParameterByName(argument.name)
 
         val symbol = function.symbol as? FirNamedFunctionSymbol
@@ -361,7 +363,7 @@ private class FirCallArgumentsProcessor(
             val someName = someParameter?.name
             if (someName != null && someName != argument.name) {
                 addDiagnostic(
-                    NameForAmbiguousParameter(argument)
+                    NameForAmbiguousParameter(argument.expression)
                 )
                 return ProcessorAction.STOP
             }
@@ -387,7 +389,7 @@ private class FirCallArgumentsProcessor(
                             val someParameter = allowedParameters?.getOrNull(matchedIndex)?.fir
                             if (someParameter != null) {
                                 addDiagnostic(
-                                    NameForAmbiguousParameter(argument)
+                                    NameForAmbiguousParameter(argument.expression)
                                 )
                                 ProcessorAction.STOP
                             } else {
@@ -401,7 +403,7 @@ private class FirCallArgumentsProcessor(
                 }
             }
             if (parameter == null) {
-                addDiagnostic(NameNotFound(argument, function))
+                addDiagnostic(NameNotFound(argument.expression, function))
             }
         } else {
             if (symbol != null && (function.isSubstitutionOrIntersectionOverride || function.isJavaOrEnhancement)) {
@@ -428,8 +430,11 @@ private class FirCallArgumentsProcessor(
         diagnostics!!.add(diagnostic)
     }
 
-    private val FirExpression.isSpread: Boolean
-        get() = this is FirWrappedArgumentExpression && isSpread
+    private val ConeCallAtom.isSpread: Boolean
+        get() = when (this) {
+            is ConeWrappedExpressionAtom -> isSpread
+            else -> false
+        }
 
     private val parameters: List<FirValueParameter>
         get() = function.valueParameters
