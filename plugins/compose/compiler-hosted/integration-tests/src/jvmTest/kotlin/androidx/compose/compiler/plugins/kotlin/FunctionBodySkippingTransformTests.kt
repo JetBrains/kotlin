@@ -1306,6 +1306,7 @@ class FunctionBodySkippingTransformTests(
                 fun ReceiveValue(value: Int) { }
             """
         )
+
 }
 
 class FunctionBodySkippingTransformTestsNoSource(
@@ -1314,6 +1315,13 @@ class FunctionBodySkippingTransformTestsNoSource(
     override fun CompilerConfiguration.updateConfiguration() {
         put(ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY, false)
         put(ComposeConfiguration.TRACE_MARKERS_ENABLED_KEY, false)
+        put(
+            ComposeConfiguration.FEATURE_FLAGS,
+            listOf(
+                FeatureFlag.StrongSkipping.featureName,
+                FeatureFlag.OptimizeNonSkippingGroups.featureName,
+            )
+        )
     }
 
     @Test
@@ -1455,6 +1463,34 @@ class FunctionBodySkippingTransformTestsNoSource(
 
             @Composable
             fun Text(value: String) {}
+        """
+    )
+
+    @Test
+    fun testIfStatementGroups() = verifyGoldenComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            fun Test(level: Int) {
+                Wrap {
+                    if (level > 0) {
+                        used(remember { "Before" })
+                        Wrap {
+                            used(remember { "Middle" })
+                        }
+                        used(remember { "End" })
+                    }
+                }
+            }
+        """,
+        """
+            import androidx.compose.runtime.*
+
+            @Composable
+            fun Wrap(content: @Composable () -> Unit) = content()
+
+            fun used(value: Any) { }
         """
     )
 }

@@ -1,0 +1,75 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+@Composable
+fun Test(level: Int) {
+    Wrap {
+        if (level > 0) {
+            used(remember { "Before" })
+            Wrap {
+                used(remember { "Middle" })
+            }
+            used(remember { "End" })
+        }
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun Test(level: Int, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(level)) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+    Wrap(rememberComposableLambda(<>, true, { %composer: Composer?, %changed: Int ->
+      if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+        if (level > 0) {
+          %composer.startReplaceGroup(<>)
+          used(<block>{
+            %composer.cache(false) {
+              "Before"
+            }
+          })
+          Wrap(ComposableSingletons%TestKt.lambda-1, %composer, 0b0110)
+          used(<block>{
+            %composer.cache(false) {
+              "End"
+            }
+          })
+          %composer.endReplaceGroup()
+        } else {
+          %composer.startReplaceGroup(<>)
+          %composer.endReplaceGroup()
+        }
+      } else {
+        %composer.skipToGroupEnd()
+      }
+    }, %composer, 0b00110110), %composer, 0b0110)
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(level, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+internal object ComposableSingletons%TestKt {
+  val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
+    if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+      used(<block>{
+        %composer.cache(false) {
+          "Middle"
+        }
+      })
+    } else {
+      %composer.skipToGroupEnd()
+    }
+  }
+}

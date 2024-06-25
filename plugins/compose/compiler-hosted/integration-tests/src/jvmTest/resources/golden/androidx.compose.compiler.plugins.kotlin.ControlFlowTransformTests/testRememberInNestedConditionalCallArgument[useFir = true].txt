@@ -31,31 +31,35 @@ private fun Test(param: String?, %composer: Composer?, %changed: Int): String? {
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
-  val tmp0 = Test(<block>{
+  val tmp0 = Test(if (param == null) {
     %composer.startReplaceGroup(<>)
     sourceInformation(%composer, "<Test(>")
-    val tmp3_group = if (param == null) {
-      Test(<block>{
+    val tmp3_group = <block>{
+      Test(if (param == null) {
         %composer.startReplaceGroup(<>)
         sourceInformation(%composer, "<rememb...>")
-        val tmp2_group = if (param == null) {
+        val tmp2_group = <block>{
           sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
           val tmp1_group = %composer.cache(false) {
             ""
           }
           sourceInformationMarkerEnd(%composer)
           tmp1_group
-        } else {
-          null
         }
         %composer.endReplaceGroup()
         tmp2_group
+      } else {
+        %composer.startReplaceGroup(<>)
+        %composer.endReplaceGroup()
+        null
       }, %composer, 0)
-    } else {
-      null
     }
     %composer.endReplaceGroup()
     tmp3_group
+  } else {
+    %composer.startReplaceGroup(<>)
+    %composer.endReplaceGroup()
+    null
   }, %composer, 0)
   if (isTraceInProgress()) {
     traceEventEnd()

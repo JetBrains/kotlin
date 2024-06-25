@@ -28,9 +28,9 @@ fun Example(x: Int, %composer: Composer?, %changed: Int): Int {
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
-  %composer.startReplaceGroup(<>)
-  sourceInformation(%composer, "<R()>")
   if (x > 0) {
+    %composer.startReplaceGroup(<>)
+    sourceInformation(%composer, "<R()>")
     val tmp1_return = R(%composer, 0)
     %composer.endReplaceGroup()
     if (isTraceInProgress()) {
@@ -38,8 +38,10 @@ fun Example(x: Int, %composer: Composer?, %changed: Int): Int {
     }
     %composer.endReplaceGroup()
     return tmp1_return
+  } else {
+    %composer.startReplaceGroup(<>)
+    %composer.endReplaceGroup()
   }
-  %composer.endReplaceGroup()
   val tmp0 = R(%composer, 0)
   if (isTraceInProgress()) {
     traceEventEnd()

@@ -30,12 +30,15 @@ private fun Test(param: String?, %composer: Composer?, %changed: Int) {
     Dialog({ %composer: Composer?, %changed: Int ->
       %composer.startReplaceGroup(<>)
       sourceInformation(%composer, "C:Test.kt")
-      %composer.startReplaceGroup(<>)
-      sourceInformation(%composer, "<Test(p...>")
       if (false) {
+        %composer.startReplaceGroup(<>)
+        sourceInformation(%composer, "<Test(p...>")
         Test(param, %composer, 0)
+        %composer.endReplaceGroup()
+      } else {
+        %composer.startReplaceGroup(<>)
+        %composer.endReplaceGroup()
       }
-      %composer.endReplaceGroup()
       %composer.endReplaceGroup()
     }, %composer, 0)
     if (isTraceInProgress()) {

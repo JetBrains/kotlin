@@ -28,7 +28,7 @@ fun Test(a: Boolean, visible: Boolean, onDismiss: () -> Unit) {
 @Composable
 fun Test(a: Boolean, visible: Boolean, onDismiss: Function0<Unit>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test)P(!1,2)<someCo...>,<{>:Test.kt")
+  sourceInformation(%composer, "C(Test)P(!1,2):Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
@@ -44,11 +44,15 @@ fun Test(a: Boolean, visible: Boolean, onDismiss: Function0<Unit>, %composer: Co
       traceEventStart(<>, %dirty, -1, <>)
     }
     if (a) {
+      %composer.startReplaceGroup(<>)
+      sourceInformation(%composer, "<someCo...>")
       val a = someComposableValue(%composer, 0)
       used(a)
       val m = Modifier()
-      val dismissModifier = <block>{
-        val tmp1_group = if (visible) {
+      val dismissModifier = if (visible) {
+        %composer.startReplaceGroup(<>)
+        sourceInformation(%composer, "<{>")
+        val tmp1_group = <block>{
           m.pointerInput(Unit, <block>{
             sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
             val tmp0_group = %composer.cache(%dirty and 0b001110000000 == 0b000100000000) {
@@ -61,12 +65,19 @@ fun Test(a: Boolean, visible: Boolean, onDismiss: Function0<Unit>, %composer: Co
             sourceInformationMarkerEnd(%composer)
             tmp0_group
           })
-        } else {
-          m
         }
+        %composer.endReplaceGroup()
         tmp1_group
+      } else {
+        %composer.startReplaceGroup(<>)
+        %composer.endReplaceGroup()
+        m
       }
       used(dismissModifier)
+      %composer.endReplaceGroup()
+    } else {
+      %composer.startReplaceGroup(<>)
+      %composer.endReplaceGroup()
     }
     if (isTraceInProgress()) {
       traceEventEnd()

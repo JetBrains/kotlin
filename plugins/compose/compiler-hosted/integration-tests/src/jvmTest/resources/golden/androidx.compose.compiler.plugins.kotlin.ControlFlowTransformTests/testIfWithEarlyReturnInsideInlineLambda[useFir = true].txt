@@ -28,17 +28,17 @@ fun Test(%composer: Composer?, %changed: Int) {
       traceEventStart(<>, %changed, -1, <>)
     }
     run {
-      %composer.startReplaceGroup(<>)
-      sourceInformation(%composer, "<Test()>")
       if (true) {
+        %composer.startReplaceGroup(<>)
         %composer.endReplaceGroup()
         return@run
       } else {
+        %composer.startReplaceGroup(<>)
+        sourceInformation(%composer, "<Test()>")
         Test(%composer, 0)
         %composer.endReplaceGroup()
         return@run
       }
-      %composer.endReplaceGroup()
     }
     if (isTraceInProgress()) {
       traceEventEnd()

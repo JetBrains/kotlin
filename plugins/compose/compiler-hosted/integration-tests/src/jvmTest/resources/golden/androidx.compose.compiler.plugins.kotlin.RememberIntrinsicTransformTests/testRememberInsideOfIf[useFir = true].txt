@@ -21,7 +21,7 @@ fun Test(condition: Boolean) {
 @Composable
 fun Test(condition: Boolean, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test)<A()>,<rememb...>:Test.kt")
+  sourceInformation(%composer, "C(Test)<A()>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changed(condition)) 0b0100 else 0b0010
@@ -32,6 +32,8 @@ fun Test(condition: Boolean, %composer: Composer?, %changed: Int) {
     }
     A(%composer, 0)
     if (condition) {
+      %composer.startReplaceGroup(<>)
+      sourceInformation(%composer, "<rememb...>")
       val foo = <block>{
         sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
         val tmp0_group = %composer.cache(false) {
@@ -40,6 +42,10 @@ fun Test(condition: Boolean, %composer: Composer?, %changed: Int) {
         sourceInformationMarkerEnd(%composer)
         tmp0_group
       }
+      %composer.endReplaceGroup()
+    } else {
+      %composer.startReplaceGroup(<>)
+      %composer.endReplaceGroup()
     }
     if (isTraceInProgress()) {
       traceEventEnd()
