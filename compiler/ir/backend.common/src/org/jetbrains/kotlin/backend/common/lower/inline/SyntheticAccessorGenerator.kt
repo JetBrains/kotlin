@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.lower.inline
 
 import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
@@ -426,4 +427,84 @@ open class SyntheticAccessorGenerator<Context : BackendContext>(protected val co
 
     protected open val DescriptorVisibility.isProtected
         get() = this == DescriptorVisibilities.PROTECTED
+
+    /**
+     * Produces a call to the synthetic accessor [accessorSymbol] to replace the call expression [oldExpression].
+     *
+     * Before:
+     * ```kotlin
+     * class C private constructor(val value: Int) {
+     *
+     *     private fun privateFun(a: Int): String = a.toString()
+     *
+     *     internal inline fun foo(x: Int) {
+     *         println(privateFun(x))
+     *     }
+     *
+     *     internal inline fun copy(): C = C(value)
+     * }
+     * ```
+     *
+     * After:
+     * ```kotlin
+     * class C private constructor(val value: Int) {
+     *
+     *     public constructor(
+     *         value: Int,
+     *         constructor_marker: DefaultConstructorMarker?
+     *     ) : this(value)
+     *
+     *     private fun privateFun(a: Int): String = a.toString()
+     *
+     *     public static fun access$privateFun($this: C, a: Int): String =
+     *         $this.protectedFun(a)
+     *
+     *     internal inline fun foo(x: Int) {
+     *         println(C.access$privateFun(this, x))
+     *     }
+     *
+     *     internal inline fun copy(): C = C(value, null)
+     * }
+     * ```
+     */
+    fun modifyFunctionAccessExpression(
+        oldExpression: IrFunctionAccessExpression,
+        accessorSymbol: IrFunctionSymbol
+    ): IrFunctionAccessExpression {
+        val newExpression = when (oldExpression) {
+            is IrCall -> IrCallImpl.fromSymbolOwner(
+                oldExpression.startOffset, oldExpression.endOffset,
+                oldExpression.type,
+                accessorSymbol as IrSimpleFunctionSymbol, oldExpression.typeArgumentsCount,
+                origin = oldExpression.origin
+            )
+            is IrDelegatingConstructorCall -> IrDelegatingConstructorCallImpl.fromSymbolOwner(
+                oldExpression.startOffset, oldExpression.endOffset,
+                context.irBuiltIns.unitType,
+                accessorSymbol as IrConstructorSymbol, oldExpression.typeArgumentsCount
+            )
+            is IrConstructorCall ->
+                IrConstructorCallImpl.fromSymbolOwner(
+                    oldExpression.startOffset, oldExpression.endOffset,
+                    oldExpression.type,
+                    accessorSymbol as IrConstructorSymbol
+                )
+            is IrEnumConstructorCall -> compilationException(
+                "Generating synthetic accessors for IrEnumConstructorCall is not supported",
+                oldExpression,
+            )
+        }
+        newExpression.copyTypeArgumentsFrom(oldExpression)
+        val receiverAndArgs = oldExpression.receiverAndArgs()
+        receiverAndArgs.forEachIndexed { i, irExpression ->
+            newExpression.putValueArgument(i, irExpression)
+        }
+        if (accessorSymbol is IrConstructorSymbol) {
+            newExpression.putValueArgument(receiverAndArgs.size, createAccessorMarkerArgument())
+        }
+        return newExpression
+    }
+
+    fun createAccessorMarkerArgument() =
+        IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.ir.symbols.defaultConstructorMarker.defaultType.makeNullable())
 }
