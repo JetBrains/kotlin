@@ -1,19 +1,19 @@
-FILE fqName:<root> fileName:/annotationsInAnnotationArguments.kt
+FILE fqName:<root> fileName:/varargsInAnnotationArguments.kt
   CLASS ANNOTATION_CLASS name:A1 modality:OPEN visibility:public superTypes:[kotlin.Annotation]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A1
-    PROPERTY name:x visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
+    PROPERTY name:xs visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:xs type:kotlin.IntArray visibility:private [final]
         EXPRESSION_BODY
-          GET_VAR 'x: kotlin.Int declared in <root>.A1.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.A1) returnType:kotlin.Int
-        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [val]
+          GET_VAR 'xs: kotlin.IntArray declared in <root>.A1.<init>' type=kotlin.IntArray origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xs> visibility:public modality:FINAL <> ($this:<root>.A1) returnType:kotlin.IntArray
+        correspondingProperty: PROPERTY name:xs visibility:public modality:FINAL [val]
         $this: VALUE_PARAMETER name:<this> type:<root>.A1
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.A1'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
-              receiver: GET_VAR '<this>: <root>.A1 declared in <root>.A1.<get-x>' type=<root>.A1 origin=null
-    CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:<root>.A1 [primary]
-      VALUE_PARAMETER name:x index:0 type:kotlin.Int
+          RETURN type=kotlin.Nothing from='public final fun <get-xs> (): kotlin.IntArray declared in <root>.A1'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xs type:kotlin.IntArray visibility:private [final]' type=kotlin.IntArray origin=null
+              receiver: GET_VAR '<this>: <root>.A1 declared in <root>.A1.<get-xs>' type=<root>.A1 origin=null
+    CONSTRUCTOR visibility:public <> (xs:kotlin.IntArray) returnType:<root>.A1 [primary]
+      VALUE_PARAMETER name:xs index:0 type:kotlin.IntArray varargElementType:kotlin.Int [vararg]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:A1 modality:OPEN visibility:public superTypes:[kotlin.Annotation]'
@@ -32,19 +32,19 @@ FILE fqName:<root> fileName:/annotationsInAnnotationArguments.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS ANNOTATION_CLASS name:A2 modality:OPEN visibility:public superTypes:[kotlin.Annotation]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A2
-    PROPERTY name:a visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:a type:<root>.A1 visibility:private [final]
+    PROPERTY name:xs visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:xs type:kotlin.Array<out kotlin.String> visibility:private [final]
         EXPRESSION_BODY
-          GET_VAR 'a: <root>.A1 declared in <root>.A2.<init>' type=<root>.A1 origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> visibility:public modality:FINAL <> ($this:<root>.A2) returnType:<root>.A1
-        correspondingProperty: PROPERTY name:a visibility:public modality:FINAL [val]
+          GET_VAR 'xs: kotlin.Array<out kotlin.String> declared in <root>.A2.<init>' type=kotlin.Array<out kotlin.String> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xs> visibility:public modality:FINAL <> ($this:<root>.A2) returnType:kotlin.Array<out kotlin.String>
+        correspondingProperty: PROPERTY name:xs visibility:public modality:FINAL [val]
         $this: VALUE_PARAMETER name:<this> type:<root>.A2
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-a> (): <root>.A1 declared in <root>.A2'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a type:<root>.A1 visibility:private [final]' type=<root>.A1 origin=null
-              receiver: GET_VAR '<this>: <root>.A2 declared in <root>.A2.<get-a>' type=<root>.A2 origin=null
-    CONSTRUCTOR visibility:public <> (a:<root>.A1) returnType:<root>.A2 [primary]
-      VALUE_PARAMETER name:a index:0 type:<root>.A1
+          RETURN type=kotlin.Nothing from='public final fun <get-xs> (): kotlin.Array<out kotlin.String> declared in <root>.A2'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xs type:kotlin.Array<out kotlin.String> visibility:private [final]' type=kotlin.Array<out kotlin.String> origin=null
+              receiver: GET_VAR '<this>: <root>.A2 declared in <root>.A2.<get-xs>' type=<root>.A2 origin=null
+    CONSTRUCTOR visibility:public <> (xs:kotlin.Array<out kotlin.String>) returnType:<root>.A2 [primary]
+      VALUE_PARAMETER name:xs index:0 type:kotlin.Array<out kotlin.String> varargElementType:kotlin.String [vararg]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:A2 modality:OPEN visibility:public superTypes:[kotlin.Annotation]'
@@ -64,18 +64,18 @@ FILE fqName:<root> fileName:/annotationsInAnnotationArguments.kt
   CLASS ANNOTATION_CLASS name:AA modality:OPEN visibility:public superTypes:[kotlin.Annotation]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.AA
     PROPERTY name:xs visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:xs type:kotlin.Array<<root>.A1> visibility:private [final]
+      FIELD PROPERTY_BACKING_FIELD name:xs type:kotlin.Array<out <root>.A1> visibility:private [final]
         EXPRESSION_BODY
-          GET_VAR 'xs: kotlin.Array<<root>.A1> declared in <root>.AA.<init>' type=kotlin.Array<<root>.A1> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xs> visibility:public modality:FINAL <> ($this:<root>.AA) returnType:kotlin.Array<<root>.A1>
+          GET_VAR 'xs: kotlin.Array<out <root>.A1> declared in <root>.AA.<init>' type=kotlin.Array<out <root>.A1> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xs> visibility:public modality:FINAL <> ($this:<root>.AA) returnType:kotlin.Array<out <root>.A1>
         correspondingProperty: PROPERTY name:xs visibility:public modality:FINAL [val]
         $this: VALUE_PARAMETER name:<this> type:<root>.AA
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-xs> (): kotlin.Array<<root>.A1> declared in <root>.AA'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xs type:kotlin.Array<<root>.A1> visibility:private [final]' type=kotlin.Array<<root>.A1> origin=null
+          RETURN type=kotlin.Nothing from='public final fun <get-xs> (): kotlin.Array<out <root>.A1> declared in <root>.AA'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xs type:kotlin.Array<out <root>.A1> visibility:private [final]' type=kotlin.Array<out <root>.A1> origin=null
               receiver: GET_VAR '<this>: <root>.AA declared in <root>.AA.<get-xs>' type=<root>.AA origin=null
-    CONSTRUCTOR visibility:public <> (xs:kotlin.Array<<root>.A1>) returnType:<root>.AA [primary]
-      VALUE_PARAMETER name:xs index:0 type:kotlin.Array<<root>.A1>
+    CONSTRUCTOR visibility:public <> (xs:kotlin.Array<out <root>.A1>) returnType:<root>.AA [primary]
+      VALUE_PARAMETER name:xs index:0 type:kotlin.Array<out <root>.A1> varargElementType:<root>.A1 [vararg]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:AA modality:OPEN visibility:public superTypes:[kotlin.Annotation]'
@@ -92,8 +92,15 @@ FILE fqName:<root> fileName:/annotationsInAnnotationArguments.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Annotation
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
+  FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     annotations:
-      A2(a = A1(x = 42))
-      AA(xs = [A1(x = 1), A1(x = 2)] type=kotlin.Array<<root>.A1> varargElementType=<root>.A1)
+      A1(xs = [1, 2, 3] type=kotlin.IntArray varargElementType=kotlin.Int)
+      A2(xs = ["a", "b", "c"] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String)
+      AA(xs = [A1(xs = [4] type=kotlin.IntArray varargElementType=kotlin.Int), A1(xs = [5] type=kotlin.IntArray varargElementType=kotlin.Int), A1(xs = [6] type=kotlin.IntArray varargElementType=kotlin.Int)] type=kotlin.Array<out <root>.A1> varargElementType=<root>.A1)
+    BLOCK_BODY
+  FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    annotations:
+      A1(xs = [] type=kotlin.IntArray varargElementType=kotlin.Array<kotlin.IntArray>)
+      A2(xs = [] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.Array<kotlin.Array<out kotlin.String>>)
+      AA(xs = [] type=kotlin.Array<out <root>.A1> varargElementType=kotlin.Array<kotlin.Array<out <root>.A1>>)
     BLOCK_BODY

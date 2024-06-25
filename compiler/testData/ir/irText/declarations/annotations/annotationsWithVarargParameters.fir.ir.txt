@@ -40,5 +40,5 @@ FILE fqName:<root> fileName:/annotationsWithVarargParameters.kt
     BLOCK_BODY
   FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     annotations:
-      A(xs = [] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String)
+      A(xs = [] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.Array<kotlin.Array<out kotlin.String>>)
     BLOCK_BODY

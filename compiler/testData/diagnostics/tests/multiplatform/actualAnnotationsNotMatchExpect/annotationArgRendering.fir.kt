@@ -19,7 +19,7 @@ expect fun kclassArg()
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT("Ann; Ann; Annotation `@Target(allowedTargets = [AnnotationTarget.FUNCTION, AnnotationTarget.CLASS])` is missing on actual declaration")!>actual annotation class Ann<!>
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT("Ann; Ann; Annotation `@Target(allowedTargets = [AnnotationTarget.FUNCTION, AnnotationTarget.CLASS] type=kotlin.Array<out kotlin.annotation.AnnotationTarget> varargElementType=kotlin.annotation.AnnotationTarget)` is missing on actual declaration")!>actual annotation class Ann<!>
 
 <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT("stringConcat; stringConcat; Annotation `@Ann2(s = \"12\")` is missing on actual declaration")!>actual fun stringConcat() {}<!>
 

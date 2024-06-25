@@ -1,0 +1,50 @@
+open annotation class A1 : Annotation {
+  val xs: IntArray
+    field = xs
+    get
+
+  constructor(vararg xs: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+open annotation class A2 : Annotation {
+  val xs: Array<out String>
+    field = xs
+    get
+
+  constructor(vararg xs: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+open annotation class AA : Annotation {
+  val xs: Array<out A1>
+    field = xs
+    get
+
+  constructor(vararg xs: A1) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@A1(xs = [1, 2, 3])
+@A2(xs = ["a", "b", "c"])
+@AA(xs = [A1(xs = [4]), A1(xs = [5]), A1(xs = [6])])
+fun test1() {
+}
+
+@A1(xs = [])
+@A2(xs = [])
+@AA(xs = [])
+fun test2() {
+}

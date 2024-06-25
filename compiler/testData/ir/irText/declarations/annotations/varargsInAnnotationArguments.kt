@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 annotation class A1(vararg val xs: Int)
 annotation class A2(vararg val xs: String)
 annotation class AA(vararg val xs: A1)
