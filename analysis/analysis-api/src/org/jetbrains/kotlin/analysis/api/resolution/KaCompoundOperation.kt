@@ -20,18 +20,6 @@ public sealed interface KaCompoundOperation : KaLifetimeOwner {
     public val operationPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>
 
     /**
-     * A compound access that read, compute, and write the computed value back. Note that calls to `<op>Assign` is not represented by this.
-     */
-    public interface KaCompoundAssignOperation : KaCompoundOperation {
-        public val kind: Kind
-        public val operand: KtExpression
-
-        public enum class Kind {
-            PLUS_ASSIGN, MINUS_ASSIGN, TIMES_ASSIGN, DIV_ASSIGN, REM_ASSIGN
-        }
-    }
-
-    /**
      * A compound access that read, increment or decrement, and write the computed value back.
      */
     public interface KaCompoundUnaryOperation : KaCompoundOperation {
@@ -45,6 +33,18 @@ public sealed interface KaCompoundOperation : KaLifetimeOwner {
         public enum class Precedence {
             PREFIX, POSTFIX
         }
+    }
+}
+
+/**
+ * A compound access that read, compute, and write the computed value back. Note that calls to `<op>Assign` is not represented by this.
+ */
+public interface KaCompoundAssignOperation : KaCompoundOperation {
+    public val kind: Kind
+    public val operand: KtExpression
+
+    public enum class Kind {
+        PLUS_ASSIGN, MINUS_ASSIGN, TIMES_ASSIGN, DIV_ASSIGN, REM_ASSIGN
     }
 }
 
