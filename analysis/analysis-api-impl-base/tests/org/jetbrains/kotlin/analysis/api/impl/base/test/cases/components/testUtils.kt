@@ -190,13 +190,13 @@ internal fun KaSession.sortedCalls(collection: Collection<KaCall>): Collection<K
 internal fun KaCall.symbols(): List<KaSymbol> = when (this) {
     is KaCompoundVariableAccessCall -> listOfNotNull(
         variablePartiallyAppliedSymbol.symbol,
-        compoundAccess.operationPartiallyAppliedSymbol.symbol,
+        compoundOperation.operationPartiallyAppliedSymbol.symbol,
     )
 
     is KaCompoundArrayAccessCall -> listOfNotNull(
         getPartiallyAppliedSymbol.symbol,
         setPartiallyAppliedSymbol.symbol,
-        compoundAccess.operationPartiallyAppliedSymbol.symbol,
+        compoundOperation.operationPartiallyAppliedSymbol.symbol,
     )
 
     is KaCallableMemberCall<*, *> -> listOf(symbol)

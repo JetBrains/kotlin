@@ -1,7 +1,7 @@
 KtOperationReferenceExpression(189,191): '+='
   KaSuccessCallInfo:
     call = KaCompoundArrayAccessCall:
-      compoundAccess = CompoundAssign:
+      compoundOperation = CompoundAssign:
         kind = PLUS_ASSIGN
         operand = 1
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:

@@ -817,7 +817,7 @@ KtConstantExpression(131,132): '1'
 KtBinaryExpression(137,161): 'javaClass.something += 1'
   KaApplicableCallCandidateInfo:
     candidate = KaCompoundVariableAccessCall:
-      compoundAccess = CompoundAssign:
+      compoundOperation = CompoundAssign:
         kind = PLUS_ASSIGN
         operand = 1
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -910,7 +910,7 @@ KtNameReferenceExpression(147,156): 'something'
 KtOperationReferenceExpression(157,159): '+='
   KaApplicableCallCandidateInfo:
     candidate = KaCompoundVariableAccessCall:
-      compoundAccess = CompoundAssign:
+      compoundOperation = CompoundAssign:
         kind = PLUS_ASSIGN
         operand = 1
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -952,7 +952,7 @@ KtConstantExpression(160,161): '1'
 KtPostfixExpression(166,187): 'javaClass.something++'
   KaApplicableCallCandidateInfo:
     candidate = KaCompoundVariableAccessCall:
-      compoundAccess = IncOrDecOperation:
+      compoundOperation = IncOrDecOperation:
         kind = INC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaExplicitReceiverValue:
@@ -1038,7 +1038,7 @@ KtNameReferenceExpression(176,185): 'something'
 KtOperationReferenceExpression(185,187): '++'
   KaApplicableCallCandidateInfo:
     candidate = KaCompoundVariableAccessCall:
-      compoundAccess = IncOrDecOperation:
+      compoundOperation = IncOrDecOperation:
         kind = INC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaExplicitReceiverValue:
@@ -1070,7 +1070,7 @@ KtOperationReferenceExpression(185,187): '++'
 KtPrefixExpression(192,213): '--javaClass.something'
   KaApplicableCallCandidateInfo:
     candidate = KaCompoundVariableAccessCall:
-      compoundAccess = IncOrDecOperation:
+      compoundOperation = IncOrDecOperation:
         kind = DEC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaExplicitReceiverValue:
@@ -1102,7 +1102,7 @@ KtPrefixExpression(192,213): '--javaClass.something'
 KtOperationReferenceExpression(192,194): '--'
   KaApplicableCallCandidateInfo:
     candidate = KaCompoundVariableAccessCall:
-      compoundAccess = IncOrDecOperation:
+      compoundOperation = IncOrDecOperation:
         kind = DEC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaExplicitReceiverValue:
@@ -1189,7 +1189,7 @@ KtNameReferenceExpression(204,213): 'something'
 KtPostfixExpression(219,230): 'something++'
   KaApplicableCallCandidateInfo:
     candidate = KaCompoundVariableAccessCall:
-      compoundAccess = IncOrDecOperation:
+      compoundOperation = IncOrDecOperation:
         kind = INC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaExplicitReceiverValue:
@@ -1254,7 +1254,7 @@ KtNameReferenceExpression(219,228): 'something'
 KtOperationReferenceExpression(228,230): '++'
   KaApplicableCallCandidateInfo:
     candidate = KaCompoundVariableAccessCall:
-      compoundAccess = IncOrDecOperation:
+      compoundOperation = IncOrDecOperation:
         kind = INC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaExplicitReceiverValue:
@@ -1293,7 +1293,7 @@ KtOperationReferenceExpression(228,230): '++'
 KtPostfixExpression(235,248): '(something)++'
   KaApplicableCallCandidateInfo:
     candidate = KaCompoundVariableAccessCall:
-      compoundAccess = IncOrDecOperation:
+      compoundOperation = IncOrDecOperation:
         kind = INC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaExplicitReceiverValue:
@@ -1361,7 +1361,7 @@ KtNameReferenceExpression(236,245): 'something'
 KtOperationReferenceExpression(246,248): '++'
   KaApplicableCallCandidateInfo:
     candidate = KaCompoundVariableAccessCall:
-      compoundAccess = IncOrDecOperation:
+      compoundOperation = IncOrDecOperation:
         kind = INC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaExplicitReceiverValue:

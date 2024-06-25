@@ -168,9 +168,12 @@ public class KaSimpleVariableAccessCall @KaImplementationDetail constructor(
 
 public interface KaCompoundAccessCall {
     /**
-     * The type of this compound access.
+     * The corresponding compound operation.
      */
-    public val compoundAccess: KaCompoundOperation
+    public val compoundOperation: KaCompoundOperation
+
+    @Deprecated("Use `compoundOperation` instead", ReplaceWith("compoundOperation"))
+    public val compoundAccess: KaCompoundOperation get() = compoundOperation
 }
 
 /**
@@ -270,7 +273,7 @@ public class KaCompoundArrayAccessCall @KaImplementationDetail constructor(
 
     override val token: KaLifetimeToken get() = backingCompoundAccess.token
 
-    override val compoundAccess: KaCompoundOperation get() = withValidityAssertion { backingCompoundAccess }
+    override val compoundOperation: KaCompoundOperation get() = withValidityAssertion { backingCompoundAccess }
 
     public val indexArguments: List<KtExpression> by validityAsserted(indexArguments)
 
