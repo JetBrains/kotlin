@@ -33,7 +33,7 @@ internal object CheckArguments : ResolutionStage() {
             val parameter = argumentMapping[argument]
             candidate.resolveArgument(
                 callInfo,
-                argument.expression,
+                argument,
                 parameter,
                 isReceiver = index == 0 && isInvokeFromExtensionFunctionType,
                 sink = sink,
@@ -63,20 +63,21 @@ internal object CheckArguments : ResolutionStage() {
 
     private fun Candidate.resolveArgument(
         callInfo: CallInfo,
-        argument: FirExpression,
+        atom: ConeCallAtom,
         parameter: FirValueParameter?,
         isReceiver: Boolean,
         sink: CheckerSink,
         context: ResolutionContext
     ) {
         // Lambdas and callable references can be unresolved at this point
+        val argument = atom.expression
         @OptIn(UnresolvedExpressionTypeAccess::class)
         argument.coneTypeOrNull.ensureResolvedTypeDeclaration(context.session)
         val expectedType =
             prepareExpectedType(context.session, context.bodyResolveComponents.scopeSession, callInfo, argument, parameter, context)
         ArgumentCheckingProcessor.resolveArgumentExpression(
             this,
-            argument,
+            atom,
             expectedType,
             sink,
             context,

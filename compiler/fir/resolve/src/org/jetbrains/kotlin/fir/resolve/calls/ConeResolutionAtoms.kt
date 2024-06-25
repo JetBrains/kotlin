@@ -9,12 +9,8 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
-import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
-import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
-import org.jetbrains.kotlin.fir.expressions.FirResolvable
-import org.jetbrains.kotlin.fir.expressions.FirSpreadArgumentExpression
+import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.lastExpression
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
@@ -41,12 +37,18 @@ fun ConeCallAtom.Companion.createRawAtom(expression: FirExpression): ConeCallAto
             expression.isResolved -> ConeResolvedAtom(expression)
             else -> ConeRawCallableReferenceAtom(expression)
         }
+        is FirSafeCallExpression -> ConeSafeCallAtom(
+            expression,
+            createRawAtom((expression.selector as? FirExpression)?.unwrapSmartcastExpression())
+        )
         is FirResolvable -> when (val candidate = expression.candidate()) {
             null -> ConeResolvedAtom(expression)
             else -> ConeAtomWithCandidate(expression, candidate)
         }
         is FirNamedArgumentExpression -> ConeNamedArgumentAtom(expression, createRawAtom(expression.expression))
         is FirSpreadArgumentExpression -> ConeSpreadExpressionAtom(expression, createRawAtom(expression.expression))
+        is FirErrorExpression -> ConeErrorExpressionAtom(expression, createRawAtom(expression.expression))
+        is FirBlock -> ConeBlockAtom(expression, createRawAtom(expression.lastExpression))
         else -> ConeResolvedAtom(expression)
     }
 }

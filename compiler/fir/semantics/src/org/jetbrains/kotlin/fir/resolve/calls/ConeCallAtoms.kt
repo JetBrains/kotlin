@@ -36,6 +36,21 @@ class ConeRawCallableReferenceAtom(override val fir: FirCallableReferenceAccess)
         get() = fir
 }
 
+class ConeSafeCallAtom(override val fir: FirSafeCallExpression, val selector: ConeCallAtom?) : ConeCallAtom() {
+    override val expression: FirSafeCallExpression
+        get() = fir
+}
+
+class ConeErrorExpressionAtom(override val fir: FirErrorExpression, val subAtom: ConeCallAtom?) : ConeCallAtom() {
+    override val expression: FirErrorExpression
+        get() = fir
+}
+
+class ConeBlockAtom(override val fir: FirBlock, val lastExpressionAtom: ConeCallAtom?) : ConeCallAtom() {
+    override val expression: FirBlock
+        get() = fir
+}
+
 sealed class ConeWrappedExpressionAtom(val subAtom: ConeCallAtom) : ConeCallAtom() {
     abstract override val fir: FirWrappedArgumentExpression
     abstract override val expression: FirWrappedArgumentExpression

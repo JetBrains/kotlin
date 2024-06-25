@@ -225,7 +225,7 @@ class PostponedArgumentsAnalyzer(
             if (!builder.hasContradiction) {
                 ArgumentCheckingProcessor.resolveArgumentExpression(
                     candidate,
-                    it,
+                    ConeCallAtom.createRawAtom(it),
                     substituteAlreadyFixedVariables(lambda.returnType),
                     checkerSink,
                     context = resolutionContext,
@@ -304,7 +304,7 @@ fun ConeLambdaWithTypeVariableAsExpectedTypeAtom.transformToResolvedLambda(
     val fixedExpectedType = (csBuilder.buildCurrentSubstitutor() as ConeSubstitutor)
         .substituteOrSelf(expectedType ?: this.expectedType)
     val resolvedAtom = ArgumentCheckingProcessor.createResolvedLambdaAtomDuringCompletion(
-        candidateOfOuterCall, csBuilder, expression, fixedExpectedType,
+        candidateOfOuterCall, csBuilder, ConeRawLambdaAtom(expression), fixedExpectedType,
         context, returnTypeVariable = returnTypeVariable
     )
     analyzed = true
