@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.phaser
 
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.IrValidationContext
-import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
-import org.jetbrains.kotlin.backend.common.validateIr
+import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.IrVerificationMode
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -39,7 +36,26 @@ open class IrValidationBeforeLoweringPhase<Context : CommonBackendContext>(conte
     }
 }
 
-class IrValidationAfterInliningAllFunctionsPhase<Context : CommonBackendContext>(context: Context) : IrValidationPhase<Context>(context) {
+class IrValidationAfterInliningOnlyPrivateFunctionsPhase<Context : CommonBackendContext>(
+    context: Context,
+    private val checkInlineFunctionCallSites: InlineFunctionUseSiteChecker
+) : IrValidationPhase<Context>(context) {
+    override fun IrValidationContext.validate(irModule: IrModuleFragment, phaseName: String) {
+        performBasicIrValidation(
+            irModule,
+            context.irBuiltIns,
+            phaseName,
+            checkTypes = false, // TODO: Re-enable checking types (KT-68663)
+            checkVisibilities = false,
+            checkInlineFunctionUseSites = checkInlineFunctionCallSites
+        )
+    }
+}
+
+class IrValidationAfterInliningAllFunctionsPhase<Context : CommonBackendContext>(
+    context: Context,
+    private val checkInlineFunctionCallSites: InlineFunctionUseSiteChecker? = null
+) : IrValidationPhase<Context>(context) {
     override fun IrValidationContext.validate(irModule: IrModuleFragment, phaseName: String) {
         performBasicIrValidation(
             irModule,
@@ -49,6 +65,7 @@ class IrValidationAfterInliningAllFunctionsPhase<Context : CommonBackendContext>
             checkValueScopes = context.configuration.getBoolean(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING),
             checkTypeParameterScopes = false,
             checkVisibilities = context.configuration.getBoolean(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING),
+            checkInlineFunctionUseSites = checkInlineFunctionCallSites
         )
     }
 }
