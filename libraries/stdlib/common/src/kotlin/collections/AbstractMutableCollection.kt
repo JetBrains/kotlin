@@ -19,8 +19,8 @@ public expect abstract class AbstractMutableCollection<E> : MutableCollection<E>
     abstract override fun add(element: E): Boolean
 
     override fun isEmpty(): Boolean
-    override fun contains(element: @UnsafeVariance E): Boolean
-    override fun containsAll(elements: Collection<@UnsafeVariance E>): Boolean
+    override fun contains(element: E): Boolean
+    override fun containsAll(elements: Collection<E>): Boolean
 
 
     override fun addAll(elements: Collection<E>): Boolean

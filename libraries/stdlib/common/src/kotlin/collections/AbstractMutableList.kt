@@ -35,10 +35,10 @@ public expect abstract class AbstractMutableList<E> : MutableList<E> {
     // From List
 
     override fun isEmpty(): Boolean
-    override fun contains(element: @UnsafeVariance E): Boolean
-    override fun containsAll(elements: Collection<@UnsafeVariance E>): Boolean
-    override fun indexOf(element: @UnsafeVariance E): Int
-    override fun lastIndexOf(element: @UnsafeVariance E): Int
+    override fun contains(element: E): Boolean
+    override fun containsAll(elements: Collection<E>): Boolean
+    override fun indexOf(element: E): Int
+    override fun lastIndexOf(element: E): Int
 
     // From MutableCollection
 
