@@ -7,8 +7,8 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.Arguments
 import org.jetbrains.kotlinx.dataframe.plugin.impl.Interpreter
 import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleCol
-import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.dataFrame
+import org.jetbrains.kotlinx.dataframe.plugin.impl.simpleColumnOf
 import org.jetbrains.kotlinx.dataframe.plugin.impl.string
 import org.jetbrains.kotlinx.dataframe.plugin.impl.type
 
@@ -20,7 +20,7 @@ class Add : AbstractSchemaModificationInterpreter() {
     val Arguments.type: TypeApproximation by type(name("expression"))
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return PluginDataFrameSchema(receiver.columns() + SimpleDataColumn(name, type))
+        return PluginDataFrameSchema(receiver.columns() + simpleColumnOf(name, type.type))
     }
 }
 
@@ -30,7 +30,7 @@ class From : AbstractInterpreter<Unit>() {
     val Arguments.type: TypeApproximation by type(name("expression"))
 
     override fun Arguments.interpret() {
-        dsl.columns += SimpleDataColumn(receiver, type)
+        dsl.columns += simpleColumnOf(receiver, type.type)
     }
 }
 
@@ -40,7 +40,7 @@ class Into : AbstractInterpreter<Unit>() {
     val Arguments.name: String by string()
 
     override fun Arguments.interpret() {
-        dsl.columns += SimpleDataColumn(name, receiver)
+        dsl.columns += simpleColumnOf(name, receiver.type)
     }
 }
 

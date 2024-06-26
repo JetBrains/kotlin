@@ -21,11 +21,11 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.Interpreter
 import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.Present
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleCol
-import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleFrameColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnWithPathApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.impl.dataFrame
+import org.jetbrains.kotlinx.dataframe.plugin.impl.simpleColumnOf
 
 class GroupBy(val df: PluginDataFrameSchema, val keys: List<ColumnWithPathApproximation>, val moveToTop: Boolean)
 
@@ -82,27 +82,8 @@ fun KotlinTypeFacade.aggregate(
             )
         }
 
-        // important to create FrameColumns, nullable DataRows?
         val cols = createPluginDataFrameSchema(groupBy.keys, groupBy.moveToTop).columns() + dsl.columns.map {
-            when (it.type.classId) {
-                Names.DATA_ROW_CLASS_ID -> {
-                    when (it.type.nullability) {
-                        ConeNullability.NULLABLE -> SimpleDataColumn(
-                            it.name,
-                            TypeApproximation(it.type)
-                        )
-                        ConeNullability.UNKNOWN -> SimpleDataColumn(
-                            it.name,
-                            TypeApproximation(it.type)
-                        )
-                        ConeNullability.NOT_NULL -> {
-                            val typeProjection = it.type.typeArguments[0]
-                            SimpleColumnGroup(it.name, pluginDataFrameSchema(typeProjection).columns())
-                        }
-                    }
-                }
-                else -> SimpleDataColumn(it.name, TypeApproximation(it.type))
-            }
+            simpleColumnOf(it.name, it.type)
         }
         PluginDataFrameSchema(cols)
     } else {
