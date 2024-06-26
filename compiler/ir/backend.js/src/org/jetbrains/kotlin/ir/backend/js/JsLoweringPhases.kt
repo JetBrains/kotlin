@@ -194,10 +194,17 @@ private val jsCodeOutliningPhase = makeIrModulePhase(
     description = "Outline js() calls where JS code references Kotlin locals"
 )
 
+private val inlineCallableReferenceToLambdaPhase = makeIrModulePhase<JsIrBackendContext>(
+    ::JsInlineCallableReferenceToLambdaPhase,
+    name = "JsInlineCallableReferenceToLambdaPhase",
+    description = "Transform all callable reference (including defaults) to inline lambdas, mark inline lambdas for later passes"
+)
+
 private val arrayConstructorPhase = makeIrModulePhase(
     ::ArrayConstructorLowering,
     name = "ArrayConstructor",
     description = "Transform `Array(size) { index -> value }` into a loop",
+    prerequisite = setOf(inlineCallableReferenceToLambdaPhase)
 )
 
 private val sharedVariablesLoweringPhase = makeIrModulePhase(
@@ -856,12 +863,6 @@ val mainFunctionCallWrapperLowering = makeIrModulePhase<JsIrBackendContext>(
     ::MainFunctionCallWrapperLowering,
     name = "MainFunctionCallWrapperLowering",
     description = "Generate main function call inside the wrapper-function"
-)
-
-val inlineCallableReferenceToLambdaPhase = makeIrModulePhase<JsIrBackendContext>(
-    ::JsInlineCallableReferenceToLambdaPhase,
-    name = "JsInlineCallableReferenceToLambdaPhase",
-    description = "Transform all callable reference (including defaults) to inline lambdas, mark inline lambdas for later passes"
 )
 
 fun getJsLowerings(

@@ -148,10 +148,17 @@ private val lowerBeforeInlinePhase = createFileLoweringPhase(
         description = "Special operations processing before inlining"
 )
 
+private val inlineCallableReferenceToLambdaPhase = createFileLoweringPhase(
+        lowering = { context: NativeGenerationState -> NativeInlineCallableReferenceToLambdaPhase(context) },
+        name = "NativeInlineCallableReferenceToLambdaPhase",
+        description = "Transform all callable reference (including defaults) to inline lambdas, mark inline lambdas for later passes"
+)
+
 private val arrayConstructorPhase = createFileLoweringPhase(
         ::ArrayConstructorLowering,
         name = "ArrayConstructor",
-        description = "Transform `Array(size) { index -> value }` into a loop"
+        description = "Transform `Array(size) { index -> value }` into a loop",
+        prerequisite = setOf(inlineCallableReferenceToLambdaPhase)
 )
 
 private val lateinitPhase = createFileLoweringPhase(
@@ -207,12 +214,6 @@ private val wrapInlineDeclarationsWithReifiedTypeParametersLowering = createFile
         ::WrapInlineDeclarationsWithReifiedTypeParametersLowering,
         name = "WrapInlineDeclarationsWithReifiedTypeParameters",
         description = "Wrap inline declarations with reified type parameters"
-)
-
-private val inlineCallableReferenceToLambdaPhase = createFileLoweringPhase(
-        lowering = { context: NativeGenerationState -> NativeInlineCallableReferenceToLambdaPhase(context) },
-        name = "NativeInlineCallableReferenceToLambdaPhase",
-        description = "Transform all callable reference (including defaults) to inline lambdas, mark inline lambdas for later passes"
 )
 
 private val postInlinePhase = createFileLoweringPhase(

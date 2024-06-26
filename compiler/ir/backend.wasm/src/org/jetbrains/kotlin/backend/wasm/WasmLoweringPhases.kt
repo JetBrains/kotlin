@@ -85,10 +85,17 @@ private val rangeContainsLoweringPhase = makeIrModulePhase(
     description = "[Optimization] Optimizes calls to contains() for ClosedRanges"
 )
 
+private val inlineCallableReferenceToLambdaPhase = makeIrModulePhase(
+    ::WasmInlineCallableReferenceToLambdaPhase,
+    name = "WasmInlineCallableReferenceToLambdaPhase",
+    description = "Transform all callable reference (including defaults) to inline lambdas, mark inline lambdas for later passes"
+)
+
 private val arrayConstructorPhase = makeIrModulePhase(
     ::ArrayConstructorLowering,
     name = "ArrayConstructor",
     description = "Transform `Array(size) { index -> value }` into a loop",
+    prerequisite = setOf(inlineCallableReferenceToLambdaPhase)
 )
 
 private val sharedVariablesLoweringPhase = makeIrModulePhase(
@@ -629,12 +636,6 @@ val constEvaluationPhase = makeIrModulePhase(
     name = "ConstEvaluationLowering",
     description = "Evaluate functions that are marked as `IntrinsicConstEvaluation`",
     prerequisite = setOf(functionInliningPhase)
-)
-
-val inlineCallableReferenceToLambdaPhase = makeIrModulePhase(
-    ::WasmInlineCallableReferenceToLambdaPhase,
-    name = "WasmInlineCallableReferenceToLambdaPhase",
-    description = "Transform all callable reference (including defaults) to inline lambdas, mark inline lambdas for later passes"
 )
 
 val loweringList = listOf(
