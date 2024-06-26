@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
@@ -173,3 +174,16 @@ fun IrClass.getAllSuperclasses(): Set<IrClass> {
     collectAllSuperclasses(this, result)
     return result
 }
+
+fun IrTypeArgument.unwrapVarargElementType(): IrType =
+    when (this) {
+        is IrDynamicType -> type
+        is IrSimpleType -> this
+        is IrTypeProjection -> {
+            require(variance == Variance.OUT_VARIANCE) {
+                "Internal error: ${variance.name} projection of vararg element type must be an OUT_VARIANCE: ${render()}"
+            }
+            type
+        }
+        else -> error ("Unsupported vararg element type: $this")
+    }

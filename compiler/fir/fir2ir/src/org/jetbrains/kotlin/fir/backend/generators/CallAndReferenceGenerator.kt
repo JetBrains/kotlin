@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.builtins.StandardNames.FqNames
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
@@ -52,8 +53,10 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.unwrapVarargElementType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator.commonSuperType
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.Variance
@@ -1137,12 +1140,12 @@ class CallAndReferenceGenerator(
                         val value = if (function?.itOrExpectHasDefaultParameterValue(index) == true) {
                             null
                         } else {
-                            val elementType = parameter.returnTypeRef.toIrType()
+                            val varargType = parameter.returnTypeRef.toIrType()
                             IrVarargImpl(
                                 UNDEFINED_OFFSET,
                                 UNDEFINED_OFFSET,
-                                elementType,
-                                elementType.toArrayOrPrimitiveArrayType(builtins)
+                                varargType,
+                                varargElementType(varargType)
                             )
                         }
                         putValueArgument(index, value)
@@ -1151,6 +1154,30 @@ class CallAndReferenceGenerator(
             }
             return this
         }
+    }
+
+    @OptIn(Fir2IrBuiltInsInternals::class)
+    private fun varargElementType(varargType: IrType): IrType {
+        when (varargType.classifierOrFail) {
+            builtins.arrayClass -> (varargType as IrSimpleType).arguments.single().unwrapVarargElementType()
+            builtins.byteArray -> builtins.byteType
+            builtins.charArray -> builtins.charType
+            builtins.shortArray -> builtins.shortType
+            builtins.intArray -> builtins.intType
+            builtins.longArray -> builtins.longType
+            builtins.floatArray -> builtins.floatType
+            builtins.doubleArray -> builtins.doubleType
+            builtins.booleanArray -> builtins.booleanType
+            else -> null
+        }?.let { return it }
+        val classId = when (varargType.classFqName) {
+            FqNames.uByteArrayFqName -> StandardClassIds.UByte
+            FqNames.uShortArrayFqName -> StandardClassIds.UShort
+            FqNames.uIntArrayFqName -> StandardClassIds.UInt
+            FqNames.uLongArrayFqName -> StandardClassIds.ULong
+            else -> error ("Unsupported vararg type: ${varargType.classFqName}")
+        }
+        return builtins.loadClass(classId).defaultType
     }
 
     private fun needArgumentReordering(
