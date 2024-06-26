@@ -73,9 +73,9 @@ class DeclarationGenerator(
             jsCode != null -> {
                 // check(declaration.isExternal) { "Non-external fun with @JsFun ${declaration.fqNameWhenAvailable}"}
                 require(declaration is IrSimpleFunction)
-                val uniqueJsFunName = wasmFileCodegenContext.referenceUniqueJsFunName(declaration.fqNameWhenAvailable.toString())
-                wasmFileCodegenContext.addJsFun(uniqueJsFunName, jsCode)
-                WasmImportDescriptor("js_code", uniqueJsFunName)
+                val jsFunName = WasmSymbol(declaration.fqNameWhenAvailable.toString())
+                wasmFileCodegenContext.addJsFun(jsFunName, jsCode)
+                WasmImportDescriptor("js_code", jsFunName)
             }
             else -> {
                 null

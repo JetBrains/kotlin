@@ -121,9 +121,6 @@ class WasmFileCodegenContext(
             wasmFileFragment.classIds.reference(irClass.getReferenceKey())
         }
 
-    fun referenceUniqueJsFunName(jsFunName: String): WasmSymbol<String> =
-        wasmFileFragment.uniqueJsFunNames.reference(jsFunName)
-
     fun addJsFun(importName: WasmSymbol<String>, jsCode: String) {
         wasmFileFragment.jsFuns +=
             WasmCompiledModuleFragment.JsCodeSnippet(importName = importName, jsCode = jsCode)
