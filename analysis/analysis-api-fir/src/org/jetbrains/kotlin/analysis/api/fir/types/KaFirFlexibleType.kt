@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForType
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
+import org.jetbrains.kotlin.analysis.api.fir.utils.createPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaFlexibleType
@@ -22,7 +23,6 @@ import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
 import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
-import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.renderForDebugging
 
 internal class KaFirFlexibleType(
@@ -48,27 +48,20 @@ internal class KaFirFlexibleType(
     @KaExperimentalApi
     @KaImplementationDetail
     override fun createPointer(): KaTypePointer<KaFlexibleType> = withValidityAssertion {
-        return KaFirFlexibleTypePointer(
-            lowerBoundPointer = lowerBound.createPointer(),
-            upperBoundPointer = upperBound.createPointer()
-        )
+        return KaFirFlexibleTypePointer(coneType, builder)
     }
 }
 
 private class KaFirFlexibleTypePointer(
-    private val lowerBoundPointer: KaTypePointer<*>,
-    private val upperBoundPointer: KaTypePointer<*>
+    coneType: ConeFlexibleType,
+    builder: KaSymbolByFirBuilder
 ) : KaTypePointer<KaFlexibleType> {
+    private val coneTypePointer = coneType.createPointer(builder)
+
     override fun restore(session: KaSession): KaFlexibleType? = session.withValidityAssertion {
         requireIsInstance<KaFirSession>(session)
 
-        val lowerBoundType = lowerBoundPointer.restore(session) as? KaFirType ?: return null
-        val lowerBoundConeType = lowerBoundType.coneType as? ConeSimpleKotlinType ?: return null
-
-        val upperBoundType = upperBoundPointer.restore(session) as? KaFirType ?: return null
-        val upperBoundConeType = upperBoundType.coneType as? ConeSimpleKotlinType ?: return null
-
-        val coneType = ConeFlexibleType(lowerBoundConeType, upperBoundConeType)
+        val coneType = coneTypePointer.restore(session) as? ConeFlexibleType ?: return null
         return KaFirFlexibleType(coneType, session.firSymbolBuilder)
     }
 }

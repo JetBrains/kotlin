@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.fir.utils
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirTypeParameterSymbol
-import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
 import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferTypeParameterType
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
@@ -67,13 +66,12 @@ private class ConeTypeVariableTypeIsNotInferredDiagnosticPointer(
     coneDiagnostic: ConeTypeVariableTypeIsNotInferred,
     builder: KaSymbolByFirBuilder
 ) : ConeDiagnosticPointer {
-    private val typePointer = builder.typeBuilder.buildKtType(coneDiagnostic.typeVariableType).createPointer()
+    private val typePointer = coneDiagnostic.typeVariableType.createPointer(builder)
     private val reason = coneDiagnostic.reason
 
     override fun restore(session: KaFirSession): ConeDiagnostic? {
-        val restoredType = typePointer.restore(session) as? KaFirType ?: return null
-        val restoredConeType = restoredType.coneType as? ConeTypeVariableType ?: return null
-        return ConeTypeVariableTypeIsNotInferred(restoredConeType, reason)
+        val typeVariableType = typePointer.restore(session) as? ConeTypeVariableType ?: return null
+        return ConeTypeVariableTypeIsNotInferred(typeVariableType, reason)
     }
 }
 

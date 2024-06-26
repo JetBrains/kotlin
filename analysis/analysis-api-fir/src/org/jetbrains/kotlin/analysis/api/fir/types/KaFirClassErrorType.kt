@@ -15,12 +15,11 @@ import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForType
 import org.jetbrains.kotlin.analysis.api.fir.getCandidateSymbols
 import org.jetbrains.kotlin.analysis.api.fir.types.qualifiers.ErrorClassTypeQualifierBuilder
-import org.jetbrains.kotlin.analysis.api.fir.utils.ConeClassLikeTypePointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.ConeDiagnosticPointer
-import org.jetbrains.kotlin.analysis.api.fir.utils.ConeErrorTypePointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.ConeTypePointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.buildAbbreviatedType
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
+import org.jetbrains.kotlin.analysis.api.fir.utils.createPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
@@ -89,40 +88,41 @@ internal class KaFirClassErrorType(
     @KaExperimentalApi
     @KaImplementationDetail
     override fun createPointer(): KaTypePointer<KaClassErrorType> = withValidityAssertion {
-        val coneTypePointer = if (coneType !is ConeErrorType) {
-            val classSymbol = builder.classifierBuilder.buildClassLikeSymbolByLookupTag(coneType.lookupTag)
-            if (classSymbol != null) {
-                ConeClassLikeTypePointer(classSymbol, coneType, builder)
-            } else {
-                val coneErrorType = ConeErrorType(
-                    ConeUnresolvedSymbolError(coneType.lookupTag.classId),
-                    isUninferredParameter = false,
-                    delegatedType = null,
-                    typeArguments = coneType.typeArguments,
-                    attributes = coneType.attributes
-                )
-                ConeErrorTypePointer(coneErrorType, builder)
-            }
-        } else {
-            ConeErrorTypePointer(coneType, builder)
-        }
-
-        val coneDiagnosticPointer = ConeDiagnosticPointer.create(coneDiagnostic, builder)
-
-        KaFirClassErrorTypePointer(coneTypePointer, coneNullability, coneDiagnosticPointer)
+        return KaFirClassErrorTypePointer(coneType, coneDiagnostic, builder, coneNullability)
     }
 }
 
 private class KaFirClassErrorTypePointer(
-    private val typePointer: ConeTypePointer,
-    private val nullability: ConeNullability,
-    private val diagnosticPointer: ConeDiagnosticPointer
+    coneType: ConeClassLikeType,
+    coneDiagnostic: ConeDiagnostic,
+    builder: KaSymbolByFirBuilder,
+    private val nullability: ConeNullability
 ) : KaTypePointer<KaClassErrorType> {
+    private val coneTypePointer: ConeTypePointer = if (coneType !is ConeErrorType) {
+        val classSymbol = builder.classifierBuilder.buildClassLikeSymbolByLookupTag(coneType.lookupTag)
+        if (classSymbol != null) {
+            coneType.createPointer(builder)
+        } else {
+            val coneErrorType = ConeErrorType(
+                ConeUnresolvedSymbolError(coneType.lookupTag.classId),
+                isUninferredParameter = false,
+                delegatedType = null,
+                typeArguments = coneType.typeArguments,
+                attributes = coneType.attributes
+            )
+            coneErrorType.createPointer(builder)
+        }
+    } else {
+        coneType.createPointer(builder)
+    }
+
+    val coneDiagnosticPointer = ConeDiagnosticPointer.create(coneDiagnostic, builder)
+
     override fun restore(session: KaSession): KaClassErrorType? = session.withValidityAssertion {
         requireIsInstance<KaFirSession>(session)
 
-        val coneType = typePointer.restore(session) as? ConeClassLikeType ?: return null
-        val coneDiagnostic = diagnosticPointer.restore(session) ?: return null
+        val coneType = coneTypePointer.restore(session) as? ConeClassLikeType ?: return null
+        val coneDiagnostic = coneDiagnosticPointer.restore(session) ?: return null
 
         return KaFirClassErrorType(coneType, nullability, coneDiagnostic, session.firSymbolBuilder)
     }

@@ -12,21 +12,18 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForType
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
+import org.jetbrains.kotlin.analysis.api.fir.utils.createPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
 import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
 import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
-import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.renderForDebugging
 import org.jetbrains.kotlin.name.Name
 
@@ -57,25 +54,20 @@ internal class KaFirTypeParameterType(
     @KaExperimentalApi
     @KaImplementationDetail
     override fun createPointer(): KaTypePointer<KaTypeParameterType> = withValidityAssertion {
-        return KaFirTypeParameterTypePointer(
-            typeParameterPointer = symbol.createPointer(),
-            isNullable = coneType.nullability.isNullable
-        )
+        return KaFirTypeParameterTypePointer(coneType, builder)
     }
 }
 
 private class KaFirTypeParameterTypePointer(
-    private val typeParameterPointer: KaSymbolPointer<KaTypeParameterSymbol>,
-    private val isNullable: Boolean
+    coneType: ConeTypeParameterType,
+    builder: KaSymbolByFirBuilder
 ) : KaTypePointer<KaTypeParameterType> {
+    private val coneTypePointer = coneType.createPointer(builder)
+
     override fun restore(session: KaSession): KaTypeParameterType? = session.withValidityAssertion {
         requireIsInstance<KaFirSession>(session)
 
-        val typeParameterSymbol = with(session) { typeParameterPointer.restoreSymbol() } as? KaFirSymbol<*> ?: return null
-        val typeParameterFirSymbol = typeParameterSymbol.firSymbol as? FirTypeParameterSymbol ?: return null
-
-        val coneType = ConeTypeParameterTypeImpl(typeParameterFirSymbol.toLookupTag(), isNullable)
-
+        val coneType = coneTypePointer.restore(session) as? ConeTypeParameterType ?: return null
         return KaFirTypeParameterType(coneType, session.firSymbolBuilder)
     }
 }

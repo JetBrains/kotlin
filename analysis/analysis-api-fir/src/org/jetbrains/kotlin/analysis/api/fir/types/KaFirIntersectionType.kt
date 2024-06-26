@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForType
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
+import org.jetbrains.kotlin.analysis.api.fir.utils.createPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaIntersectionType
@@ -48,35 +49,20 @@ internal class KaFirIntersectionType(
     @KaExperimentalApi
     @KaImplementationDetail
     override fun createPointer(): KaTypePointer<KaIntersectionType> = withValidityAssertion {
-        return KaFirIntersectionTypePointer(
-            conjunctPointers = conjuncts.map { it.createPointer() },
-            upperBoundForApproximationPointer = coneType.upperBoundForApproximation?.let(builder.typeBuilder::buildKtType)?.createPointer()
-        )
+        return KaFirIntersectionTypePointer(coneType, builder)
     }
 }
 
 private class KaFirIntersectionTypePointer(
-    private val conjunctPointers: List<KaTypePointer<*>>,
-    private val upperBoundForApproximationPointer: KaTypePointer<*>?
+    coneType: ConeIntersectionType,
+    builder: KaSymbolByFirBuilder
 ) : KaTypePointer<KaIntersectionType> {
+    private val coneTypePointer = coneType.createPointer(builder)
+
     override fun restore(session: KaSession): KaIntersectionType? = session.withValidityAssertion {
         requireIsInstance<KaFirSession>(session)
 
-        val conjunctConeTypes = buildList(conjunctPointers.size) {
-            for (conjunctPointer in conjunctPointers) {
-                val conjunctType = conjunctPointer.restore(session) as? KaFirType ?: return null
-                add(conjunctType.coneType)
-            }
-        }
-
-        val upperBoundForApproximationConeType = if (upperBoundForApproximationPointer != null) {
-            val upperBoundForApproximationType = upperBoundForApproximationPointer.restore(session) as KaFirType? ?: return null
-            upperBoundForApproximationType.coneType
-        } else {
-            null
-        }
-
-        val coneType = ConeIntersectionType(conjunctConeTypes, upperBoundForApproximationConeType)
+        val coneType = coneTypePointer.restore(session) as? ConeIntersectionType ?: return null
         return KaFirIntersectionType(coneType, session.firSymbolBuilder)
     }
 }

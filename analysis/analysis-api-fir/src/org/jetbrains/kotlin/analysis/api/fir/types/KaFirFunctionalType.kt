@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForType
 import org.jetbrains.kotlin.analysis.api.fir.types.qualifiers.UsualClassTypeQualifierBuilder
-import org.jetbrains.kotlin.analysis.api.fir.utils.ConeClassLikeTypePointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
+import org.jetbrains.kotlin.analysis.api.fir.utils.createPointer
 import org.jetbrains.kotlin.analysis.api.impl.base.KaBaseContextReceiver
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -95,16 +95,20 @@ internal class KaFirFunctionalType(
     @KaExperimentalApi
     @KaImplementationDetail
     override fun createPointer(): KaTypePointer<KaFunctionType> = withValidityAssertion {
-        val coneTypePointer = ConeClassLikeTypePointer(symbol, coneType, builder)
-        return KaFirFunctionalClassTypePointer(coneTypePointer)
+        return KaFirFunctionalClassTypePointer(coneType, builder)
     }
 }
 
-private class KaFirFunctionalClassTypePointer(private val coneTypePointer: ConeClassLikeTypePointer) : KaTypePointer<KaFunctionType> {
+private class KaFirFunctionalClassTypePointer(
+    coneType: ConeClassLikeTypeImpl,
+    builder: KaSymbolByFirBuilder
+) : KaTypePointer<KaFunctionType> {
+    private val coneTypePointer = coneType.createPointer(builder)
+
     override fun restore(session: KaSession): KaFunctionType? {
         requireIsInstance<KaFirSession>(session)
 
-        val coneType = coneTypePointer.restore(session) ?: return null
+        val coneType = coneTypePointer.restore(session) as? ConeClassLikeTypeImpl ?: return null
         if (!coneType.isSomeFunctionType(session.firResolveSession.useSiteFirSession)) {
             return null
         }
