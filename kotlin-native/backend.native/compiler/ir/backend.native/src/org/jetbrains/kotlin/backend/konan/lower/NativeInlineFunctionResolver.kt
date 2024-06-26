@@ -22,9 +22,8 @@ internal class InlineFunctionsSupport(mapping: NativeMapping) {
      */
     private val loweredInlineFunctions = mapping.loweredInlineFunctions
 
-    fun saveLoweredInlineFunction(function: IrFunction): IrFunction = function.deepCopyWithSymbols(function.parent).also {
-        loweredInlineFunctions[function] = it
-    }
+    fun saveLoweredInlineFunction(function: IrFunction): IrFunction = getLoweredInlineFunction(function)
+            ?: function.deepCopyWithSymbols(function.parent).also { loweredInlineFunctions[function] = it }
 
     fun getLoweredInlineFunction(function: IrFunction): IrFunction? = loweredInlineFunctions[function]
 }
