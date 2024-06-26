@@ -65,6 +65,12 @@ public class ClassicNativeKlibSyntheticAccessorTestGenerated extends AbstractNat
       }
 
       @Test
+      @TestMetadata("leakingPrivateMethodFromLocalObjectInsideInternalInline.kt")
+      public void testLeakingPrivateMethodFromLocalObjectInsideInternalInline() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateMethodFromLocalObjectInsideInternalInline.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateMethodThroughPrivateInlineChain.kt")
       public void testLeakingPrivateMethodThroughPrivateInlineChain() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateMethodThroughPrivateInlineChain.kt");
@@ -119,6 +125,12 @@ public class ClassicNativeKlibSyntheticAccessorTestGenerated extends AbstractNat
       }
 
       @Test
+      @TestMetadata("leakingPrivateMethodFromLocalObjectInsideInternalInline.kt")
+      public void testLeakingPrivateMethodFromLocalObjectInsideInternalInline() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateMethodFromLocalObjectInsideInternalInline.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateMethodThroughPrivateInlineChain.kt")
       public void testLeakingPrivateMethodThroughPrivateInlineChain() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateMethodThroughPrivateInlineChain.kt");
@@ -170,6 +182,12 @@ public class ClassicNativeKlibSyntheticAccessorTestGenerated extends AbstractNat
       @TestMetadata("usePrivateMethodFromInternalInline.kt")
       public void testUsePrivateMethodFromInternalInline() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/usePrivateMethodFromInternalInline.kt");
+      }
+
+      @Test
+      @TestMetadata("usePrivateMethodFromLocalObjectInsideInternalInline.kt")
+      public void testUsePrivateMethodFromLocalObjectInsideInternalInline() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/usePrivateMethodFromLocalObjectInsideInternalInline.kt");
       }
 
       @Test
