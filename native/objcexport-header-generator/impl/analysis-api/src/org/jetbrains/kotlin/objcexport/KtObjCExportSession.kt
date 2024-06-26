@@ -86,7 +86,6 @@ internal data class KtObjCExportSessionImpl(
  * Example Usage: Caching the ObjC name of 'MutableSet'
  *
  * ```kotlin
- * context(KtObjCExportSession)
  * val mutableSetObjCName get() = cached("mutableSetOfObjCName") {
  *     "MutableSet".getObjCKotlinStdlibClassOrProtocolName().objCName
  *     //                       ^
@@ -94,18 +93,14 @@ internal data class KtObjCExportSessionImpl(
  * }
  * ```
  */
-context(KtObjCExportSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-internal inline fun <reified T> cached(key: Any, noinline computation: () -> T): T {
+internal inline fun <reified T> KtObjCExportSession.cached(key: Any, noinline computation: () -> T): T {
     return cached(T::class.java, key, computation)
 }
 
 /**
  * @see cached
  */
-context(KtObjCExportSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-private fun <T> cached(typeOfT: Class<T>, key: Any, computation: () -> T): T {
+private fun <T> KtObjCExportSession.cached(typeOfT: Class<T>, key: Any, computation: () -> T): T {
     val value = private.cache.getOrPutNullable(key) {
         computation()
     }

@@ -6,14 +6,14 @@
 package org.jetbrains.kotlin.objcexport.tests
 
 import org.jetbrains.kotlin.objcexport.KtObjCExportConfiguration
-import org.jetbrains.kotlin.objcexport.withKtObjCExportSession
 import org.jetbrains.kotlin.objcexport.cached
+import org.jetbrains.kotlin.objcexport.withKtObjCExportSession
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
 import kotlin.test.fail
 
-class KtObjCExportSessionCacheTest {
+class KtObjCExportContextCacheTest {
 
     data class Payload(val key: Any)
 

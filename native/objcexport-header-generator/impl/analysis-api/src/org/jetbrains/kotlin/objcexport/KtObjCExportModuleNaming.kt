@@ -19,20 +19,19 @@ import kotlin.io.path.isDirectory
 import org.jetbrains.kotlin.konan.file.File as KonanFile
 
 interface KtObjCExportModuleNaming {
-    context(KaSession)
-    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-    fun getModuleName(module: KaModule): String?
+
+    fun KaSession.getModuleName(module: KaModule): String?
 
     companion object {
         val default = KtObjCExportModuleNaming(listOf(KtKlibObjCExportModuleNaming, KtSimpleObjCExportModuleNaming))
     }
 }
 
-context(KaSession, KtObjCExportSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-internal fun KaModule.getObjCKotlinModuleName(): String? {
-    return cached(GetObjCKotlinModuleNameCacheKey(this)) {
-        internal.moduleNaming.getModuleName(this)
+internal fun ObjCExportContext.getObjCKotlinModuleName(module: KaModule): String? {
+    return exportSession.cached(GetObjCKotlinModuleNameCacheKey(module)) {
+        with(exportSession.internal.moduleNaming) {
+            kaSession.getModuleName(module)
+        }
     }
 }
 
@@ -47,9 +46,7 @@ fun KtObjCExportModuleNaming(implementations: List<KtObjCExportModuleNaming>): K
 }
 
 internal object KtKlibObjCExportModuleNaming : KtObjCExportModuleNaming {
-    context(KaSession)
-    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-    override fun getModuleName(module: KaModule): String? {
+    override fun KaSession.getModuleName(module: KaModule): String? {
         /*
         In this implementation, we're actually looking into the klib file, trying to resolve
         the contained manifest to get the 'shortName' or 'uniqueName'.
@@ -66,10 +63,8 @@ internal object KtKlibObjCExportModuleNaming : KtObjCExportModuleNaming {
 }
 
 internal object KtSimpleObjCExportModuleNaming : KtObjCExportModuleNaming {
-    context(KaSession)
     @OptIn(KaExperimentalApi::class)
-    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-    override fun getModuleName(module: KaModule): String? {
+    override fun KaSession.getModuleName(module: KaModule): String? {
         return when (module) {
             is KaSourceModule -> module.stableModuleName ?: module.name
             is KaLibraryModule -> module.libraryName
@@ -79,9 +74,11 @@ internal object KtSimpleObjCExportModuleNaming : KtObjCExportModuleNaming {
 }
 
 internal class KtCompositeObjCExportModuleNaming(private val implementations: List<KtObjCExportModuleNaming>) : KtObjCExportModuleNaming {
-    context(KaSession)
-    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-    override fun getModuleName(module: KaModule): String? {
-        return implementations.firstNotNullOfOrNull { implementation -> implementation.getModuleName(module) }
+    override fun KaSession.getModuleName(module: KaModule): String? {
+        return implementations.firstNotNullOfOrNull { implementation ->
+            with(implementation) {
+                getModuleName(module)
+            }
+        }
     }
 }

@@ -19,10 +19,8 @@ import org.jetbrains.kotlin.objcexport.extras.requiresForwardDeclaration
  * If object class has companion object it needs to have property which returns this companion.
  * To check whether class has companion object see [needsCompanionProperty]
  */
-context(KaSession, KtObjCExportSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-internal fun KaClassSymbol.buildCompanionProperty(): ObjCProperty {
-    val companion = this.staticMemberScope.classifiers.toList()
+internal fun KaSession.buildCompanionProperty(classSymbol: KaClassSymbol): ObjCProperty {//KtObjCExportSession
+    val companion = classSymbol.staticMemberScope.classifiers.toList()
         .firstOrNull { (it as? KaClassSymbol)?.isCompanion == true }
 
     val typeName = (companion as KaClassSymbol).getObjCClassOrProtocolName()
