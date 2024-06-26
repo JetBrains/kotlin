@@ -98,7 +98,7 @@ private class KaFirClassErrorTypePointer(
     builder: KaSymbolByFirBuilder,
     private val nullability: ConeNullability
 ) : KaTypePointer<KaClassErrorType> {
-    private val coneTypePointer: ConeTypePointer = if (coneType !is ConeErrorType) {
+    private val coneTypePointer: ConeTypePointer<*> = if (coneType !is ConeErrorType) {
         val classSymbol = builder.classifierBuilder.buildClassLikeSymbolByLookupTag(coneType.lookupTag)
         if (classSymbol != null) {
             coneType.createPointer(builder)

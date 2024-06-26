@@ -80,7 +80,7 @@ private class KaFirErrorTypePointer(
     override fun restore(session: KaSession): KaErrorType? = session.withValidityAssertion {
         requireIsInstance<KaFirSession>(session)
 
-        val coneType = coneTypePointer.restore(session) as? ConeErrorType ?: return null
+        val coneType = coneTypePointer.restore(session) ?: return null
         return KaFirErrorType(coneType, coneNullability, session.firSymbolBuilder)
     }
 }

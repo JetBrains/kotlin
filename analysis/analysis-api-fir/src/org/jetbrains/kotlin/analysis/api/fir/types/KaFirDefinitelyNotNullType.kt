@@ -57,7 +57,7 @@ private class KaFirDefinitelyNotNullTypePointer(
     override fun restore(session: KaSession): KaDefinitelyNotNullType? = session.withValidityAssertion {
         requireIsInstance<KaFirSession>(session)
 
-        val coneType = coneTypePointer.restore(session) as? ConeDefinitelyNotNullType ?: return null
+        val coneType = coneTypePointer.restore(session) ?: return null
         return KaFirDefinitelyNotNullType(coneType, session.firSymbolBuilder)
     }
 }

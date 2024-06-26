@@ -62,7 +62,7 @@ private class KaFirCapturedTypePointer(
     override fun restore(session: KaSession): KaCapturedType? = session.withValidityAssertion {
         requireIsInstance<KaFirSession>(session)
 
-        val coneType = coneTypePointer.restore(session) as? ConeCapturedType ?: return null
+        val coneType = coneTypePointer.restore(session) ?: return null
         return KaFirCapturedType(coneType, session.firSymbolBuilder)
     }
 }

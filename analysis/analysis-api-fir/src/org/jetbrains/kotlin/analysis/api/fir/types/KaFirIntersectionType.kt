@@ -62,7 +62,7 @@ private class KaFirIntersectionTypePointer(
     override fun restore(session: KaSession): KaIntersectionType? = session.withValidityAssertion {
         requireIsInstance<KaFirSession>(session)
 
-        val coneType = coneTypePointer.restore(session) as? ConeIntersectionType ?: return null
+        val coneType = coneTypePointer.restore(session) ?: return null
         return KaFirIntersectionType(coneType, session.firSymbolBuilder)
     }
 }

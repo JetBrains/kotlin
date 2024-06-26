@@ -80,7 +80,7 @@ private class KaFirUsualClassTypePointer(
     override fun restore(session: KaSession): KaUsualClassType? = session.withValidityAssertion {
         requireIsInstance<KaFirSession>(session)
 
-        val coneType = coneTypePointer.restore(session) as? ConeClassLikeTypeImpl ?: return null
+        val coneType = coneTypePointer.restore(session) ?: return null
         if (coneType.isSomeFunctionType(session.firResolveSession.useSiteFirSession)) {
             return null
         }
