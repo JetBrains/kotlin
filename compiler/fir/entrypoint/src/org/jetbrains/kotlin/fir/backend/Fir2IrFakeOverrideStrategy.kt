@@ -255,8 +255,17 @@ class Fir2IrDelegatedMembersGenerationStrategy(
                     classLookupTag
                 ) as IrPropertySymbol? ?: return@l
                 val delegatedIrProperty = symbolResolver.getReferencedProperty(fakeOverrideIrSymbol).owner
+
                 @OptIn(SymbolInternals::class)
-                delegatedIrProperty.metadata = FirMetadataSource.Property(firSymbol.fir)
+                val firProperty = firSymbol.fir
+
+                delegatedIrProperty.metadata = FirMetadataSource.Property(firProperty)
+                firProperty.getter?.let {
+                    delegatedIrProperty.getter?.metadata = FirMetadataSource.Function(it)
+                }
+                firProperty.setter?.let {
+                    delegatedIrProperty.setter?.metadata = FirMetadataSource.Function(it)
+                }
             }
         }
     }

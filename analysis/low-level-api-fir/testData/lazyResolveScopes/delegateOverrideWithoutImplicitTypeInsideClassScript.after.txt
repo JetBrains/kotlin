@@ -21,8 +21,8 @@ public open [ResolvedTo(BODY_RESOLVE)] fun anotherFunction([ResolvedTo(BODY_RESO
     @PROPERTY_SETTER:R|Anno|[Types](str = <strcat>(String(property ), R|/constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=BaseInterface] set([ResolvedTo(BODY_RESOLVE)] @SETTER_PARAMETER:R|Anno|[Types](str = <strcat>(String(property ), R|/constant|)) value: R|kotlin/Int|): R|kotlin/Unit|
 
 public open override [ResolvedTo(BODY_RESOLVE)] [DelegatedWrapperDataKey=[wrapped=FirPropertySymbol /BaseInterface.property, containingClass=MyClass, delegateField=FirFieldSymbol /MyClass.$$delegate_0] var property: R|kotlin/Int|
-
-
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] get(): R|kotlin/Int|
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
 
 public abstract [ResolvedTo(BODY_RESOLVE)] var property: R|kotlin/Int|
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=BaseInterface] get(): R|kotlin/Int|

@@ -465,7 +465,8 @@ object FirFakeOverrideGenerator {
         newSource: KtSourceElement? = source,
         newVisibility: Visibility = visibility,
     ) = when {
-        annotations.isNotEmpty() || newVisibility != baseProperty.visibility -> buildCopy(
+        annotations.isNotEmpty() || newVisibility != baseProperty.visibility ||
+                origin == FirDeclarationOrigin.Delegated || origin is FirDeclarationOrigin.SubstitutionOverride -> buildCopy(
             moduleData,
             origin,
             propertyReturnTypeRef,

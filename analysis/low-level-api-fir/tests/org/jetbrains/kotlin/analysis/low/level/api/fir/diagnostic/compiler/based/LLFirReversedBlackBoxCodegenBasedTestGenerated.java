@@ -18591,6 +18591,12 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     }
 
     @Test
+    @TestMetadata("inlineClassProperty.kt")
+    public void testInlineClassProperty() {
+      runTest("compiler/testData/codegen/box/delegation/inlineClassProperty.kt");
+    }
+
+    @Test
     @TestMetadata("kt30102_comparable.kt")
     public void testKt30102_comparable() {
       runTest("compiler/testData/codegen/box/delegation/kt30102_comparable.kt");

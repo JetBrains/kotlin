@@ -1,5 +1,3 @@
-// JVM_ABI_K1_K2_DIFF: KT-63828
-
 interface IFoo {
     @Deprecated("")
     val prop: String get() = ""

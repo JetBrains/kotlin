@@ -1,6 +1,6 @@
 STATUS:
 TARGET: public final override [ResolvedTo(STATUS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={T -> kotlin/Int}, baseSymbol=FirPropertySymbol /AbstractClass.property), SubstitutedOverrideOriginalKey=/AbstractClass.property] val R|kotlin/Int|.property: <implicit>
-
+    public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] get(): <implicit>
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeAndReceiverScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-substitutionFakeOverrideWithImplicitTypeAndReceiverScript.kts>
@@ -29,7 +29,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeAndReceiverS
 
 EXPECT_ACTUAL_MATCHING:
 TARGET: public final override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={T -> kotlin/Int}, baseSymbol=FirPropertySymbol /AbstractClass.property), SubstitutedOverrideOriginalKey=/AbstractClass.property] val R|kotlin/Int|.property: <implicit>
-
+    public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=SubClass] get(): <implicit>
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeAndReceiverScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-substitutionFakeOverrideWithImplicitTypeAndReceiverScript.kts>
@@ -58,7 +58,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeAndReceiverS
 
 CONTRACTS:
 TARGET: public final override [ResolvedTo(CONTRACTS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={T -> kotlin/Int}, baseSymbol=FirPropertySymbol /AbstractClass.property), SubstitutedOverrideOriginalKey=/AbstractClass.property] val R|kotlin/Int|.property: <implicit>
-
+    public [ResolvedTo(CONTRACTS)] [ContainingClassKey=SubClass] get(): <implicit>
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeAndReceiverScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-substitutionFakeOverrideWithImplicitTypeAndReceiverScript.kts>
@@ -87,7 +87,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeAndReceiverS
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 TARGET: public final override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val R|kotlin/Int|.property: R|kotlin/Int|
-
+    public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=SubClass] get(): R|kotlin/Int|
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeAndReceiverScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-substitutionFakeOverrideWithImplicitTypeAndReceiverScript.kts>
@@ -116,7 +116,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeAndReceiverS
 
 CONSTANT_EVALUATION:
 TARGET: public final override [ResolvedTo(CONSTANT_EVALUATION)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val R|kotlin/Int|.property: R|kotlin/Int|
-
+    public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=SubClass] get(): R|kotlin/Int|
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeAndReceiverScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-substitutionFakeOverrideWithImplicitTypeAndReceiverScript.kts>
@@ -145,7 +145,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeAndReceiverS
 
 ANNOTATION_ARGUMENTS:
 TARGET: public final override [ResolvedTo(ANNOTATION_ARGUMENTS)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val R|kotlin/Int|.property: R|kotlin/Int|
-
+    public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=SubClass] get(): R|kotlin/Int|
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeAndReceiverScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-substitutionFakeOverrideWithImplicitTypeAndReceiverScript.kts>
@@ -174,7 +174,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeAndReceiverS
 
 BODY_RESOLVE:
 TARGET: public final override [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val R|kotlin/Int|.property: R|kotlin/Int|
-
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SubClass] get(): R|kotlin/Int|
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeAndReceiverScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-substitutionFakeOverrideWithImplicitTypeAndReceiverScript.kts>

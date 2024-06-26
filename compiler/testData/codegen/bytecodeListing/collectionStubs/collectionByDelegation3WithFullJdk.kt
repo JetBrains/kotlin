@@ -1,6 +1,5 @@
 // FULL_JDK
 // See also: https://youtrack.jetbrains.com/issue/KT-42330
-// JVM_ABI_K1_K2_DIFF: KT-63828
 
 class DIntIterator(d: Iterator<Int>) : Iterator<Int> by d
 
