@@ -59,6 +59,8 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
     private static final TokenSet L_PAR_L_BRACE_R_PAR_SET = TokenSet.create(LPAR, LBRACE, RPAR);
     private static final TokenSet IN_KEYWORD_SET = TokenSet.create(IN_KEYWORD);
     private static final TokenSet TRY_CATCH_RECOVERY_TOKEN_SET = TokenSet.create(LBRACE, RBRACE, FINALLY_KEYWORD, CATCH_KEYWORD);
+    private static final TokenSet IS_DESTRUCTURING_SET = TokenSet.create(ANDAND, ARROW);
+    private static final TokenSet IS_DESTRUCTURING_SET_RECOVERY = TokenSet.orSet(IS_DESTRUCTURING_SET, PARAMETER_NAME_RECOVERY_SET);
 
     private static ImmutableMap<String, KtToken> tokenSetToMap(TokenSet tokens) {
         ImmutableMap.Builder<String, KtToken> builder = ImmutableMap.builder();
@@ -160,21 +162,21 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         PREFIX(MINUS, PLUS, MINUSMINUS, PLUSPLUS, EXCL) { // annotations
 
             @Override
-            public void parseHigherPrecedence(KotlinExpressionParsing parser) {
+            public void parseHigherPrecedence(KotlinExpressionParsing parser, boolean conditionalContext) {
                 throw new IllegalStateException("Don't call this method");
             }
         },
 
         AS(AS_KEYWORD, AS_SAFE) {
             @Override
-            public IElementType parseRightHandSide(IElementType operation, KotlinExpressionParsing parser) {
+            public IElementType parseRightHandSide(IElementType operation, KotlinExpressionParsing parser, boolean conditionalContext) {
                 parser.myKotlinParsing.parseTypeRefWithoutIntersections();
                 return BINARY_WITH_TYPE;
             }
 
             @Override
-            public void parseHigherPrecedence(KotlinExpressionParsing parser) {
-                parser.parsePrefixExpression();
+            public void parseHigherPrecedence(KotlinExpressionParsing parser, boolean conditionalContext) {
+                parser.parsePrefixExpression(conditionalContext);
             }
         },
 
@@ -185,18 +187,30 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         ELVIS(KtTokens.ELVIS),
         IN_OR_IS(IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS) {
             @Override
-            public IElementType parseRightHandSide(IElementType operation, KotlinExpressionParsing parser) {
-                if (operation == IS_KEYWORD || operation == NOT_IS) {
+            public IElementType parseRightHandSide(IElementType operation, KotlinExpressionParsing parser, boolean conditionalContext) {
+                if (operation == IS_KEYWORD && conditionalContext) {
+                    parser.myKotlinParsing.parseTypeRefWithoutIntersections();
+                    if (parser.myKotlinParsing.at(LPAR)) {
+                        parser.myKotlinParsing.parseMultiDeclarationName(IS_DESTRUCTURING_SET, IS_DESTRUCTURING_SET_RECOVERY);
+                    }
+                    return IS_EXPRESSION;
+                } else if (operation == IS_KEYWORD || operation == NOT_IS) {
                     parser.myKotlinParsing.parseTypeRefWithoutIntersections();
                     return IS_EXPRESSION;
                 }
 
-                return super.parseRightHandSide(operation, parser);
+                return super.parseRightHandSide(operation, parser, conditionalContext);
             }
         },
         COMPARISON(LT, GT, LTEQ, GTEQ),
         EQUALITY(EQEQ, EXCLEQ, EQEQEQ, EXCLEQEQEQ),
-        CONJUNCTION(ANDAND),
+        CONJUNCTION(ANDAND) {
+            @Override
+            public IElementType parseRightHandSide(IElementType operation, KotlinExpressionParsing parser, boolean conditionalContext) {
+                parseHigherPrecedence(parser, conditionalContext); // propagate conditionalContext correctly
+                return BINARY_EXPRESSION;
+            }
+        },
         DISJUNCTION(OROR),
         //        ARROW(KtTokens.ARROW),
         ASSIGNMENT(EQ, PLUSEQ, MINUSEQ, MULTEQ, DIVEQ, PERCEQ),
@@ -210,16 +224,16 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             }
         }
 
-        private Precedence higher;
+        protected Precedence higher;
         private final TokenSet operations;
 
         Precedence(IElementType... operations) {
             this.operations = TokenSet.create(operations);
         }
 
-        public void parseHigherPrecedence(KotlinExpressionParsing parser) {
+        public void parseHigherPrecedence(KotlinExpressionParsing parser, boolean conditionalContext) {
             assert higher != null;
-            parser.parseBinaryExpression(higher);
+            parser.parseBinaryExpression(higher, conditionalContext);
         }
 
         /**
@@ -228,8 +242,8 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
          * @param parser the parser object
          * @return node type of the result
          */
-        public IElementType parseRightHandSide(IElementType operation, KotlinExpressionParsing parser) {
-            parseHigherPrecedence(parser);
+        public IElementType parseRightHandSide(IElementType operation, KotlinExpressionParsing parser, boolean conditionalContext) {
+            parseHigherPrecedence(parser, false);
             return BINARY_EXPRESSION;
         }
 
@@ -309,12 +323,20 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
      *   // block is syntactically equivalent to a functionLiteral with no parameters
      *   ;
      */
-    public void parseExpression() {
+    private void parseExpression(boolean conditionalContext) {
         if (!atSet(EXPRESSION_FIRST)) {
             error("Expecting an expression");
             return;
         }
-        parseBinaryExpression(Precedence.ASSIGNMENT);
+        parseBinaryExpression(Precedence.ASSIGNMENT, conditionalContext);
+    }
+
+    public void parseExpression() {
+        parseExpression(false);
+    }
+
+    public void parseConditionalExpression() {
+        parseExpression(true);
     }
 
     /*
@@ -322,17 +344,17 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
      *
      * see the precedence table
      */
-    private void parseBinaryExpression(Precedence precedence) {
+    private void parseBinaryExpression(Precedence precedence, boolean conditionalContext) {
         PsiBuilder.Marker expression = mark();
 
-        precedence.parseHigherPrecedence(this);
+        precedence.parseHigherPrecedence(this, conditionalContext);
 
         while (!interruptedWithNewLine() && atSet(precedence.getOperations())) {
             IElementType operation = tt();
 
             parseOperationReference();
 
-            IElementType resultType = precedence.parseRightHandSide(operation, this);
+            IElementType resultType = precedence.parseRightHandSide(operation, this, conditionalContext);
             expression.done(resultType);
             expression = expression.precede();
         }
@@ -346,19 +368,19 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
     private void parseLabeledExpression() {
         PsiBuilder.Marker expression = mark();
         parseLabelDefinition();
-        parsePrefixExpression();
+        parsePrefixExpression(false);
         expression.done(LABELED_EXPRESSION);
     }
 
     /*
      * operation? prefixExpression
      */
-    private void parsePrefixExpression() {
+    public void parsePrefixExpression(boolean conditionalContext) {
         if (at(AT)) {
             if (!parseLocalDeclaration(/* rollbackIfDefinitelyNotExpression = */ false, false)) {
                 PsiBuilder.Marker expression = mark();
                 myKotlinParsing.parseAnnotations(DEFAULT);
-                parsePrefixExpression();
+                parsePrefixExpression(false);
                 expression.done(ANNOTATED_EXPRESSION);
             }
         }
@@ -375,12 +397,12 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
 
                 myBuilder.restoreJoiningComplexTokensState();
 
-                parsePrefixExpression();
+                parsePrefixExpression(false);
                 expression.done(PREFIX_EXPRESSION);
             }
             else {
                 myBuilder.restoreJoiningComplexTokensState();
-                parsePostfixExpression();
+                parsePostfixExpression(conditionalContext);
             }
         }
     }
@@ -450,10 +472,10 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
      *   : memberAccessOperation postfixUnaryExpression // TODO: Review
      *   ;
      */
-    private void parsePostfixExpression() {
+    private void parsePostfixExpression(boolean conditionalContext) {
         PsiBuilder.Marker expression = mark();
 
-        boolean firstExpressionParsed = at(COLONCOLON) ? parseDoubleColonSuffix(mark()) : parseAtomicExpression();
+        boolean firstExpressionParsed = at(COLONCOLON) ? parseDoubleColonSuffix(mark()) : parseAtomicExpression(conditionalContext);
 
         while (true) {
             if (interruptedWithNewLine()) {
@@ -473,7 +495,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
                 if (!firstExpressionParsed) {
                     expression.drop();
                     expression = mark();
-                    firstExpressionParsed = parseAtomicExpression();
+                    firstExpressionParsed = parseAtomicExpression(false);
                     continue;
                 }
 
@@ -534,7 +556,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
      */
     private void parseSelectorCallExpression() {
         PsiBuilder.Marker mark = mark();
-        parseAtomicExpression();
+        parseAtomicExpression(false);
         if (!myBuilder.newlineBeforeCurrentToken() && parseCallSuffix()) {
             mark.done(CALL_EXPRESSION);
         }
@@ -632,7 +654,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
      *   : collectionLiteral
      *   ;
      */
-    private boolean parseAtomicExpression() {
+    private boolean parseAtomicExpression(boolean conditionalContext) {
         boolean ok = true;
 
         switch (getTokenId()) {
@@ -718,10 +740,17 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             case NULL_KEYWORD_Id:
                 parseOneTokenExpression(NULL);
                 break;
+            case VAL_KEYWORD_Id:
+                if (conditionalContext) {
+                    PsiBuilder.Marker start = mark();
+                    IElementType result = myKotlinParsing.parseProperty(KotlinParsing.DeclarationParsingMode.CONDITIONAL);
+                    start.done(result);
+                    break;
+                }
+                // else, cascade
             case CLASS_KEYWORD_Id:
             case INTERFACE_KEYWORD_Id:
             case FUN_KEYWORD_Id:
-            case VAL_KEYWORD_Id:
             case VAR_KEYWORD_Id:
             case TYPE_ALIAS_KEYWORD_Id:
                 if (!parseLocalDeclaration(/* rollbackIfDefinitelyNotExpression = */ myBuilder.newlineBeforeCurrentToken(), false)) {
@@ -1023,7 +1052,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
                 condition.done(WHEN_CONDITION_EXPRESSION);
                 break;
             default:
-                parseExpression();
+                parseConditionalExpression();
                 condition.done(WHEN_CONDITION_EXPRESSION);
                 break;
         }

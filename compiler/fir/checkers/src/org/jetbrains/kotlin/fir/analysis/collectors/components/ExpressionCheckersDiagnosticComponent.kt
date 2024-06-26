@@ -113,6 +113,13 @@ class ExpressionCheckersDiagnosticComponent(
         checkers.allWhenExpressionCheckers.check(whenExpression, data)
     }
 
+    override fun visitVariableInConditionalExpression(
+        variableInConditionalExpression: FirVariableInConditionalExpression,
+        data: CheckerContext
+    ) {
+        checkers.allBasicExpressionCheckers.check(variableInConditionalExpression, data)
+    }
+
     override fun visitWhileLoop(whileLoop: FirWhileLoop, data: CheckerContext) {
         checkers.allWhileLoopCheckers.check(whileLoop, data)
     }

@@ -1270,7 +1270,7 @@ class LightTreeRawFirDeclarationBuilder(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseProperty
      */
-    fun convertPropertyDeclaration(property: LighterASTNode, classWrapper: ClassWrapper? = null): FirDeclaration {
+    fun convertPropertyDeclaration(property: LighterASTNode, classWrapper: ClassWrapper? = null): FirVariable {
         var modifiers: Modifier? = null
         val propertyAnnotations = mutableListOf<FirAnnotationCall>()
         var identifier: String? = null

@@ -18,6 +18,12 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirTypeOperatorCall
+import org.jetbrains.kotlin.fir.expressions.builder.buildBlock
+import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
+import org.jetbrains.kotlin.fir.expressions.builder.buildVariableInConditionalExpression
+import org.jetbrains.kotlin.fir.generateTemporaryVariable
+import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -99,4 +105,59 @@ fun <T> AbstractRawFirBuilder<*>.buildDestructuringVariable(
             }
         }
     }.also(configure)
+}
+
+fun <T> AbstractRawFirBuilder<*>.buildIsDestructuring(
+    moduleData: FirModuleData,
+    originalSource: KtSourceElement?,
+    c: DestructuringContext<T>,
+    leftHandSide: FirExpression,
+    destructuringEntries: List<T>,
+    buildTypeOperator: (FirExpression) -> FirTypeOperatorCall
+): FirExpression {
+    val baseVariable = generateTemporaryVariable(
+        moduleData,
+        originalSource,
+        Name.special("<isDestructor>"),
+        leftHandSide
+    )
+    val wrappedBaseVariable =
+        buildVariableInConditionalExpression {
+            declaration = baseVariable
+            source = baseVariable.source
+        }
+    val variableAccess = buildPropertyAccessExpression {
+        calleeReference = buildResolvedNamedReference {
+            name = baseVariable.name
+            resolvedSymbol = baseVariable.symbol
+        }
+        source = originalSource
+    }
+    val typeOperator = buildTypeOperator(variableAccess)
+    val block = buildBlock {
+        addDestructuringVariables(
+            statements,
+            c,
+            baseModuleData,
+            baseVariable,
+            destructuringEntries,
+            false,
+            false,
+            false
+        )
+    }
+    val code: List<FirExpression> =
+        listOf(wrappedBaseVariable, typeOperator) + block.statements.filterIsInstance<FirVariable>().map<_, FirExpression> {
+            buildVariableInConditionalExpression {
+                declaration = it
+                source = it.source
+            }
+        }
+    return code.reduce { acc, next ->
+        acc.generateLazyLogicalOperation(
+            next,
+            isAnd = true,
+            originalSource
+        )
+    }
 }

@@ -22,6 +22,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 
+import java.util.List;
+
 public class KtIsExpression extends KtExpressionImpl implements KtOperationExpression {
     public KtIsExpression(@NotNull ASTNode node) {
         super(node);
@@ -50,6 +52,11 @@ public class KtIsExpression extends KtExpressionImpl implements KtOperationExpre
 
     public boolean isNegated() {
         return getOperationReference().getReferencedNameElementType() == KtTokens.NOT_IS;
+    }
+
+    @Nullable @IfNotParsed
+    public List<KtDestructuringDeclarationEntry> getDestructuringEntries() {
+        return findChildrenByType(KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY);
     }
 
 }

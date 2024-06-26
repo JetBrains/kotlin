@@ -127,14 +127,24 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
         return lastBranch.source != null && lastBranch.condition is FirElseIfTrueCondition && lastBranch.result is FirEmptyExpressionBlock
     }
 
+    override fun transformVariableInConditionalExpression(
+        variableInConditionalExpression: FirVariableInConditionalExpression,
+        data: ResolutionMode
+    ): FirStatement {
+        variableInConditionalExpression.replaceConeTypeOrNull(session.builtinTypes.booleanType.coneTypeUnsafe())
+        variableInConditionalExpression.transformDeclaration(transformer, ResolutionMode.ContextIndependent)
+        return variableInConditionalExpression
+    }
+
     override fun transformWhenBranch(whenBranch: FirWhenBranch, data: ResolutionMode): FirWhenBranch {
         dataFlowAnalyzer.enterWhenBranchCondition(whenBranch)
-        return context.withWhenSubjectImportingScope {
-            whenBranch.transformCondition(transformer, withExpectedType(session.builtinTypes.booleanType))
-        }.also { dataFlowAnalyzer.exitWhenBranchCondition(it) }
-            .transformResult(transformer, data)
-            .also { dataFlowAnalyzer.exitWhenBranchResult(it) }
-
+        return context.forBlock(session) {
+            context.withWhenSubjectImportingScope {
+                whenBranch.transformCondition(transformer, withExpectedType(session.builtinTypes.booleanType))
+            }.also { dataFlowAnalyzer.exitWhenBranchCondition(it) }
+                .transformResult(transformer, data)
+                .also { dataFlowAnalyzer.exitWhenBranchResult(it) }
+        }
     }
 
     override fun transformWhenSubjectExpression(

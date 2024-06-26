@@ -1,0 +1,92 @@
+FILE: DeclarationsInConditionals.kt
+    public open class Developer : R|kotlin/Any| {
+        public constructor(): R|Developer| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class Person : R|Developer| {
+        public constructor(name: R|kotlin/String|): R|Person| {
+            super<R|Developer|>()
+        }
+
+        public final val name: R|kotlin/String| = R|<local>/name|
+            public get(): R|kotlin/String|
+
+    }
+    public final class Company : R|Developer| {
+        public constructor(legalName: R|kotlin/String|, cto: R|Person|): R|Company| {
+            super<R|Developer|>()
+        }
+
+        public final val legalName: R|kotlin/String| = R|<local>/legalName|
+            public get(): R|kotlin/String|
+
+        public final val cto: R|Person| = R|<local>/cto|
+            public get(): R|Person|
+
+    }
+    public sealed class Download : R|kotlin/Any| {
+        protected constructor(): R|Download| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final data class App : R|Download| {
+        public constructor(title: R|kotlin/String|, developer: R|Developer|): R|App| {
+            super<R|Download|>()
+        }
+
+        public final val title: R|kotlin/String| = R|<local>/title|
+            public get(): R|kotlin/String|
+
+        public final val developer: R|Developer| = R|<local>/developer|
+            public get(): R|Developer|
+
+        public final operator fun component1(): R|kotlin/String|
+
+        public final operator fun component2(): R|Developer|
+
+        public final fun copy(title: R|kotlin/String| = this@R|/App|.R|/App.title|, developer: R|Developer| = this@R|/App|.R|/App.developer|): R|App|
+
+    }
+    public final data class Movie : R|Download| {
+        public constructor(title: R|kotlin/String|, director: R|Person|): R|Movie| {
+            super<R|Download|>()
+        }
+
+        public final val title: R|kotlin/String| = R|<local>/title|
+            public get(): R|kotlin/String|
+
+        public final val director: R|Person| = R|<local>/director|
+            public get(): R|Person|
+
+        public final operator fun component1(): R|kotlin/String|
+
+        public final operator fun component2(): R|Person|
+
+        public final fun copy(title: R|kotlin/String| = this@R|/Movie|.R|/Movie.title|, director: R|Person| = this@R|/Movie|.R|/Movie.director|): R|Movie|
+
+    }
+    public final fun f(download: R|Download|): R|kotlin/String| {
+        ^f when () {
+            (R|<local>/download| is R|App|) && lval <destruct>: R|Download| = R|<local>/download| && lval title: R|kotlin/String| = R|<local>/<destruct>|.R|/App.component1|() && lval developer: R|Developer| = R|<local>/<destruct>|.R|/App.component2|() && (R|<local>/developer| is R|Person|) && ==(R|<local>/developer|.R|/Person.name|, String(Alice)) ->  {
+                <strcat>(R|<local>/title|, String( in Wonderland))
+            }
+            else ->  {
+                String(Boo)
+            }
+        }
+
+    }
+    public final fun g(download: R|Download|): R|kotlin/String| {
+        ^g when () {
+            lval <isDestructor>: R|Download| = R|<local>/download| && (R|<local>/<isDestructor>| is R|App|) && lval title: R|kotlin/String| = R|<local>/<isDestructor>|.R|/App.component1|() && lval developer: R|Developer| = R|<local>/<isDestructor>|.R|/App.component2|() && (R|<local>/developer| is R|Person|) && ==(R|<local>/developer|.R|/Person.name|, String(Alice)) ->  {
+                <strcat>(R|<local>/title|, String( in Wonderland))
+            }
+            else ->  {
+                String(Boo)
+            }
+        }
+
+    }

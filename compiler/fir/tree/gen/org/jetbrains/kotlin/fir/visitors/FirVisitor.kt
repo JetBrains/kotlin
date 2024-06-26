@@ -452,6 +452,9 @@ abstract class FirVisitor<out R, in D> {
     open fun visitWhenExpression(whenExpression: FirWhenExpression, data: D): R =
         visitElement(whenExpression, data)
 
+    open fun visitVariableInConditionalExpression(variableInConditionalExpression: FirVariableInConditionalExpression, data: D): R =
+        visitElement(variableInConditionalExpression, data)
+
     open fun visitTypeProjection(typeProjection: FirTypeProjection, data: D): R =
         visitElement(typeProjection, data)
 

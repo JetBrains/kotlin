@@ -254,6 +254,9 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
     override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: D): R =
         visitQualifiedAccessExpression(thisReceiverExpression, data)
 
+    override fun visitVariableInConditionalExpression(variableInConditionalExpression: FirVariableInConditionalExpression, data: D): R =
+        visitExpression(variableInConditionalExpression, data)
+
     override fun visitTypeProjectionWithVariance(typeProjectionWithVariance: FirTypeProjectionWithVariance, data: D): R =
         visitTypeProjection(typeProjectionWithVariance, data)
 

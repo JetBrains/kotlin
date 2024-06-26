@@ -165,3 +165,27 @@ internal fun AbstractRawFirBuilder<*>.addDestructuringVariables(
         configure
     )
 }
+
+internal fun AbstractRawFirBuilder<*>.addDestructuringVariables(
+    destination: MutableList<in FirVariable>,
+    c: DestructuringContext<KtDestructuringDeclarationEntry>,
+    moduleData: FirModuleData,
+    entries: List<KtDestructuringDeclarationEntry>,
+    isVar: Boolean,
+    container: FirVariable,
+    tmpVariable: Boolean,
+    forceLocal: Boolean,
+    configure: (FirVariable) -> Unit = {}
+) {
+    addDestructuringVariables(
+        destination,
+        c,
+        moduleData,
+        container,
+        entries,
+        isVar,
+        tmpVariable,
+        forceLocal,
+        configure
+    )
+}

@@ -151,6 +151,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
       runTest("compiler/testData/psi/ControlStructures.kt");
     }
 
+    @TestMetadata("DeclarationsInConditionals.kt")
+    public void testDeclarationsInConditionals() {
+      runTest("compiler/testData/psi/DeclarationsInConditionals.kt");
+    }
+
     @TestMetadata("DefaultKeyword.kt")
     public void testDefaultKeyword() {
       runTest("compiler/testData/psi/DefaultKeyword.kt");

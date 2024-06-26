@@ -639,6 +639,15 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
         FirControlFlowStatementsResolveTransformer::transformWhenExpression,
     )
 
+    override fun transformVariableInConditionalExpression(
+        variableInConditionalExpression: FirVariableInConditionalExpression,
+        data: ResolutionMode
+    ): FirStatement = controlFlowStatementsTransformation(
+        variableInConditionalExpression,
+        data,
+        FirControlFlowStatementsResolveTransformer::transformVariableInConditionalExpression,
+    )
+
     override fun transformWhenBranch(
         whenBranch: FirWhenBranch,
         data: ResolutionMode,

@@ -159,6 +159,12 @@ public class FirPsiDiagnosticTestGenerated extends AbstractFirPsiDiagnosticTest 
     }
 
     @Test
+    @TestMetadata("DeclarationsInConditionals.kt")
+    public void testDeclarationsInConditionals() {
+      runTest("compiler/fir/analysis-tests/testData/resolve/DeclarationsInConditionals.kt");
+    }
+
+    @Test
     @TestMetadata("defaultJavaImportHiding.kt")
     public void testDefaultJavaImportHiding() {
       runTest("compiler/fir/analysis-tests/testData/resolve/defaultJavaImportHiding.kt");

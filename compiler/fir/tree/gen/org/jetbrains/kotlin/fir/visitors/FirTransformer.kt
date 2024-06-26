@@ -1171,6 +1171,14 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformWhenExpression(whenExpression, data)
     }
 
+    open fun transformVariableInConditionalExpression(variableInConditionalExpression: FirVariableInConditionalExpression, data: D): FirStatement {
+        return transformElement(variableInConditionalExpression, data)
+    }
+
+    final override fun visitVariableInConditionalExpression(variableInConditionalExpression: FirVariableInConditionalExpression, data: D): FirStatement {
+        return transformVariableInConditionalExpression(variableInConditionalExpression, data)
+    }
+
     open fun transformTypeProjection(typeProjection: FirTypeProjection, data: D): FirTypeProjection {
         return transformElement(typeProjection, data)
     }

@@ -57,6 +57,8 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
         }
 
         private fun getSubjectType(session: FirSession, whenExpression: FirWhenExpression): ConeKotlinType? {
+            if (whenExpression.subject is FirVariableInConditionalExpression) return null
+
             val subjectType = whenExpression.subjectVariable?.returnTypeRef?.coneType
                 ?: whenExpression.subject?.resolvedType
                 ?: return null

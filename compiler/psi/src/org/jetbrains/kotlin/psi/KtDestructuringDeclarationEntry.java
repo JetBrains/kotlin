@@ -20,6 +20,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,8 +32,7 @@ import org.jetbrains.kotlin.psi.typeRefHelpers.TypeRefHelpersKt;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.kotlin.lexer.KtTokens.VAL_KEYWORD;
-import static org.jetbrains.kotlin.lexer.KtTokens.VAR_KEYWORD;
+import static org.jetbrains.kotlin.lexer.KtTokens.*;
 
 @SuppressWarnings("deprecation")
 public class KtDestructuringDeclarationEntry extends KtNamedDeclarationNotStubbed implements KtVariableDeclaration {
@@ -132,7 +132,8 @@ public class KtDestructuringDeclarationEntry extends KtNamedDeclarationNotStubbe
     @NotNull
     private ASTNode getParentNode() {
         ASTNode parent = getNode().getTreeParent();
-        assert parent.getElementType() == KtNodeTypes.DESTRUCTURING_DECLARATION :
+        IElementType parentType = parent.getElementType();
+        assert (parentType == KtNodeTypes.DESTRUCTURING_DECLARATION || parentType == KtNodeTypes.IS_EXPRESSION) :
                 "parent is " + parent.getElementType();
         return parent;
     }

@@ -1216,6 +1216,12 @@ object FirTree : AbstractFirTreeBuilder() {
         +field("usedAsExpression", boolean)
     }
 
+    val variableInConditionalExpression: Element by element(Expression) {
+        parent(expression)
+
+        +field("declaration", variable, withTransform = true)
+    }
+
     val typeProjection: Element by element(TypeRefElement)
 
     val typeProjectionWithVariance: Element by element(TypeRefElement) {

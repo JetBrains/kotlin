@@ -308,6 +308,9 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
             additionalImports(stubReferenceType)
         }
 
+        builder(variableInConditionalExpression) {
+        }
+
         builder(resolvedTypeRef) {
             defaultNull("delegatedTypeRef")
             withCopy()

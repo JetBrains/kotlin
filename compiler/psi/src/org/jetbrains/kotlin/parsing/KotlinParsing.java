@@ -1437,18 +1437,21 @@ public class KotlinParsing extends AbstractKotlinParsing {
     }
 
     enum DeclarationParsingMode {
-        MEMBER_OR_TOPLEVEL(false, true, true),
-        LOCAL(true, false, false),
-        SCRIPT_TOPLEVEL(true, true, false);
+        MEMBER_OR_TOPLEVEL(false, true, true, false),
+        LOCAL(true, false, false, false),
+        SCRIPT_TOPLEVEL(true, true, false, false),
+        CONDITIONAL(true, false, false, true);
 
         public final boolean destructuringAllowed;
         public final boolean accessorsAllowed;
         public final boolean canBeEnumUsedAsSoftKeyword;
+        public final boolean onlyAtomicExpressions;
 
-        DeclarationParsingMode(boolean destructuringAllowed, boolean accessorsAllowed, boolean canBeEnumUsedAsSoftKeyword) {
+        DeclarationParsingMode(boolean destructuringAllowed, boolean accessorsAllowed, boolean canBeEnumUsedAsSoftKeyword, boolean onlyAtomicExpressions) {
             this.destructuringAllowed = destructuringAllowed;
             this.accessorsAllowed = accessorsAllowed;
             this.canBeEnumUsedAsSoftKeyword = canBeEnumUsedAsSoftKeyword;
+            this.onlyAtomicExpressions = onlyAtomicExpressions;
         }
     }
 
@@ -1507,7 +1510,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         parseTypeConstraintsGuarded(typeParametersDeclared);
 
-        if (!parsePropertyDelegateOrAssignment() && isNameOnTheNextLine && noTypeReference && !receiverTypeDeclared) {
+        if (!parsePropertyDelegateOrAssignment(mode) && isNameOnTheNextLine && noTypeReference && !receiverTypeDeclared) {
             // Do not parse property identifier on the next line if declaration is invalid
             // In most cases this identifier relates to next statement/declaration
             beforeName.rollbackTo();
@@ -1550,14 +1553,18 @@ public class KotlinParsing extends AbstractKotlinParsing {
         return multiDeclaration ? DESTRUCTURING_DECLARATION : PROPERTY;
     }
 
-    private boolean parsePropertyDelegateOrAssignment() {
-        if (at(BY_KEYWORD)) {
+    private boolean parsePropertyDelegateOrAssignment(DeclarationParsingMode mode) {
+        if (at(BY_KEYWORD) && !mode.onlyAtomicExpressions) {
             parsePropertyDelegate();
             return true;
         }
         else if (at(EQ)) {
             advance(); // EQ
-            myExpressionParsing.parseExpression();
+            if (mode.onlyAtomicExpressions) {
+                myExpressionParsing.parsePrefixExpression(false);
+            } else {
+                myExpressionParsing.parseExpression();
+            }
             return true;
         }
 

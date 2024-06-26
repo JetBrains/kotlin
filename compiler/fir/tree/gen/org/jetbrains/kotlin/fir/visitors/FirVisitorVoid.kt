@@ -1171,6 +1171,14 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(whenExpression)
     }
 
+    final override fun visitVariableInConditionalExpression(variableInConditionalExpression: FirVariableInConditionalExpression, data: Nothing?) {
+        visitVariableInConditionalExpression(variableInConditionalExpression)
+    }
+
+    open fun visitVariableInConditionalExpression(variableInConditionalExpression: FirVariableInConditionalExpression) {
+        visitElement(variableInConditionalExpression)
+    }
+
     final override fun visitTypeProjection(typeProjection: FirTypeProjection, data: Nothing?) {
         visitTypeProjection(typeProjection)
     }

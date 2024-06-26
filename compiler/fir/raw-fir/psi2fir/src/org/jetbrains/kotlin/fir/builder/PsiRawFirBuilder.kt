@@ -312,6 +312,20 @@ open class PsiRawFirBuilder(
 
             return when (val fir = convertElement(this, null)) {
                 is FirExpression -> when {
+                    fir is FirBlock && fir.statements.isNotEmpty() && fir.statements.all { it is FirVariable } -> {
+                        fir.statements.filterIsInstance<FirVariable>().map<_, FirExpression> {
+                            buildVariableInConditionalExpression {
+                                declaration = it
+                                source = it.source
+                            }
+                        }.reduce { acc, next ->
+                            acc.generateLazyLogicalOperation(
+                                next,
+                                isAnd = true,
+                                toFirSourceElement(KtFakeSourceElementKind.WhenCondition)
+                            )
+                        }
+                    }
                     isValidExpression(fir) -> checkSelectorInvariant(fir)
                     else -> buildErrorExpression {
                         nonExpressionElement = fir
@@ -319,10 +333,16 @@ open class PsiRawFirBuilder(
                         source = sourceWhenInvalidExpression?.toFirSourceElement()
                     }
                 }
-                else -> buildErrorExpression {
-                    nonExpressionElement = fir
-                    diagnostic = diagnosticFn()
-                    source = fir?.source?.realElement() ?: toFirSourceElement()
+                else -> when {
+                    fir is FirVariable -> buildVariableInConditionalExpression {
+                        declaration = fir
+                        source = fir.source
+                    }
+                    else -> buildErrorExpression {
+                        nonExpressionElement = fir
+                        diagnostic = diagnosticFn()
+                        source = fir?.source?.realElement() ?: toFirSourceElement()
+                    }
                 }
             }
         }
@@ -2934,14 +2954,30 @@ open class PsiRawFirBuilder(
             }
         }
 
-        override fun visitIsExpression(expression: KtIsExpression, data: FirElement?): FirElement {
-            return buildTypeOperatorCall {
-                source = expression.toFirSourceElement()
-                operation = if (expression.isNegated) FirOperation.NOT_IS else FirOperation.IS
-                conversionTypeRef = expression.typeReference.toFirOrErrorType()
-                argumentList = buildUnaryArgumentList(expression.leftHandSide.toFirExpression("No left operand"))
+        override fun visitIsExpression(expression: KtIsExpression, data: FirElement?): FirElement =
+            if (expression.destructuringEntries.isNullOrEmpty()) {
+                buildTypeOperatorCall {
+                    source = expression.toFirSourceElement()
+                    operation = if (expression.isNegated) FirOperation.NOT_IS else FirOperation.IS
+                    conversionTypeRef = expression.typeReference.toFirOrErrorType()
+                    argumentList = buildUnaryArgumentList(expression.leftHandSide.toFirExpression("No left operand"))
+                }
+            } else {
+                buildIsDestructuring(
+                    baseModuleData,
+                    expression.toFirSourceElement(),
+                    this@Visitor,
+                    expression.leftHandSide.toFirExpression { ConeSyntaxDiagnostic("Initializer required for destructuring declaration") },
+                    expression.destructuringEntries!!
+                ) {
+                    buildTypeOperatorCall {
+                        source = expression.toFirSourceElement()
+                        operation = if (expression.isNegated) FirOperation.NOT_IS else FirOperation.IS
+                        conversionTypeRef = expression.typeReference.toFirOrErrorType()
+                        argumentList = buildUnaryArgumentList(it)
+                    }
+                }
             }
-        }
 
         override fun visitUnaryExpression(expression: KtUnaryExpression, data: FirElement?): FirElement {
             val operationToken = expression.operationToken
