@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrSuspensionPoint
-import org.jetbrains.kotlin.ir.inline.FunctionInlining
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -356,27 +355,7 @@ private val builtinOperatorPhase = createFileLoweringPhase(
 
 private val inlinePhase = createFileLoweringPhase(
         lowering = { context: NativeGenerationState ->
-            object : FileLoweringPass {
-                override fun lower(irFile: IrFile) {
-                    irFile.acceptChildrenVoid(object : IrElementVisitorVoid {
-                        override fun visitElement(element: IrElement) {
-                            element.acceptChildrenVoid(this)
-                        }
-
-                        override fun visitFunction(declaration: IrFunction) {
-                            if (declaration.isInline)
-                                context.context.inlineFunctionsSupport.saveLoweredInlineFunction(declaration)
-                            declaration.acceptChildrenVoid(this)
-                        }
-                    })
-
-                    FunctionInlining(
-                            context.context,
-                            NativeInlineFunctionResolver(context, inlineOnlyPrivateFunctions = false),
-                            insertAdditionalImplicitCasts = true,
-                    ).lower(irFile)
-                }
-            }
+            NativeIrInliner(context, inlineOnlyPrivateFunctions = false)
         },
         name = "Inline",
         description = "Functions inlining",
