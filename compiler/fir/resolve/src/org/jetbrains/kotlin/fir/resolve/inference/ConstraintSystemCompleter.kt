@@ -537,7 +537,8 @@ private fun FirStatement.processCandidatesAndPostponedAtomsInOrderImpl(
                 for (atom in arg.getPostponedAtoms(candidate, topLevelCandidate)) {
                     postponedAtomsProcessor?.invoke(atom)
                     if (atom is ConeResolvedLambdaAtom && atom.analyzed) {
-                        for (it in atom.returnStatements) {
+                        for (returnAtom in atom.returnStatements) {
+                            val it = returnAtom.expression
                             visited += it
                             process(it)
                         }

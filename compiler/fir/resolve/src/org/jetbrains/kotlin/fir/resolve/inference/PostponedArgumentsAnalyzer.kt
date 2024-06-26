@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.types.model.freshTypeConstructor
 import org.jetbrains.kotlin.types.model.safeSubstitute
 
 data class ReturnArgumentsAnalysisResult(
-    val returnArguments: Collection<FirExpression>,
+    val returnArguments: Collection<ConeCallAtom>,
     val additionalConstraints: ConstraintStorage?,
 )
 
@@ -174,7 +174,8 @@ class PostponedArgumentsAnalyzer(
         results: ReturnArgumentsAnalysisResult,
         substituteAlreadyFixedVariables: (ConeKotlinType) -> ConeKotlinType = c.createSubstituteFunctorForLambdaAnalysis(),
     ) {
-        val (returnArguments, additionalConstraintStorage) = results
+        val (returnAtoms, additionalConstraintStorage) = results
+        val returnArguments = returnAtoms.map { it.expression }
 
         if (additionalConstraintStorage != null) {
             c.addOtherSystem(additionalConstraintStorage)
@@ -190,10 +191,11 @@ class PostponedArgumentsAnalyzer(
         }
         val isUnitLambda = returnTypeRef.type.isUnitOrFlexibleUnit || lambda.fir.shouldReturnUnit(returnArguments)
 
-        returnArguments.forEach {
-            if (it.isImplicitUnitForEmptyLambda()) return@forEach
+        for (atom in returnAtoms) {
+            val expression = atom.expression
+            if (expression.isImplicitUnitForEmptyLambda()) continue
             // If the lambda returns Unit, the last expression is not returned and should not be constrained.
-            val isLastExpression = it == lastExpression
+            val isLastExpression = expression == lastExpression
 
             // TODO (KT-55837) questionable moment inherited from FE1.0 (the `haveSubsystem` case):
             //    fun <T> foo(): T
@@ -202,7 +204,7 @@ class PostponedArgumentsAnalyzer(
             //      foo() // T = Unit, even though there is no implicit return
             //    }
             //  Things get even weirder if T has an upper bound incompatible with Unit.
-            val haveSubsystem = c.addSubsystemFromExpression(it)
+            val haveSubsystem = c.addSubsystemFromExpression(expression)
             if (isLastExpression && isUnitLambda) {
                 // That "if" is necessary because otherwise we would force a lambda return type
                 // to be inferred from completed last expression.
@@ -214,18 +216,18 @@ class PostponedArgumentsAnalyzer(
                     // }
                     // See KT-63602 for details.
                     builder.addSubtypeConstraintIfCompatible(
-                        it.resolvedType, returnTypeRef.type,
+                        expression.resolvedType, returnTypeRef.type,
                         ConeLambdaArgumentConstraintPosition(lambda.fir)
                     )
                 }
-                return@forEach
+                continue
             }
 
             hasExpressionInReturnArguments = true
             if (!builder.hasContradiction) {
                 ArgumentCheckingProcessor.resolveArgumentExpression(
                     candidate,
-                    ConeCallAtom.createRawAtom(it),
+                    atom,
                     substituteAlreadyFixedVariables(lambda.returnType),
                     checkerSink,
                     context = resolutionContext,
@@ -240,7 +242,7 @@ class PostponedArgumentsAnalyzer(
         }
 
         lambda.analyzed = true
-        lambda.returnStatements = returnArguments
+        lambda.returnStatements = returnAtoms
     }
 
     private fun addLambdaReturnTypeUnitConstraintOrReportError(
