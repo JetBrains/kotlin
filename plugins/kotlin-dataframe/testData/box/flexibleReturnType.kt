@@ -1,24 +1,16 @@
-package org.jetbrains.kotlinx.dataframe
-
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.time.temporal.Temporal
 import kotlin.experimental.ExperimentalTypeInference
-import org.jetbrains.kotlinx.dataframe.annotations.DataSchema
-import org.jetbrains.kotlinx.dataframe.annotations.DisableInterpretation
-import org.jetbrains.kotlinx.dataframe.api.cast
-import org.jetbrains.kotlinx.dataframe.io.*
+import org.jetbrains.kotlinx.dataframe.*
+import org.jetbrains.kotlinx.dataframe.annotations.*
 import org.jetbrains.kotlinx.dataframe.api.*
+import org.jetbrains.kotlinx.dataframe.io.*
 
 @DataSchema
 interface ActivePlayer {
     val char: Int
-//    val level: Int
-//    val race: String
-//    val charclass: String
-//    val zone: String
-//    val guild: Int
     val timestamp: String
 }
 
