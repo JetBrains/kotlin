@@ -98,7 +98,6 @@ kotlin {
                         moduleName = "kotlin-stdlib"
                         languageVersion = KotlinVersion.KOTLIN_2_0
                         apiVersion = KotlinVersion.KOTLIN_2_0
-                        allWarningsAsErrors = false
                         // providing exhaustive list of args here
                         freeCompilerArgs.set(
                             listOfNotNull(
