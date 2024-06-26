@@ -10,6 +10,11 @@
     />
 
     <projectService
+        serviceInterface="org.jetbrains.kotlin.analysis.api.platform.modification.KaSourceModificationService"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.fir.modification.KaFirSourceModificationService"
+    />
+
+    <projectService
         serviceInterface="org.jetbrains.kotlin.idea.references.KotlinReferenceProviderContributor"
         serviceImplementation="org.jetbrains.kotlin.analysis.api.fir.references.KotlinFirReferenceContributor"
     />

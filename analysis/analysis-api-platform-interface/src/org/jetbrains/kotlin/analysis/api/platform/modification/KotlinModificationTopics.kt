@@ -81,6 +81,10 @@ import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
  * works with static code and static module structure, you do not need to publish any events. However, keep in mind the contracts of the
  * various modification events. For example, if your platform can guarantee a static module structure but source code can still change,
  * module state modification events do not need to be published, but out-of-block modification events do.
+ *
+ * Source code modification should always be handled with [KaSourceModificationService]. It publishes out-of-block modification events if
+ * it detects an out-of-block change, which makes modification handling much easier. But it also invalidates local caches on local changes,
+ * which currently cannot be accomplished by modification events with the same level of granularity.
  */
 public object KotlinModificationTopics {
     public val MODULE_STATE_MODIFICATION: Topic<KotlinModuleStateModificationListener> =

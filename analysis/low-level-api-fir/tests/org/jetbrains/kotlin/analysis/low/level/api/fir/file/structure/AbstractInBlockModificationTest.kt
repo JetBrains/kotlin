@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.Analys
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
+import org.jetbrains.kotlin.analysis.api.platform.modification.KaElementModificationType
 import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModuleOutOfBlockModificationListener
 import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationTopics
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
@@ -152,7 +153,7 @@ private fun LLFirDeclarationModificationService.modifyElement(element: PsiElemen
             KotlinModuleOutOfBlockModificationListener { isOutOfBlock = true },
         )
 
-        elementModified(element)
+        elementModified(element, modificationType = KaElementModificationType.Unknown)
     } finally {
         Disposer.dispose(disposable)
     }
