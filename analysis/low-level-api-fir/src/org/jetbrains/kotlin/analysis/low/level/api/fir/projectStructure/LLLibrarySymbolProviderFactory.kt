@@ -18,10 +18,10 @@ import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 
 /**
- * [LLFirLibrarySymbolProviderFactory] creates symbol providers in accordance with [KotlinPlatformSettings.deserializedDeclarationsOrigin].
+ * [LLLibrarySymbolProviderFactory] creates symbol providers in accordance with [KotlinPlatformSettings.deserializedDeclarationsOrigin].
  * Its implementations should be lightweight as the factory is neither a service nor cached.
  */
-internal interface LLFirLibrarySymbolProviderFactory {
+internal interface LLLibrarySymbolProviderFactory {
     fun createJvmLibrarySymbolProvider(
         session: FirSession,
         moduleData: LLFirModuleData,
@@ -68,7 +68,7 @@ internal interface LLFirLibrarySymbolProviderFactory {
     ): List<FirSymbolProvider>
 
     companion object {
-        fun fromSettings(project: Project): LLFirLibrarySymbolProviderFactory {
+        fun fromSettings(project: Project): LLLibrarySymbolProviderFactory {
             val platformSettings = KotlinPlatformSettings.getInstance(project)
             return when (platformSettings.deserializedDeclarationsOrigin) {
                 KotlinDeserializedDeclarationsOrigin.BINARIES -> LLBinaryOriginLibrarySymbolProviderFactory(project)

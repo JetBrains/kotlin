@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
-import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirLibrarySymbolProviderFactory
+import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLLibrarySymbolProviderFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirModuleData
 import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.fir.SessionConfiguration
@@ -122,7 +122,7 @@ internal class LLFirJvmSessionFactory(project: Project) : LLFirAbstractSessionFa
         val packagePartProvider = project.createPackagePartProvider(scope)
         return buildList {
             val firJavaFacade = LLFirJavaFacadeForBinaries(session, builtinTypes, project.createJavaClassFinder(scope), moduleDataProvider)
-            val deserializedSymbolProviderFactory = LLFirLibrarySymbolProviderFactory.fromSettings(project)
+            val deserializedSymbolProviderFactory = LLLibrarySymbolProviderFactory.fromSettings(project)
             addAll(
                 deserializedSymbolProviderFactory.createJvmLibrarySymbolProvider(
                     session,

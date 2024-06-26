@@ -36,9 +36,9 @@ import kotlin.io.path.isDirectory
 import org.jetbrains.kotlin.util.Logger as KLogger
 
 /**
- * [LLFirLibrarySymbolProviderFactory] for [KotlinDeserializedDeclarationsOrigin.BINARIES][org.jetbrains.kotlin.analysis.api.platform.KotlinDeserializedDeclarationsOrigin.BINARIES].
+ * [LLLibrarySymbolProviderFactory] for [KotlinDeserializedDeclarationsOrigin.BINARIES][org.jetbrains.kotlin.analysis.api.platform.KotlinDeserializedDeclarationsOrigin.BINARIES].
  */
-class LLBinaryOriginLibrarySymbolProviderFactory(private val project: Project) : LLFirLibrarySymbolProviderFactory {
+class LLBinaryOriginLibrarySymbolProviderFactory(private val project: Project) : LLLibrarySymbolProviderFactory {
     override fun createJvmLibrarySymbolProvider(
         session: FirSession,
         moduleData: LLFirModuleData,

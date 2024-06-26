@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirLibrarySymbolProviderFactory
+import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLLibrarySymbolProviderFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirModuleWithDependenciesSymbolProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
@@ -94,7 +94,7 @@ internal class LLFirJsSessionFactory(project: Project) : LLFirAbstractSessionFac
         isFallbackDependenciesProvider: Boolean,
     ): List<FirSymbolProvider> {
         val moduleDataProvider = SingleModuleDataProvider(moduleData)
-        return LLFirLibrarySymbolProviderFactory.fromSettings(project).createJsLibrarySymbolProvider(
+        return LLLibrarySymbolProviderFactory.fromSettings(project).createJsLibrarySymbolProvider(
             session,
             moduleData,
             kotlinScopeProvider,

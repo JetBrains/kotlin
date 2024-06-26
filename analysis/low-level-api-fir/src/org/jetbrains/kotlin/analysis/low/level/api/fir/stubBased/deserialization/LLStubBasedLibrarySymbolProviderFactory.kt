@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserializatio
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirLibrarySymbolProviderFactory
+import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLLibrarySymbolProviderFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirJavaSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.createNativeForwardDeclarationsSymbolProvider
@@ -28,9 +28,9 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtFile
 
 /**
- * [LLFirLibrarySymbolProviderFactory] for [KotlinDeserializedDeclarationsOrigin.STUBS][org.jetbrains.kotlin.analysis.api.platform.KotlinDeserializedDeclarationsOrigin.STUBS].
+ * [LLLibrarySymbolProviderFactory] for [KotlinDeserializedDeclarationsOrigin.STUBS][org.jetbrains.kotlin.analysis.api.platform.KotlinDeserializedDeclarationsOrigin.STUBS].
  */
-internal class LLStubBasedLibrarySymbolProviderFactory(private val project: Project) : LLFirLibrarySymbolProviderFactory {
+internal class LLStubBasedLibrarySymbolProviderFactory(private val project: Project) : LLLibrarySymbolProviderFactory {
     override fun createJvmLibrarySymbolProvider(
         session: FirSession,
         moduleData: LLFirModuleData,
