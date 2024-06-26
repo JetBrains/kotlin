@@ -91,6 +91,7 @@ public val File.isRooted: Boolean
  * @property segments the list of [File] objects representing every directory in the path to the file,
  *     up to an including the file itself.
  */
+@ConsistentCopyVisibility
 internal data class FilePathComponents
     internal constructor(public val root: File, public val segments: List<File>) {
 
