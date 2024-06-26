@@ -607,7 +607,6 @@ class WasmSerializer(outputStream: OutputStream) {
             serialize(stringLiteralPoolId, ::serialize, ::serialize)
             serialize(constantArrayDataSegmentId, { serialize(it, { serialize(it, ::serialize) }, ::serialize)}, ::serialize)
             serialize(interfaceUnions) { serialize(it, ::serialize) }
-            serialize(uniqueJsFunNames, ::serialize, ::serialize)
             serialize(jsFuns, ::serialize)
             serialize(jsModuleImports, ::serialize)
             serialize(exports, ::serialize)

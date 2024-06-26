@@ -38,7 +38,6 @@ class WasmCompiledFileFragment(
     val stringLiteralPoolId: ReferencableElements<String, Int> = ReferencableElements(),
     val constantArrayDataSegmentId: ReferencableElements<Pair<List<Long>, WasmType>, Int> = ReferencableElements(),
     val interfaceUnions: MutableList<List<IdSignature>> = mutableListOf(),
-    val uniqueJsFunNames: ReferencableElements<String, String> = ReferencableElements(),
     val jsFuns: MutableList<JsCodeSnippet> = mutableListOf(),
     val jsModuleImports: MutableSet<String> = mutableSetOf(),
     val exports: MutableList<WasmExport<*>> = mutableListOf(),
@@ -80,7 +79,7 @@ class WasmCompiledModuleFragment(
     } as? WasmFunction.Defined
 
 
-    class JsCodeSnippet(val importName: WasmSymbolReadOnly<String>, val jsCode: String)
+    class JsCodeSnippet(val importName: WasmSymbol<String>, val jsCode: String)
 
     open class ReferencableElements<Ir, Wasm : Any>(
         val unbound: MutableMap<Ir, WasmSymbol<Wasm>> = mutableMapOf()
@@ -590,11 +589,13 @@ class WasmCompiledModuleFragment(
     private fun bindUniqueJsFunNames() {
         val jsCodeCounter = mutableMapOf<String, Int>()
         wasmCompiledFileFragments.forEach { fragment ->
-            fragment.uniqueJsFunNames.unbound.forEach { (jsFunName, symbol) ->
+            fragment.jsFuns.forEach { jsCodeSnippet ->
+                val jsFunName = jsCodeSnippet.importName.owner
                 val counterValue = jsCodeCounter.getOrPut(jsFunName, defaultValue = { 0 })
                 jsCodeCounter[jsFunName] = counterValue + 1
-                val counterSuffix = if (counterValue == 0 && jsFunName.lastOrNull()?.isDigit() == false) "" else "_$counterValue"
-                symbol.bind("$jsFunName$counterSuffix")
+                if (counterValue > 0) {
+                    jsCodeSnippet.importName.bind("${jsFunName}_$counterValue")
+                }
             }
         }
     }

@@ -598,7 +598,6 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         stringLiteralPoolId = deserializeStringLiteralPoolId(),
         constantArrayDataSegmentId = deserializeConstantArrayDataSegmentId(),
         interfaceUnions = deserializeInterfaceUnions(),
-        uniqueJsFunNames = deserializeUniqueJsFunNames(),
         jsFuns = deserializeJsFuns(),
         jsModuleImports = deserializeJsModuleImports(),
         exports = deserializeExports(),
@@ -633,7 +632,6 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
     private fun deserializeStringLiteralPoolId() = deserializeReferencableElements(::deserializeString, ::deserializeInt)
     private fun deserializeConstantArrayDataSegmentId(): ReferencableElements<Pair<List<Long>, WasmType>, Int> = deserializeReferencableElements({ deserializePair({ deserializeList(::deserializeLong) }, ::deserializeType) }, ::deserializeInt)
     private fun deserializeInterfaceUnions(): MutableList<List<IdSignature>> = deserializeList { deserializeList(::deserializeIdSignature) }
-    private fun deserializeUniqueJsFunNames() = deserializeReferencableElements(::deserializeString, ::deserializeString)
     private fun deserializeJsFuns() = deserializeList(::deserializeJsCodeSnippet)
     private fun deserializeJsModuleImports() = deserializeSet(::deserializeString)
     private fun deserializeExports() = deserializeList(::deserializeExport)
