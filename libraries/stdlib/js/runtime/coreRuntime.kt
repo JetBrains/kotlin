@@ -22,6 +22,7 @@ internal fun equals(obj1: dynamic, obj2: dynamic): Boolean {
     }
 
     if (jsTypeOf(obj1) == "number" && jsTypeOf(obj2) == "number") {
+        @Suppress("IMPLICIT_BOXING_IN_IDENTITY_EQUALS")
         return obj1 === obj2 && (obj1 !== 0 || 1.asDynamic() / obj1 === 1.asDynamic() / obj2)
     }
     return obj1 === obj2

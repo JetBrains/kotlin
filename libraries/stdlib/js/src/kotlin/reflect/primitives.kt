@@ -72,6 +72,7 @@ internal object PrimitiveClasses {
     @JsName("functionClass")
     fun functionClass(arity: Int): KClassImpl<Any> {
         return functionClasses.get(arity) ?: run {
+            @Suppress("IMPLICIT_BOXING_IN_IDENTITY_EQUALS")
             val result = PrimitiveKClassImpl(js("Function").unsafeCast<JsClass<Any>>(), "Function$arity",
                                              { jsTypeOf(it) === "function" && it.asDynamic().length === arity })
             functionClasses.asDynamic()[arity] = result

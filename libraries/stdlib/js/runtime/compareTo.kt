@@ -40,6 +40,7 @@ internal fun doubleCompareTo(a: dynamic, b: dynamic): Int =
         a > b -> 1
 
         a === b -> {
+            @Suppress("IMPLICIT_BOXING_IN_IDENTITY_EQUALS")
             if (a !== 0)
                 0
             else {
