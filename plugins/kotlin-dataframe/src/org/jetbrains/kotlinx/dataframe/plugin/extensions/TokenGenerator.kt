@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 import org.jetbrains.kotlinx.dataframe.plugin.utils.generateExtensionProperty
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.builder.buildLiteralExpression
@@ -51,8 +52,7 @@ class TokenGenerator(session: FirSession) : FirDeclarationGenerationExtension(se
                 }
                 is CallShapeData.RefinedType -> callShapeData.scopes.associate {
                     val propertyName = Name.identifier(it.name.identifier.replaceFirstChar { it.lowercaseChar() })
-                    // making them var appeared to be the easiest way to filter
-                    propertyName to listOf(buildProperty(it.defaultType().toFirResolvedTypeRef(), propertyName, k, isVal = false))
+                    propertyName to listOf(buildProperty(it.defaultType().toFirResolvedTypeRef(), propertyName, k, isScopeProperty = true))
                 }
                 is CallShapeData.Scope -> callShapeData.columns.associate { schemaProperty ->
                     val propertyName = Name.identifier(schemaProperty.name)
@@ -89,7 +89,6 @@ class TokenGenerator(session: FirSession) : FirDeclarationGenerationExtension(se
 
     @OptIn(SymbolInternals::class)
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
-        // maybe Init needed not for everything
         val destination = mutableSetOf<Name>()
         when (classSymbol.fir.callShapeData) {
             is CallShapeData.RefinedType -> destination.add(SpecialNames.INIT)
@@ -110,28 +109,33 @@ class TokenGenerator(session: FirSession) : FirDeclarationGenerationExtension(se
         resolvedTypeRef: FirResolvedTypeRef,
         propertyName: Name,
         k: FirClassSymbol<*>,
-        isVal: Boolean = true,
+        isScopeProperty: Boolean = false,
         order: Int? = null,
     ): FirProperty {
-        return createMemberProperty(k, Key, propertyName, resolvedTypeRef.type, isVal) {
+        return createMemberProperty(k, Key, propertyName, resolvedTypeRef.type) {
             modality = Modality.ABSTRACT
             visibility = Visibilities.Public
         }.apply {
+            val annotations = mutableListOf<FirAnnotation>()
             if (order != null) {
-                val orderAnnotation = buildAnnotation {
+                annotations += buildAnnotation {
                     annotationTypeRef = buildResolvedTypeRef {
-                        type = ConeClassLikeTypeImpl(
-                            ConeClassLikeLookupTagImpl(Names.ORDER_ANNOTATION),
-                            arrayOf(),
-                            isNullable = false
-                        )
+                        type = Names.ORDER_ANNOTATION.defaultType(emptyList())
                     }
                     argumentMapping = buildAnnotationArgumentMapping {
                         mapping[Names.ORDER_ARGUMENT] = buildLiteralExpression(null, ConstantValueKind.Int, order, setType = true)
                     }
                 }
-                replaceAnnotations(listOf(orderAnnotation))
             }
+            if (isScopeProperty) {
+                annotations += buildAnnotation {
+                    annotationTypeRef = buildResolvedTypeRef {
+                        type = Names.SCOPE_PROPERTY_ANNOTATION.defaultType(emptyList())
+                    }
+                    argumentMapping = buildAnnotationArgumentMapping()
+                }
+            }
+            replaceAnnotations(annotations)
         }
     }
 
