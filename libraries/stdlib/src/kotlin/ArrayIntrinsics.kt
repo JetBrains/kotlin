@@ -5,10 +5,8 @@
 
 package kotlin
 
-import kotlin.internal.PureReifiable
-
 /**
  * Returns an empty array of the specified type [T].
  */
 @Suppress("REIFIED_TYPE_PARAMETER_NO_INLINE")
-public expect fun <reified @PureReifiable T> emptyArray(): Array<T>
+public expect fun <reified T> emptyArray(): Array<T>

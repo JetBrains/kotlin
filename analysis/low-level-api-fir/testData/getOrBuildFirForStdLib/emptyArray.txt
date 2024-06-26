@@ -3,4 +3,4 @@ FIR element: FirSimpleFunctionImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-public final inline [ResolvedTo(BODY_RESOLVE)] fun <@R|kotlin/internal/PureReifiable|() reified [ResolvedTo(BODY_RESOLVE)] T> emptyArray(): R|kotlin/Array<T>|
+public final inline [ResolvedTo(BODY_RESOLVE)] fun <reified [ResolvedTo(BODY_RESOLVE)] T> emptyArray(): R|kotlin/Array<T>|
