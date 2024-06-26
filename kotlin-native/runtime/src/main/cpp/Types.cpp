@@ -20,7 +20,7 @@ KBoolean IsInstanceInternal(const ObjHeader* obj, const TypeInfo* type_info) {
   return IsSubtype(obj_type_info, type_info);
 }
 
-KBoolean IsSubtype(const TypeInfo* obj_type_info, const TypeInfo* type_info) {
+RUNTIME_PURE KBoolean IsSubtype(const TypeInfo* obj_type_info, const TypeInfo* type_info) {
   // If it is an interface - check in list of implemented interfaces.
   if ((type_info->flags_ & TF_INTERFACE) != 0) {
     for (int i = 0; i < obj_type_info->implementedInterfacesCount_; ++i) {
@@ -36,12 +36,12 @@ KBoolean IsSubtype(const TypeInfo* obj_type_info, const TypeInfo* type_info) {
   return obj_type_info != nullptr;
 }
 
-KBoolean IsSubclassFast(const TypeInfo* obj_type_info, int32_t lo, int32_t hi) {
+RUNTIME_PURE ALWAYS_INLINE KBoolean IsSubclassFast(const TypeInfo* obj_type_info, int32_t lo, int32_t hi) {
   // Super type's interval should contain our interval.
   return obj_type_info->classId_ >= lo && obj_type_info->classId_ <= hi;
 }
 
-KBoolean IsArray(KConstRef obj) {
+ALWAYS_INLINE KBoolean IsArray(KConstRef obj) {
   RuntimeAssert(obj != nullptr, "Object must not be null");
   return obj->type_info()->instanceSize_ < 0;
 }
