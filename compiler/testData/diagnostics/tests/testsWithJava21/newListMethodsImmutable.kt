@@ -26,8 +26,8 @@ fun baz(x: ArrayDeque<String>, y: LinkedHashSet<String>) {
 
     y.addFirst("")
     y.addLast("")
-    y.addFirst(null)
-    y.addLast(null)
+    y.addFirst(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
+    y.addLast(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
     y.removeFirst()
     y.removeLast()
     y.getFirst()
