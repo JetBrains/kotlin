@@ -415,6 +415,18 @@ public class ClassicNativeKlibSyntheticAccessorTestGenerated extends AbstractNat
       }
 
       @Test
+      @TestMetadata("leakingPrivateClassThroughtKlass.kt")
+      public void testLeakingPrivateClassThroughtKlass() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateClassThroughtKlass.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingPrivateClassThroughtTypecheck.kt")
+      public void testLeakingPrivateClassThroughtTypecheck() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateClassThroughtTypecheck.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateExtensionFun.kt")
       public void testLeakingPrivateExtensionFun() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateExtensionFun.kt");
@@ -527,6 +539,18 @@ public class ClassicNativeKlibSyntheticAccessorTestGenerated extends AbstractNat
       @Test
       public void testAllFilesPresentInCrossModulePrivateLeak() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+      }
+
+      @Test
+      @TestMetadata("leakingPrivateClassThroughtKlass.kt")
+      public void testLeakingPrivateClassThroughtKlass() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateClassThroughtKlass.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingPrivateClassThroughtTypecheck.kt")
+      public void testLeakingPrivateClassThroughtTypecheck() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateClassThroughtTypecheck.kt");
       }
 
       @Test
