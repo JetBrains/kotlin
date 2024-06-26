@@ -168,6 +168,10 @@ class WasmFileCodegenContext(
         wasmFileFragment.classAssociatedObjectsInstanceGetters.add(classAssociatedObjects)
     }
 
+    fun addJsModuleAndQualifierReferences(reference: JsModuleAndQualifierReference) {
+        wasmFileFragment.jsModuleAndQualifierReferences.add(reference)
+    }
+
     fun defineTryGetAssociatedObjectFun(func: IrFunctionSymbol) {
         wasmFileFragment.tryGetAssociatedObjectFun = func.getReferenceKey()
     }

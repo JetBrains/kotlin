@@ -77,6 +77,10 @@ internal fun compileIrFile(
         wasmFileCodegenContext.addClassAssociatedObjects(klass.symbol, associatedObjectsInstanceGettersSignatures)
     }
 
+    fileContext.jsModuleAndQualifierReferences.forEach { reference ->
+        wasmFileCodegenContext.addJsModuleAndQualifierReferences(reference)
+    }
+
     val tryGetAssociatedObjectFunction = backendContext.wasmSymbols.tryGetAssociatedObject
     if (irFile == tryGetAssociatedObjectFunction.owner.fileOrNull) {
         wasmFileCodegenContext.defineTryGetAssociatedObjectFun(tryGetAssociatedObjectFunction)
