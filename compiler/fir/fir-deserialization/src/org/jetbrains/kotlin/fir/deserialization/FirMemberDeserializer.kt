@@ -616,14 +616,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         val wfqn = FqName.fromSegments(c.nameResolver.getQualifiedClassName(dproto.wrappedClassId).split("/"))
         val wcn = c.nameResolver.getName(dproto.wrappedNameId)
         val wcid = ClassId(wfqn.parent(), wfqn.shortName())
-        val wrappedClass =
-            c.session.symbolProvider.getRegularClassSymbolByClassId(wcid)
-                ?: c.session.dependenciesSymbolProvider.getRegularClassSymbolByClassId(wcid)
-        val wrappedFunction = wrappedClass?.fir?.declarations?.find { it is FirSimpleFunction && it.name == wcn }
-        if (wrappedFunction != null && wrappedFunction is FirSimpleFunction) {
-            callableDeclaration.delegatedWrapperData =
-                DelegatedWrapperData(wrappedFunction, null, null)
-        }
+        callableDeclaration.delegatedWrapperData2 = DelegatedWrapperData2(wcid, wcn)
     }
 
     fun loadConstructor(

@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeIntersectionType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.toLookupTag
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 
 fun FirCallableSymbol<*>.dispatchReceiverClassTypeOrNull(): ConeClassLikeType? =
     fir.dispatchReceiverClassTypeOrNull()
@@ -223,6 +225,7 @@ private object IsCatchParameterProperty : FirDeclarationDataKey()
 var FirProperty.isCatchParameter: Boolean? by FirDeclarationDataRegistry.data(IsCatchParameterProperty)
 
 private object DelegatedWrapperDataKey : FirDeclarationDataKey()
+private object DelegatedWrapperData2Key : FirDeclarationDataKey()
 
 class DelegatedWrapperData<D : FirCallableDeclaration>(
     val wrapped: D,
@@ -234,8 +237,16 @@ class DelegatedWrapperData<D : FirCallableDeclaration>(
             "${::delegateField.name}=${delegateField?.symbol}"
 }
 
+class DelegatedWrapperData2(
+    val wrappedClassId: ClassId,
+    val wrappedName: Name,
+)
+
 var <D : FirCallableDeclaration>
         D.delegatedWrapperData: DelegatedWrapperData<D>? by FirDeclarationDataRegistry.data(DelegatedWrapperDataKey)
+
+var <D : FirCallableDeclaration>
+        D.delegatedWrapperData2: DelegatedWrapperData2? by FirDeclarationDataRegistry.data(DelegatedWrapperData2Key)
 
 val <D : FirCallableDeclaration> FirCallableSymbol<D>.delegatedWrapperData: DelegatedWrapperData<D>?
     get() = fir.delegatedWrapperData

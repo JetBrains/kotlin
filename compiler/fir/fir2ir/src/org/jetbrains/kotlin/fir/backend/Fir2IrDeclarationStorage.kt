@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.lazy.Fir2IrLazySimpleFunction
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.getContainingClass
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
@@ -94,7 +95,7 @@ class Fir2IrDeclarationStorage(
 
     private val initializerCache: ConcurrentHashMap<FirAnonymousInitializer, IrAnonymousInitializer> = ConcurrentHashMap()
 
-    class PropertyCacheStorage(
+    inner class PropertyCacheStorage(
         val normal: ConcurrentHashMap<FirProperty, IrPropertySymbol>,
         val synthetic: ConcurrentHashMap<FirFunction, IrPropertySymbol>
     ) {
@@ -119,11 +120,26 @@ class Fir2IrDeclarationStorage(
             }
         }
 
-        fun getOriginal(fir: FirProperty): IrPropertySymbol? {
+        fun getOriginal(fir: FirProperty, fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?): IrPropertySymbol? {
+            val isFakeOverride = fir.isFakeOverrideOrDelegated(fakeOverrideOwnerLookupTag)
             return if (fir.origin == FirDeclarationOrigin.CommonArtefact || fir.moduleData.isFromCommonArtefact) {
-                when (fir) {
-                    is FirSyntheticProperty -> synthetic.getCachedPairByCommonFunction(fir.cacheKey)?.value
-                    else -> normal.getCachedIrSymbolByCommonCallable(fir)
+                if (isFakeOverride) {
+                    val originalFir = fir.unwrapFakeOverridesOrDelegated2(fir.moduleData.session)
+                    val originalNotFromCommonArtefact =
+                        if (originalFir.origin == FirDeclarationOrigin.CommonArtefact || originalFir.moduleData.isFromCommonArtefact) {
+                            normal.getCachedPairByCommonCallable(originalFir)?.key ?: originalFir
+                        } else originalFir
+                    val key = FakeOverrideIdentifier(
+                        originalNotFromCommonArtefact.symbol,
+                        fakeOverrideOwnerLookupTag ?: fir.containingClassLookupTag()!!,
+                        c
+                    )
+                    irForFirSessionDependantDeclarationMap[key] as? IrPropertySymbol
+                } else {
+                    when (fir) {
+                        is FirSyntheticProperty -> synthetic.getCachedPairByCommonFunction(fir.cacheKey)?.value
+                        else -> normal.getCachedPairByCommonCallable(fir)?.value
+                    }
                 }
             } else null
         }
@@ -334,11 +350,11 @@ class Fir2IrDeclarationStorage(
         return cachedIrCallable?.let(symbolsMappingForLazyClasses::remapFunctionSymbol)
     }
 
-    private fun Fir2IrDeclarationStorage.fakeOverrideIdentifier(
+    internal fun Fir2IrDeclarationStorage.fakeOverrideIdentifier(
         function: FirFunction,
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?,
     ): FakeOverrideIdentifier {
-        val originalFunction = function.unwrapFakeOverridesOrDelegated()
+        val originalFunction = function.unwrapFakeOverridesOrDelegated2(function.moduleData.session)
         val originalNotFromCommonArtefact =
             if (originalFunction.origin == FirDeclarationOrigin.CommonArtefact || originalFunction.moduleData.isFromCommonArtefact) {
                 functionCache.getCachedPairByCommonFunction(originalFunction)?.key ?: originalFunction
@@ -399,7 +415,7 @@ class Fir2IrDeclarationStorage(
             return createFunctionSymbol()
         }
         val containingClassSymbol = findContainingIrClassSymbol(function, fakeOverrideOwnerLookupTag)
-        val originalFirFunction = function.unwrapFakeOverridesOrDelegated()
+        val originalFirFunction = function.unwrapFakeOverridesOrDelegated2(function.moduleData.session)
         val originalSymbol = getIrFunctionSymbol(originalFirFunction.symbol) as IrSimpleFunctionSymbol
         return IrFunctionFakeOverrideSymbol(originalSymbol, containingClassSymbol, idSignature = null)
     }
@@ -606,7 +622,7 @@ class Fir2IrDeclarationStorage(
         property: FirProperty,
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?,
     ): PropertySymbols {
-        val originalFirProperty = property.unwrapFakeOverridesOrDelegated()
+        val originalFirProperty = property.unwrapFakeOverridesOrDelegated2(property.moduleData.session)
         val originalSymbols = getIrPropertySymbols(originalFirProperty.symbol)
         require(property.isStubPropertyForPureField != true) {
             "What are we doing here?"
@@ -648,7 +664,7 @@ class Fir2IrDeclarationStorage(
             setterForPropertyCache[irPropertySymbol] = it
         }
         if (property.isFakeOverrideOrDelegated(fakeOverrideOwnerLookupTag)) {
-            val originalProperty = property.unwrapFakeOverridesOrDelegated()
+            val originalProperty = property.unwrapFakeOverridesOrDelegated2(property.moduleData.session)
             val key = FakeOverrideIdentifier(
                 originalProperty.symbol,
                 fakeOverrideOwnerLookupTag ?: property.containingClassLookupTag()!!,
@@ -718,7 +734,7 @@ class Fir2IrDeclarationStorage(
     ): IrPropertySymbol? {
         @Suppress("NAME_SHADOWING")
         val property = prepareProperty(property)
-        val symbol = propertyCache.getOriginal(property)
+        val symbol = propertyCache.getOriginal(property, fakeOverrideOwnerLookupTag)
             ?: getCachedIrCallableSymbol(
                 property,
                 fakeOverrideOwnerLookupTag,
@@ -949,7 +965,7 @@ class Fir2IrDeclarationStorage(
             return delegatedProperty?.delegate?.symbol ?: getIrVariableSymbol(fir)
         }
         @OptIn(UnsafeDuringIrConstructionAPI::class)
-        (propertyCache.getOriginal(fir) ?: propertyCache[fir])?.ownerIfBound()?.let { return it.backingField!!.symbol }
+        (propertyCache.getOriginal(fir, null) ?: propertyCache[fir])?.ownerIfBound()?.let { return it.backingField!!.symbol }
         val irParent = findIrParent(fir, fakeOverrideOwnerLookupTag = null)
         val parentOrigin = (irParent as? IrDeclaration)?.origin ?: IrDeclarationOrigin.DEFINED
         return createAndCacheIrProperty(fir, irParent, predefinedOrigin = parentOrigin).backingField!!.symbol
@@ -1443,7 +1459,7 @@ private fun FirCallableDeclaration.isFakeOverrideImpl(fakeOverrideOwnerLookupTag
     if (fakeOverrideOwnerLookupTag == null) return false
     // this condition is true for all places when we are trying to create "fake" fake overrides in IR
     // "fake" fake overrides are f/o which are presented in IR but have no corresponding FIR f/o
-    return fakeOverrideOwnerLookupTag != containingClassLookupTag()
+    return fakeOverrideOwnerLookupTag != containingClassLookupTag() || delegatedWrapperData2 != null
 }
 
 internal inline fun <reified FD : FirDeclaration, reified IS : IrSymbol> Map<FD, IS>.getCachedIrSymbolByCommonDeclaration(
@@ -1477,16 +1493,38 @@ private inline fun <reified FF : FirFunction, reified IS : IrSymbol> Map<FF, IS>
     }
 }
 
-internal inline fun <reified FC : FirCallableDeclaration, reified IS : IrSymbol> Map<FC, IS>.getCachedIrSymbolByCommonCallable(
+internal inline fun <reified FC : FirCallableDeclaration, reified IS : IrSymbol> Map<FC, IS>.getCachedPairByCommonCallable(
     firCallable: FC,
-): IS? {
+): Map.Entry<FC, IS>? {
     val callableId = firCallable.symbol.callableId
     val receiver = firCallable.receiverParameter?.typeRef?.coneType
     return getCachedIrSymbolByCommonDeclaration {
         it.symbol.callableId == callableId && it.receiverParameter?.typeRef?.coneType == receiver &&
                 it.symbol.isExpect == firCallable.symbol.isExpect
-    }?.value
+    }
 }
+
+internal inline fun <reified D : FirCallableDeclaration> D.unwrapFakeOverridesOrDelegated2(session: FirSession): D {
+    var current = this
+
+    do {
+        val next = current.originalIfFakeOverrideOrDelegated2(session) ?: return current
+        current = next
+    } while (true)
+}
+
+inline fun <reified D : FirCallableDeclaration> D.originalIfFakeOverrideOrDelegated2(session: FirSession): D? =
+    originalForSubstitutionOverride ?: baseForIntersectionOverride ?: delegatedWrapperData?.wrapped ?: delegatedWrapperData2?.let { attr ->
+        session.symbolProvider.getClassLikeSymbolByClassId(attr.wrappedClassId)?.fir?.let { cl ->
+            (cl as? FirClass)?.declarations?.firstOrNull { decl -> // it is suspicious if not found
+                when (decl) {
+                    is FirFunction -> decl.nameOrSpecialName == attr.wrappedName
+                    is FirProperty -> decl.name == attr.wrappedName
+                    else -> false
+                }
+            } as? D
+        }
+    }
 
 private object IsStubPropertyForPureFieldKey : FirDeclarationDataKey()
 

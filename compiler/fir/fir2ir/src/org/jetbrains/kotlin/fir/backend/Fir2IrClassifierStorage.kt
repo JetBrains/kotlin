@@ -332,7 +332,7 @@ class Fir2IrClassifierStorage(
     }
 
     fun getIrEnumEntrySymbol(enumEntry: FirEnumEntry): IrEnumEntrySymbol {
-        enumEntryCache.getCachedIrSymbolByCommonCallable(enumEntry)?.let { return it }
+        enumEntryCache.getCachedPairByCommonCallable(enumEntry)?.let { return it.value }
 
         val symbol = IrEnumEntrySymbolImpl()
         enumEntryCache[enumEntry] = symbol
