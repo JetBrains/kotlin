@@ -24,6 +24,9 @@ private val FirBasedSymbol<*>.isExternal
         else -> false
     }
 
+/**
+ * The containing symbol is resolved using the declaration-site session.
+ */
 fun FirBasedSymbol<*>.isEffectivelyExternal(session: FirSession): Boolean {
     if (fir is FirMemberDeclaration && isExternal) return true
 
@@ -38,5 +41,5 @@ fun FirBasedSymbol<*>.isEffectivelyExternal(session: FirSession): Boolean {
         }
     }
 
-    return getContainingClassSymbol(session)?.isEffectivelyExternal(session) == true
+    return getContainingClassSymbol()?.isEffectivelyExternal(session) == true
 }

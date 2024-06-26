@@ -44,7 +44,7 @@ interface PlatformConflictDeclarationsDiagnosticDispatcher : FirSessionComponent
                     FirErrors.CONFLICTING_OVERLOADS
                 }
                 conflictingDeclaration is FirClassLikeSymbol<*> &&
-                        conflictingDeclaration.getContainingClassSymbol(context.session) == null &&
+                        conflictingDeclaration.getContainingClassSymbol() == null &&
                         symbols.any { it is FirClassLikeSymbol<*> } -> {
                     FirErrors.CLASSIFIER_REDECLARATION
                 }

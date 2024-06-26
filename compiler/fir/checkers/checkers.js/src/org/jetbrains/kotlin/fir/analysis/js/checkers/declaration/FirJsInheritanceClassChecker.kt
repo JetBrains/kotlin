@@ -91,7 +91,7 @@ sealed class FirJsInheritanceClassChecker(mppKind: MppCheckerKind) : FirClassChe
         val members = scope.collectAllFunctions()
             .filterIsInstance<FirIntersectionOverrideFunctionSymbol>()
             .filter {
-                val container = it.getContainingClassSymbol(context.session)
+                val container = it.getContainingClassSymbol()
                 container == symbol && it.intersections.isNotEmpty()
             }
 

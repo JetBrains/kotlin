@@ -88,7 +88,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
             classSymbol.isCompanion && !isExternalSerializer -> {
                 result += SerialEntityNames.SERIALIZER_PROVIDER_NAME
 
-                val containingClassSymbol = classSymbol.getContainingClassSymbol(session) as? FirClassSymbol
+                val containingClassSymbol = classSymbol.getContainingClassSymbol() as? FirClassSymbol
                 if (containingClassSymbol != null && containingClassSymbol.keepGeneratedSerializer(session)) {
                     result += SerialEntityNames.GENERATED_SERIALIZER_PROVIDER_NAME
                 }
@@ -124,7 +124,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
 
                 if (classSymbol.isCompanion) {
                     result += SerialEntityNames.SERIALIZER_PROVIDER_NAME
-                    val containingClassSymbol = classSymbol.getContainingClassSymbol(session) as? FirClassSymbol
+                    val containingClassSymbol = classSymbol.getContainingClassSymbol() as? FirClassSymbol
                     if (containingClassSymbol != null && containingClassSymbol.keepGeneratedSerializer(session)) {
                         result += SerialEntityNames.GENERATED_SERIALIZER_PROVIDER_NAME
                     }

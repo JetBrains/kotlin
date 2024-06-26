@@ -67,7 +67,7 @@ sealed class FirFunInterfaceDeclarationChecker(mppKind: MppCheckerKind) : FirReg
                 val firProperty = property as? FirPropertySymbol ?: continue
                 if (firProperty.isAbstract) {
                     val source =
-                        if (firProperty.getContainingClassSymbol(context.session) != classSymbol)
+                        if (firProperty.getContainingClassSymbol() != classSymbol)
                             declaration.source
                         else
                             firProperty.source
@@ -82,7 +82,7 @@ sealed class FirFunInterfaceDeclarationChecker(mppKind: MppCheckerKind) : FirReg
             return
         }
 
-        val inFunInterface = abstractFunctionSymbol.getContainingClassSymbol(context.session) === classSymbol
+        val inFunInterface = abstractFunctionSymbol.getContainingClassSymbol() === classSymbol
 
         when {
             abstractFunctionSymbol.typeParameterSymbols.isNotEmpty() ->

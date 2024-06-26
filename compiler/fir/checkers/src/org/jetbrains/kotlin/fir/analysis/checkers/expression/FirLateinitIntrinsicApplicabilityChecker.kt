@@ -74,7 +74,7 @@ object FirLateinitIntrinsicApplicabilityChecker : FirQualifiedAccessExpressionCh
     private fun FirPropertySymbol.containingClassOrFile(
         context: CheckerContext
     ): FirBasedSymbol<*>? {
-        return getContainingClassSymbol(context.session)
+        return getContainingClassSymbol()
             ?: context.session.firProvider.getFirCallableContainerFile(this)?.symbol
     }
 }

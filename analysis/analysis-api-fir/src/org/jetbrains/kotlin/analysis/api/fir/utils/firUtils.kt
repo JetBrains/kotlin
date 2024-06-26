@@ -59,10 +59,9 @@ internal fun KaTypeNullability.toConeNullability() = when (this) {
 
 /**
  * @receiver A symbol that needs to be imported
- * @param useSiteSession A use-site fir session.
  * @return An [FqName] by which this symbol can be imported (if it is possible)
  */
-internal fun FirCallableSymbol<*>.computeImportableName(useSiteSession: FirSession): FqName? {
+internal fun FirCallableSymbol<*>.computeImportableName(): FqName? {
     if (callableId.isLocal) return null
 
     // SAM constructors are synthetic, but can be imported
@@ -72,7 +71,7 @@ internal fun FirCallableSymbol<*>.computeImportableName(useSiteSession: FirSessi
     val containingClassId = callableId.classId
         ?: return callableId.asSingleFqName()
 
-    val containingClass = getContainingClassSymbol(useSiteSession) ?: return null
+    val containingClass = getContainingClassSymbol() ?: return null
 
     if (this is FirConstructorSymbol) return if (!containingClass.isInner) containingClassId.asSingleFqName() else null
 

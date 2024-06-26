@@ -200,7 +200,7 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
             this is FirPropertyAccessor -> propertySymbol.visibility
 
             this is FirConstructor -> {
-                val classSymbol = this.getContainingClassSymbol(context.session)
+                val classSymbol = this.getContainingClassSymbol()
                 if (
                     classSymbol is FirRegularClassSymbol
                     && (classSymbol.isEnumClass || classSymbol.isSealed)

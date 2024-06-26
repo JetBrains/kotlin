@@ -40,7 +40,7 @@ object FirSynchronizedAnnotationChecker : FirFunctionChecker(MppCheckerKind.Comm
             return
         }
 
-        val containingClass = declaration.getContainingClassSymbol(session) ?: return
+        val containingClass = declaration.getContainingClassSymbol() ?: return
         if (containingClass.classKind == ClassKind.INTERFACE) {
             reporter.reportOn(annotation.source, FirJvmErrors.SYNCHRONIZED_IN_INTERFACE, context)
         } else if (declaration.isAbstract) {

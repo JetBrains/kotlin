@@ -523,7 +523,7 @@ internal object FirReferenceResolveHelper {
         val classifiersToSkip = expression.parents.takeWhile { it != ktTypeElementFromFirType }.count()
         var classifier: FirClassLikeSymbol<*>? = fir.type.toRegularClassSymbol(session)
         repeat(classifiersToSkip) {
-            classifier = classifier?.getContainingClassSymbol(session)
+            classifier = classifier?.getContainingClassSymbol()
         }
 
         val firClassSymbol = classifier

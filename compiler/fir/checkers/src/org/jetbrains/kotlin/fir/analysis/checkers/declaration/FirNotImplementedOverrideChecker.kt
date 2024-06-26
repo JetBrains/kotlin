@@ -215,5 +215,5 @@ object FirNotImplementedOverrideChecker : FirClassChecker(MppCheckerKind.Platfor
     }
 
     private fun FirCallableSymbol<*>.isFromInterfaceOrEnum(context: CheckerContext): Boolean =
-        (getContainingClassSymbol(context.session) as? FirRegularClassSymbol)?.let { it.isInterface || it.isEnumClass } == true
+        (getContainingClassSymbol() as? FirRegularClassSymbol)?.let { it.isInterface || it.isEnumClass } == true
 }

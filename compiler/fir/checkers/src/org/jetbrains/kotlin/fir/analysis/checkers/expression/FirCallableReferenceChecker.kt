@@ -51,7 +51,7 @@ object FirCallableReferenceChecker : FirQualifiedAccessExpressionChecker(MppChec
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        if (referredSymbol is FirConstructorSymbol && referredSymbol.getContainingClassSymbol(context.session)?.classKind == ClassKind.ANNOTATION_CLASS) {
+        if (referredSymbol is FirConstructorSymbol && referredSymbol.getContainingClassSymbol()?.classKind == ClassKind.ANNOTATION_CLASS) {
             reporter.reportOn(source, FirErrors.CALLABLE_REFERENCE_TO_ANNOTATION_CONSTRUCTOR, context)
         }
         if ((referredSymbol as? FirCallableSymbol<*>)?.isExtensionMember == true &&

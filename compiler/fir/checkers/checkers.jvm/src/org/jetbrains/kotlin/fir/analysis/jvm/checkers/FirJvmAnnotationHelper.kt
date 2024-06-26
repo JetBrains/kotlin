@@ -17,13 +17,16 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 
+/**
+ * The containing symbol is resolved using the declaration-site session.
+ */
 fun <D> FirBasedSymbol<D>.isCompiledToJvmDefault(
     session: FirSession,
     jvmDefaultMode: JvmDefaultMode,
 ): Boolean where D : FirAnnotationContainer, D : FirDeclaration {
     if (getAnnotationByClassId(JvmStandardClassIds.Annotations.JvmDefault, session) != null) return true
 
-    val container = getContainingClassSymbol(session)
+    val container = getContainingClassSymbol()
     if (container !is FirRegularClassSymbol || container.origin.fromSource) return jvmDefaultMode.isEnabled
 
     // Opt-in is fine here because this flag is only possible for deserialized declarations, and it's set during deserialization.

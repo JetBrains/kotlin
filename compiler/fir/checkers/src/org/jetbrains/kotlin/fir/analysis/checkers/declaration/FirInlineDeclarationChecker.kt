@@ -505,7 +505,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
         if (declaration.containingClassLookupTag() == null) return true
         if (effectiveVisibility == EffectiveVisibility.PrivateInClass) return true
 
-        if (!declaration.isEffectivelyFinal(context)) {
+        if (!declaration.isEffectivelyFinal()) {
             // For primary constructor parameters there's INLINE_PROPERTY_WITH_BACKING_FIELD already
             if (declaration.source?.kind != KtFakeSourceElementKind.PropertyFromParameter) {
                 reporter.reportOn(declaration.source, FirErrors.DECLARATION_CANT_BE_INLINED, context)

@@ -26,7 +26,7 @@ object FirJsBuiltinNameClashChecker : FirBasicDeclarationChecker(MppCheckerKind.
         if (declaration.symbol.isNativeObject(context.session)) {
             return
         }
-        if (declaration.getContainingClassSymbol(context.session) == null) {
+        if (declaration.getContainingClassSymbol() == null) {
             return
         }
 

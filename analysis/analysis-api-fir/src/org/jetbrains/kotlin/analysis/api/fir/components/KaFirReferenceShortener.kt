@@ -414,7 +414,7 @@ private class FirShorteningContext(val analysisSession: KaFirSession) {
         firSession.symbolProvider.getClassLikeSymbolByClassId(classId)
 
     fun convertToImportableName(callableSymbol: FirCallableSymbol<*>): FqName? =
-        callableSymbol.computeImportableName(firSession)
+        callableSymbol.computeImportableName()
 }
 
 private sealed class ElementToShorten {

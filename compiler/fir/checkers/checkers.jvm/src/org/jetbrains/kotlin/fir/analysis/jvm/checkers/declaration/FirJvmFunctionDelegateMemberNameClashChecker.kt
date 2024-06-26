@@ -24,7 +24,7 @@ object FirJvmFunctionDelegateMemberNameClashChecker : FirBasicDeclarationChecker
 
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration !is FirCallableDeclaration) return
-        val containingClassSymbol = declaration.getContainingClassSymbol(context.session) as? FirRegularClassSymbol ?: return
+        val containingClassSymbol = declaration.getContainingClassSymbol() as? FirRegularClassSymbol ?: return
         if (!containingClassSymbol.isFun) return
         if (declaration.symbol.isExtension || (declaration as? FirFunction)?.valueParameters?.isNotEmpty() == true) return
 
