@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.utils
 
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.types.AbbreviatedTypeAttribute
 import org.jetbrains.kotlin.fir.types.ConeAttributes
@@ -61,7 +63,17 @@ internal fun <T : ConeKotlinType> T.createPointer(builder: KaSymbolByFirBuilder)
     } as ConeTypePointer<T>
 }
 
+/**
+ * A pointer for the compiler type representation.
+ * Does not hold references to internal compiler abstractions, so it can be restored in a different [KaSession].
+ *
+ * Meant to be used as a lower level abstraction inside [KaTypePointer]s.
+ */
 internal interface ConeTypePointer<out T : ConeKotlinType> {
+    /**
+     * Restores the original type when possible.
+     * Returns `null` if restoration is impossible.
+     */
     fun restore(session: KaFirSession): T?
 }
 
@@ -331,11 +343,19 @@ internal class ConeTypeProjectionPointer(projection: ConeTypeProjection, builder
     }
 }
 
+/**
+ * Restores all type pointers in a list.
+ * Returns `null` if at least one pointer cannot be restored.
+ */
 @JvmName("restoreTypes")
 private fun <T : ConeKotlinType> List<ConeTypePointer<T>>.restore(session: KaFirSession): List<T>? {
     return restoreAll { it.restore(session) }
 }
 
+/**
+ * Restores all type projection pointers in a list.
+ * Returns `null` if at least one pointer cannot be restored.
+ */
 @JvmName("restoreTypeProjections")
 private fun List<ConeTypeProjectionPointer>.restore(session: KaFirSession): List<ConeTypeProjection>? {
     return restoreAll { it.restore(session) }
