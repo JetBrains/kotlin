@@ -293,7 +293,7 @@ class Fir2IrDeclarationStorage(
             return localStorage.getLocalFunctionSymbol(function)
         }
         runIf(function.origin.generatedAnyMethod) {
-            val containingClass = function.getContainingClass(session)!!
+            val containingClass = function.getContainingClass()!!
             val cache = dataClassGeneratedFunctionsCache.computeIfAbsent(containingClass) { DataClassGeneratedFunctionsStorage() }
             val cachedFunction = when (function.nameOrSpecialName) {
                 OperatorNameConventions.EQUALS -> cache.equalsSymbol
@@ -415,7 +415,7 @@ class Fir2IrDeclarationStorage(
     }
 
     internal fun cacheGeneratedFunction(firFunction: FirSimpleFunction, irFunction: IrSimpleFunction) {
-        val containingClass = firFunction.getContainingClass(session)!!
+        val containingClass = firFunction.getContainingClass()!!
         val cache = dataClassGeneratedFunctionsCache.computeIfAbsent(containingClass) { DataClassGeneratedFunctionsStorage() }
         val irSymbol = irFunction.symbol
         when (val name = firFunction.nameOrSpecialName) {

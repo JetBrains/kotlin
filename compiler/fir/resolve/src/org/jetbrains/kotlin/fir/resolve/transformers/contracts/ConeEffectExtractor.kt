@@ -194,7 +194,7 @@ class ConeEffectExtractor(
             ?: return ConeContractDescriptionError.UnresolvedThis(thisReceiverExpression).asElement()
         val callableOwner = owner as? FirCallableDeclaration
         val ownerHasReceiver = callableOwner?.receiverParameter != null
-        val ownerIsMemberOfDeclaration = callableOwner?.getContainingClass(session) == declaration
+        val ownerIsMemberOfDeclaration = callableOwner?.getContainingClass() == declaration
         return if (declaration == owner || owner.isAccessorOf(declaration) || ownerIsMemberOfDeclaration && !ownerHasReceiver) {
             val type = thisReceiverExpression.resolvedType
             toValueParameterReference(type, -1, "this")

@@ -45,7 +45,7 @@ object FirJvmNameChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         if (declaration is FirFunction && !context.isRenamableFunction(declaration)) {
             reporter.reportOn(jvmName.source, FirJvmErrors.INAPPLICABLE_JVM_NAME, context)
         } else if (declaration is FirCallableDeclaration) {
-            val containingClass = declaration.getContainingClass(context.session)
+            val containingClass = declaration.getContainingClass()
 
             if (
                 declaration.isOverride ||

@@ -95,10 +95,12 @@ internal fun FirFunction.hasObjCFactoryAnnotation(session: FirSession) = this.an
 internal fun FirFunction.hasObjCMethodAnnotation(session: FirSession) = this.annotations.hasAnnotation(NativeStandardInteropNames.objCMethodClassId, session)
 
 /**
- * almost mimics FunctionDescriptor.isObjCClassMethod(), apart from `it.isObjCClass()` changed to `it.symbol.isObjCClass(session)` for simplicity
+ * Almost mimics FunctionDescriptor.isObjCClassMethod(), apart from `it.isObjCClass()`
+ * changed to `it.symbol.isObjCClass(session)` for simplicity.
+ * The containing symbol is resolved using the declaration-site session.
  */
 internal fun FirFunction.isObjCClassMethod(session: FirSession) =
-        getContainingClass(session).let { it is FirClass && it.symbol.isObjCClass(session) }
+        getContainingClass().let { it is FirClass && it.symbol.isObjCClass(session) }
 
 /**
  * mimics ConstructorDescriptor.isObjCConstructor()

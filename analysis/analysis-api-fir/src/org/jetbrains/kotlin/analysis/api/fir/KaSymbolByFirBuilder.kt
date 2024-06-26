@@ -574,7 +574,7 @@ internal class KaSymbolByFirBuilder(
      * in signature; `null` otherwise.
      */
     private inline fun <reified T : FirCallableDeclaration> T.unwrapInheritanceSubstitutionOverrideIfNeeded(): T? {
-        val containingClass = getContainingClass(rootSession) ?: return null
+        val containingClass = getContainingClass() ?: return null
         val originalDeclaration = originalForSubstitutionOverride ?: return null
 
         val allowedTypeParameters = buildSet {
