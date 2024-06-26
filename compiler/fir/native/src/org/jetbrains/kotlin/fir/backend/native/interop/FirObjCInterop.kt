@@ -98,7 +98,7 @@ internal fun FirFunction.hasObjCMethodAnnotation(session: FirSession) = this.ann
  * almost mimics FunctionDescriptor.isObjCClassMethod(), apart from `it.isObjCClass()` changed to `it.symbol.isObjCClass(session)` for simplicity
  */
 internal fun FirFunction.isObjCClassMethod(session: FirSession) =
-        getContainingClass(session).let { it is FirClass && it.symbol.isObjCClass(session) }
+        getContainingClass().let { it is FirClass && it.symbol.isObjCClass(session) }
 
 /**
  * mimics ConstructorDescriptor.isObjCConstructor()
