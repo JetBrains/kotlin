@@ -10,8 +10,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
-import org.jetbrains.kotlin.fir.resolve.calls.InferenceError
-import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
+import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.candidate
 import org.jetbrains.kotlin.fir.resolve.initialTypeOfCandidate
@@ -120,8 +119,10 @@ class FirDelegatedPropertyInferenceSession(
 
             integrateChildSession(
                 buildList {
-                    addIfNotNull(delegateExpression)
-                    partiallyResolvedCalls.mapTo(this) { it.first as FirStatement }
+                    addIfNotNull(ConeCallAtom.createRawAtom(delegateExpression))
+                    partiallyResolvedCalls.mapTo(this) { (expression, candidate) ->
+                        ConeAtomWithCandidate(expression, candidate)
+                    }
                 },
                 parentConstraintSystem.currentStorage(),
                 onCompletionResultsWriting,
