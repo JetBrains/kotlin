@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/klib/syntheticAccessors")
 @TestDataPath("$PROJECT_ROOT")
 @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
+@EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
 @UseExtTestCaseGroupProvider()
 public class ClassicNativeKlibSyntheticAccessorTestGenerated extends AbstractNativeKlibSyntheticAccessorTest {
   @Test
@@ -34,6 +35,7 @@ public class ClassicNativeKlibSyntheticAccessorTestGenerated extends AbstractNat
   @TestMetadata("compiler/testData/klib/syntheticAccessors/privateMember")
   @TestDataPath("$PROJECT_ROOT")
   @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
+  @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
   @UseExtTestCaseGroupProvider()
   public class PrivateMember {
     @Test
@@ -45,6 +47,7 @@ public class ClassicNativeKlibSyntheticAccessorTestGenerated extends AbstractNat
     @TestMetadata("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak")
     @TestDataPath("$PROJECT_ROOT")
     @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
+    @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
     @UseExtTestCaseGroupProvider()
     public class CrossFilePrivateLeak {
       @Test
@@ -105,6 +108,7 @@ public class ClassicNativeKlibSyntheticAccessorTestGenerated extends AbstractNat
     @TestMetadata("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak")
     @TestDataPath("$PROJECT_ROOT")
     @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
+    @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
     @UseExtTestCaseGroupProvider()
     public class CrossModulePrivateLeak {
       @Test
@@ -165,6 +169,7 @@ public class ClassicNativeKlibSyntheticAccessorTestGenerated extends AbstractNat
     @TestMetadata("compiler/testData/klib/syntheticAccessors/privateMember/singleFile")
     @TestDataPath("$PROJECT_ROOT")
     @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
+    @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
     @UseExtTestCaseGroupProvider()
     public class SingleFile {
       @Test
@@ -208,6 +213,7 @@ public class ClassicNativeKlibSyntheticAccessorTestGenerated extends AbstractNat
   @TestMetadata("compiler/testData/klib/syntheticAccessors/topLevelPrivate")
   @TestDataPath("$PROJECT_ROOT")
   @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
+  @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
   @UseExtTestCaseGroupProvider()
   public class TopLevelPrivate {
     @Test
@@ -219,6 +225,7 @@ public class ClassicNativeKlibSyntheticAccessorTestGenerated extends AbstractNat
     @TestMetadata("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak")
     @TestDataPath("$PROJECT_ROOT")
     @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
+    @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
     @UseExtTestCaseGroupProvider()
     public class CrossFilePrivateLeak {
       @Test
@@ -279,6 +286,7 @@ public class ClassicNativeKlibSyntheticAccessorTestGenerated extends AbstractNat
     @TestMetadata("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak")
     @TestDataPath("$PROJECT_ROOT")
     @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
+    @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
     @UseExtTestCaseGroupProvider()
     public class CrossModulePrivateLeak {
       @Test
@@ -339,6 +347,7 @@ public class ClassicNativeKlibSyntheticAccessorTestGenerated extends AbstractNat
     @TestMetadata("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile")
     @TestDataPath("$PROJECT_ROOT")
     @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
+    @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
     @UseExtTestCaseGroupProvider()
     public class SingleFile {
       @Test

@@ -733,6 +733,11 @@ private fun klibSyntheticAccessors() = arrayOf(
         "property" to ClassLevelProperty.TEST_KIND,
         "propertyValue" to "STANDALONE"
     ),
+    annotation(
+        EnforcedProperty::class.java,
+        "property" to ClassLevelProperty.CACHE_MODE,
+        "propertyValue" to "NO"
+    ),
     provider<UseExtTestCaseGroupProvider>(),
 )
 
