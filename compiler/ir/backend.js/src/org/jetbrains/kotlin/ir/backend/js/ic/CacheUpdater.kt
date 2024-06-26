@@ -102,6 +102,7 @@ class CacheUpdater(
     cacheDir: String,
     private val compilerConfiguration: CompilerConfiguration,
     private val icContext: PlatformDependentICContext,
+    checkForClassStructuralChanges: Boolean = false,
 ) {
     private val stopwatch = StopwatchIC()
 
@@ -109,7 +110,7 @@ class CacheUpdater(
 
     private val mainLibraryFile = KotlinLibraryFile(File(mainModule).canonicalPath)
 
-    private val icHasher = ICHasher()
+    private val icHasher = ICHasher(checkForClassStructuralChanges)
 
     private val irInterner = IrInterningService()
 

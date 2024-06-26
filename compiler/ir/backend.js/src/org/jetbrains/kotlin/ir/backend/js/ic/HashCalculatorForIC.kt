@@ -45,7 +45,7 @@ value class ICHash(val hash: Hash128Bits = Hash128Bits()) {
     }
 }
 
-private class HashCalculatorForIC {
+private class HashCalculatorForIC(private val checkForClassStructuralChanges: Boolean = false) {
     private val md5Digest = MessageDigest.getInstance("MD5")
 
     fun update(data: ByteArray) = md5Digest.update(data)
@@ -81,6 +81,14 @@ private class HashCalculatorForIC {
 
     fun updateSymbol(symbol: IrSymbol) {
         update(symbol.toString())
+
+        if (checkForClassStructuralChanges) {
+            (symbol.owner as? IrClass)?.let { irClass ->
+                irClass.declarations.forEach {
+                    updateSymbol(it.symbol)
+                }
+            }
+        }
 
         (symbol.owner as? IrClass)?.takeIf { it.isInterface }?.let { irInterface ->
             // Adding or removing a method or property with a default implementation to an interface
@@ -147,8 +155,8 @@ private class HashCalculatorForIC {
     }
 }
 
-internal class ICHasher {
-    private val hashCalculator = HashCalculatorForIC()
+internal class ICHasher(checkForClassStructuralChanges: Boolean = false) {
+    private val hashCalculator = HashCalculatorForIC(checkForClassStructuralChanges)
 
     fun calculateConfigHash(config: CompilerConfiguration): ICHash {
         hashCalculator.update(KotlinCompilerVersion.VERSION)
