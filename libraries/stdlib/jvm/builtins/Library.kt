@@ -5,8 +5,6 @@
 
 package kotlin
 
-import kotlin.internal.PureReifiable
-
 /**
  * Returns a string representation of the object. Can be called with a null receiver, in which case
  * it returns the string "null".
@@ -24,12 +22,12 @@ public operator fun String?.plus(other: Any?): String
  *
  * @throws RuntimeException if the specified [size] is negative.
  */
-public fun <reified @PureReifiable T> arrayOfNulls(size: Int): Array<T?>
+public fun <reified T> arrayOfNulls(size: Int): Array<T?>
 
 /**
  * Returns an array containing the specified elements.
  */
-public inline fun <reified @PureReifiable T> arrayOf(vararg elements: T): Array<T>
+public inline fun <reified T> arrayOf(vararg elements: T): Array<T>
 
 /**
  * Returns an array containing the specified [Double] numbers.

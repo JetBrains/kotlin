@@ -6,7 +6,6 @@
 package kotlin
 
 import kotlin.internal.ActualizeByJvmBuiltinProvider
-import kotlin.internal.PureReifiable
 
 /**
  * Returns a string representation of the object. Can be called with a null receiver, in which case
@@ -29,13 +28,13 @@ public expect operator fun String?.plus(other: Any?): String
  */
 @Suppress("REIFIED_TYPE_PARAMETER_NO_INLINE")
 @ActualizeByJvmBuiltinProvider
-public expect fun <reified @PureReifiable T> arrayOfNulls(size: Int): Array<T?>
+public expect fun <reified T> arrayOfNulls(size: Int): Array<T?>
 
 /**
  * Returns an array containing the specified elements.
  */
 @ActualizeByJvmBuiltinProvider
-public expect inline fun <reified @PureReifiable T> arrayOf(vararg elements: T): Array<T>
+public expect inline fun <reified T> arrayOf(vararg elements: T): Array<T>
 
 /**
  * Returns an array containing the specified [Double] numbers.

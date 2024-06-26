@@ -24,7 +24,6 @@ public actual inline fun <T> arrayOfNulls(size: Int): Array<T?> =
 public actual external inline fun <T> arrayOf(vararg elements: T): Array<T>
 
 @GCUnsafeCall("Kotlin_emptyArray")
-@Suppress("ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT") // missing @PureReifiable on T
 public actual external fun <T> emptyArray(): Array<T>
 
 /**
