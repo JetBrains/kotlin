@@ -34,7 +34,7 @@ object FirAccidentalOverrideClashChecker : FirSimpleFunctionChecker(MppCheckerKi
         val mayBeRenamedBuiltIn = name in namesPossibleForRenamedBuiltin
         val mayBeSameAsBuiltInWithErasedParameters = name.sameAsBuiltinMethodWithErasedValueParameters
         if (!mayBeRenamedBuiltIn && !mayBeSameAsBuiltInWithErasedParameters) return
-        val containingClass = declaration.getContainingClass(context.session) ?: return
+        val containingClass = declaration.getContainingClass(declaration.moduleData.session) ?: return
 
         var reported = false
         containingClass.unsubstitutedScope(context).processFunctionsByName(name) {
