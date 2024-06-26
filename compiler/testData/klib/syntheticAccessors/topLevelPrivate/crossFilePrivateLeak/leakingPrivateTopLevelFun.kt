@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: NATIVE
-
 // FILE: a.kt
 private fun privateFun() = "OK"
 

@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: NATIVE
-
 // MODULE: lib
 // FILE: a.kt
 private var privateVar = 12

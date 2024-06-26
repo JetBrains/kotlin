@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: ANY
+// IGNORE_BACKEND: JS_IR
 
 // FILE: a.kt
 private var privateVar = 12

@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K1: ANY
+// IGNORE_BACKEND_K1: JS_IR
 
 // MODULE: lib
 // FILE: A.kt

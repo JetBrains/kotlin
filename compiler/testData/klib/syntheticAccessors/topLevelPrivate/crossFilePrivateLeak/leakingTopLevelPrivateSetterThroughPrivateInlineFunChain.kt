@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: NATIVE
-
 // FILE: a.kt
 var privateSetterVar = 12
     private set
