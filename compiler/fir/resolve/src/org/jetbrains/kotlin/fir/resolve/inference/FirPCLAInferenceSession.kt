@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.inference
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
+import org.jetbrains.kotlin.fir.resolve.calls.ConeAtomWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.ConeCallAtom
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.candidate
@@ -71,7 +72,7 @@ class FirPCLAInferenceSession(
         currentCommonSystem.replaceContentWith(candidate.system.currentStorage())
 
         if (completionMode == ConstraintSystemCompletionMode.PCLA_POSTPONED_CALL) {
-            outerCandidate.postponedPCLACalls += call
+            outerCandidate.postponedPCLACalls += ConeAtomWithCandidate(call, candidate)
         }
     }
 
@@ -121,7 +122,7 @@ class FirPCLAInferenceSession(
     }
 
     fun integrateChildSession(
-        childCalls: Collection<FirStatement>,
+        childCalls: Collection<ConeCallAtom>,
         childStorage: ConstraintStorage,
         onCompletionResultsWriting: (ConeSubstitutor) -> Unit,
     ) {

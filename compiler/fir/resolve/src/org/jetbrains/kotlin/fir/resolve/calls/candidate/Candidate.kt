@@ -189,7 +189,7 @@ class Candidate(
 
     // ---------------------------------------- PCLA-related parts ----------------------------------------
 
-    val postponedPCLACalls: MutableList<FirStatement> = mutableListOf()
+    val postponedPCLACalls: MutableList<ConeCallAtom> = mutableListOf()
     val lambdasAnalyzedWithPCLA: MutableList<FirAnonymousFunction> = mutableListOf()
 
     // Currently, it's only about completion results writing for property delegation inference info

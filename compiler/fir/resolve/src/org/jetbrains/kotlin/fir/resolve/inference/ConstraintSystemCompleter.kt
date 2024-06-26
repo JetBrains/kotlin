@@ -551,7 +551,8 @@ private fun FirStatement.processCandidatesAndPostponedAtomsInOrderImpl(
                 process(arg)
             }
 
-            for (call in candidate.postponedPCLACalls) {
+            for (atom in candidate.postponedPCLACalls) {
+                val call = atom.fir as FirStatement
                 if (!visited.add(call)) continue
                 call.processCandidatesAndPostponedAtomsInOrderImpl(topLevelCandidate, candidateProcessor, postponedAtomsProcessor)
             }
