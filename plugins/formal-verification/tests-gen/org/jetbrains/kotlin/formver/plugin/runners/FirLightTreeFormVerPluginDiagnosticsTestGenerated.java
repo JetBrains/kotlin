@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.formver.plugin.runners;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -46,18 +46,6 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
     }
 
     @Test
-    @TestMetadata("calls_in_place.kt")
-    public void testCalls_in_place() {
-      runTest("plugins/formal-verification/testData/diagnostics/bad_contracts/calls_in_place.kt");
-    }
-
-    @Test
-    @TestMetadata("calls_in_place_leak.kt")
-    public void testCalls_in_place_leak() {
-      runTest("plugins/formal-verification/testData/diagnostics/bad_contracts/calls_in_place_leak.kt");
-    }
-
-    @Test
     @TestMetadata("cond_effects.kt")
     public void testCond_effects() {
       runTest("plugins/formal-verification/testData/diagnostics/bad_contracts/cond_effects.kt");
@@ -67,12 +55,6 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
     @TestMetadata("do_not_verify.kt")
     public void testDo_not_verify() {
       runTest("plugins/formal-verification/testData/diagnostics/bad_contracts/do_not_verify.kt");
-    }
-
-    @Test
-    @TestMetadata("inlining_captured.kt")
-    public void testInlining_captured() {
-      runTest("plugins/formal-verification/testData/diagnostics/bad_contracts/inlining_captured.kt");
     }
 
     @Test
@@ -140,12 +122,6 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
     }
 
     @Test
-    @TestMetadata("calls_in_place.kt")
-    public void testCalls_in_place() {
-      runTest("plugins/formal-verification/testData/diagnostics/good_contracts/calls_in_place.kt");
-    }
-
-    @Test
     @TestMetadata("custom_list.kt")
     public void testCustom_list() {
       runTest("plugins/formal-verification/testData/diagnostics/good_contracts/custom_list.kt");
@@ -155,18 +131,6 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
     @TestMetadata("inline_correctness.kt")
     public void testInline_correctness() {
       runTest("plugins/formal-verification/testData/diagnostics/good_contracts/inline_correctness.kt");
-    }
-
-    @Test
-    @TestMetadata("inlining.kt")
-    public void testInlining() {
-      runTest("plugins/formal-verification/testData/diagnostics/good_contracts/inlining.kt");
-    }
-
-    @Test
-    @TestMetadata("inlining_captured.kt")
-    public void testInlining_captured() {
-      runTest("plugins/formal-verification/testData/diagnostics/good_contracts/inlining_captured.kt");
     }
 
     @Test

@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.formver.effects
-import org.jetbrains.kotlin.formver.embeddings.FunctionTypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.SourceRole
 import org.jetbrains.kotlin.formver.embeddings.callables.NamedFunctionSignature
 import org.jetbrains.kotlin.formver.embeddings.expression.*
@@ -33,25 +32,9 @@ class ContractDescriptionConversionVisitor(
     private val ctx: ProgramConversionContext,
     private val signature: NamedFunctionSignature,
 ) : KtContractDescriptionVisitor<ExpEmbedding, ContractVisitorContext, ConeKotlinType, ConeDiagnostic>() {
-    private val parameterIndices = signature.params.indices.toSet() + setOfNotNull(signature.receiver?.let { -1 })
-
-    fun getPreconditions(context: ContractVisitorContext): List<ExpEmbedding> {
-        val callsInPlaceIndices = context.functionContractOwner.effects
-            .mapNotNull { (it.effect as? KtCallsEffectDeclaration<*, *>)?.valueParameterReference?.parameterIndex }
-            .toSet()
-
-        // All parameters of function type that are not callsInPlace should be marked duplicable.
-        return (parameterIndices - callsInPlaceIndices)
-            .map { embeddedVarByIndex(it) }
-            .filter { it.type is FunctionTypeEmbedding }
-            .map { DuplicableCall(it) }
-    }
-
-    fun getPostconditions(context: ContractVisitorContext): List<ExpEmbedding> {
-        return context.functionContractOwner.effects.map {
-            it.effect.accept(this, context).withPosition(it.source)
-        }
-    }
+    fun getPostconditions(context: ContractVisitorContext): List<ExpEmbedding> = context.functionContractOwner.effects.map {
+        it.effect.accept(this, context).withPosition(it.source)
+    }.filter { it != BooleanLit(true) }
 
     override fun visitBooleanConstantDescriptor(
         booleanConstantDescriptor: KtBooleanConstantReference<ConeKotlinType, ConeDiagnostic>,
@@ -136,40 +119,7 @@ class ContractDescriptionConversionVisitor(
         callsEffect: KtCallsEffectDeclaration<ConeKotlinType, ConeDiagnostic>,
         data: ContractVisitorContext,
     ): ExpEmbedding {
-        val param = callsEffect.valueParameterReference.accept(this, data)
-        val callsFieldAccess = FunctionObjectCallsPrimitiveAccess(param)
-        val targetLambdaByCallsEffect = callsEffect.valueParameterReference.getTargetParameter(data)
-        val sourceRole = SourceRole.CallsInPlaceEffect(targetLambdaByCallsEffect, callsEffect.kind)
-        return when (callsEffect.kind) {
-            // NOTE: case not supported for contracts
-            EventOccurrencesRange.ZERO -> EqCmp(
-                callsFieldAccess,
-                Old(callsFieldAccess),
-                sourceRole
-            )
-            EventOccurrencesRange.AT_MOST_ONCE -> LeCmp(
-                callsFieldAccess,
-                Add(Old(callsFieldAccess), IntLit(1)),
-                sourceRole
-            )
-            EventOccurrencesRange.EXACTLY_ONCE -> EqCmp(
-                callsFieldAccess,
-                Add(Old(callsFieldAccess), IntLit(1)),
-                sourceRole
-            )
-            EventOccurrencesRange.AT_LEAST_ONCE -> GtCmp(
-                callsFieldAccess,
-                Old(callsFieldAccess),
-                sourceRole
-            )
-            // NOTE: case not supported for contracts
-            EventOccurrencesRange.MORE_THAN_ONCE -> GtCmp(
-                callsFieldAccess,
-                Add(Old(callsFieldAccess), IntLit(1)),
-                sourceRole
-            )
-            EventOccurrencesRange.UNKNOWN -> BooleanLit(true, sourceRole)
-        }
+        return BooleanLit(true)
     }
 
     override fun visitIsInstancePredicate(

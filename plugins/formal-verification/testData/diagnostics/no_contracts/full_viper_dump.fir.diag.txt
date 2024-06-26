@@ -205,8 +205,6 @@ domain dom$RuntimeType  {
 
 field public$backing_field_x: Ref
 
-field special$function_object_call_counter: Int
-
 function special$andBools(arg1: Ref, arg2: Ref): Ref
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(result), dom$RuntimeType$boolType())
   ensures dom$RuntimeType$boolFromRef(result) ==
@@ -316,10 +314,6 @@ method global$fun_f$fun_take$$return$T_Unit() returns (ret$0: Ref)
 }
 
 method special$invoke_function_object(anonymous$0: Ref)
-  requires acc(anonymous$0.special$function_object_call_counter, write)
-  ensures acc(anonymous$0.special$function_object_call_counter, write)
-  ensures old(anonymous$0.special$function_object_call_counter) + 1 ==
-    anonymous$0.special$function_object_call_counter
 
 
 /full_viper_dump.kt:(172,173): info: Generated ExpEmbedding for global$fun_f$fun_take$$return$T_Unit:

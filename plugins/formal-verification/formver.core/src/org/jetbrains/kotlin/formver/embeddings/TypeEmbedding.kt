@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.formver.embeddings
 
 import org.jetbrains.kotlin.formver.conversion.AccessPolicy
-import org.jetbrains.kotlin.formver.conversion.SpecialFields
-import org.jetbrains.kotlin.formver.domains.*
+import org.jetbrains.kotlin.formver.domains.Injection
+import org.jetbrains.kotlin.formver.domains.RuntimeTypeDomain
 import org.jetbrains.kotlin.formver.embeddings.callables.CallableSignatureData
-import org.jetbrains.kotlin.formver.embeddings.expression.*
+import org.jetbrains.kotlin.formver.embeddings.expression.PlaceholderVariableEmbedding
+import org.jetbrains.kotlin.formver.embeddings.expression.PrimitiveFieldAccess
+import org.jetbrains.kotlin.formver.embeddings.expression.toConjunction
 import org.jetbrains.kotlin.formver.linearization.pureToViper
 import org.jetbrains.kotlin.formver.names.*
 import org.jetbrains.kotlin.formver.viper.MangledName
@@ -186,19 +188,6 @@ data class NullableTypeEmbedding(val elementType: TypeEmbedding) : TypeEmbedding
 
 abstract class UnspecifiedFunctionTypeEmbedding : TypeEmbedding {
     override val runtimeType = RuntimeTypeDomain.functionType()
-
-    override fun accessInvariants(): List<TypeInvariantEmbedding> =
-        listOf(FieldAccessTypeInvariantEmbedding(SpecialFields.FunctionObjectCallCounterField, PermExp.FullPerm()))
-
-    override fun dynamicInvariants(): List<TypeInvariantEmbedding> = listOf(CallCounterMonotonicTypeInvariantEmbedding)
-
-    object CallCounterMonotonicTypeInvariantEmbedding : TypeInvariantEmbedding {
-        override fun fillHole(exp: ExpEmbedding): ExpEmbedding =
-            LeCmp(
-                Old(FunctionObjectCallsPrimitiveAccess(exp)),
-                FunctionObjectCallsPrimitiveAccess(exp)
-            )
-    }
 }
 
 /**

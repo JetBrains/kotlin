@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.formver.reporting
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -14,7 +13,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers
 import org.jetbrains.kotlin.formver.PluginErrors
 import org.jetbrains.kotlin.formver.embeddings.SourceRole
 import org.jetbrains.kotlin.formver.viper.ast.info
-import org.jetbrains.kotlin.formver.viper.ast.unwrap
 import org.jetbrains.kotlin.formver.viper.ast.unwrapOr
 import org.jetbrains.kotlin.formver.viper.errors.VerificationError
 
@@ -32,28 +30,6 @@ class ReturnsEffectError(private val sourceRole: SourceRole.ReturnsEffect) : For
 
     override fun report(reporter: DiagnosticReporter, source: KtSourceElement?, context: CheckerContext) {
         reporter.reportOn(source, PluginErrors.UNEXPECTED_RETURNED_VALUE, sourceRole.asUserFriendlyMessage, context)
-    }
-}
-
-class CallsInPlaceError(private val sourceRole: SourceRole.CallsInPlaceEffect) : FormattedError {
-    private val SourceRole.CallsInPlaceEffect.asUserFriendlyMessage: String
-        get() = when (kind) {
-            EventOccurrencesRange.AT_MOST_ONCE -> "at most once"
-            EventOccurrencesRange.EXACTLY_ONCE -> "exactly once"
-            EventOccurrencesRange.AT_LEAST_ONCE -> "at least once"
-            EventOccurrencesRange.MORE_THAN_ONCE -> "more than once"
-            else -> throw IllegalStateException("Unknown kind of range: $kind")
-        }
-
-    override fun report(reporter: DiagnosticReporter, source: KtSourceElement?, context: CheckerContext) {
-        reporter.reportOn(source, PluginErrors.INVALID_INVOCATION_TYPE, sourceRole.paramSymbol, sourceRole.asUserFriendlyMessage, context)
-    }
-}
-
-class LeakingLambdaError(private val sourceRole: SourceRole.FirSymbolHolder) : FormattedError {
-    override fun report(reporter: DiagnosticReporter, source: KtSourceElement?, context: CheckerContext) {
-        val leakingFunctionSymbol = sourceRole.firSymbol
-        reporter.reportOn(source, PluginErrors.LAMBDA_MAY_LEAK, leakingFunctionSymbol, context)
     }
 }
 
@@ -129,9 +105,7 @@ class InvalidSubListRangeError(private val error: VerificationError, private val
 fun VerificationError.formatUserFriendly(): FormattedError? =
     when (val sourceRole = lookupSourceRole()) {
         is SourceRole.ReturnsEffect -> ReturnsEffectError(sourceRole)
-        is SourceRole.CallsInPlaceEffect -> CallsInPlaceError(sourceRole)
         is SourceRole.ConditionalEffect -> ConditionalEffectError(sourceRole)
-        is SourceRole.ParamFunctionLeakageCheck -> LeakingLambdaError(sourceRole.functionRole)
         is SourceRole.ListElementAccessCheck -> IndexOutOfBoundError(this, sourceRole)
         is SourceRole.SubListCreation -> InvalidSubListRangeError(this, sourceRole)
         else -> null

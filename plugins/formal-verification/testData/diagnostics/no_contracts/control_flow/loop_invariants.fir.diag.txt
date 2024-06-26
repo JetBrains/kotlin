@@ -1,11 +1,6 @@
 /loop_invariants.kt:(146,168): info: Generated Viper text for dynamicLambdaInvariant:
 method global$fun_dynamicLambdaInvariant$fun_take$fun_take$$return$T_Int$return$T_Unit(local$f: Ref)
   returns (ret$0: Ref)
-  requires acc(local$f.special$function_object_call_counter, write)
-  requires special$duplicable(local$f)
-  ensures acc(local$f.special$function_object_call_counter, write)
-  ensures old(local$f.special$function_object_call_counter) <=
-    local$f.special$function_object_call_counter
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
   var anonymous$0: Ref
@@ -14,9 +9,6 @@ method global$fun_dynamicLambdaInvariant$fun_take$fun_take$$return$T_Int$return$
   label label$continue$0
   anonymous$0 := global$fun_returnsBoolean$fun_take$$return$T_Boolean()
   while (dom$RuntimeType$boolFromRef(anonymous$0))
-    invariant acc(local$f.special$function_object_call_counter, write)
-    invariant old(local$f.special$function_object_call_counter) <=
-      local$f.special$function_object_call_counter
     invariant dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
   {
     var anonymous$1: Ref
@@ -38,11 +30,6 @@ method global$fun_returnsBoolean$fun_take$$return$T_Boolean()
 /loop_invariants.kt:(241,259): info: Generated Viper text for functionAssignment:
 method global$fun_functionAssignment$fun_take$fun_take$$return$T_Int$return$T_Unit(local$f: Ref)
   returns (ret$0: Ref)
-  requires acc(local$f.special$function_object_call_counter, write)
-  requires special$duplicable(local$f)
-  ensures acc(local$f.special$function_object_call_counter, write)
-  ensures old(local$f.special$function_object_call_counter) <=
-    local$f.special$function_object_call_counter
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
   var local0$g: Ref
@@ -53,9 +40,6 @@ method global$fun_functionAssignment$fun_take$fun_take$$return$T_Int$return$T_Un
   label label$continue$0
   anonymous$0 := global$fun_returnsBoolean$fun_take$$return$T_Boolean()
   while (dom$RuntimeType$boolFromRef(anonymous$0))
-    invariant acc(local$f.special$function_object_call_counter, write)
-    invariant old(local$f.special$function_object_call_counter) <=
-      local$f.special$function_object_call_counter
     invariant dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
   {
     var anonymous$1: Ref
@@ -78,16 +62,6 @@ method global$fun_returnsBoolean$fun_take$$return$T_Boolean()
 method global$fun_conditionalFunctionAssignment$fun_take$T_Boolean$fun_take$$return$T_Int$fun_take$$return$T_Int$return$T_Unit(local$b: Ref,
   local$f: Ref, local$h: Ref)
   returns (ret$0: Ref)
-  requires acc(local$f.special$function_object_call_counter, write)
-  requires acc(local$h.special$function_object_call_counter, write)
-  requires special$duplicable(local$f)
-  requires special$duplicable(local$h)
-  ensures acc(local$f.special$function_object_call_counter, write)
-  ensures acc(local$h.special$function_object_call_counter, write)
-  ensures old(local$f.special$function_object_call_counter) <=
-    local$f.special$function_object_call_counter
-  ensures old(local$h.special$function_object_call_counter) <=
-    local$h.special$function_object_call_counter
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
   var local0$g: Ref
@@ -103,12 +77,6 @@ method global$fun_conditionalFunctionAssignment$fun_take$T_Boolean$fun_take$$ret
   label label$continue$0
   anonymous$0 := global$fun_returnsBoolean$fun_take$$return$T_Boolean()
   while (dom$RuntimeType$boolFromRef(anonymous$0))
-    invariant acc(local$f.special$function_object_call_counter, write)
-    invariant acc(local$h.special$function_object_call_counter, write)
-    invariant old(local$f.special$function_object_call_counter) <=
-      local$f.special$function_object_call_counter
-    invariant old(local$h.special$function_object_call_counter) <=
-      local$h.special$function_object_call_counter
     invariant dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
   {
     var anonymous$1: Ref

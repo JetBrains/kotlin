@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.formver.conversion
 
 import org.jetbrains.kotlin.formver.embeddings.FieldEmbedding
-import org.jetbrains.kotlin.formver.embeddings.IntTypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 import org.jetbrains.kotlin.formver.names.SpecialName
 import org.jetbrains.kotlin.formver.viper.MangledName
@@ -19,8 +18,5 @@ class SpecialField(baseName: String, override val type: TypeEmbedding, override 
 }
 
 object SpecialFields {
-    val FunctionObjectCallCounterField = SpecialField("function_object_call_counter", IntTypeEmbedding, Type.Int)
-    val all = listOf(
-        FunctionObjectCallCounterField,
-    )
+    val all: List<SpecialField> = listOf()
 }

@@ -1,11 +1,6 @@
 /captured.kt:(155,165): info: Generated Viper text for captureArg:
 method global$fun_captureArg$fun_take$fun_take$T_Int$return$T_Int$return$T_Int(local$g: Ref)
   returns (ret$0: Ref)
-  requires acc(local$g.special$function_object_call_counter, write)
-  requires special$duplicable(local$g)
-  ensures acc(local$g.special$function_object_call_counter, write)
-  ensures old(local$g.special$function_object_call_counter) <=
-    local$g.special$function_object_call_counter
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
 {
   var ret$1: Ref

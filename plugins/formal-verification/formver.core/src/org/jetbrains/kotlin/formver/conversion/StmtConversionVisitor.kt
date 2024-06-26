@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.formver.UnsupportedFeatureBehaviour
 import org.jetbrains.kotlin.formver.embeddings.BooleanTypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
-import org.jetbrains.kotlin.formver.embeddings.UnspecifiedFunctionTypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.callables.FullNamedFunctionSignature
 import org.jetbrains.kotlin.formver.embeddings.callables.insertCall
 import org.jetbrains.kotlin.formver.embeddings.expression.*
@@ -186,10 +185,7 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext>()
             }
             else -> {
                 val retType = data.embedType(implicitInvokeCall.toResolvedCallableSymbol()!!.resolvedReturnType)
-                val leaks = args.filter { it.type is UnspecifiedFunctionTypeEmbedding }
-                    .map { Assert(DuplicableCall(it)) }
-                val call = InvokeFunctionObject(data.convert(receiver), args, retType)
-                Block(leaks + listOf(call))
+                InvokeFunctionObject(data.convert(receiver), args, retType)
             }
         }
     }

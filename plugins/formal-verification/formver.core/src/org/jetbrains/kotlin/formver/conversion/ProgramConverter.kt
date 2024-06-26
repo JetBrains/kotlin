@@ -241,7 +241,6 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
             override fun getPreconditions(returnVariable: VariableEmbedding) =
                 subSignature.formalArgs.flatMap { it.pureInvariants() } +
                         subSignature.formalArgs.flatMap { it.accessInvariants() } +
-                        contractVisitor.getPreconditions(ContractVisitorContext(returnVariable, symbol)) +
                         subSignature.stdLibPreconditions()
 
             override fun getPostconditions(returnVariable: VariableEmbedding) =
