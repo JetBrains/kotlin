@@ -19,22 +19,16 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.isEmpty
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.backend.*
-import org.jetbrains.kotlin.fir.backend.native.interop.isExternalObjCClassProperty
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
+import org.jetbrains.kotlin.fir.backend.DelicateDeclarationStorageApi
+import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
+import org.jetbrains.kotlin.fir.backend.Fir2IrPluginContext
+import org.jetbrains.kotlin.fir.backend.Fir2IrVisibilityConverter
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.pipeline.convertToIrAndActualize
-import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
-import org.jetbrains.kotlin.ir.declarations.IrOverridableDeclaration
-import org.jetbrains.kotlin.ir.objcinterop.IrObjCOverridabilityCondition
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
@@ -45,23 +39,6 @@ import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 internal val KlibFactories = KlibMetadataFactories(::KonanBuiltIns, DynamicTypeDeserializer)
-
-internal object NativeFir2IrExtensions : Fir2IrExtensions {
-    override val irNeedsDeserialization = false
-    override val parametersAreAssignable: Boolean get() = false
-    override val externalOverridabilityConditions = listOf(IrObjCOverridabilityCondition)
-    override fun deserializeToplevelClass(irClass: IrClass, components: Fir2IrComponents) = false
-    override fun findInjectedValue(calleeReference: FirReference, conversionScope: Fir2IrConversionScope) = null
-    override fun hasBackingField(property: FirProperty, session: FirSession): Boolean =
-            if (property.isExternalObjCClassProperty(session))
-                property.isLateInit
-            else
-                Fir2IrExtensions.Default.hasBackingField(property, session)
-
-    override fun isTrueStatic(declaration: FirCallableDeclaration, session: FirSession): Boolean = false
-    override fun initializeIrBuiltInsAndSymbolTable(irBuiltIns: IrBuiltIns, symbolTable: SymbolTable) {}
-    override fun shouldGenerateDelegatedMember(delegateMemberFromBaseType: IrOverridableDeclaration<*>): Boolean = true
-}
 
 internal fun PhaseContext.fir2Ir(
         input: FirOutput.Full,
