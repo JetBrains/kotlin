@@ -73,7 +73,7 @@ public expect inline fun AutoCloseable(crossinline closeAction: () -> Unit): Aut
  * @param block a function to process this [AutoCloseable] resource.
  * @return the result of [block] function invoked on this resource.
  */
-@Suppress("EXPECTED_DECLARATION_WITH_BODY")
+@Suppress("EXPECTED_DECLARATION_WITH_BODY", "WRONG_INVOCATION_KIND")
 @SinceKotlin("2.0")
 @WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
