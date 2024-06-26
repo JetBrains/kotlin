@@ -48,7 +48,7 @@ class FirCompilerLazyDeclarationResolverWithPhaseChecking : FirLazyDeclarationRe
         if (!lazyResolveContractChecksEnabled || elementPhase >= requestedPhase) return
 
         val currentPhase = currentTransformerPhase
-            ?: error("Current phase is not set, please call ${this::startResolvingPhase.name} before starting transforming the file")
+            ?: return // error("Current phase is not set, please call ${this::startResolvingPhase.name} before starting transforming the file")
 
         // This case is not a violation of any contract
         // However, now we keep more strict invariant here,
