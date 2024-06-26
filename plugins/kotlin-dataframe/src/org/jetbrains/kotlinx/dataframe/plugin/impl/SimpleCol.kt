@@ -2,9 +2,9 @@
 
 package org.jetbrains.kotlinx.dataframe.plugin.impl
 
+import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClassId
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeNullability
-import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.isNullable
 import org.jetbrains.kotlinx.dataframe.impl.api.DataFrameLikeContainer
 import org.jetbrains.kotlinx.dataframe.impl.api.GenericColumn
@@ -101,8 +101,8 @@ data class SimpleColumnGroup(
 }
 
 fun KotlinTypeFacade.simpleColumnOf(name: String, type: ConeKotlinType): SimpleCol {
-    return if (type.classId == Names.DATA_ROW_CLASS_ID) {
-        val schema = pluginDataFrameSchema(type)
+    return if (type.fullyExpandedClassId(session) == Names.DATA_ROW_CLASS_ID) {
+        val schema = pluginDataFrameSchema(type.typeArguments[0])
         val group = SimpleColumnGroup(name, schema.columns())
         val column = if (type.isNullable) {
             makeNullable(group)
@@ -110,8 +110,8 @@ fun KotlinTypeFacade.simpleColumnOf(name: String, type: ConeKotlinType): SimpleC
             group
         }
         column
-    } else if (type.classId == Names.DF_CLASS_ID && type.nullability == ConeNullability.NOT_NULL) {
-        val schema = pluginDataFrameSchema(type)
+    } else if (type.fullyExpandedClassId(session) == Names.DF_CLASS_ID && type.nullability == ConeNullability.NOT_NULL) {
+        val schema = pluginDataFrameSchema(type.typeArguments[0])
         SimpleFrameColumn(name, schema.columns())
     } else {
         SimpleDataColumn(name, type.wrap())
@@ -121,7 +121,7 @@ fun KotlinTypeFacade.simpleColumnOf(name: String, type: ConeKotlinType): SimpleC
 private fun KotlinTypeFacade.makeNullable(column: SimpleCol): SimpleCol {
     return when (column) {
         is SimpleColumnGroup -> {
-            SimpleColumnGroup(column.name, column.columns().map { makeNullable(column) })
+            SimpleColumnGroup(column.name, column.columns().map { makeNullable(it) })
         }
         is SimpleFrameColumn -> column
         is SimpleDataColumn -> SimpleDataColumn(column.name, column.type.changeNullability { true })

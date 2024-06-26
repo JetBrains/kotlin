@@ -1,24 +1,20 @@
 package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
-import org.jetbrains.kotlinx.dataframe.plugin.pluginDataFrameSchema
-import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.fir.types.isNullable
+import org.jetbrains.kotlinx.dataframe.api.Infer
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
 import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractInterpreter
 import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractSchemaModificationInterpreter
 import org.jetbrains.kotlinx.dataframe.plugin.impl.Arguments
-import org.jetbrains.kotlinx.dataframe.plugin.impl.Present
-import org.jetbrains.kotlinx.dataframe.api.Infer
 import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
+import org.jetbrains.kotlinx.dataframe.plugin.impl.Present
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleCol
-import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
+import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleFrameColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnWithPathApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.impl.dataFrame
 import org.jetbrains.kotlinx.dataframe.plugin.impl.enum
+import org.jetbrains.kotlinx.dataframe.plugin.impl.simpleColumnOf
 import org.jetbrains.kotlinx.dataframe.plugin.impl.string
 import org.jetbrains.kotlinx.dataframe.plugin.impl.type
 import org.jetbrains.kotlinx.dataframe.plugin.impl.varargString
@@ -73,17 +69,8 @@ internal fun KotlinTypeFacade.convertImpl(
     type: TypeApproximation
 ): PluginDataFrameSchema {
     return pluginDataFrameSchema.map(columns.toSet()) { path, column ->
-        require(column is SimpleDataColumn) {
-            "$path must be ${SimpleDataColumn::class}, but was ${column::class}"
-        }
         val unwrappedType = type.type
-        // TODO: AnyRow
-        if (unwrappedType is ConeClassLikeType && unwrappedType.classId == Names.DF_CLASS_ID && !unwrappedType.isNullable) {
-            val f = unwrappedType.typeArguments.single()
-            SimpleFrameColumn(column.name, pluginDataFrameSchema(f).columns())
-        } else {
-            column.changeType(type)
-        }
+        simpleColumnOf(column.name, unwrappedType)
     }
 }
 

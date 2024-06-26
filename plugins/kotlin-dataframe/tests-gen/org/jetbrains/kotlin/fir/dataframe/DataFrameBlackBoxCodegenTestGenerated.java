@@ -6,6 +6,7 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -331,5 +332,27 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   @TestMetadata("ungroup.kt")
   public void testUngroup() {
     runTest("testData/box/ungroup.kt");
+  }
+
+  @Nested
+  @TestMetadata("testData/box/colKinds")
+  @TestDataPath("$PROJECT_ROOT")
+  public class ColKinds {
+    @Test
+    @TestMetadata("add.kt")
+    public void testAdd() {
+      runTest("testData/box/colKinds/add.kt");
+    }
+
+    @Test
+    public void testAllFilesPresentInColKinds() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/box/colKinds"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+    }
+
+    @Test
+    @TestMetadata("toDataFrame.kt")
+    public void testToDataFrame() {
+      runTest("testData/box/colKinds/toDataFrame.kt");
+    }
   }
 }
