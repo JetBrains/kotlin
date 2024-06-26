@@ -43,8 +43,6 @@ open class AbstractDataFrameBlackBoxCodegenTest : AbstractFirLightTreeBlackBoxCo
             JvmEnvironmentConfigurationDirectives.JDK_KIND with TestJdkKind.FULL_JDK
             +JvmEnvironmentConfigurationDirectives.WITH_REFLECT
             +IGNORE_DEXING
-            +FirDiagnosticsDirectives.FIR_DUMP
-            +CodegenTestDirectives.DUMP_IR
         }
         builder.useAdditionalService<TemporaryDirectoryManager>(::TemporaryDirectoryManagerImplFixed)
         builder.useConfigurators(::DataFramePluginAnnotationsProvider)
