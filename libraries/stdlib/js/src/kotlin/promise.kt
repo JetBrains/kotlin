@@ -35,12 +35,14 @@ public open external class Promise<out T>(executor: (resolve: (T) -> Unit, rejec
 }
 
 // It's workaround for KT-19672 since we can fix it properly until KT-11265 isn't fixed.
+@Suppress("NOTHING_TO_INLINE")
 public inline fun <T, S> Promise<Promise<T>>.then(
     noinline onFulfilled: ((T) -> S)?
 ): Promise<S> {
     return this.unsafeCast<Promise<T>>().then(onFulfilled)
 }
 
+@Suppress("NOTHING_TO_INLINE")
 public inline fun <T, S> Promise<Promise<T>>.then(
     noinline onFulfilled: ((T) -> S)?,
     noinline onRejected: ((Throwable) -> S)?
