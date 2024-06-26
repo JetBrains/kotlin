@@ -60,6 +60,27 @@ class ConeAtomWithCandidate(
         get() = fir as FirExpression
 }
 
+class ConeRawLambdaAtom(override val expression: FirAnonymousFunctionExpression) : ConeCallAtom() {
+    override val fir: FirAnonymousFunction = expression.anonymousFunction
+
+    var subAtom: ConePostponedResolvedAtom? = null
+        set(value) {
+            require(field == null) { "subAtom already initialized" }
+            field = value
+        }
+}
+
+class ConeRawCallableReferenceAtom(override val fir: FirCallableReferenceAccess) : ConeCallAtom() {
+    override val expression: FirCallableReferenceAccess
+        get() = fir
+
+    var subAtom: ConeResolvedCallableReferenceAtom? = null
+        set(value) {
+            require(field == null) { "subAtom already initialized" }
+            field = value
+        }
+}
+
 sealed class ConePostponedResolvedAtom : ConeCallAtom(), PostponedResolvedAtomMarker {
     abstract override val inputTypes: Collection<ConeKotlinType>
     abstract override val outputType: ConeKotlinType?
@@ -125,6 +146,12 @@ class ConeLambdaWithTypeVariableAsExpectedTypeAtom(
     val candidateOfOuterCall: Candidate,
 ) : ConePostponedResolvedAtom(), LambdaWithTypeVariableAsExpectedTypeMarker {
     override val fir: FirAnonymousFunction = expression.anonymousFunction
+
+    var subAtom: ConeResolvedLambdaAtom? = null
+        set(value) {
+            require(field == null) { "subAtom already initialized" }
+            field = value
+        }
 
     override var parameterTypesFromDeclaration: List<ConeKotlinType?>? = null
         private set
