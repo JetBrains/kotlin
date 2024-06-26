@@ -9,13 +9,23 @@ import kotlinx.validation.api.*
 import org.gradle.api.*
 import org.gradle.api.file.*
 import org.gradle.api.tasks.*
+import java.io.File
 import java.util.jar.JarFile
 import javax.inject.Inject
+
+private const val MIGRATION_GUIDE_LINK = "https://github.com/Kotlin/binary-compatibility-validator/blob/master/docs/design/0.15.0-migration-guide.md"
+private const val OUTPUT_API_DIR_ERROR = "Property outputApiDir was replaced with outputApiFile. Please refer to the migration guide for migration details: $MIGRATION_GUIDE_LINK"
 
 public abstract class KotlinApiBuildTask @Inject constructor(
 ) : BuildTaskBase() {
     @get:OutputFile
     public abstract val outputApiFile: RegularFileProperty
+
+    @get:Internal
+    @Deprecated(level = DeprecationLevel.ERROR, message = OUTPUT_API_DIR_ERROR)
+    public var outputApiDir: File
+        get() = throw UnsupportedOperationException(OUTPUT_API_DIR_ERROR)
+        set(_) = throw UnsupportedOperationException(OUTPUT_API_DIR_ERROR)
 
     @get:InputFiles
     @get:Optional
