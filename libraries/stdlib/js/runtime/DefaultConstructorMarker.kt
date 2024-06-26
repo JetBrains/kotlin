@@ -5,4 +5,5 @@
 
 package kotlin.js
 
+@PublishedApi
 internal object DefaultConstructorMarker
