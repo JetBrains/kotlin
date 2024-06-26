@@ -27985,6 +27985,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("nothingToOverrideMessage.kt")
+      public void testNothingToOverrideMessage() {
+        runTest("compiler/testData/diagnostics/tests/override/nothingToOverrideMessage.kt");
+      }
+
+      @Test
       @TestMetadata("ObjectDelegationManyImpl.kt")
       public void testObjectDelegationManyImpl() {
         runTest("compiler/testData/diagnostics/tests/override/ObjectDelegationManyImpl.kt");

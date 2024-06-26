@@ -956,6 +956,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
     val OVERRIDES by object : DiagnosticGroup("overrides") {
         val NOTHING_TO_OVERRIDE by error<KtModifierListOwner>(PositioningStrategy.OVERRIDE_MODIFIER) {
             parameter<FirCallableSymbol<*>>("declaration")
+            parameter<List<FirCallableSymbol<*>>>("candidates")
         }
 
         val CANNOT_OVERRIDE_INVISIBLE_MEMBER by error<KtNamedDeclaration>(PositioningStrategy.OVERRIDE_MODIFIER) {

@@ -537,7 +537,7 @@ object FirErrors {
     val MUTABLE_PROPERTY_WITH_CAPTURED_TYPE: KtDiagnosticFactory0 = KtDiagnosticFactory0("MUTABLE_PROPERTY_WITH_CAPTURED_TYPE", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
 
     // overrides
-    val NOTHING_TO_OVERRIDE: KtDiagnosticFactory1<FirCallableSymbol<*>> = KtDiagnosticFactory1("NOTHING_TO_OVERRIDE", ERROR, SourceElementPositioningStrategies.OVERRIDE_MODIFIER, KtModifierListOwner::class)
+    val NOTHING_TO_OVERRIDE: KtDiagnosticFactory2<FirCallableSymbol<*>, List<FirCallableSymbol<*>>> = KtDiagnosticFactory2("NOTHING_TO_OVERRIDE", ERROR, SourceElementPositioningStrategies.OVERRIDE_MODIFIER, KtModifierListOwner::class)
     val CANNOT_OVERRIDE_INVISIBLE_MEMBER: KtDiagnosticFactory2<FirCallableSymbol<*>, FirCallableSymbol<*>> = KtDiagnosticFactory2("CANNOT_OVERRIDE_INVISIBLE_MEMBER", ERROR, SourceElementPositioningStrategies.OVERRIDE_MODIFIER, KtNamedDeclaration::class)
     val DATA_CLASS_OVERRIDE_CONFLICT: KtDiagnosticFactory2<FirCallableSymbol<*>, FirCallableSymbol<*>> = KtDiagnosticFactory2("DATA_CLASS_OVERRIDE_CONFLICT", ERROR, SourceElementPositioningStrategies.DATA_MODIFIER, KtClassOrObject::class)
     val DATA_CLASS_OVERRIDE_DEFAULT_VALUES: KtDiagnosticFactory2<FirCallableSymbol<*>, FirClassSymbol<*>> = KtDiagnosticFactory2("DATA_CLASS_OVERRIDE_DEFAULT_VALUES", ERROR, SourceElementPositioningStrategies.DATA_MODIFIER, KtElement::class)

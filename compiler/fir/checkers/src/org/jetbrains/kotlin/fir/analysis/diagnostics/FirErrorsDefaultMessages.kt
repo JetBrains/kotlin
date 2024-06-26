@@ -753,6 +753,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_MODIFIER_TA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_SETTER_PARAMETER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_SETTER_RETURN_TYPE
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 
 /**
@@ -1717,7 +1718,14 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(INLINE_PROPERTY_WITH_BACKING_FIELD_DEPRECATION, "Inline property cannot have a backing field.")
 
         // Overrides
-        map.put(NOTHING_TO_OVERRIDE, "''{0}'' overrides nothing.", DECLARATION_NAME)
+        map.put(
+            NOTHING_TO_OVERRIDE,
+            "''{0}'' overrides nothing.{1}",
+            DECLARATION_NAME,
+            Renderer { symbols: List<FirCallableSymbol<*>> ->
+                if (symbols.isEmpty()) return@Renderer ""
+                " Potential signatures for overriding:" + SYMBOLS_ON_NEXT_LINES.render(symbols)
+            })
 
         map.put(
             CANNOT_OVERRIDE_INVISIBLE_MEMBER,

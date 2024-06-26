@@ -1,0 +1,18 @@
+/nothingToOverrideMessage.kt:(89,101): error: Class 'Simple' is not abstract and does not implement abstract member 'foo'.
+
+/nothingToOverrideMessage.kt:(112,120): error: 'foo' overrides nothing. Potential signatures for overriding:
+fun foo(s: String): Unit
+
+/nothingToOverrideMessage.kt:(159,167): error: 'foo' overrides nothing.
+
+/nothingToOverrideMessage.kt:(254,275): error: Class 'GenericOverride' is not abstract and does not implement abstract member 'foo'.
+
+/nothingToOverrideMessage.kt:(298,306): error: 'foo' overrides nothing. Potential signatures for overriding:
+fun foo(t: R): Unit
+
+/nothingToOverrideMessage.kt:(323,347): error: Class 'NonGenericOverride' is not abstract and does not implement abstract member 'foo'.
+
+/nothingToOverrideMessage.kt:(372,380): error: 'foo' overrides nothing. Potential signatures for overriding:
+fun foo(t: String): Unit
+
+/nothingToOverrideMessage.kt:(476,484): error: 'foo' overrides nothing.

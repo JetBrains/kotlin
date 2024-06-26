@@ -2392,6 +2392,7 @@ internal class MutablePropertyWithCapturedTypeImpl(
 
 internal class NothingToOverrideImpl(
     override val declaration: KaCallableSymbol,
+    override val candidates: List<KaCallableSymbol>,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtModifierListOwner>(firDiagnostic, token), KaFirDiagnostic.NothingToOverride
