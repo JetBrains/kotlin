@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 internal sealed class NameMatcher(val name: MangledName) {
-
     companion object {
         inline fun matchClassScope(name: MangledName, action: ClassScopeNameMatcher.() -> Nothing): Nothing {
             ClassScopeNameMatcher(name).action()
@@ -50,7 +49,6 @@ internal sealed class NameMatcher(val name: MangledName) {
 }
 
 internal class ClassScopeNameMatcher(name: MangledName) : NameMatcher(name) {
-
     override val className = (scopedName?.scope as? ClassScope)?.className
 
     inline fun ifNoReceiver(action: NameMatcher.() -> Unit) {
@@ -59,7 +57,8 @@ internal class ClassScopeNameMatcher(name: MangledName) : NameMatcher(name) {
     }
 
     inline fun ifFunctionName(name: String, action: ClassScopeNameMatcher.() -> Unit) {
-        if (scopedName?.name == FunctionKotlinName(Name.identifier(name)))
+        val functionName = scopedName?.name as? FunctionKotlinName
+        if (functionName?.name == Name.identifier(name))
             this.action()
     }
 
@@ -70,6 +69,5 @@ internal class ClassScopeNameMatcher(name: MangledName) : NameMatcher(name) {
 }
 
 internal class GlobalScopeNameMatcher(name: MangledName) : NameMatcher(name) {
-
     override val className = scopedName?.name as ClassKotlinName?
 }

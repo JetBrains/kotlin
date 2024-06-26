@@ -27,14 +27,12 @@ fun CallableId.embedScopeName(): NameScope =
         else -> DefaultClassScope(packageName, ClassKotlinName(id.relativeClassName))
     }
 
-fun CallableId.embedScopedWithType(type: TypeEmbedding, name: KotlinName) = ScopedKotlinName(embedScopeName(), name, type)
-
 fun ClassId.embedName(): ScopedKotlinName = ScopedKotlinName(GlobalScope(packageFqName), ClassKotlinName(relativeClassName))
 fun CallableId.embedExtensionGetterName(type: TypeEmbedding): ScopedKotlinName =
-    embedScopedWithType(type, ExtensionGetterKotlinName(callableName))
+    ScopedKotlinName(embedScopeName(), ExtensionGetterKotlinName(callableName, type))
 
 fun CallableId.embedExtensionSetterName(type: TypeEmbedding): ScopedKotlinName =
-    embedScopedWithType(type, ExtensionSetterKotlinName(callableName))
+    ScopedKotlinName(embedScopeName(), ExtensionSetterKotlinName(callableName, type))
 
 private fun CallableId.embedMemberPropertyNameBase(isPrivate: Boolean, withAction: (Name) -> KotlinName): ScopedKotlinName {
     val id = classId ?: error("Embedding non-member property $callableName as a member.")
@@ -52,7 +50,7 @@ fun CallableId.embedMemberBackingFieldName(isPrivate: Boolean) = embedMemberProp
 
 fun CallableId.embedUnscopedPropertyName(): SimpleKotlinName = SimpleKotlinName(callableName)
 fun CallableId.embedFunctionName(type: TypeEmbedding): ScopedKotlinName =
-    embedScopedWithType(type, FunctionKotlinName(callableName))
+    ScopedKotlinName(embedScopeName(), FunctionKotlinName(callableName, type))
 
 fun Name.embedScopedLocalName(scope: Int) = ScopedKotlinName(LocalScope(scope), SimpleKotlinName(this))
 fun Name.embedParameterName() = ScopedKotlinName(ParameterScope, SimpleKotlinName(this))
@@ -74,7 +72,7 @@ fun FirPropertySymbol.embedMemberPropertyName() = callableId.embedMemberProperty
 )
 
 fun FirConstructorSymbol.embedName(ctx: ProgramConversionContext): ScopedKotlinName =
-    callableId.embedScopedWithType(ctx.embedType(this), ConstructorKotlinName)
+    ScopedKotlinName(callableId.embedScopeName(), ConstructorKotlinName(ctx.embedType(this)))
 
 fun FirFunctionSymbol<*>.embedName(ctx: ProgramConversionContext): ScopedKotlinName = when (this) {
     is FirPropertyAccessorSymbol -> if (isGetter) propertySymbol.embedGetterName(ctx) else propertySymbol.embedSetterName(ctx)

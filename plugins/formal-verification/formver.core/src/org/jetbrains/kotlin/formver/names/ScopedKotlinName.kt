@@ -5,16 +5,15 @@
 
 package org.jetbrains.kotlin.formver.names
 
-import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.name.FqName
 
 /**
  * Name of a Kotlin entity in the original program in a specified scope and optionally distinguished by type.
  */
-data class ScopedKotlinName(val scope: NameScope, val name: KotlinName, val type: TypeEmbedding? = null) : MangledName {
+data class ScopedKotlinName(val scope: NameScope, val name: KotlinName) : MangledName {
     override val mangled: String
-        get() = listOfNotNull(scope.mangled, name.mangled, type?.name?.mangled).joinToString("$")
+        get() = listOf(scope.mangled, name.mangled).joinToString("$")
 }
 
 fun FqName.asViperString() = asString().replace('.', '$')

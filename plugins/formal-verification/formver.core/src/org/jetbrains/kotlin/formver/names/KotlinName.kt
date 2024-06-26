@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.formver.names
 
+import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -25,7 +26,11 @@ abstract class PrefixedKotlinName(prefix: String, name: Name) : KotlinName {
     override val mangled: String = "${prefix}_${name.asStringStripSpecialMarkers()}"
 }
 
-data class FunctionKotlinName(val name: Name) : PrefixedKotlinName("fun", name)
+abstract class PrefixedKotlinNameWithType(prefix: String, name: Name, type: TypeEmbedding) : KotlinName {
+    override val mangled: String = "${prefix}_${name.asStringStripSpecialMarkers()}\$${type.name.mangled}"
+}
+
+data class FunctionKotlinName(val name: Name, val type: TypeEmbedding) : PrefixedKotlinNameWithType("fun", name, type)
 
 /**
  * This name will never occur in the viper output, but rather is used to lookup properties.
@@ -34,8 +39,16 @@ data class PropertyKotlinName(val name: Name) : PrefixedKotlinName("property_pro
 data class BackingFieldKotlinName(val name: Name) : PrefixedKotlinName("backing_field", name)
 data class GetterKotlinName(val name: Name) : PrefixedKotlinName("property_getter", name)
 data class SetterKotlinName(val name: Name) : PrefixedKotlinName("property_setter", name)
-data class ExtensionSetterKotlinName(val name: Name) : PrefixedKotlinName("ext_setter", name)
-data class ExtensionGetterKotlinName(val name: Name) : PrefixedKotlinName("ext_getter", name)
+data class ExtensionSetterKotlinName(val name: Name, val type: TypeEmbedding) : PrefixedKotlinNameWithType(
+    "ext_setter",
+    name, type
+)
+
+data class ExtensionGetterKotlinName(val name: Name, val type: TypeEmbedding) : PrefixedKotlinNameWithType
+    (
+    "ext_getter",
+    name, type
+)
 
 data class ClassKotlinName(val name: FqName) : KotlinName {
     override val mangled: String = "class_${name.asViperString()}"
@@ -43,7 +56,7 @@ data class ClassKotlinName(val name: FqName) : KotlinName {
     constructor(classSegments: List<String>) : this(FqName.fromSegments(classSegments))
 }
 
-data object ConstructorKotlinName : KotlinName {
-    override val mangled: String = "constructor"
+data class ConstructorKotlinName(val type: TypeEmbedding) : KotlinName {
+    override val mangled: String = "constructor\$${type.name.mangled}"
 }
 
