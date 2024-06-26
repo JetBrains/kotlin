@@ -1,8 +1,12 @@
 @_exported import ExportedKotlinPackages
+import KotlinRuntime
 import KotlinBridges_main
 
 public func foo() -> Swift.Int32 {
     return __root___foo()
+}
+public func return_any_should_append_runtime_import() -> KotlinRuntime.KotlinBase {
+    return KotlinRuntime.KotlinBase(__externalRCRef: __root___return_any_should_append_runtime_import())
 }
 public extension ExportedKotlinPackages.namespace1.local_functions {
     public static func foo() -> Swift.Void {

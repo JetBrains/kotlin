@@ -24,18 +24,6 @@ public fun __root___FLOAT_CONST_get(): Float {
     return _result
 }
 
-@ExportedBridge("__root___Foo_init_allocate")
-public fun __root___Foo_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = kotlin.native.internal.createUninitializedInstance<Foo>()
-    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
-}
-
-@ExportedBridge("__root___Foo_init_initialize__TypesOfArguments__uintptr_t__")
-public fun __root___Foo_init_initialize(__kt: kotlin.native.internal.NativePtr): Unit {
-    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
-    kotlin.native.internal.initInstance(____kt, Foo())
-}
-
 @ExportedBridge("__root___INT_CONST_get")
 public fun __root___INT_CONST_get(): Int {
     val _result = INT_CONST
@@ -92,8 +80,20 @@ public fun __root___foo_get(): kotlin.native.internal.NativePtr {
 
 @ExportedBridge("__root___foo_set__TypesOfArguments__uintptr_t__")
 public fun __root___foo_set(newValue: kotlin.native.internal.NativePtr): Unit {
-    val __newValue = kotlin.native.internal.ref.dereferenceExternalRCRef(newValue) as Foo
+    val __newValue = kotlin.native.internal.ref.dereferenceExternalRCRef(newValue) as kotlin.Any
     foo = __newValue
+}
+
+@ExportedBridge("__root___lateinit_foo_get")
+public fun __root___lateinit_foo_get(): kotlin.native.internal.NativePtr {
+    val _result = lateinit_foo
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___lateinit_foo_set__TypesOfArguments__uintptr_t__")
+public fun __root___lateinit_foo_set(newValue: kotlin.native.internal.NativePtr): Unit {
+    val __newValue = kotlin.native.internal.ref.dereferenceExternalRCRef(newValue) as kotlin.Any
+    lateinit_foo = __newValue
 }
 
 @ExportedBridge("namespace_main_bar_get")

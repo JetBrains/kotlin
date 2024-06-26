@@ -6,6 +6,12 @@ public fun __root___foo(): Int {
     return _result
 }
 
+@ExportedBridge("__root___return_any_should_append_runtime_import")
+public fun __root___return_any_should_append_runtime_import(): kotlin.native.internal.NativePtr {
+    val _result = return_any_should_append_runtime_import()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
 @ExportedBridge("namespace1_bar")
 public fun namespace1_bar(): Int {
     val _result = namespace1.bar()

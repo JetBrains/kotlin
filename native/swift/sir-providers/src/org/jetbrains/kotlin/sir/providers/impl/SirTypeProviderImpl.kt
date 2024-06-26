@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.SirTypeProvider
 import org.jetbrains.kotlin.sir.providers.SirTypeProvider.ErrorTypeStrategy
+import org.jetbrains.kotlin.sir.providers.source.KotlinRuntimeElement
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
@@ -112,6 +113,9 @@ public class SirTypeProviderImpl(
                         ktModule.sirModule()
                     }
                     processTypeImports(listOf(SirImport(sirModule.name)))
+                }
+                is KotlinRuntimeElement -> {
+                    processTypeImports(listOf(SirImport(KotlinRuntimeModule.name)))
                 }
                 else -> {}
             }
