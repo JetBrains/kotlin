@@ -7,8 +7,8 @@ kotlin {
         linuxX64(),
         // 1) no machine currently available 2) CLI library does not support
 //        linuxArm64(),
-//        macosX64(),
-//        macosArm64(),
+        macosX64(),
+        macosArm64(),
     )
 
     jvm {
