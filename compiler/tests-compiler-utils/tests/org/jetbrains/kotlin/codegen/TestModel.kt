@@ -99,13 +99,15 @@ private const val EXPECTED_DTS_LIST = "expected dts"
 private const val REBUILD_KLIB = "rebuild klib"
 private const val COMPILER = "compiler"
 
+private val TARGET_PATTERN = Pattern.compile("^\\s*TARGET\\s*?:\\s*(.*)\\s*$")
+
 private val STEP_PATTERN = Pattern.compile("^\\s*STEP\\s+(\\d+)\\.*(\\d+)?\\s*:?$")
 
 private val MODIFICATION_PATTERN = Pattern.compile("^([UD])\\s*:(.+)$")
 
-abstract class InfoParser<Info>(protected val infoFile: File) {
+abstract class InfoParser<Info>(protected val infoFile: File, target: String = "JS") {
     protected var lineCounter = 0
-    protected val lines = infoFile.readLines()
+    protected val lines = infoFile.readTargetLines(target)
 
     abstract fun parse(entryName: String): Info
 
@@ -131,11 +133,36 @@ abstract class InfoParser<Info>(protected val infoFile: File) {
         throw AssertionError(diagnosticMessage("Syntax error", line))
     }
 
+    private fun File.readTargetLines(target: String): List<String> {
+        // If no target is supplied in the file, the whole file will match for any target
+        val lines = readLines()
+        val result = mutableListOf<String>()
+        var addLines = true
+        for (line in lines) {
+            if (line.isBlank()) continue
+            val matcher = TARGET_PATTERN.matcher(line)
+            if (matcher.matches()) {
+                if (result.isNotEmpty()) {
+                    // Entering another target than the intended target
+                    break;
+                }
+                addLines = target == matcher.group(1)
+            }
+            if (addLines) result.add(line)
+        }
+        if (result.isEmpty()) {
+            error(
+                "The target \"$target\" is not found in ${path}.\n" +
+                        "Either specify a correct target, or remove target specifiers so that any target is matched"
+            )
+        }
+        return result
+    }
 }
 
 private fun String.splitAndTrim() = split(",").map { it.trim() }.filter { it.isNotBlank() }
 
-class ProjectInfoParser(infoFile: File) : InfoParser<ProjectInfo>(infoFile) {
+class ProjectInfoParser(infoFile: File, target: String = "JS") : InfoParser<ProjectInfo>(infoFile, target) {
     private val moduleKindMap = mapOf(
         "plain" to ModuleKind.PLAIN,
         "commonjs" to ModuleKind.COMMON_JS,
@@ -238,7 +265,7 @@ class ProjectInfoParser(infoFile: File) : InfoParser<ProjectInfo>(infoFile) {
     }
 }
 
-class ModuleInfoParser(infoFile: File) : InfoParser<ModuleInfo>(infoFile) {
+class ModuleInfoParser(infoFile: File, target: String = "JS") : InfoParser<ModuleInfo>(infoFile, target) {
 
     private fun parseModifications(): List<ModuleInfo.Modification> {
         val modifications = mutableListOf<ModuleInfo.Modification>()
