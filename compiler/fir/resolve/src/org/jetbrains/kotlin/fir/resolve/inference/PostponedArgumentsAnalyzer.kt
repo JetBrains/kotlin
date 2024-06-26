@@ -307,6 +307,9 @@ fun ConeLambdaWithTypeVariableAsExpectedTypeAtom.transformToResolvedLambda(
         candidateOfOuterCall, csBuilder, ConeRawLambdaAtom(expression), fixedExpectedType,
         context, returnTypeVariable = returnTypeVariable
     )
+
+    subAtom = resolvedAtom
     analyzed = true
+
     return resolvedAtom
 }

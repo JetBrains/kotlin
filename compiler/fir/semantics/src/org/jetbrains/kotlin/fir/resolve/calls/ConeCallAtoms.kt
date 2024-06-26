@@ -27,15 +27,6 @@ class ConeResolvedAtom(override val fir: FirExpression) : ConeCallAtom() {
         get() = fir
 }
 
-class ConeRawLambdaAtom(override val expression: FirAnonymousFunctionExpression) : ConeCallAtom() {
-    override val fir: FirAnonymousFunction = expression.anonymousFunction
-}
-
-class ConeRawCallableReferenceAtom(override val fir: FirCallableReferenceAccess) : ConeCallAtom() {
-    override val expression: FirCallableReferenceAccess
-        get() = fir
-}
-
 class ConeSafeCallAtom(override val fir: FirSafeCallExpression, val selector: ConeCallAtom?) : ConeCallAtom() {
     override val expression: FirSafeCallExpression
         get() = fir

@@ -300,7 +300,9 @@ internal object ArgumentCheckingProcessor {
     private fun ArgumentContext.preprocessCallableReference(atom: ConeRawCallableReferenceAtom) {
         val expression = atom.expression
         val lhs = context.bodyResolveComponents.doubleColonExpressionResolver.resolveDoubleColonLHS(expression)
-        candidate.addPostponedAtom(ConeResolvedCallableReferenceAtom(expression, expectedType, lhs, context.session))
+        val postponedAtom = ConeResolvedCallableReferenceAtom(expression, expectedType, lhs, context.session)
+        atom.subAtom = postponedAtom
+        candidate.addPostponedAtom(postponedAtom)
     }
 
     private fun ArgumentContext.preprocessLambdaArgument(atom: ConeRawLambdaAtom): ConePostponedResolvedAtom {
@@ -323,6 +325,7 @@ internal object ArgumentCheckingProcessor {
         return runIf(explicitTypeArgument == null || explicitTypeArgument.typeArguments.isNotEmpty()) {
             ConeLambdaWithTypeVariableAsExpectedTypeAtom(atom.expression, expectedType, candidate).also {
                 candidate.addPostponedAtom(it)
+                atom.subAtom = it
             }
         }
     }
@@ -345,6 +348,8 @@ internal object ArgumentCheckingProcessor {
             allowCoercionToExtensionReceiver = duringCompletion,
             sourceForFunctionExpression = expression.source,
         ) ?: extractLambdaInfo(expression, sourceForFunctionExpression = expression.source)
+
+        atom.subAtom = resolvedArgument
 
         if (expectedType != null) {
             val parameters = resolvedArgument.parameters
