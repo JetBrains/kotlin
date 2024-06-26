@@ -134,6 +134,7 @@ import org.jetbrains.kotlin.types.Variance
 /**
  * Generated from: [org.jetbrains.kotlin.fir.checkers.generator.diagnostics.DIAGNOSTICS_LIST]
  */
+@Suppress("IncorrectFormatting")
 object FirErrors {
     // Meta-errors
     val UNSUPPORTED: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("UNSUPPORTED", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)

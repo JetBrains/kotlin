@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 /**
  * Generated from: [org.jetbrains.kotlin.fir.builder.SYNTAX_DIAGNOSTIC_LIST]
  */
+@Suppress("IncorrectFormatting")
 object FirSyntaxErrors {
     // Syntax
     val SYNTAX: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("SYNTAX", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
