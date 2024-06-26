@@ -353,7 +353,7 @@ internal fun PhaseEngine<NativeGenerationState>.lowerModuleWithDependencies(modu
         runLowerings(getLoweringsUpToAndIncludingSyntheticAccessors(), allModulesToLower)
         runLowerings(listOf(inlineAllFunctionsPhase), allModulesToLower)
     }
-    runIrValidationPhase(validateIrAfterInlining, allModulesToLower)
+    runIrValidationPhase(validateIrAfterInliningAllFunctions, allModulesToLower)
     runLowerings(getLoweringsAfterInlining(), allModulesToLower)
     runIrValidationPhase(validateIrAfterLowering, allModulesToLower)
 

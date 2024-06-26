@@ -39,7 +39,7 @@ open class IrValidationBeforeLoweringPhase<Context : CommonBackendContext>(conte
     }
 }
 
-class IrValidationAfterInliningPhase<Context : CommonBackendContext>(context: Context) : IrValidationPhase<Context>(context) {
+class IrValidationAfterInliningAllFunctionsPhase<Context : CommonBackendContext>(context: Context) : IrValidationPhase<Context>(context) {
     override fun IrValidationContext.validate(irModule: IrModuleFragment, phaseName: String) {
         performBasicIrValidation(
             irModule,
