@@ -67,7 +67,9 @@ public abstract class kotlinx/validation/KotlinApiBuildTask : kotlinx/validation
 	public abstract fun getInputClassesDirs ()Lorg/gradle/api/file/ConfigurableFileCollection;
 	public abstract fun getInputDependencies ()Lorg/gradle/api/file/ConfigurableFileCollection;
 	public abstract fun getInputJar ()Lorg/gradle/api/file/RegularFileProperty;
+	public final fun getOutputApiDir ()Ljava/io/File;
 	public abstract fun getOutputApiFile ()Lorg/gradle/api/file/RegularFileProperty;
+	public final fun setOutputApiDir (Ljava/io/File;)V
 }
 
 public class kotlinx/validation/KotlinApiCompareTask : org/gradle/api/DefaultTask {
