@@ -618,7 +618,6 @@ object ArrayOps : TemplateGroupBase() {
         on(Platform.Common) {
             specialFor(InvariantArraysOfObjects) {
                 suppress("NO_ACTUAL_FOR_EXPECT") // TODO: KT-21937
-                suppress("EXPECT_ACTUAL_MISMATCH")
             }
         }
     }
@@ -680,7 +679,6 @@ object ArrayOps : TemplateGroupBase() {
             on(Platform.Common) {
                 specialFor(InvariantArraysOfObjects) {
                     suppress("NO_ACTUAL_FOR_EXPECT") // TODO: KT-21937
-                    suppress("EXPECT_ACTUAL_MISMATCH")
                 }
             }
         }
@@ -756,7 +754,6 @@ object ArrayOps : TemplateGroupBase() {
             on(Platform.Common) {
                 specialFor(InvariantArraysOfObjects) {
                     suppress("NO_ACTUAL_FOR_EXPECT") // TODO: KT-21937
-                    suppress("EXPECT_ACTUAL_MISMATCH")
                 }
             }
         }
@@ -816,7 +813,6 @@ object ArrayOps : TemplateGroupBase() {
             on(Platform.Common) {
                 specialFor(InvariantArraysOfObjects) {
                     suppress("NO_ACTUAL_FOR_EXPECT") // TODO: KT-21937
-                    suppress("EXPECT_ACTUAL_MISMATCH")
                 }
             }
         }
@@ -981,7 +977,6 @@ object ArrayOps : TemplateGroupBase() {
             on(Platform.Common) {
                 specialFor(InvariantArraysOfObjects) {
                     suppress("NO_ACTUAL_FOR_EXPECT") // TODO: KT-21937
-                    suppress("EXPECT_ACTUAL_MISMATCH")
                 }
             }
             on(Platform.Native) {
@@ -1083,7 +1078,6 @@ object ArrayOps : TemplateGroupBase() {
             on(Platform.Common) {
                 specialFor(InvariantArraysOfObjects) {
                     suppress("NO_ACTUAL_FOR_EXPECT") // TODO: KT-21937
-                    suppress("EXPECT_ACTUAL_MISMATCH")
                 }
             }
             on(Platform.Native) {
@@ -1147,7 +1141,6 @@ object ArrayOps : TemplateGroupBase() {
             }
             on(Platform.Common) {
                 suppress("NO_ACTUAL_FOR_EXPECT") // TODO: KT-21937
-                suppress("EXPECT_ACTUAL_MISMATCH")
             }
             on(Platform.Native) {
                 body { "return this.copyOfNulls(newSize)" }

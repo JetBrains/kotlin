@@ -7312,7 +7312,7 @@ public expect fun CharArray.copyInto(destination: CharArray, destinationOffset: 
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.copyOf
  */
-@Suppress("NO_ACTUAL_FOR_EXPECT", "EXPECT_ACTUAL_MISMATCH")
+@Suppress("NO_ACTUAL_FOR_EXPECT")
 public expect fun <T> Array<T>.copyOf(): Array<T>
 
 /**
@@ -7468,7 +7468,7 @@ public expect fun CharArray.copyOf(newSize: Int): CharArray
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.resizingCopyOf
  */
-@Suppress("NO_ACTUAL_FOR_EXPECT", "EXPECT_ACTUAL_MISMATCH")
+@Suppress("NO_ACTUAL_FOR_EXPECT")
 public expect fun <T> Array<T>.copyOf(newSize: Int): Array<T?>
 
 /**
@@ -7480,7 +7480,7 @@ public expect fun <T> Array<T>.copyOf(newSize: Int): Array<T?>
  * @throws IndexOutOfBoundsException if [fromIndex] is less than zero or [toIndex] is greater than the size of this array.
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
  */
-@Suppress("NO_ACTUAL_FOR_EXPECT", "EXPECT_ACTUAL_MISMATCH")
+@Suppress("NO_ACTUAL_FOR_EXPECT")
 public expect fun <T> Array<T>.copyOfRange(fromIndex: Int, toIndex: Int): Array<T>
 
 /**
@@ -7934,7 +7934,7 @@ public val CharArray.lastIndex: Int
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
-@Suppress("NO_ACTUAL_FOR_EXPECT", "EXPECT_ACTUAL_MISMATCH")
+@Suppress("NO_ACTUAL_FOR_EXPECT")
 public expect operator fun <T> Array<T>.plus(element: T): Array<T>
 
 /**
@@ -7980,7 +7980,7 @@ public expect operator fun CharArray.plus(element: Char): CharArray
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
  */
-@Suppress("NO_ACTUAL_FOR_EXPECT", "EXPECT_ACTUAL_MISMATCH")
+@Suppress("NO_ACTUAL_FOR_EXPECT")
 public expect operator fun <T> Array<T>.plus(elements: Collection<T>): Array<T>
 
 /**
@@ -8026,7 +8026,7 @@ public expect operator fun CharArray.plus(elements: Collection<Char>): CharArray
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
  */
-@Suppress("NO_ACTUAL_FOR_EXPECT", "EXPECT_ACTUAL_MISMATCH")
+@Suppress("NO_ACTUAL_FOR_EXPECT")
 public expect operator fun <T> Array<T>.plus(elements: Array<out T>): Array<T>
 
 /**
@@ -8072,7 +8072,7 @@ public expect operator fun CharArray.plus(elements: CharArray): CharArray
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
-@Suppress("NO_ACTUAL_FOR_EXPECT", "EXPECT_ACTUAL_MISMATCH")
+@Suppress("NO_ACTUAL_FOR_EXPECT")
 public expect fun <T> Array<T>.plusElement(element: T): Array<T>
 
 /**
