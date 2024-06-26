@@ -274,4 +274,32 @@ class PropertyTest : AbstractModelTest("/src/main/kotlin/property/Test.kt", "pro
             }
         }
     }
+
+    @Test
+    fun `member properties and Java fields should have no generic params in kotlin`() {
+        inlineModelTest(
+            """
+            |/src/sample/ParentInKotlin.kt
+            |package sample
+            |
+            | class KtContainer<T> : MyContainer<T>() {
+            |   val ktProp: T
+            |}
+            |
+            |/src/sample/MyContainer.java
+            |package sample;
+            |
+            |public class MyContainer<T> {
+            |    public T prop;
+            |}
+            """.trimIndent()
+        ) {
+            with((this / "sample" / "KtContainer" / "prop").cast<DProperty>()) {
+                generics counts 0
+            }
+            with((this / "sample" / "KtContainer" / "ktProp").cast<DProperty>()) {
+                generics counts 0
+            }
+        }
+    }
 }
