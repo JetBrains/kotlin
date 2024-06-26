@@ -10,7 +10,6 @@ package kotlin
 /**
  * Returns an empty array of the specified type [T].
  */
-@Suppress("ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT") // missing @PureReifiable on T
 public actual inline fun <T> emptyArray(): Array<T> = js("[]")
 
 /**

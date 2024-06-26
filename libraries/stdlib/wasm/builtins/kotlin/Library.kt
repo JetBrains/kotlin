@@ -10,7 +10,6 @@ package kotlin
 import kotlin.wasm.internal.enumValueOfIntrinsic
 import kotlin.wasm.internal.enumValuesIntrinsic
 
-@Suppress("ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT") // missing @PureReifiable on T
 public actual inline fun <T> emptyArray(): Array<T> = arrayOf()
 
 /**

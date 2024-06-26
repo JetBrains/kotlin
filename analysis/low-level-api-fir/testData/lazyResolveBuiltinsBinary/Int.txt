@@ -2015,9 +2015,9 @@ TARGET: public final [ResolvedTo(BODY_RESOLVE)] class Int : R|kotlin/Number|, R|
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
-    public final inline [ResolvedTo(BODY_RESOLVE)] fun <@R|kotlin/internal/PureReifiable|[Types]() reified [ResolvedTo(BODY_RESOLVE)] T> arrayOf([ResolvedTo(BODY_RESOLVE)] vararg elements: R|kotlin/Array<out T>|): R|kotlin/Array<T>| {
+    public final inline [ResolvedTo(BODY_RESOLVE)] fun <reified [ResolvedTo(BODY_RESOLVE)] T> arrayOf([ResolvedTo(BODY_RESOLVE)] vararg elements: R|kotlin/Array<out T>|): R|kotlin/Array<T>| {
     }
-    public final [ResolvedTo(BODY_RESOLVE)] fun <@R|kotlin/internal/PureReifiable|[Types]() reified [ResolvedTo(BODY_RESOLVE)] T> arrayOfNulls([ResolvedTo(BODY_RESOLVE)] size: R|kotlin/Int|): R|kotlin/Array<T?>| {
+    public final [ResolvedTo(BODY_RESOLVE)] fun <reified [ResolvedTo(BODY_RESOLVE)] T> arrayOfNulls([ResolvedTo(BODY_RESOLVE)] size: R|kotlin/Int|): R|kotlin/Array<T?>| {
     }
     public final [ResolvedTo(BODY_RESOLVE)] fun booleanArrayOf([ResolvedTo(BODY_RESOLVE)] vararg elements: R|kotlin/BooleanArray|): R|kotlin/BooleanArray| {
     }
@@ -2027,7 +2027,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
     }
     public final [ResolvedTo(BODY_RESOLVE)] fun doubleArrayOf([ResolvedTo(BODY_RESOLVE)] vararg elements: R|kotlin/DoubleArray|): R|kotlin/DoubleArray| {
     }
-    public final inline [ResolvedTo(BODY_RESOLVE)] fun <@R|kotlin/internal/PureReifiable|[Types]() reified [ResolvedTo(BODY_RESOLVE)] T> emptyArray(): R|kotlin/Array<T>| {
+    public final inline [ResolvedTo(BODY_RESOLVE)] fun <reified [ResolvedTo(BODY_RESOLVE)] T> emptyArray(): R|kotlin/Array<T>| {
     }
     @R|kotlin/SinceKotlin|[Types]() public final inline [ResolvedTo(BODY_RESOLVE)] fun <reified [ResolvedTo(BODY_RESOLVE)] T : R|kotlin/Enum<T>|> enumValueOf([ResolvedTo(BODY_RESOLVE)] name: R|kotlin/String|): R|T| {
     }
