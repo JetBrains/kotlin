@@ -32,10 +32,6 @@ import org.jetbrains.kotlin.name.Name
  * Generates visible synthetic accessor functions for symbols that are otherwise inaccessible, for example,
  * when inlining a function that references a private method of a class outside of that class, or generating a class for a lambda
  * expression that uses a `super` qualifier in its body.
- *
- * TODO: Right now this class is only used in the JVM backend. There is an ongoing effort to also generate synthetic
- *    accessors on KLIB-based backends ([KT-64865](https://youtrack.jetbrains.com/issue/KT-64865)).
- *    Please consider this fact when you want to change its implementation.
  */
 open class SyntheticAccessorGenerator<Context : BackendContext>(protected val context: Context) {
     private data class AccessorKey(val parent: IrDeclarationParent, val superQualifierSymbol: IrClassSymbol?)

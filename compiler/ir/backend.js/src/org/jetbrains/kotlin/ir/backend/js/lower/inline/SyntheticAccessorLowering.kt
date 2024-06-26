@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.util.withinScope
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
 
+// TODO: Replace this with org.jetbrains.kotlin.ir.inline.SyntheticAccessorLowering
 class SyntheticAccessorLowering(private val context: CommonBackendContext) : BodyLoweringPass {
 
     private class CandidatesCollector(val candidates: MutableCollection<IrSimpleFunction>) : IrElementVisitorVoid {

@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_K1: NATIVE
-
 // MODULE: lib
 // FILE: a.kt
 

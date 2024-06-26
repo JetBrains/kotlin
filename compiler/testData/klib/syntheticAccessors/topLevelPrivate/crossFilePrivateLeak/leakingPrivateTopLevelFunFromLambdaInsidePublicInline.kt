@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: ANY
+// IGNORE_BACKEND: JS_IR
 
 // FILE: A.kt
 private fun privateMethod() = "OK"

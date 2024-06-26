@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: ANY
+// IGNORE_BACKEND: JS_IR
 
 // FILE: Outer.kt
 class Outer {

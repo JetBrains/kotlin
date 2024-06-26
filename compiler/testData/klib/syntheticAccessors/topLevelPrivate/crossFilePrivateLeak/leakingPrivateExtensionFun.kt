@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: NATIVE
-
 // FILE: A.kt
 class A
 

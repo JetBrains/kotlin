@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrSuspensionPoint
-import org.jetbrains.kotlin.ir.inline.STUB_FOR_INLINING
+import org.jetbrains.kotlin.ir.inline.SyntheticAccessorLowering
 import org.jetbrains.kotlin.ir.inline.isConsideredAsPrivateForInlining
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -408,6 +408,13 @@ private val inlineOnlyPrivateFunctionsPhase = createFileLoweringPhase(
         prerequisite = setOf(lowerBeforeInlinePhase, arrayConstructorPhase, extractLocalClassesFromInlineBodies)
 )
 
+internal val syntheticAccessorGenerationPhase = createFileLoweringPhase(
+        lowering = ::SyntheticAccessorLowering,
+        name = "SyntheticAccessorGeneration",
+        description = "Generate synthetic accessors from private declarations referenced from inline functions",
+        prerequisite = setOf(inlineOnlyPrivateFunctionsPhase),
+)
+
 internal val inlineAllFunctionsPhase = createFileLoweringPhase(
         lowering = { context: NativeGenerationState ->
             NativeIrInliner(context, inlineOnlyPrivateFunctions = false)
@@ -606,7 +613,7 @@ internal fun PhaseEngine<NativeGenerationState>.getLoweringsUpToAndIncludingSynt
         arrayConstructorPhase,
         wrapInlineDeclarationsWithReifiedTypeParametersLowering,
         inlineOnlyPrivateFunctionsPhase.takeIf { context.config.configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING) },
-        // TODO KT-69174: the placeholder for synthetic accessors lowering
+        syntheticAccessorGenerationPhase.takeIf { context.config.configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING) },
 )
 
 internal fun PhaseEngine<NativeGenerationState>.getLoweringsAfterInlining(): LoweringList = listOfNotNull(

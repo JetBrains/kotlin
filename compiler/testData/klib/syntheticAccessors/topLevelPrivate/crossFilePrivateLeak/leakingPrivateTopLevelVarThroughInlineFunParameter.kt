@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: NATIVE
-
 // FILE: a.kt
 private val privateVal = 21
 private val privateValFunctional = { 21 }
