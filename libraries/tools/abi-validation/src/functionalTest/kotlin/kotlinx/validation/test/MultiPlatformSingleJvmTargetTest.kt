@@ -129,8 +129,8 @@ internal class MultiPlatformSingleJvmTargetTest : BaseKotlinGradleTest() {
         }
 
         runner.build().apply {
-            assertTaskSkipped(":jvmApiDump")
-            assertTaskUpToDate(":apiDump")
+            assertTaskSuccess(":jvmApiDump")
+            assertTaskSuccess(":apiDump")
         }
     }
 
@@ -149,9 +149,28 @@ internal class MultiPlatformSingleJvmTargetTest : BaseKotlinGradleTest() {
         }
 
         runner.build().apply {
-            assertTaskSkipped(":jvmApiCheck")
-            assertTaskUpToDate(":apiCheck")
+            assertTaskSuccess(":jvmApiCheck")
+            assertTaskSuccess(":apiCheck")
+        }
+    }
 
+    @Test
+    fun testApiCheckFailsForEmptyProjectWithoutDumpFile() {
+        val runner = test {
+            buildGradleKts {
+                resolve("/examples/gradle/base/multiplatformWithSingleJvmTarget.gradle.kts")
+            }
+
+            runner {
+                arguments.add(":apiCheck")
+            }
+        }
+
+        runner.buildAndFail().apply {
+            assertTaskFailure(":jvmApiCheck")
+            assertThat(output).contains(
+                "Expected file with API declarations 'api${File.separator}${rootProjectDir.name}.api' does not exist"
+            )
         }
     }
 
