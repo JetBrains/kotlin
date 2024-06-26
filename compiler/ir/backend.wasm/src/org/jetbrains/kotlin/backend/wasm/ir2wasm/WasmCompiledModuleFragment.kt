@@ -45,7 +45,7 @@ class WasmCompiledFileFragment(
     val mainFunctionWrappers: MutableList<IdSignature> = mutableListOf(),
     var testFun: IdSignature? = null,
     val closureCallExports: MutableList<Pair<String, IdSignature>> = mutableListOf(),
-    val jsModuleAndQualifierReferences: Set<JsModuleAndQualifierReference> = mutableSetOf(),
+    val jsModuleAndQualifierReferences: MutableSet<JsModuleAndQualifierReference> = mutableSetOf(),
     val classAssociatedObjectsInstanceGetters: MutableList<ClassAssociatedObjects> = mutableListOf(),
     var tryGetAssociatedObjectFun: IdSignature? = null,
 ) : IrProgramFragment()
