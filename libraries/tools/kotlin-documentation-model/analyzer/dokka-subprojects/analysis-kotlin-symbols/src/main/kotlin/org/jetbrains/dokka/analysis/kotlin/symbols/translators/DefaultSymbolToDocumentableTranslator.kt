@@ -34,12 +34,7 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotated
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithModality
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithVisibility
 import org.jetbrains.kotlin.analysis.api.types.*
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -529,14 +524,6 @@ internal class DokkaSymbolVisitor(
             val inheritedFrom = dri.getInheritedFromDRI(parent)
             val isExpect = false
             val isActual = false
-            val generics =
-                javaFieldSymbol.typeParameters.mapIndexed { index, symbol ->
-                    visitVariantTypeParameter(
-                        index,
-                        symbol,
-                        dri
-                    )
-                }
 
             return DProperty(
                 dri = dri,
@@ -556,7 +543,7 @@ internal class DokkaSymbolVisitor(
                 type = toBoundFrom(javaFieldSymbol.returnType),
                 expectPresentInSet = sourceSet.takeIf { isExpect },
                 sourceSets = setOf(sourceSet),
-                generics = generics,
+                generics = emptyList(),
                 isExpectActual = (isExpect || isActual),
                 extra = PropertyContainer.withAll(
                     javaFieldSymbol.additionalExtras()?.toSourceSetDependent()?.toAdditionalModifiers(),
@@ -886,26 +873,26 @@ internal class DokkaSymbolVisitor(
 
 
     // ----------- Translators of modifiers ----------------------------------------------------------------------------
-    private fun KaSymbolWithModality.getDokkaModality(): KotlinModifier {
+    private fun KaDeclarationSymbol.getDokkaModality(): KotlinModifier {
         val isInterface = this is KaClassSymbol && classKind == KaClassKind.INTERFACE
         return if (isInterface) {
             // only two modalities are possible for interfaces:
             //  - `SEALED` - when it's declared as `sealed interface`
             //  - `ABSTRACT` - when it's declared as `interface` or `abstract interface` (`abstract` is redundant but possible here)
             when (modality) {
-                Modality.SEALED -> KotlinModifier.Sealed
+                KaSymbolModality.SEALED -> KotlinModifier.Sealed
                 else -> KotlinModifier.Empty
             }
         } else {
             when (modality) {
-                Modality.FINAL -> KotlinModifier.Final
-                Modality.SEALED -> KotlinModifier.Sealed
-                Modality.OPEN -> KotlinModifier.Open
-                Modality.ABSTRACT -> KotlinModifier.Abstract
+                KaSymbolModality.FINAL -> KotlinModifier.Final
+                KaSymbolModality.SEALED -> KotlinModifier.Sealed
+                KaSymbolModality.OPEN -> KotlinModifier.Open
+                KaSymbolModality.ABSTRACT -> KotlinModifier.Abstract
             }
         }
     }
-    private fun KaSymbolWithVisibility.getDokkaVisibility() = visibility.toDokkaVisibility()
+    private fun KaDeclarationSymbol.getDokkaVisibility() = visibility.toDokkaVisibility()
     private fun KaValueParameterSymbol.additionalExtras() = listOfNotNull(
         ExtraModifiers.KotlinOnlyModifiers.NoInline.takeIf { isNoinline },
         ExtraModifiers.KotlinOnlyModifiers.CrossInline.takeIf { isCrossinline },
@@ -952,15 +939,14 @@ internal class DokkaSymbolVisitor(
         ExtraModifiers.KotlinOnlyModifiers.Fun.takeIf { isFun },
     ).toSet().takeUnless { it.isEmpty() }
 
-    private fun org.jetbrains.kotlin.descriptors.Visibility.toDokkaVisibility(): Visibility = when (this) {
-        Visibilities.Public -> KotlinVisibility.Public
-        Visibilities.Protected -> KotlinVisibility.Protected
-        Visibilities.Internal -> KotlinVisibility.Internal
-        Visibilities.Private, Visibilities.PrivateToThis -> KotlinVisibility.Private
-        JavaVisibilities.ProtectedAndPackage -> KotlinVisibility.Protected
-        JavaVisibilities.ProtectedStaticVisibility -> KotlinVisibility.Protected
-        JavaVisibilities.PackageVisibility -> JavaVisibility.Default
-        else -> KotlinVisibility.Public
+    private fun KaSymbolVisibility.toDokkaVisibility(): Visibility = when (this) {
+        KaSymbolVisibility.PUBLIC -> KotlinVisibility.Public
+        KaSymbolVisibility.PROTECTED -> KotlinVisibility.Protected
+        KaSymbolVisibility.INTERNAL -> KotlinVisibility.Internal
+        KaSymbolVisibility.PRIVATE -> KotlinVisibility.Private
+        KaSymbolVisibility.PACKAGE_PROTECTED -> KotlinVisibility.Protected
+        KaSymbolVisibility.PACKAGE_PRIVATE -> JavaVisibility.Default
+        KaSymbolVisibility.UNKNOWN, KaSymbolVisibility.LOCAL -> KotlinVisibility.Public
     }
 }
 

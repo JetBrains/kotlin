@@ -9,7 +9,6 @@ import org.jetbrains.dokka.analysis.markdown.jb.MarkdownParser
 import org.jetbrains.dokka.model.doc.DocumentationNode
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaPossibleMemberSymbol
 import org.jetbrains.kotlin.builtins.StandardNames
 
 private const val ENUM_ENTRIES_TEMPLATE_PATH = "/dokka/docs/kdoc/EnumEntries.kt.template"
@@ -33,7 +32,7 @@ private fun KaSession.getDocumentationTemplatePath(symbol: KaSymbol): String? =
         else -> null
     }
 
-private fun KaSession.isEnumSpecialMember(symbol: KaPossibleMemberSymbol): Boolean =
+private fun KaSession.isEnumSpecialMember(symbol: KaSymbol): Boolean =
     symbol.origin == KaSymbolOrigin.SOURCE_MEMBER_GENERATED
             && (symbol.containingSymbol as? KaClassSymbol)?.classKind == KaClassKind.ENUM_CLASS
 

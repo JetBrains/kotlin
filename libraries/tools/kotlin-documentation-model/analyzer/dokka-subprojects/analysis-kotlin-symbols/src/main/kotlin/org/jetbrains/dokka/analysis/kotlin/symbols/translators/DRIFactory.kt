@@ -5,10 +5,10 @@
 package org.jetbrains.dokka.analysis.kotlin.symbols.translators
 
 import org.jetbrains.dokka.links.*
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithTypeParameters
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -41,9 +41,9 @@ internal fun getDRIFromEnumEntry(symbol: KaEnumEntrySymbol): DRI {
 }
 
 
+@OptIn(KaExperimentalApi::class) // due to `typeParameters`
 internal fun KaSession.getDRIFromTypeParameter(symbol: KaTypeParameterSymbol): DRI {
-    val containingSymbol =
-        (symbol.containingSymbol as? KaSymbolWithTypeParameters)
+    val containingSymbol = symbol.containingSymbol
             ?: throw IllegalStateException("Containing symbol is null for type parameter")
     val typeParameters = containingSymbol.typeParameters
     val index = typeParameters.indexOfFirst { symbol.name == it.name }
