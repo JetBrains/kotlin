@@ -43,7 +43,7 @@ internal fun FirMemberDeclaration.isEffectivelyFinal(context: CheckerContext): B
 internal fun FirBasedSymbol<*>.isEffectivelyFinal(session: FirSession): Boolean {
     if (this.isFinal()) return true
 
-    val containingClass = this.getContainingClassSymbol(session) as? FirClassSymbol<*> ?: return true
+    val containingClass = this.getContainingClassSymbol() as? FirClassSymbol<*> ?: return true
 
     if (containingClass.isEnumClass) {
         // Enum class has enum entries and hence is not considered final

@@ -131,7 +131,7 @@ internal object FirAnnotationValueConverter {
                 val reference = calleeReference as? FirResolvedNamedReference ?: return null
                 when (val resolvedSymbol = reference.resolvedSymbol) {
                     is FirConstructorSymbol -> {
-                        val classSymbol = resolvedSymbol.getContainingClassSymbol(builder.rootSession) ?: return null
+                        val classSymbol = resolvedSymbol.getContainingClassSymbol() ?: return null
                         if ((classSymbol.fir as? FirClass)?.classKind == ClassKind.ANNOTATION_CLASS) {
                             val resultMap = mutableMapOf<Name, FirExpression>()
                             resolvedArgumentMapping?.entries?.forEach { (arg, param) ->

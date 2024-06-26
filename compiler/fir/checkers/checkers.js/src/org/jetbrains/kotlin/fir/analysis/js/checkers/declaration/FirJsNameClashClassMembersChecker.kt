@@ -157,7 +157,7 @@ sealed class FirJsNameClashClassMembersChecker(mppKind: MppCheckerKind) : FirCla
     }
 
     private fun List<FirJsStableName>.filterFakeOverrideNames(declaration: FirClass, context: CheckerContext) = filterTo(mutableSetOf()) {
-        it.symbol.getContainingClassSymbol(context.session) != declaration.symbol
+        it.symbol.getContainingClassSymbol() != declaration.symbol
     }
 
     private data class ClashedSymbol(val symbol: FirBasedSymbol<*>, val clashedWith: List<FirBasedSymbol<*>>)

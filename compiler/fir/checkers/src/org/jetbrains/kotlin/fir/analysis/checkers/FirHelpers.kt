@@ -161,9 +161,9 @@ fun FirTypeRef.toRegularClassSymbol(session: FirSession): FirRegularClassSymbol?
  * Returns the ClassLikeDeclaration where the Fir object has been defined
  * or null if no proper declaration has been found.
  */
-fun FirBasedSymbol<*>.getContainingClassSymbol(session: FirSession): FirClassLikeSymbol<*>? = when (this) {
-    is FirCallableSymbol<*> -> containingClassLookupTag()?.toSymbol(session)
-    is FirClassLikeSymbol<*> -> getContainingClassLookupTag()?.toSymbol(session)
+fun FirBasedSymbol<*>.getContainingClassSymbol(): FirClassLikeSymbol<*>? = when (this) {
+    is FirCallableSymbol<*> -> containingClassLookupTag()?.toSymbol(moduleData.session)
+    is FirClassLikeSymbol<*> -> getContainingClassLookupTag()?.toSymbol(moduleData.session)
     is FirAnonymousInitializerSymbol -> containingDeclarationSymbol as? FirClassLikeSymbol<*>
     else -> null
 }
@@ -172,11 +172,11 @@ fun FirBasedSymbol<*>.getContainingClassSymbol(session: FirSession): FirClassLik
  * Returns the containing class or file if the callable is top-level.
  */
 fun FirCallableSymbol<*>.getContainingSymbol(session: FirSession): FirBasedSymbol<*>? {
-    return getContainingClassSymbol(session)
+    return getContainingClassSymbol()
         ?: session.firProvider.getFirCallableContainerFile(this)?.symbol
 }
 
-fun FirDeclaration.getContainingClassSymbol(session: FirSession) = symbol.getContainingClassSymbol(session)
+fun FirDeclaration.getContainingClassSymbol() = symbol.getContainingClassSymbol()
 
 fun FirClassLikeSymbol<*>.outerClassSymbol(context: CheckerContext): FirClassLikeSymbol<*>? {
     if (this !is FirClassSymbol<*>) return null
@@ -339,7 +339,7 @@ fun FirCallableSymbol<*>.getImplementationStatus(
     sessionHolder: SessionHolder,
     parentClassSymbol: FirClassSymbol<*>
 ): ImplementationStatus {
-    val containingClassSymbol = getContainingClassSymbol(sessionHolder.session)
+    val containingClassSymbol = getContainingClassSymbol()
     val symbol = this
 
     if (this.multipleDelegatesWithTheSameSignature == true && containingClassSymbol == parentClassSymbol) {
@@ -351,7 +351,7 @@ fun FirCallableSymbol<*>.getImplementationStatus(
         val memberWithBaseScope = MemberWithBaseScope(symbol, dispatchReceiverScope)
         val nonSubsumed = memberWithBaseScope.getNonSubsumedOverriddenSymbols()
 
-        if (containingClassSymbol === parentClassSymbol && !memberWithBaseScope.isTrivialIntersection() && nonSubsumed.subjectToManyNotImplemented(sessionHolder)) {
+        if (containingClassSymbol === parentClassSymbol && !memberWithBaseScope.isTrivialIntersection() && nonSubsumed.subjectToManyNotImplemented()) {
             return ImplementationStatus.AMBIGUOUSLY_INHERITED
         }
 
@@ -364,7 +364,7 @@ fun FirCallableSymbol<*>.getImplementationStatus(
         for (intersection in nonSubsumed) {
             val unwrapped = intersection.unwrapFakeOverrides()
             val isVar = unwrapped is FirPropertySymbol && unwrapped.isVar
-            val isFromClass = unwrapped.getContainingClassSymbol(sessionHolder.session)?.classKind == ClassKind.CLASS
+            val isFromClass = unwrapped.getContainingClassSymbol()?.classKind == ClassKind.CLASS
 
             if (intersection.isAbstract) {
                 if (isFromClass) {
@@ -419,12 +419,12 @@ fun FirCallableSymbol<*>.getImplementationStatus(
     }
 }
 
-private fun List<FirCallableSymbol<*>>.subjectToManyNotImplemented(sessionHolder: SessionHolder): Boolean {
+private fun List<FirCallableSymbol<*>>.subjectToManyNotImplemented(): Boolean {
     var nonAbstractCountInClass = 0
     var nonAbstractCountInInterface = 0
     var abstractCountInInterface = 0
     for (intersectionSymbol in this) {
-        val containingClassSymbol = intersectionSymbol.getContainingClassSymbol(sessionHolder.session) as? FirRegularClassSymbol
+        val containingClassSymbol = intersectionSymbol.getContainingClassSymbol() as? FirRegularClassSymbol
         val hasInterfaceContainer = containingClassSymbol?.classKind == ClassKind.INTERFACE
         if (intersectionSymbol.modality != Modality.ABSTRACT) {
             if (hasInterfaceContainer) {
@@ -748,7 +748,7 @@ fun FirCallableDeclaration.getDirectOverriddenSymbols(context: CheckerContext): 
 }
 
 fun FirNamedFunctionSymbol.directOverriddenFunctions(session: FirSession, scopeSession: ScopeSession): List<FirNamedFunctionSymbol> {
-    val classSymbol = getContainingClassSymbol(session) as? FirClassSymbol ?: return emptyList()
+    val classSymbol = getContainingClassSymbol() as? FirClassSymbol ?: return emptyList()
     val scope = classSymbol.unsubstitutedScope(
         session,
         scopeSession,
@@ -779,7 +779,7 @@ inline fun FirNamedFunctionSymbol.processOverriddenFunctions(
     context: CheckerContext,
     crossinline action: (FirNamedFunctionSymbol) -> Unit,
 ) {
-    val containingClass = getContainingClassSymbol(context.session) as? FirClassSymbol ?: return
+    val containingClass = getContainingClassSymbol() as? FirClassSymbol ?: return
     val firTypeScope = containingClass.unsubstitutedScope(context)
 
     firTypeScope.processFunctionsByName(callableId.callableName) { }
@@ -799,7 +799,7 @@ val CheckerContext.isTopLevel get() = containingDeclarations.lastOrNull().let { 
 
 fun FirBasedSymbol<*>.hasAnnotationOrInsideAnnotatedClass(classId: ClassId, session: FirSession): Boolean {
     if (hasAnnotation(classId, session)) return true
-    val container = getContainingClassSymbol(moduleData.session) ?: return false
+    val container = getContainingClassSymbol() ?: return false
     return container.hasAnnotationOrInsideAnnotatedClass(classId, session)
 }
 

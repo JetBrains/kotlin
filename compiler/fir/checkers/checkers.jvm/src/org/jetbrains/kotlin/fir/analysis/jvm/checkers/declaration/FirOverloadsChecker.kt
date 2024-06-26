@@ -32,7 +32,7 @@ object FirOverloadsChecker : FirFunctionChecker(MppCheckerKind.Common) {
             ?: declaration.symbol.getSingleMatchedExpectForActualOrNull()
             ?: return
 
-        val containingDeclaration = declaration.getContainingClassSymbol(session)
+        val containingDeclaration = declaration.getContainingClassSymbol()
         when {
             containingDeclaration?.classKind == ClassKind.INTERFACE ->
                 reporter.reportOn(annotation.source, FirJvmErrors.OVERLOADS_INTERFACE, context)

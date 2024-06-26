@@ -38,5 +38,5 @@ fun FirBasedSymbol<*>.isEffectivelyExternal(session: FirSession): Boolean {
         }
     }
 
-    return getContainingClassSymbol(session)?.isEffectivelyExternal(session) == true
+    return getContainingClassSymbol()?.isEffectivelyExternal(session) == true
 }

@@ -164,7 +164,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
             classScope.processFunctionsByName(Name.identifier(reservedName)) {
                 val functionSymbol = it.unwrapFakeOverrides()
                 if (functionSymbol.isAbstract) return@processFunctionsByName
-                val containingClassSymbol = functionSymbol.getContainingClassSymbol(context.session) ?: return@processFunctionsByName
+                val containingClassSymbol = functionSymbol.getContainingClassSymbol() ?: return@processFunctionsByName
                 if (containingClassSymbol == declaration.symbol) {
                     if (functionSymbol.source?.kind is KtRealSourceElementKind) {
                         reporter.reportOn(

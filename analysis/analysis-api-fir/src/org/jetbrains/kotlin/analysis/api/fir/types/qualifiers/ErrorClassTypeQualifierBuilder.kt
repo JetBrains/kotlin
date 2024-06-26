@@ -56,7 +56,7 @@ internal object ErrorClassTypeQualifierBuilder {
         firSymbol: FirClassLikeSymbol<*>,
         builder: KaSymbolByFirBuilder
     ): List<KaResolvedClassTypeQualifier> {
-        return generateSequence(firSymbol) { it.getContainingClassSymbol(builder.rootSession) }.mapTo(mutableListOf()) { classSymbol ->
+        return generateSequence(firSymbol) { it.getContainingClassSymbol() }.mapTo(mutableListOf()) { classSymbol ->
             KaBaseResolvedClassTypeQualifier(
                 builder.classifierBuilder.buildClassLikeSymbol(classSymbol),
                 emptyList(),

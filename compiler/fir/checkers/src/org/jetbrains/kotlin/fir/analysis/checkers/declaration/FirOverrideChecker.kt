@@ -342,7 +342,7 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
         context: CheckerContext,
     ) {
         val overridden = overriddenMemberSymbols.firstOrNull() ?: return
-        val overriddenClass = overridden.getContainingClassSymbol(context.session) as? FirClassSymbol<*> ?: return
+        val overriddenClass = overridden.getContainingClassSymbol() as? FirClassSymbol<*> ?: return
         reporter.reportOn(containingClass.source, FirErrors.DATA_CLASS_OVERRIDE_DEFAULT_VALUES, this, overriddenClass, context)
     }
 
@@ -500,13 +500,13 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
         firTypeScope: FirTypeScope,
         context: CheckerContext,
     ) {
-        val containingClassSymbol = declaration.getContainingClassSymbol(context.session)
+        val containingClassSymbol = declaration.getContainingClassSymbol()
         val candidates = if (declaration is FirPropertySymbol) {
             firTypeScope.getProperties(declaration.name)
         } else {
             firTypeScope.getFunctions(declaration.name)
         }.filter {
-            it.unwrapFakeOverrides().getContainingClassSymbol(context.session) != containingClassSymbol &&
+            it.unwrapFakeOverrides().getContainingClassSymbol() != containingClassSymbol &&
                     (it.isOpen || it.isAbstract)
         }
 

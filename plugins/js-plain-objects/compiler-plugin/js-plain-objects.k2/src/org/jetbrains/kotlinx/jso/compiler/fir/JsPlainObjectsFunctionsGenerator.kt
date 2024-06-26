@@ -136,7 +136,7 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
     }
 
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
-        val outerClass = classSymbol.getContainingClassSymbol(session)
+        val outerClass = classSymbol.getContainingClassSymbol()
         return when {
             classSymbol.isCompanion && outerClass?.isJsPlainObject == true -> setOf(OperatorNameConventions.INVOKE)
             classSymbol.isJsPlainObject -> setOf(StandardNames.DATA_CLASS_COPY)

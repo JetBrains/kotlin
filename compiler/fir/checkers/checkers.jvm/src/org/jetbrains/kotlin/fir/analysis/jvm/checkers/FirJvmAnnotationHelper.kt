@@ -23,7 +23,7 @@ fun <D> FirBasedSymbol<D>.isCompiledToJvmDefault(
 ): Boolean where D : FirAnnotationContainer, D : FirDeclaration {
     if (getAnnotationByClassId(JvmStandardClassIds.Annotations.JvmDefault, session) != null) return true
 
-    val container = getContainingClassSymbol(session)
+    val container = getContainingClassSymbol()
     if (container !is FirRegularClassSymbol || container.origin.fromSource) return jvmDefaultMode.isEnabled
 
     // Opt-in is fine here because this flag is only possible for deserialized declarations, and it's set during deserialization.

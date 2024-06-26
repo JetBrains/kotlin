@@ -72,7 +72,7 @@ internal fun FirCallableSymbol<*>.computeImportableName(useSiteSession: FirSessi
     val containingClassId = callableId.classId
         ?: return callableId.asSingleFqName()
 
-    val containingClass = getContainingClassSymbol(useSiteSession) ?: return null
+    val containingClass = getContainingClassSymbol() ?: return null
 
     if (this is FirConstructorSymbol) return if (!containingClass.isInner) containingClassId.asSingleFqName() else null
 

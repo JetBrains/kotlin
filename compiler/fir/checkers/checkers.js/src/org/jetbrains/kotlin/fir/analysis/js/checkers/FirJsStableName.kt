@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.analysis.js.checkers
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
-import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -24,7 +23,7 @@ internal data class FirJsStableName(
             return when (symbol) {
                 is FirClassLikeSymbol -> !symbol.isLocal
                 is FirCallableSymbol -> {
-                    val parentClass = symbol.getContainingClassSymbol(session)
+                    val parentClass = symbol.getContainingClassSymbol()
                     if (parentClass != null) {
                         when (symbol.visibility) {
                             is Visibilities.Public -> true

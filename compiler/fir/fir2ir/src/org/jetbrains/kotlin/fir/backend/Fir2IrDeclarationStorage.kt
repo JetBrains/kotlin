@@ -1195,7 +1195,7 @@ class Fir2IrDeclarationStorage(
     private fun generateDeclaration(originalSymbol: FirBasedSymbol<*>) {
         val irParent = findIrParent(
             originalSymbol.packageFqName(),
-            originalSymbol.getContainingClassSymbol(session)?.toLookupTag(),
+            originalSymbol.getContainingClassSymbol()?.toLookupTag(),
             originalSymbol,
             originalSymbol.origin
         )

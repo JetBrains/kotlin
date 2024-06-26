@@ -58,7 +58,7 @@ object FirJvmNameChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     }
 
     private fun CheckerContext.isRenamableFunction(function: FirFunction): Boolean {
-        val containingClass = function.getContainingClassSymbol(session)
+        val containingClass = function.getContainingClassSymbol()
         return containingClass != null || !function.symbol.callableId.isLocal
     }
 
