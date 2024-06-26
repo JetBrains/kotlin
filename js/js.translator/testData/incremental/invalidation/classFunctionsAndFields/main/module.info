@@ -1,3 +1,5 @@
+TARGET: JS
+
 STEP 0:
     dependencies: lib1
     added file: m.kt
@@ -10,6 +12,34 @@ STEP 3:
     dependencies: lib1
     modified ir: m.kt
 STEP 4..7:
+    dependencies: lib1
+STEP 8:
+    dependencies: lib1
+    updated imports: m.kt
+STEP 9:
+    dependencies: lib1
+STEP 10..11:
+    dependencies: lib1
+    modified ir: m.kt
+
+
+TARGET: Wasm
+
+STEP 0:
+    dependencies: lib1
+    added file: m.kt
+STEP 1:
+    dependencies: lib1
+STEP 2:
+    dependencies: lib1
+    updated imports: m.kt
+STEP 3:
+    dependencies: lib1
+    modified ir: m.kt
+STEP 4:
+    dependencies: lib1
+    updated imports: m.kt
+STEP 5..7:
     dependencies: lib1
 STEP 8:
     dependencies: lib1
