@@ -208,6 +208,12 @@ public class SerializationFirLightTreeBlackBoxTestGenerated extends AbstractSeri
     }
 
     @Test
+    @TestMetadata("localSerializable.kt")
+    public void testLocalSerializable() {
+      runTest("plugins/kotlinx-serialization/testData/boxIr/localSerializable.kt");
+    }
+
+    @Test
     @TestMetadata("metaSerializable.kt")
     public void testMetaSerializable() {
       runTest("plugins/kotlinx-serialization/testData/boxIr/metaSerializable.kt");
