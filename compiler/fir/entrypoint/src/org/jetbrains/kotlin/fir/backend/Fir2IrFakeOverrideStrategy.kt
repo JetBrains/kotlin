@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.EnhancedNullability
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.FlexibleNullability
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -122,14 +123,18 @@ class Fir2IrDelegatedMembersGenerationStrategy(
 
     override fun <S : IrSymbol, T : IrOverridableDeclaration<S>> postProcessGeneratedFakeOverride(overridableMember: T, parent: IrClass) {
         val delegateInfo = delegatedClassesInfo[parent.symbol] ?: return
-        if (!fir2IrExtensions.shouldGenerateDelegatedMember(overridableMember)) return
 
         val overridden = overridableMember.allOverridden()
         val matched = overridden.mapNotNull {
             if (it is IrSimpleFunction && it.isFakeOverriddenFromAny()) return@mapNotNull null
             val matchedField = delegateInfo[it.parentAsClass.symbol] ?: return@mapNotNull null
             it to matchedField
+        }.let {
+            // There might be a diamond of fake-overrides with a single original declaration
+            // see `manyImplFromOneJavaInterfaceWithDelegation.kt` test for reference
+            it.applyIf(it.size > 1) { distinctBy { (member, _) -> member.resolveFakeOverride() } }
         }
+
         when (matched.size) {
             0 -> return
             1 -> {}
@@ -146,6 +151,9 @@ class Fir2IrDelegatedMembersGenerationStrategy(
             }
         }
         val (delegateTargetFromBaseType, delegateFieldSymbol) = matched.single()
+
+        if (!fir2IrExtensions.shouldGenerateDelegatedMember(delegateTargetFromBaseType)) return
+
         val delegateField = delegateFieldSymbol.owner
 
         fun IrType.extractClassSymbol(): IrClassSymbol {

@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND_K2: ANY
 // ISSUE: KT-69421
 
 // FILE: JavaInterface.java
