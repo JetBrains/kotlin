@@ -5,7 +5,11 @@
 
 package org.jetbrains.kotlin.konan.target
 
+import org.jetbrains.kotlin.konan.KonanExternalToolFailure
+import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.file.File
+import java.io.FileInputStream
+import java.util.zip.ZipInputStream
 
 internal object Android {
     const val API = "21"
@@ -21,14 +25,14 @@ internal object Android {
 }
 
 sealed class ClangArgs(
-        private val configurables: Configurables,
-        private val forJni: Boolean
+    private val configurables: Configurables,
+    private val forJni: Boolean,
 ) {
 
     private val absoluteTargetToolchain = configurables.absoluteTargetToolchain
     private val absoluteTargetSysRoot = configurables.absoluteTargetSysRoot
     private val absoluteLlvmHome = configurables.absoluteLlvmHome
-    private val target = configurables.target
+    val target = configurables.target
     private val targetTriple = configurables.targetTriple
 
     // TODO: Should be dropped in favor of real MSVC target.
@@ -132,16 +136,17 @@ sealed class ClangArgs(
         )
 
         KonanTarget.ANDROID_ARM32, KonanTarget.ANDROID_ARM64,
-        KonanTarget.ANDROID_X86, KonanTarget.ANDROID_X64 -> {
+        KonanTarget.ANDROID_X86, KonanTarget.ANDROID_X64,
+        -> {
             val clangTarget = targetTriple.withoutVendor()
             val architectureDir = Android.architectureDirForTarget(target)
             val toolchainSysroot = "$absoluteTargetToolchain/sysroot"
             listOf(
-                    "-D__ANDROID_API__=${Android.API}",
-                    "--sysroot=$absoluteTargetSysRoot/$architectureDir",
-                    "-I$toolchainSysroot/usr/include/c++/v1",
-                    "-I$toolchainSysroot/usr/include",
-                    "-I$toolchainSysroot/usr/include/$clangTarget"
+                "-D__ANDROID_API__=${Android.API}",
+                "--sysroot=$absoluteTargetSysRoot/$architectureDir",
+                "-I$toolchainSysroot/usr/include/c++/v1",
+                "-I$toolchainSysroot/usr/include",
+                "-I$toolchainSysroot/usr/include/$clangTarget"
             )
         }
 
@@ -201,9 +206,16 @@ sealed class ClangArgs(
     private val targetArCmd
             = listOf("${absoluteLlvmHome}/bin/llvm-ar")
 
+    fun clangC_WithXcode16Hacks(
+        temporaryRoot: java.io.File,
+        vararg userArgs: String
+    ) = clangC(*prepareXcode16HacksIfNeeded(target, temporaryRoot).toTypedArray(), *userArgs)
+    fun clangCXX_WithXcode16Hacks(
+        temporaryRoot: java.io.File,
+        vararg userArgs: String
+    ) = clangCXX(*prepareXcode16HacksIfNeeded(target, temporaryRoot).toTypedArray(), *userArgs)
 
     fun clangC(vararg userArgs: String) = targetClangCmd + userArgs.asList()
-
     fun clangCXX(vararg userArgs: String) = targetClangXXCmd + userArgs.asList()
 
     fun llvmAr(vararg userArgs: String) = targetArCmd + userArgs.asList()
@@ -233,4 +245,113 @@ sealed class ClangArgs(
      * E.g., Kotlin/Native runtime and interop stubs.
      */
     class Native(configurables: Configurables) : ClangArgs(configurables, forJni = false)
+}
+
+
+fun prepareXcode16HacksIfNeeded(
+    target: KonanTarget,
+    temporaryRoot: java.io.File,
+): List<String> {
+    if (!HostManager.hostIsMac) return emptyList()
+    if (!target.family.isAppleFamily) return emptyList()
+    if (dumpXcodeVersion() < 16) return emptyList()
+
+    temporaryRoot.mkdirs()
+
+    val vfsOverlay = temporaryRoot.resolve("hack.yaml")
+    val headersRoot = temporaryRoot.resolve("include")
+    vfsOverlay.writeText(
+        xcode16VfsOverlay(
+            sdkRoot = dumpSdkPath(target).path,
+            headersRoot = headersRoot.path + "/include",
+        )
+    )
+
+    copyXcode16HeaderHacks(
+        headersRoot = headersRoot,
+    )
+
+    return listOf("-ivfsoverlay", vfsOverlay.path)
+}
+
+fun xcode16VfsOverlay(
+    sdkRoot: String,
+    headersRoot: String,
+): String = """
+        {
+          'case-sensitive': 'false',
+          'roots': [
+            {
+              "contents": [
+                { 'external-contents': "${headersRoot}/simd/packed.h", 'name': "simd/packed.h", 'type': 'file' },
+                { 'external-contents': "${headersRoot}/simd/types.h", 'name': "simd/types.h", 'type': 'file' },
+                { 'external-contents': "${headersRoot}/simd/quaternion.h", 'name': "simd/quaternion.h", 'type': 'file' },
+                { 'external-contents': "${headersRoot}/simd/matrix_types.h", 'name': "simd/matrix_types.h", 'type': 'file' },
+                { 'external-contents': "${headersRoot}/simd/matrix.h", 'name': "simd/matrix.h", 'type': 'file' },
+                { 'external-contents': "${headersRoot}/simd/conversion.h", 'name': "simd/conversion.h", 'type': 'file' },
+                { 'external-contents': "${headersRoot}/simd/vector_make.h", 'name': "simd/vector_make.h", 'type': 'file' },
+                { 'external-contents': "${headersRoot}/simd/common.h", 'name': "simd/common.h", 'type': 'file' },
+                { 'external-contents': "${headersRoot}/simd/logic.h", 'name': "simd/logic.h", 'type': 'file' },
+                { 'external-contents': "${headersRoot}/simd/simd.h", 'name': "simd/simd.h", 'type': 'file' },
+                { 'external-contents': "${headersRoot}/simd/vector_types.h", 'name': "simd/vector_types.h", 'type': 'file' },
+                { 'external-contents': "${headersRoot}/simd/math.h", 'name': "simd/math.h", 'type': 'file' },
+                { 'external-contents': "${headersRoot}/simd/extern.h", 'name': "simd/extern.h", 'type': 'file' },
+                { 'external-contents': "${headersRoot}/simd/vector.h", 'name': "simd/vector.h", 'type': 'file' },
+                { 'external-contents': "${headersRoot}/simd/geometry.h", 'name': "simd/geometry.h", 'type': 'file' },
+                { 'external-contents': "${headersRoot}/simd/base.h", 'name': "simd/base.h", 'type': 'file' },
+                { 'external-contents': "${headersRoot}/math.h", 'name': "math.h", 'type': 'file' },
+                { 'external-contents': "${headersRoot}/tgmath.h", 'name': "tgmath.h", 'type': 'file' },
+                { 'external-contents': "${headersRoot}/empty", 'name': "libxml2/libxml/module.modulemap", 'type': 'file' }
+              ],
+              'name': "${sdkRoot}/usr/include",
+              'type': 'directory'
+            },
+          ],
+          'version': 0,
+        }
+    """.trimIndent()
+
+fun copyXcode16HeaderHacks(headersRoot: java.io.File) {
+    ZipInputStream(
+        ClangArgs::class.java.getResourceAsStream("/headerHacks.zip")!!
+    ).use { zip ->
+        for (entry in generateSequence { zip.nextEntry }) {
+            val file = headersRoot.resolve(entry.name)
+            if (!entry.isDirectory) {
+                file.parentFile.mkdirs()
+                file.writeBytes(zip.readBytes())
+            }
+        }
+    }
+}
+
+fun dumpSdkPath(target: KonanTarget): java.io.File {
+    val sdk = when (target) {
+        KonanTarget.MACOS_ARM64, KonanTarget.MACOS_X64 -> "macosx"
+        KonanTarget.IOS_SIMULATOR_ARM64, KonanTarget.IOS_X64 -> "iphonesimulator"
+        KonanTarget.IOS_ARM64 -> "iphoneos"
+        KonanTarget.WATCHOS_X64, KonanTarget.WATCHOS_SIMULATOR_ARM64 -> "watchsimulator"
+        KonanTarget.WATCHOS_ARM32, KonanTarget.WATCHOS_ARM64, KonanTarget.WATCHOS_DEVICE_ARM64 -> "watchos"
+        KonanTarget.TVOS_ARM64 -> "appletvos"
+        KonanTarget.TVOS_X64, KonanTarget.TVOS_SIMULATOR_ARM64 -> "appletvsimulator"
+        else -> throw Exception("dumpSdkPath: ${target}")
+    }
+    return java.io.File(Command("xcrun", "--sdk", sdk, "--show-sdk-path").getOutputLines().first())
+}
+
+// FIXME: Command line tools
+fun dumpXcodePath(): java.io.File = java.io.File(Command("/usr/bin/xcode-select", "-p").getOutputLines().first())
+fun dumpXcodeVersion(): Int {
+    val xcodePath = dumpXcodePath()
+    val versionPlist = xcodePath.parentFile.resolve("version.plist")
+    if (!versionPlist.exists()) {
+        throw KonanExternalToolFailure("version.plist: ${xcodePath}", "xcode-select")
+    }
+
+    val xcodeVersion = Command(
+        "/usr/libexec/PlistBuddy", versionPlist.canonicalPath,
+        "-c", "Print :CFBundleShortVersionString",
+    ).getOutputLines().first()
+
+    return xcodeVersion.split(".")[0].toInt()
 }

@@ -92,12 +92,12 @@ native {
     val cxxflags = listOf("-std=c++11", *cflags.toTypedArray())
     suffixes {
         (".c" to ".$obj") {
-            tool(*hostPlatform.clangForJni.clangC("").toTypedArray())
+            tool(*hostPlatform.clangForJni.clangC_WithXcode16Hacks(layout.buildDirectory.dir("1").get().asFile,"").toTypedArray())
             flags(*cflags.toTypedArray(),
                   "-c", "-o", ruleOut(), ruleInFirst())
         }
         (".cpp" to ".$obj") {
-            tool(*hostPlatform.clangForJni.clangCXX("").toTypedArray())
+            tool(*hostPlatform.clangForJni.clangCXX_WithXcode16Hacks(layout.buildDirectory.dir("2").get().asFile,"").toTypedArray())
             flags(*cxxflags.toTypedArray(), "-c", "-o", ruleOut(), ruleInFirst())
         }
 
@@ -114,7 +114,7 @@ native {
                          sourceSets["main-cpp"]!!.transform(".cpp" to ".$obj"))
 
     target(solib("clangstubs"), *objSet) {
-        tool(*hostPlatform.clangForJni.clangCXX("").toTypedArray())
+        tool(*hostPlatform.clangForJni.clangCXX_WithXcode16Hacks(layout.buildDirectory.dir("3").get().asFile,"").toTypedArray())
         flags(
             "-shared",
             "-o", ruleOut(), *ruleInAll(),

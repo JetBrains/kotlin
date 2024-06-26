@@ -114,6 +114,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                                 bitcodeAdapter = tempFiles.create("api", ".bc").javaFile(),
                                 header = outputFiles.cAdapterHeader.javaFile(),
                                 def = if (config.target.family == Family.MINGW) outputFiles.cAdapterDef.javaFile() else null,
+                                xcode16Hacks = tempFiles.create("xcode16Hacks_TopLevelPhases").javaFile(),
                         )
                     } else null
                     // TODO: Make this work if we first compile all the fragments and only after that run the link phases.
@@ -375,7 +376,7 @@ internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModu
                 cppAdapterFile = cExportFiles.cppAdapter
         )
         runPhase(CExportGenerateApiPhase, input)
-        runPhase(CExportCompileAdapterPhase, CExportCompileAdapterInput(cExportFiles.cppAdapter, cExportFiles.bitcodeAdapter))
+        runPhase(CExportCompileAdapterPhase, CExportCompileAdapterInput(cExportFiles.cppAdapter, cExportFiles.bitcodeAdapter, cExportFiles.xcode16Hacks))
         listOf(cExportFiles.bitcodeAdapter)
     } else {
         emptyList()

@@ -21,7 +21,7 @@ native {
                                *hostPlatform.clangForJni.hostCompilerArgsForJni)
     suffixes {
         (".c" to ".$obj") {
-            tool(*hostPlatform.clangForJni.clangC("").toTypedArray())
+            tool(*hostPlatform.clangForJni.clangC_WithXcode16Hacks(layout.buildDirectory.dir("1").get().asFile, "").toTypedArray())
             flags( *cflags.toTypedArray(), "-c", "-o", ruleOut(), ruleInFirst())
         }
     }
@@ -33,7 +33,7 @@ native {
     val objSet = sourceSets["callbacks"]!!.transform(".c" to ".$obj")
 
     target(solib("callbacks"), objSet) {
-        tool(*hostPlatform.clangForJni.clangCXX("").toTypedArray())
+        tool(*hostPlatform.clangForJni.clangCXX_WithXcode16Hacks(layout.buildDirectory.dir("2").get().asFile, "").toTypedArray())
         flags("-shared",
               "-o",ruleOut(), *ruleInAll(),
               "-L${project(":kotlin-native:libclangext").layout.buildDirectory.get().asFile}",

@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.konan.target.SanitizerKind
 import org.jetbrains.kotlin.konan.target.TargetDomainObjectContainer
 import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
 import org.jetbrains.kotlin.konan.target.enabledTargets
+import org.jetbrains.kotlin.konan.target.prepareXcode16HacksIfNeeded
 import org.jetbrains.kotlin.testing.native.GoogleTestExtension
 import org.jetbrains.kotlin.utils.capitalized
 import java.time.Duration
@@ -229,7 +230,8 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
         /**
          * Compiles source files into bitcode files.
          */
-        val compileTask = project.tasks.register<ClangFrontend>("clangFrontend${module.name.capitalized}${name.capitalized}${_target.toString().capitalized}").apply {
+        val taskName = "clangFrontend${module.name.capitalized}${name.capitalized}${_target.toString().capitalized}"
+        val compileTask = project.tasks.register<ClangFrontend>(taskName).apply {
             configure {
                 this.description = "Compiles '${module.name}' (${this@SourceSet.name} sources) to bitcode for $_target"
                 this.outputDirectory.set(this@SourceSet.outputDirectory)
@@ -241,6 +243,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                     SanitizerKind.ADDRESS -> listOf("-fsanitize=address")
                     SanitizerKind.THREAD -> listOf("-fsanitize=thread")
                 })
+                this.arguments.addAll(prepareXcode16HacksIfNeeded(target, project.layout.buildDirectory.dir(taskName).get().asFile))
                 this.headersDirs.from(this@SourceSet.headersDirs)
                 this.inputFiles.from(this@SourceSet.inputFiles.dir)
                 this.inputFiles.setIncludes(this@SourceSet.inputFiles.includes)
@@ -260,7 +263,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                     val compileTask: TaskProvider<ClangFrontend> = this@apply
                     directory.set(compileTask.flatMap { it.workingDirectory })
                     files.setFrom(compileTask.map { it.inputFiles })
-                    arguments.set(compileTask.map { listOf(execClang.resolveExecutable(it.compiler.get())) + it.compilerFlags.get() + execClang.clangArgsForCppRuntime(target.name) })
+                    arguments.set(compileTask.map { listOf(execClang.resolveExecutable(it.compiler.get())) + it.compilerFlags.get() + execClang.clangArgsForCppRuntime(target.name) + prepareXcode16HacksIfNeeded(target, project.layout.buildDirectory.dir(taskName).get().asFile) })
                     // Only the location of output file matters, compdb does not depend on the compilation result.
                     output.set(compileTask.flatMap { it.outputDirectory.locationOnly.map { it.asFile.absolutePath }})
                 }

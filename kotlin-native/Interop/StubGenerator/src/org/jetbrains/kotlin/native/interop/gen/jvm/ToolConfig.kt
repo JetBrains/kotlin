@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.utils.KotlinNativePaths
 import org.jetbrains.kotlin.konan.target.AbstractToolConfig
 import org.jetbrains.kotlin.native.interop.gen.jvm.KotlinPlatform
 import org.jetbrains.kotlin.native.interop.indexer.Language
+import java.io.File
 
 class ToolConfig(userProvidedTargetName: String?, flavor: KotlinPlatform, propertyOverrides: Map<String, String>, konanDataDir: String? = null)
     : AbstractToolConfig(KotlinNativePaths.homePath.absolutePath, userProvidedTargetName, propertyOverrides, konanDataDir) {
@@ -30,7 +31,9 @@ class ToolConfig(userProvidedTargetName: String?, flavor: KotlinPlatform, proper
         KotlinPlatform.NATIVE -> platform.clang
     }
 
-    fun getDefaultCompilerOptsForLanguage(language: Language): List<String> = when (language) {
+    fun getDefaultCompilerOptsForLanguage(
+            language: Language,
+    ): List<String> = when (language) {
         Language.C,
         Language.OBJECTIVE_C -> clang.libclangArgs.toList()
         Language.CPP -> clang.libclangXXArgs.toList()
