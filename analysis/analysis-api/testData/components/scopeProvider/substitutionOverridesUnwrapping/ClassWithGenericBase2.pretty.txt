@@ -6,6 +6,7 @@ val <TT> TT.withOwnGeneric: TT?
   get()
 
 override val <TT> TT.withOuterAndOwnGeneric: test.Foo?
+  get()
 
 open operator fun equals(other: kotlin.Any?): kotlin.Boolean
 

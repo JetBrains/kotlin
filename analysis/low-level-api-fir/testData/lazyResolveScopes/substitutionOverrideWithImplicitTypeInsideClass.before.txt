@@ -13,8 +13,8 @@ public open [ResolvedTo(STATUS)] fun isSchemeFile([ResolvedTo(STATUS)] name: R|k
     @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=LazySchemeProcessor] set([ResolvedTo(STATUS)] @SETTER_PARAMETER:R|second/Anno|[Types](LAZY_EXPRESSION) value: R|SCHEME|): R|kotlin/Unit|
 
 public final override [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=second/LazySchemeProcessor.property] var property: R|@R|second/Anno|(<strcat>(String(super1 ), constant#))  kotlin/Int|
-
-
+    public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|@R|second/Anno|(<strcat>(String(super1 ), constant#))  kotlin/Int|
+    public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] set([ResolvedTo(STATUS)] value: R|@R|second/Anno|(<strcat>(String(super1 ), constant#))  kotlin/Int|): R|kotlin/Unit|
 
 public final [ResolvedTo(STATUS)] var property: R|SCHEME|
     public [ResolvedTo(STATUS)] [ContainingClassKey=LazySchemeProcessor] get(): R|SCHEME|

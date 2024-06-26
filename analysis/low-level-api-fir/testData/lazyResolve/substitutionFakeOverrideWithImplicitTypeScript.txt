@@ -1,6 +1,6 @@
 STATUS:
 TARGET: public final override [ResolvedTo(STATUS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={T -> kotlin/Int}, baseSymbol=FirPropertySymbol /AbstractClass.property), SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: <implicit>
-
+    public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] get(): <implicit>
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-substitutionFakeOverrideWithImplicitTypeScript.kts>
@@ -29,7 +29,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeScript.kts
 
 EXPECT_ACTUAL_MATCHING:
 TARGET: public final override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={T -> kotlin/Int}, baseSymbol=FirPropertySymbol /AbstractClass.property), SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: <implicit>
-
+    public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=SubClass] get(): <implicit>
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-substitutionFakeOverrideWithImplicitTypeScript.kts>
@@ -58,7 +58,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeScript.kts
 
 CONTRACTS:
 TARGET: public final override [ResolvedTo(CONTRACTS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={T -> kotlin/Int}, baseSymbol=FirPropertySymbol /AbstractClass.property), SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: <implicit>
-
+    public [ResolvedTo(CONTRACTS)] [ContainingClassKey=SubClass] get(): <implicit>
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-substitutionFakeOverrideWithImplicitTypeScript.kts>
@@ -87,7 +87,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeScript.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 TARGET: public final override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: R|kotlin/Int|
-
+    public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=SubClass] get(): R|kotlin/Int|
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-substitutionFakeOverrideWithImplicitTypeScript.kts>
@@ -116,7 +116,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeScript.kts
 
 CONSTANT_EVALUATION:
 TARGET: public final override [ResolvedTo(CONSTANT_EVALUATION)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: R|kotlin/Int|
-
+    public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=SubClass] get(): R|kotlin/Int|
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-substitutionFakeOverrideWithImplicitTypeScript.kts>
@@ -145,7 +145,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeScript.kts
 
 ANNOTATION_ARGUMENTS:
 TARGET: public final override [ResolvedTo(ANNOTATION_ARGUMENTS)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: R|kotlin/Int|
-
+    public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=SubClass] get(): R|kotlin/Int|
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-substitutionFakeOverrideWithImplicitTypeScript.kts>
@@ -174,7 +174,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeScript.kts
 
 BODY_RESOLVE:
 TARGET: public final override [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: R|kotlin/Int|
-
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SubClass] get(): R|kotlin/Int|
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-substitutionFakeOverrideWithImplicitTypeScript.kts>

@@ -1,7 +1,6 @@
 // FIR_IDENTICAL
 // ISSUE: KT-55828
 // DUMP_IR
-// JVM_ABI_K1_K2_DIFF: KT-63828
 
 interface MyCollection {
     fun foo(): String
