@@ -15,6 +15,7 @@ import kotlin.native.internal.GCUnsafeCall
  * either throwing exception or returning some kind of implementation-specific default value.
  */
 @PublishedApi
+@Suppress("NOTHING_TO_INLINE")
 internal actual inline fun <E> arrayOfUninitializedElements(size: Int): Array<E> {
     // TODO: special case for size == 0?
     require(size >= 0) { "capacity must be non-negative." }

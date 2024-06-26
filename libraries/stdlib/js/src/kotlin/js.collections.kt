@@ -17,10 +17,12 @@ public external interface JsReadonlyArray<out E>
 
 @SinceKotlin("2.0")
 @ExperimentalJsCollectionsApi
+@Suppress("NOTHING_TO_INLINE")
 public inline fun <E> JsReadonlyArray<E>.toList(): List<E> = createListFrom(this)
 
 @SinceKotlin("2.0")
 @ExperimentalJsCollectionsApi
+@Suppress("NOTHING_TO_INLINE")
 public inline fun <E> JsReadonlyArray<E>.toMutableList(): MutableList<E> = createMutableListFrom(this)
 
 /**
@@ -41,10 +43,12 @@ public external interface JsReadonlySet<out E>
 
 @SinceKotlin("2.0")
 @ExperimentalJsCollectionsApi
+@Suppress("NOTHING_TO_INLINE")
 public inline fun <E> JsReadonlySet<E>.toSet(): Set<E> = createSetFrom(this)
 
 @SinceKotlin("2.0")
 @ExperimentalJsCollectionsApi
+@Suppress("NOTHING_TO_INLINE")
 public inline fun <E> JsReadonlySet<E>.toMutableSet(): MutableSet<E> = createMutableSetFrom(this)
 
 /**
@@ -65,10 +69,12 @@ public external interface JsReadonlyMap<K, out V>
 
 @SinceKotlin("2.0")
 @ExperimentalJsCollectionsApi
+@Suppress("NOTHING_TO_INLINE")
 public inline fun <K, V> JsReadonlyMap<K, V>.toMap(): Map<K, V> = createMapFrom(this)
 
 @SinceKotlin("2.0")
 @ExperimentalJsCollectionsApi
+@Suppress("NOTHING_TO_INLINE")
 public inline fun <K, V> JsReadonlyMap<K, V>.toMutableMap(): MutableMap<K, V> = createMutableMapFrom(this)
 
 /**

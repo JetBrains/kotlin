@@ -26,6 +26,7 @@ public class Pinned<T : Any> @PublishedApi internal constructor(obj: T) {
 }
 
 @ExperimentalForeignApi
+@Suppress("NOTHING_TO_INLINE")
 public inline fun <T : Any> T.pin(): Pinned<T> = Pinned(this)
 
 @ExperimentalForeignApi
