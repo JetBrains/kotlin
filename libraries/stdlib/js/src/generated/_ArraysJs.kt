@@ -824,9 +824,20 @@ public actual inline fun CharArray.copyInto(destination: CharArray, destinationO
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.copyOf
  */
-@Suppress("ACTUAL_WITHOUT_EXPECT", "NOTHING_TO_INLINE")
-public actual inline fun <T> Array<out T>.copyOf(): Array<T> {
+@Suppress("NOTHING_TO_INLINE")
+public inline fun <T> Array<out T>.copyOf(): Array<T> {
     return this.asDynamic().slice()
+}
+
+/**
+ * Returns new array which is a copy of the original array.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOf
+ */
+@Deprecated("Provided for expect-actual matching", level = DeprecationLevel.HIDDEN)
+@kotlin.internal.InlineOnly
+public actual inline fun <T> Array<T>.copyOf(): Array<T> {
+    return this.copyOf()
 }
 
 /**
@@ -904,6 +915,18 @@ public actual fun BooleanArray.copyOf(): BooleanArray {
  */
 public actual fun CharArray.copyOf(): CharArray {
     return withType("CharArray", this.asDynamic().slice())
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with `null` values if necessary.
+ * 
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array, the extra elements in the copy array are filled with `null` values.
+ */
+public fun <T> Array<out T>.copyOf(newSize: Int): Array<T?> {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
+    return arrayCopyResize(this, newSize, null)
 }
 
 /**
@@ -1027,10 +1050,10 @@ public actual fun CharArray.copyOf(newSize: Int): CharArray {
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.resizingCopyOf
  */
-@Suppress("ACTUAL_WITHOUT_EXPECT")
-public actual fun <T> Array<out T>.copyOf(newSize: Int): Array<T?> {
-    require(newSize >= 0) { "Invalid new array size: $newSize." }
-    return arrayCopyResize(this, newSize, null)
+@Deprecated("Provided for expect-actual matching", level = DeprecationLevel.HIDDEN)
+@kotlin.internal.InlineOnly
+public actual inline fun <T> Array<T>.copyOf(newSize: Int): Array<T?> {
+    return this.copyOf(newSize)
 }
 
 /**
@@ -1042,10 +1065,24 @@ public actual fun <T> Array<out T>.copyOf(newSize: Int): Array<T?> {
  * @throws IndexOutOfBoundsException if [fromIndex] is less than zero or [toIndex] is greater than the size of this array.
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
  */
-@Suppress("ACTUAL_WITHOUT_EXPECT")
-public actual fun <T> Array<out T>.copyOfRange(fromIndex: Int, toIndex: Int): Array<T> {
+public fun <T> Array<out T>.copyOfRange(fromIndex: Int, toIndex: Int): Array<T> {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
     return this.asDynamic().slice(fromIndex, toIndex)
+}
+
+/**
+ * Returns a new array which is a copy of the specified range of the original array.
+ * 
+ * @param fromIndex the start of the range (inclusive) to copy.
+ * @param toIndex the end of the range (exclusive) to copy.
+ * 
+ * @throws IndexOutOfBoundsException if [fromIndex] is less than zero or [toIndex] is greater than the size of this array.
+ * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
+ */
+@Deprecated("Provided for expect-actual matching", level = DeprecationLevel.HIDDEN)
+@kotlin.internal.InlineOnly
+public actual inline fun <T> Array<T>.copyOfRange(fromIndex: Int, toIndex: Int): Array<T> {
+    return this.copyOfRange(fromIndex, toIndex)
 }
 
 /**
@@ -1308,9 +1345,18 @@ public actual fun CharArray.fill(element: Char, fromIndex: Int = 0, toIndex: Int
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
-@Suppress("ACTUAL_WITHOUT_EXPECT", "NOTHING_TO_INLINE")
-public actual inline operator fun <T> Array<out T>.plus(element: T): Array<T> {
+@Suppress("NOTHING_TO_INLINE")
+public inline operator fun <T> Array<out T>.plus(element: T): Array<T> {
     return this.asDynamic().concat(arrayOf(element))
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+@Deprecated("Provided for expect-actual matching", level = DeprecationLevel.HIDDEN)
+@kotlin.internal.InlineOnly
+public actual inline operator fun <T> Array<T>.plus(element: T): Array<T> {
+    return this.plus(element)
 }
 
 /**
@@ -1380,9 +1426,17 @@ public actual inline operator fun CharArray.plus(element: Char): CharArray {
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
  */
-@Suppress("ACTUAL_WITHOUT_EXPECT")
-public actual operator fun <T> Array<out T>.plus(elements: Collection<T>): Array<T> {
+public operator fun <T> Array<out T>.plus(elements: Collection<T>): Array<T> {
     return arrayPlusCollection(this, elements)
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
+ */
+@Deprecated("Provided for expect-actual matching", level = DeprecationLevel.HIDDEN)
+@kotlin.internal.InlineOnly
+public actual inline operator fun <T> Array<T>.plus(elements: Collection<T>): Array<T> {
+    return this.plus(elements)
 }
 
 /**
@@ -1462,9 +1516,18 @@ public actual operator fun CharArray.plus(elements: Collection<Char>): CharArray
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
  */
-@Suppress("ACTUAL_WITHOUT_EXPECT", "NOTHING_TO_INLINE")
-public actual inline operator fun <T> Array<out T>.plus(elements: Array<out T>): Array<T> {
+@Suppress("NOTHING_TO_INLINE")
+public inline operator fun <T> Array<out T>.plus(elements: Array<out T>): Array<T> {
     return this.asDynamic().concat(elements)
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
+ */
+@Deprecated("Provided for expect-actual matching", level = DeprecationLevel.HIDDEN)
+@kotlin.internal.InlineOnly
+public actual inline operator fun <T> Array<T>.plus(elements: Array<out T>): Array<T> {
+    return this.plus(elements)
 }
 
 /**
@@ -1534,9 +1597,18 @@ public actual inline operator fun CharArray.plus(elements: CharArray): CharArray
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
-@Suppress("ACTUAL_WITHOUT_EXPECT", "NOTHING_TO_INLINE")
-public actual inline fun <T> Array<out T>.plusElement(element: T): Array<T> {
+@Suppress("NOTHING_TO_INLINE")
+public inline fun <T> Array<out T>.plusElement(element: T): Array<T> {
     return this.asDynamic().concat(arrayOf(element))
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+@Deprecated("Provided for expect-actual matching", level = DeprecationLevel.HIDDEN)
+@kotlin.internal.InlineOnly
+public actual inline fun <T> Array<T>.plusElement(element: T): Array<T> {
+    return this.plusElement(element)
 }
 
 /**
