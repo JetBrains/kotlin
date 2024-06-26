@@ -337,7 +337,6 @@ include ":kotlin-atomicfu-compiler-plugin",
 include ":litmuskt:core",
         ":litmuskt:testsuite",
         ":litmuskt:repo-tests"
-//        ":litmuskt:jcstress-wrapper"
 
 include ":plugins:js-plain-objects:compiler-plugin",
         ":plugins:js-plain-objects:compiler-plugin-embeddable",
@@ -931,7 +930,6 @@ project(':atomicfu').projectDir = file("$rootDir/libraries/tools/atomicfu")
 project(':litmuskt:core').projectDir = file("$rootDir/native/litmuskt/core")
 project(':litmuskt:testsuite').projectDir = file("$rootDir/native/litmuskt/testsuite")
 project(':litmuskt:repo-tests').projectDir = file("$rootDir/native/litmuskt/repo-tests")
-//project(':litmuskt:jcstress-wrapper').projectDir = file("$rootDir/native/litmuskt/jcstress-wrapper")
 
 if (!buildProperties.inJpsBuildIdeaSync) {
     project(':plugins:compose-compiler-plugin').projectDir = file("$rootDir/plugins/compose")

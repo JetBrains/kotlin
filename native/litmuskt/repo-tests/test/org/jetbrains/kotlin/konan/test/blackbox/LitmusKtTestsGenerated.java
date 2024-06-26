@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty;
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty;
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseStandardTestCaseGroupProvider;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -30,12 +29,6 @@ public class LitmusKtTestsGenerated extends AbstractNativeBlackBoxTest {
   @Test
   public void testAllFilesPresentInStandalone() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/litmuskt/repo-tests/testData/standalone"), Pattern.compile("^(.+)\\.kt$"), null, true);
-  }
-
-  @Test
-  @TestMetadata("Haha.kt")
-  public void testHaha() {
-    runTest("native/litmuskt/repo-tests/testData/standalone/Haha.kt");
   }
 
   @Test

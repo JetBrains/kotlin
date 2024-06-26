@@ -1,24 +1,25 @@
 // KIND: STANDALONE
 
 import kotlin.test.*
-import komem.litmus.*
-import komem.litmus.barriers.*
-import komem.litmus.tests.*
+import org.jetbrains.litmuskt.*
+import org.jetbrains.litmuskt.autooutcomes.*
+import org.jetbrains.litmuskt.barriers.*
+import org.jetbrains.litmuskt.tests.*
 
 fun runTest(test: LitmusTest<*>) {
     val runner = WorkerRunner()
     val params = LitmusRunParams(
-        batchSize = 10_000_000,
-        syncPeriod = 500,
+        batchSize = 1_000_000,
+        syncPeriod = 50,
         affinityMap = null,
         barrierProducer = ::CinteropSpinBarrier
     )
-    val results = runner.runTest(params, test)
-    println(results.generateTable())
+    val results = runner.runTests(listOf(test), params).first()
+//    println(results.generateTable())
     assertEquals(4, results.size)
 }
 
 @Test
 fun sb() {
-    runTest(SB)
+    runTest(StoreBuffering.Plain)
 }
