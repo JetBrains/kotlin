@@ -14,7 +14,7 @@ kotlinx-bcv = "0.13.2"
 # Version of compiler for analysis-descriptor is in sync with K2 because of updated intellij-platform in 2.0.20-dev-5055
 # can be changed to just 2.0.20 after release of Kotlin 2.0.20
 kotlin-compiler = "2.0.20-dev-5135"
-kotlin-compiler-k2 = "2.0.20-dev-6911"
+kotlin-compiler-k2 = "2.0.20-dev-7572"
 
 # MUST match the version of the intellij platform used in the kotlin compiler,
 # otherwise this will lead to different versions of psi API and implementations
