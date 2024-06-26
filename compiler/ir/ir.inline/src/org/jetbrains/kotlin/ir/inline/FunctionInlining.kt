@@ -76,7 +76,7 @@ abstract class InlineFunctionResolverReplacingCoroutineIntrinsics<Ctx : CommonBa
 
     override fun shouldExcludeFunctionFromInlining(symbol: IrFunctionSymbol): Boolean {
         return super.shouldExcludeFunctionFromInlining(symbol) ||
-                (inlineOnlyPrivateFunctions && !DescriptorVisibilities.isPrivate(symbol.owner.visibility))
+                (inlineOnlyPrivateFunctions && !symbol.owner.isConsideredAsPrivateForInlining())
     }
 }
 
@@ -771,3 +771,9 @@ open class FunctionInlining(
 enum class NonReifiedTypeParameterRemappingMode {
     LEAVE_AS_IS, SUBSTITUTE, ERASE
 }
+
+/**
+ * Checks if the given function should be treated by 1st phase of inlining (inlining of private functions).
+ */
+fun IrFunction.isConsideredAsPrivateForInlining(): Boolean =
+    DescriptorVisibilities.isPrivate(visibility) || visibility == DescriptorVisibilities.LOCAL
