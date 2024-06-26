@@ -101,6 +101,16 @@ val deps_instance: Any = DepsFoo()
 fun isDepsObject(obj: Any): Boolean = obj is DepsFoo
 fun isSavedDepsObject(obj: Any): Boolean = obj == deps_instance
 
+// MODULE: second_main(deps)
+// FILE: second_main.kt
+
+import dependency.*
+
+val deps_instance_2: Any = DepsFoo()
+
+fun isDepsObject_2(obj: Any): Boolean = obj is DepsFoo
+fun isSavedDepsObject_2(obj: Any): Boolean = obj == deps_instance_2
+
 // MODULE: deps
 // FILE: deps_file.kt
 package dependency

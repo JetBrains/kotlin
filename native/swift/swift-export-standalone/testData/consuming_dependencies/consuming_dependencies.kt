@@ -1,11 +1,17 @@
 // KIND: STANDALONE
-// MODULE: main(dependency)
+// MODULE: main_one(dependency)
 // FILE: main.kt
 import dependency.one.*
 import dependency.two.*
 import dependency.three.*
 
-fun main() = foo()
+fun main_first() = foo()
+
+// MODULE: main_two(dependency_deeper_neighbor)
+// FILE: main.kt
+import dependency.three.*
+
+val deps_instance_2: Any = Bar()
 
 // MODULE: dependency(dependency_deeper,dependency_deeper_neighbor)
 // FILE: foo_deps.kt
