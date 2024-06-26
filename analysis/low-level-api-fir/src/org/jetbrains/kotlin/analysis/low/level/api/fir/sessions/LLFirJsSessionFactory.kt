@@ -94,7 +94,7 @@ internal class LLFirJsSessionFactory(project: Project) : LLFirAbstractSessionFac
         isFallbackDependenciesProvider: Boolean,
     ): List<FirSymbolProvider> {
         val moduleDataProvider = SingleModuleDataProvider(moduleData)
-        return LLFirLibrarySymbolProviderFactory.getService(project).createJsLibrarySymbolProvider(
+        return LLFirLibrarySymbolProviderFactory.fromSettings(project).createJsLibrarySymbolProvider(
             session,
             moduleData,
             kotlinScopeProvider,

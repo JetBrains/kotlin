@@ -10,6 +10,8 @@ import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
+import org.jetbrains.kotlin.analysis.api.platform.KotlinDeserializedDeclarationsOrigin
+import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformSettings
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinAnnotationsResolverFactory
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProviderFactory
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProviderMerger
@@ -55,6 +57,8 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 object AnalysisApiBaseTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
     override fun registerProjectServices(project: MockProject, testServices: TestServices) {
         project.apply {
+            registerPlatformSettings(testServices)
+
             registerService(KotlinModificationTrackerFactory::class.java, KotlinStandaloneModificationTrackerFactory::class.java)
             registerService(KotlinGlobalModificationService::class.java, KotlinStandaloneGlobalModificationService::class.java)
 
@@ -66,6 +70,19 @@ object AnalysisApiBaseTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
             registerService(ClsJavaStubByVirtualFileCache::class.java, ClsJavaStubByVirtualFileCache())
             registerService(ScriptDefinitionProvider::class.java, CliScriptDefinitionProvider())
         }
+    }
+
+    private fun MockProject.registerPlatformSettings(testServices: TestServices) {
+        val deserializedDeclarationsOrigin = when (testServices.libraryIndexingConfiguration.binaryLibraryIndexingMode) {
+            AnalysisApiBinaryLibraryIndexingMode.INDEX_STUBS -> KotlinDeserializedDeclarationsOrigin.STUBS
+            AnalysisApiBinaryLibraryIndexingMode.NO_INDEXING -> KotlinDeserializedDeclarationsOrigin.BINARIES
+        }
+
+        val settings = object : KotlinPlatformSettings {
+            override val deserializedDeclarationsOrigin: KotlinDeserializedDeclarationsOrigin = deserializedDeclarationsOrigin
+        }
+
+        registerService(KotlinPlatformSettings::class.java, settings)
     }
 
     class KtClsFileClassProvider(val project: Project) : KtFileClassProvider {

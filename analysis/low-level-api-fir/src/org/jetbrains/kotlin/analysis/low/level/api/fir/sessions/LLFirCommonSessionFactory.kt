@@ -99,7 +99,7 @@ internal class LLFirCommonSessionFactory(project: Project) : LLFirAbstractSessio
         val packagePartProvider = project.createPackagePartProvider(scope)
         return buildList {
             addAll(
-                LLFirLibrarySymbolProviderFactory.getService(project).createCommonLibrarySymbolProvider(
+                LLFirLibrarySymbolProviderFactory.fromSettings(project).createCommonLibrarySymbolProvider(
                     session,
                     moduleData,
                     kotlinScopeProvider,

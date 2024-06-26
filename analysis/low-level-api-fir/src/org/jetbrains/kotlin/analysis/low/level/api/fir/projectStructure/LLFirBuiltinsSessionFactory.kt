@@ -93,7 +93,8 @@ class LLFirBuiltinsSessionFactory(private val project: Project) {
 
             val symbolProvider = createCompositeSymbolProvider(this) {
                 addAll(
-                    LLFirLibrarySymbolProviderFactory.getService(project)
+                    LLFirLibrarySymbolProviderFactory
+                        .fromSettings(project)
                         .createBuiltinsSymbolProvider(session, moduleData, kotlinScopeProvider)
                 )
                 add(FirExtensionSyntheticFunctionInterfaceProvider(session, moduleData, kotlinScopeProvider))

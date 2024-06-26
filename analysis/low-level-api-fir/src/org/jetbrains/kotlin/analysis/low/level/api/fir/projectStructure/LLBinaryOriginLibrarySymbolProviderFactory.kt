@@ -3,13 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure
+package org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirLibrarySymbolProviderFactory
-import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirModuleData
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.fir.BinaryModuleData
 import org.jetbrains.kotlin.fir.FirSession
@@ -23,6 +21,7 @@ import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.KlibBasedSymbolProvider
 import org.jetbrains.kotlin.fir.session.MetadataSymbolProvider
 import org.jetbrains.kotlin.fir.session.NativeForwardDeclarationsSymbolProvider
+import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
@@ -36,7 +35,10 @@ import kotlin.io.path.extension
 import kotlin.io.path.isDirectory
 import org.jetbrains.kotlin.util.Logger as KLogger
 
-class LLFirStandaloneLibrarySymbolProviderFactory(private val project: Project) : LLFirLibrarySymbolProviderFactory() {
+/**
+ * [LLFirLibrarySymbolProviderFactory] for [KotlinDeserializedDeclarationsOrigin.BINARIES][org.jetbrains.kotlin.analysis.api.platform.KotlinDeserializedDeclarationsOrigin.BINARIES].
+ */
+class LLBinaryOriginLibrarySymbolProviderFactory(private val project: Project) : LLFirLibrarySymbolProviderFactory {
     override fun createJvmLibrarySymbolProvider(
         session: FirSession,
         moduleData: LLFirModuleData,
@@ -132,7 +134,6 @@ class LLFirStandaloneLibrarySymbolProviderFactory(private val project: Project) 
         )
     }
 
-
     private fun LLFirModuleData.getLibraryKLibs(): List<KotlinLibrary> {
         val ktLibraryModule = ktModule as? KaLibraryModule ?: return emptyList()
 
@@ -143,7 +144,7 @@ class LLFirStandaloneLibrarySymbolProviderFactory(private val project: Project) 
 
     private fun Path.tryResolveAsKLib(): KotlinLibrary? {
         return try {
-            val konanFile = org.jetbrains.kotlin.konan.file.File(absolutePathString())
+            val konanFile = File(absolutePathString())
             ToolingSingleFileKlibResolveStrategy.tryResolve(konanFile, IntellijLogBasedLogger)
         } catch (e: Exception) {
             LOG.warn("Cannot resolve a KLib $this", e)
@@ -152,7 +153,7 @@ class LLFirStandaloneLibrarySymbolProviderFactory(private val project: Project) 
     }
 
     companion object {
-        private val LOG = Logger.getInstance(LLFirStandaloneLibrarySymbolProviderFactory::class.java)
+        private val LOG = Logger.getInstance(LLBinaryOriginLibrarySymbolProviderFactory::class.java)
     }
 
     private object IntellijLogBasedLogger : KLogger {

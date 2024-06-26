@@ -14,7 +14,8 @@ import org.jetbrains.kotlin.psi.*
 
 /**
  * A [KotlinDeclarationProvider] provides Kotlin PSI declarations for the project as well as additional information about them. The
- * declarations may come from sources, libraries in case of stubbing, or declaration generation.
+ * declarations may come from sources, libraries in case of [stubbing][org.jetbrains.kotlin.analysis.api.platform.KotlinDeserializedDeclarationsOrigin.STUBS],
+ * or declaration generation.
  *
  * Declaration providers usually don't cover declarations of the whole project, but rather of a restricted context. This usually means being
  * limited to a specific [scope][com.intellij.psi.search.GlobalSearchScope], but the details depend on the kind of declaration provider.
