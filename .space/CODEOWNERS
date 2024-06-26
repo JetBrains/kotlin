@@ -282,6 +282,7 @@
 /kotlin-native/tools/benchmarksAnalyzer "Kotlin Native" "Kotlin Performance QA"
 /kotlin-native/tools/performance-server "Kotlin Native" "Kotlin Performance QA"
 /kotlin-native/performance "Kotlin Native" "Kotlin Performance QA"
+/kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/NativeFir2IrExtensions.kt "Kotlin Native" "Kotlin Compiler Core"
 
 /libraries/examples/annotation-processor-example/ "Kotlin Compiler Core"
 /libraries/examples/kotlin-gradle-subplugin-example/ "Kotlin Compiler Core"
