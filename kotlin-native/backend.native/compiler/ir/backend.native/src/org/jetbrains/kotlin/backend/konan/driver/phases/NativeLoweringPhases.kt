@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrSuspensionPoint
+import org.jetbrains.kotlin.ir.inline.isConsideredAsPrivateForInlining
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -63,10 +64,32 @@ internal val validateIrBeforeLowering = createSimpleNamedCompilerPhase<NativeGen
         op = { context, module -> IrValidationBeforeLoweringPhase(context.context).lower(module) }
 )
 
+internal val validateIrAfterInliningOnlyPrivateFunctions = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
+        name = "validateIrAfterInliningOnlyPrivateFunctions",
+        description = "Validate IR after only private functions have been inlined",
+        op = { context, module ->
+            IrValidationAfterInliningOnlyPrivateFunctionsPhase(
+                    context = context.context,
+                    checkInlineFunctionCallSites = { inlineFunctionUseSite ->
+                        // Call sites of only non-private functions are allowed at this stage.
+                        !inlineFunctionUseSite.symbol.owner.isConsideredAsPrivateForInlining()
+                    }
+            ).lower(module)
+        }
+)
+
 internal val validateIrAfterInliningAllFunctions = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
         name = "validateIrAfterInliningAllFunctions",
         description = "Validate IR after all functions have been inlined",
-        op = { context, module -> IrValidationAfterInliningAllFunctionsPhase(context.context).lower(module) }
+        op = { context, module ->
+            IrValidationAfterInliningAllFunctionsPhase(
+                    context = context.context,
+                    checkInlineFunctionCallSites = { inlineFunctionUseSite ->
+                        // No inline function call sites should remain at this stage.
+                        inlineFunctionUseSite.symbol.owner.isExternal // TODO: remove this condition after the fix of KT-66734
+                    }
+            ).lower(module)
+        }
 )
 
 internal val validateIrAfterLowering = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(

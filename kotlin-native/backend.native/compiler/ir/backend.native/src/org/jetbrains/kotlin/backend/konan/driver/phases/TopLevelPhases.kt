@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.konan.driver.utilities.createTempFiles
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -351,6 +352,9 @@ internal fun PhaseEngine<NativeGenerationState>.lowerModuleWithDependencies(modu
         // To avoid overcomplicating things and to keep running the preceding lowerings with "modify-only-lowered-file"
         // invariant, we would like to put a synchronization point immediately before "InlineAllFunctions".
         runLowerings(getLoweringsUpToAndIncludingSyntheticAccessors(), allModulesToLower)
+        if (context.config.configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING)) {
+            runIrValidationPhase(validateIrAfterInliningOnlyPrivateFunctions, allModulesToLower)
+        }
         runLowerings(listOf(inlineAllFunctionsPhase), allModulesToLower)
     }
     runIrValidationPhase(validateIrAfterInliningAllFunctions, allModulesToLower)

@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.DeclarationParentsVisitor
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.render
@@ -22,13 +24,18 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 typealias ReportIrValidationError = (IrFile?, IrElement, String, List<IrElement>) -> Unit
 
-internal data class IrValidatorConfig(
+internal class IrValidatorConfig(
     val checkTypes: Boolean = true,
     val checkProperties: Boolean = false,
     val checkValueScopes: Boolean = false,
     val checkTypeParameterScopes: Boolean = false,
     val checkVisibilities: Boolean = false,
+    val checkInlineFunctionUseSites: InlineFunctionUseSiteChecker? = null,
 )
+
+fun interface InlineFunctionUseSiteChecker {
+    fun isPermitted(inlineFunctionUseSite: IrMemberAccessExpression<IrFunctionSymbol>): Boolean
+}
 
 private class IrValidator(
     irBuiltIns: IrBuiltIns,
@@ -50,6 +57,9 @@ private class IrValidator(
         }
         if (config.checkVisibilities) {
             declaration.acceptVoid(IrVisibilityChecker(declaration.module, declaration, reportError))
+        }
+        config.checkInlineFunctionUseSites?.let {
+            declaration.acceptVoid(NoInlineFunctionUseSitesValidator(declaration, reportError, it))
         }
     }
 
@@ -178,6 +188,7 @@ sealed interface IrValidationContext {
         checkVisibilities: Boolean = false,
         checkValueScopes: Boolean = false,
         checkTypeParameterScopes: Boolean = false,
+        checkInlineFunctionUseSites: InlineFunctionUseSiteChecker? = null,
     ) {
         performBasicIrValidation(
             fragment,
@@ -188,6 +199,7 @@ sealed interface IrValidationContext {
                 checkValueScopes,
                 checkTypeParameterScopes,
                 checkVisibilities,
+                checkInlineFunctionUseSites,
             ),
         ) { file, element, message, parentChain ->
             reportIrValidationError(file, element, message, phaseName, parentChain)
