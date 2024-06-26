@@ -2,8 +2,6 @@
 // TARGET_BACKEND: JVM
 // FULL_JDK
 
-// JVM_ABI_K1_K2_DIFF: KT-63828
-
 class MapWithBadDefaults : HashMap<String, String>() {
     override fun getOrDefault(key: String, defaultValue: String): String {
         throw RuntimeException("Shouldn't be executed")
@@ -25,4 +23,3 @@ fun box(): String {
 
     return test.getOrDefault("absent", "OK")
 }
-

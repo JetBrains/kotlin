@@ -17,8 +17,8 @@ public open [ResolvedTo(STATUS)] fun anotherFunction([ResolvedTo(STATUS)] name: 
     @PROPERTY_SETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=BaseInterface] set([ResolvedTo(STATUS)] @SETTER_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) value: R|kotlin/Int|): R|kotlin/Unit|
 
 public open override [ResolvedTo(STATUS)] [DelegatedWrapperDataKey=[wrapped=FirPropertySymbol /BaseInterface.property, containingClass=<anonymous>, delegateField=FirFieldSymbol <local>/<anonymous>.$$delegate_0] var property: R|kotlin/Int|
-
-
+    public [ResolvedTo(STATUS)] [ContainingClassKey=<anonymous>] get(): R|kotlin/Int|
+    public [ResolvedTo(STATUS)] [ContainingClassKey=<anonymous>] set([ResolvedTo(STATUS)] value: R|kotlin/Int|): R|kotlin/Unit|
 
 public abstract [ResolvedTo(STATUS)] var property: R|kotlin/Int|
     public [ResolvedTo(STATUS)] [ContainingClassKey=BaseInterface] get(): R|kotlin/Int|
