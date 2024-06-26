@@ -55,13 +55,8 @@ class WasmIrExpressionBuilder(
     private var isUnderMacroIf = false
 
     override fun buildInstr(op: WasmOp, location: SourceLocation, vararg immediates: WasmImmediate) {
-        if (op == WasmOp.MACRO_IF) {
-            isUnderMacroIf = true
-        }
-        if (op == WasmOp.MACRO_END_IF) {
+        if (isUnderMacroIf && op == WasmOp.MACRO_END_IF) {
             isUnderMacroIf = false
-        }
-        if (isUnderMacroIf) {
             addInstruction(op, location, immediates)
             return
         }
@@ -70,7 +65,7 @@ class WasmIrExpressionBuilder(
         if (currentEatUntil != null) {
             if (currentEatUntil <= numberOfNestedBlocks) return
         } else {
-            if (op.isOutCfgNode()) {
+            if (!isUnderMacroIf && op.isOutCfgNode()) {
                 eatEverythingUntilLevel = numberOfNestedBlocks
                 addInstruction(op, location, immediates)
                 return
@@ -103,6 +98,10 @@ class WasmIrExpressionBuilder(
                     return
                 }
             }
+        }
+
+        if (op == WasmOp.MACRO_IF) {
+            isUnderMacroIf = true
         }
 
         addInstruction(op, location, immediates)
