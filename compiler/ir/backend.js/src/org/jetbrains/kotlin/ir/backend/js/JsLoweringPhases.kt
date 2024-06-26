@@ -34,7 +34,7 @@ private val validateIrBeforeLowering = makeIrModulePhase<JsIrBackendContext>(
 )
 
 private val validateIrAfterInliningPhase = makeIrModulePhase(
-    ::IrValidationAfterInliningPhase,
+    ::IrValidationAfterInliningAllFunctionsPhase,
     name = "IrValidationAfterInliningPhase",
     description = "Validate IR after inlining",
 )

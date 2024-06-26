@@ -63,10 +63,10 @@ internal val validateIrBeforeLowering = createSimpleNamedCompilerPhase<NativeGen
         op = { context, module -> IrValidationBeforeLoweringPhase(context.context).lower(module) }
 )
 
-internal val validateIrAfterInlining = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
-        name = "ValidateIrBeforeLowering",
-        description = "Validate IR before lowering",
-        op = { context, module -> IrValidationAfterInliningPhase(context.context).lower(module) }
+internal val validateIrAfterInliningAllFunctions = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
+        name = "validateIrAfterInliningAllFunctions",
+        description = "Validate IR after all functions have been inlined",
+        op = { context, module -> IrValidationAfterInliningAllFunctionsPhase(context.context).lower(module) }
 )
 
 internal val validateIrAfterLowering = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
