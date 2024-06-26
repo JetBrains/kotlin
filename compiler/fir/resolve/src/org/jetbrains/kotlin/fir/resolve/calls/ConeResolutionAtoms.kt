@@ -116,7 +116,7 @@ class ConeResolvedLambdaAtom(
     override var expectedType: ConeKotlinType? = expectedType
         private set
 
-    lateinit var returnStatements: Collection<FirExpression>
+    lateinit var returnStatements: Collection<ConeCallAtom>
 
     override val inputTypes: Collection<ConeKotlinType>
         get() {
