@@ -28,9 +28,8 @@ FILE: selectDuringTyping.kt
             }
 
             local abstract class ExplodeSchema_94 : R|<local>/ExplodeSchema_94I| {
-                public abstract var scope0: R|<local>/Scope0|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope0: R|<local>/Scope0|
                     public get(): R|<local>/Scope0|
-                    public set(value: R|<local>/Scope0|): R|kotlin/Unit|
 
                 public constructor(): R|<local>/ExplodeSchema_94|
 

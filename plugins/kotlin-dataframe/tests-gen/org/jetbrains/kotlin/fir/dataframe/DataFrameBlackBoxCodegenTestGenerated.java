@@ -23,6 +23,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("castTo.kt")
+  public void testCastTo() {
+    runTest("testData/box/castTo.kt");
+  }
+
+  @Test
   @TestMetadata("columnGroupApi.kt")
   public void testColumnGroupApi() {
     runTest("testData/box/columnGroupApi.kt");
@@ -212,6 +218,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   @TestMetadata("platformType.kt")
   public void testPlatformType() {
     runTest("testData/box/platformType.kt");
+  }
+
+  @Test
+  @TestMetadata("propertiesOrder.kt")
+  public void testPropertiesOrder() {
+    runTest("testData/box/propertiesOrder.kt");
   }
 
   @Test

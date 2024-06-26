@@ -3,6 +3,7 @@ package org.jetbrains.kotlinx.dataframe.plugin.extensions
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.extensions.FirExpressionResolutionExtension
 import org.jetbrains.kotlin.fir.scopes.collectAllProperties
@@ -21,7 +22,7 @@ class ReturnTypeBasedReceiverInjector(session: FirSession) : FirExpressionResolu
         val symbol = generatedTokenOrNull(functionCall) ?: return emptyList()
         return symbol.declaredMemberScope(session, FirResolvePhase.DECLARATIONS).collectAllProperties()
             .filterIsInstance<FirPropertySymbol>()
-            .filter { it.resolvedReturnType.classId?.shortClassName?.asString()?.startsWith("Scope") ?: false }
+            .filter { it.getAnnotationByClassId(Names.SCOPE_PROPERTY_ANNOTATION, session) != null }
             .map { it.resolvedReturnType }
     }
 
