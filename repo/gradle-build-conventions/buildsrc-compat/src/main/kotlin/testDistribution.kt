@@ -3,18 +3,18 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-import com.gradle.enterprise.gradleplugin.testdistribution.TestDistributionExtension
+import com.gradle.develocity.agent.gradle.test.TestDistributionConfiguration
 import org.gradle.api.tasks.testing.Test
 import org.gradle.internal.os.OperatingSystem
 
 
-fun Test.configureTestDistribution(configure: TestDistributionExtension.() -> Unit = {}) {
+fun Test.configureTestDistribution(configure: TestDistributionConfiguration.() -> Unit = {}) {
     val isTeamcityBuild = project.kotlinBuildProperties.isTeamcityBuild
     val testDistributionEnabled =
         project.findProperty("kotlin.build.test.distribution.enabled")?.toString()?.toBoolean() ?: false
 
     useJUnitPlatform()
-    extensions.configure(TestDistributionExtension::class.java) {
+    extensions.configure(TestDistributionConfiguration::class.java) {
         enabled.set(testDistributionEnabled)
         maxRemoteExecutors.set(20)
         if (isTeamcityBuild) {
@@ -27,4 +27,4 @@ fun Test.configureTestDistribution(configure: TestDistributionExtension.() -> Un
 }
 
 fun Test.isTestDistributionEnabled(): Boolean =
-    extensions.findByType(TestDistributionExtension::class.java)?.enabled?.orNull ?: false
+    extensions.findByType(TestDistributionConfiguration::class.java)?.enabled?.orNull ?: false

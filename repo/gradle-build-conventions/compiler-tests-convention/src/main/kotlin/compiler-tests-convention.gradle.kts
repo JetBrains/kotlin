@@ -1,4 +1,4 @@
-import com.gradle.enterprise.gradleplugin.testretry.TestRetryExtension
+import com.gradle.develocity.agent.gradle.test.TestRetryConfiguration
 
 val extension = extensions.create("compilerTests", CompilerTestsExtension::class)
 
@@ -22,7 +22,7 @@ tasks.withType<Test>().configureEach {
     inputs.property("os.name", org.gradle.internal.os.OperatingSystem.current().name)
     inputs.files(extension.testData).withPathSensitivity(PathSensitivity.RELATIVE)
 
-    extensions.configure(TestRetryExtension::class) {
+    extensions.configure(TestRetryConfiguration::class) {
         maxRetries = if (kotlinBuildProperties.isTeamcityBuild) 3 else 0
         failOnPassedAfterRetry.set(extension.allowFlaky.convention(false).map { !it })
     }
