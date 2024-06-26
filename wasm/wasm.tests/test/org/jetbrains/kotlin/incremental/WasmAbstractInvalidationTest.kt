@@ -269,7 +269,8 @@ abstract class WasmAbstractInvalidationTest(
                     mainModuleFriends = mainModuleInfo.friends,
                     cacheDir = buildDir.resolve("incremental-cache").absolutePath,
                     compilerConfiguration = configuration,
-                    icContext = icContext
+                    icContext = icContext,
+                    checkForClassStructuralChanges = true
                 )
 
                 val removedModulesInfo = (projectInfo.modules - projStep.order.toSet()).map { setupTestStep(projStep, it) }
