@@ -46,11 +46,12 @@ internal val CExportGenerateApiPhase = createSimpleNamedCompilerPhase<PhaseConte
 internal class CExportCompileAdapterInput(
         val cppAdapterFile: File,
         val bitcodeAdapterFile: File,
+        val xcode16Hacks: File,
 )
 
 internal val CExportCompileAdapterPhase = createSimpleNamedCompilerPhase<PhaseContext, CExportCompileAdapterInput>(
         name = "CExportCompileAdapter",
         description = "Compile C++ adapter to bitcode"
 ) { context, input ->
-    produceCAdapterBitcode(context.config.clang, input.cppAdapterFile, input.bitcodeAdapterFile)
+    produceCAdapterBitcode(context.config.clang, input.cppAdapterFile, input.bitcodeAdapterFile, input.xcode16Hacks)
 }
