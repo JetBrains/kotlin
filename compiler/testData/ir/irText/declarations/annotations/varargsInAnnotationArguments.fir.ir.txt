@@ -100,7 +100,7 @@ FILE fqName:<root> fileName:/varargsInAnnotationArguments.kt
     BLOCK_BODY
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     annotations:
-      A1(xs = [] type=kotlin.IntArray varargElementType=kotlin.Int)
-      A2(xs = [] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String)
-      AA(xs = [] type=kotlin.Array<out <root>.A1> varargElementType=<root>.A1)
+      A1(xs = [] type=kotlin.IntArray varargElementType=kotlin.Array<kotlin.IntArray>)
+      A2(xs = [] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.Array<kotlin.Array<out kotlin.String>>)
+      AA(xs = [] type=kotlin.Array<out <root>.A1> varargElementType=kotlin.Array<kotlin.Array<out <root>.A1>>)
     BLOCK_BODY

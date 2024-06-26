@@ -1,0 +1,24 @@
+open annotation class A : Annotation {
+  val xs: Array<out String>
+    field = xs
+    get
+
+  constructor(vararg xs: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@A(xs = ["abc", "def"])
+fun test1() {
+}
+
+@A(xs = ["abc"])
+fun test2() {
+}
+
+@A(xs = [])
+fun test3() {
+}
