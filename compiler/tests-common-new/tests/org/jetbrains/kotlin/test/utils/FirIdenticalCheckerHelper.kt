@@ -14,7 +14,7 @@ import java.io.File
 
 abstract class FirIdenticalCheckerHelper(private val testServices: TestServices) {
     companion object {
-        val isTeamCityBuild: Boolean = System.getenv("TEAMCITY_VERSION") != null
+        private const val isTeamCityBuild: Boolean = true
     }
 
     abstract fun getClassicFileToCompare(testDataFile: File): File?
