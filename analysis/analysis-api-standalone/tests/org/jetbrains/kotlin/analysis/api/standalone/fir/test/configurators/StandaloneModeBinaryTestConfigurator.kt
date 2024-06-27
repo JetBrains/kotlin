@@ -44,7 +44,7 @@ abstract class StandaloneModeBinaryTestConfigurator : StandaloneModeConfigurator
             useSourcePreprocessor(::ExternalAnnotationsSourcePreprocessor)
 
             useAdditionalService<KtTestModuleFactory> { testModuleFactory }
-            useAdditionalService<TestModuleCompiler> { DispatchingTestModuleCompiler() }
+            useAdditionalService<TestModuleCompiler> { DispatchingTestModuleCompiler }
             useAdditionalService<TestModuleDecompiler> { TestModuleDecompilerJar() }
 
             this.defaultsProviderBuilder.dependencyKind = DependencyKind.Binary
