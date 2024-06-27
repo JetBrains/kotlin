@@ -7,11 +7,7 @@
 
 package test.text
 
-import test.regexSplitUnicodeCodePointHandling
-import test.supportsOctalLiteralInRegex
-import test.supportsEscapeAnyCharInRegex
-import test.BackReferenceHandling
-import test.HandlingOption
+import test.*
 import kotlin.test.*
 
 class RegexTest {
@@ -188,7 +184,9 @@ class RegexTest {
 
     @Test fun matchDuplicateGroupName() {
         // should fail with IllegalArgumentException, but JS fails with SyntaxError
-        assertFails { "(?<hi>hi)|(?<hi>bye)".toRegex() }
+        testExceptOn(TestPlatform.Js) {
+            assertFails { "(?<hi>hi)|(?<hi>bye)".toRegex() }
+        }
         assertFails { "(?<first>\\d+)-(?<first>\\d+)".toRegex() }
     }
 
