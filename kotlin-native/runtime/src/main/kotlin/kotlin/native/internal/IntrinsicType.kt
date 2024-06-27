@@ -26,7 +26,6 @@ internal class IntrinsicType {
         const val FLOAT_EXTEND          = "FLOAT_EXTEND"
         const val SIGNED_TO_FLOAT       = "SIGNED_TO_FLOAT"
         const val UNSIGNED_TO_FLOAT     = "UNSIGNED_TO_FLOAT"
-        const val FLOAT_TO_SIGNED       = "FLOAT_TO_SIGNED"
         const val SIGNED_COMPARE_TO     = "SIGNED_COMPARE_TO"
         const val UNSIGNED_COMPARE_TO   = "UNSIGNED_COMPARE_TO"
         const val NOT                   = "NOT"

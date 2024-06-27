@@ -29,8 +29,6 @@ extern "C" const int32_t Kotlin_disableAllocatorOverheadEstimate;
 extern "C" const int32_t Kotlin_runtimeLogs[];
 extern "C" const int32_t Kotlin_concurrentWeakSweep;
 extern "C" const int32_t Kotlin_gcMarkSingleThreaded;
-extern "C" const int32_t Kotlin_freezingEnabled;
-extern "C" const int32_t Kotlin_freezingChecksEnabled;
 
 class SourceInfo;
 
@@ -87,11 +85,11 @@ ALWAYS_INLINE inline const int32_t* runtimeLogs() noexcept {
 }
 
 ALWAYS_INLINE inline bool freezingEnabled() noexcept {
-    return Kotlin_freezingEnabled != 0;
+    return false;
 }
 
 ALWAYS_INLINE inline bool freezingChecksEnabled() noexcept {
-    return Kotlin_freezingChecksEnabled != 0;
+    return false;
 }
 
 ALWAYS_INLINE inline bool concurrentWeakSweep() noexcept {

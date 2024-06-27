@@ -317,7 +317,6 @@ internal class EnumClassLowering(val context: Context) : FileLoweringPass {
             }).also {
                 it.setDeclarationsParent(valuesField)
             }
-            valuesField.annotations += buildSimpleAnnotation(context.irBuiltIns, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, context.ir.symbols.sharedImmutable.owner)
         }
 
         fun defineEntriesField() {

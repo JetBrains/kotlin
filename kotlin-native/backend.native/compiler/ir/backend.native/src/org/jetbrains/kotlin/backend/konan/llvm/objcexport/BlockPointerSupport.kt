@@ -63,7 +63,7 @@ internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(
             kotlinReferenceToRetainedObjC(param(index + 1))
         }
 
-        switchThreadStateIfExperimentalMM(ThreadState.Native)
+        switchThreadState(ThreadState.Native)
         // Using terminatingExceptionHandler, so any exception thrown by `invoke` will lead to the termination,
         // and switching the thread state back to `Runnable` on exceptional path is not required.
         val result = callAndMaybeRetainAutoreleased(
@@ -77,7 +77,7 @@ internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(
             objcReleaseFromNativeThreadState(it)
         }
 
-        switchThreadStateIfExperimentalMM(ThreadState.Runnable)
+        switchThreadState(ThreadState.Runnable)
 
         val kotlinResult = if (bridge.returnsVoid) {
             theUnitInstanceRef.llvm

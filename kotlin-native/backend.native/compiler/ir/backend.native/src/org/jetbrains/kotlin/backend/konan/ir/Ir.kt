@@ -437,8 +437,6 @@ internal class KonanSymbols(
 
     val threadLocal = topLevelClass(KonanFqNames.threadLocal)
 
-    val sharedImmutable = topLevelClass(KonanFqNames.sharedImmutable)
-
     val eagerInitialization = topLevelClass(KonanFqNames.eagerInitialization)
 
     val enumVarConstructorSymbol = lookup.findPrimaryConstructor(interopClass(InteropFqNames.cEnumVarName))!!

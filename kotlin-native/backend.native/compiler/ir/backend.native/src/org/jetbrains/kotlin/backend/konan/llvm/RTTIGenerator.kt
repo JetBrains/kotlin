@@ -9,7 +9,6 @@ import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.ir.isArray
-import org.jetbrains.kotlin.backend.konan.ir.isFrozen
 import org.jetbrains.kotlin.backend.konan.lower.FunctionReferenceLowering.Companion.isLoweredFunctionReference
 import org.jetbrains.kotlin.backend.konan.lower.getObjectClassInstanceFunction
 import org.jetbrains.kotlin.builtins.PrimitiveType
@@ -54,16 +53,11 @@ internal class RTTIGenerator(
 
     private fun flagsFromClass(irClass: IrClass): Int {
         var result = 0
-        if (irClass.isFrozen(context))
-            result = result or TF_IMMUTABLE
         // TODO: maybe perform deeper analysis to find surely acyclic types.
         if (!irClass.isInterface && !irClass.isAbstract() && !irClass.isAnnotationClass) {
             if (checkAcyclicClass(irClass)) {
                 result = result or TF_ACYCLIC
             }
-        }
-        if (irClass.hasAnnotation(KonanFqNames.leakDetectorCandidate)) {
-            result = result or TF_LEAK_DETECTOR_CANDIDATE
         }
         if (irClass.isInterface)
             result = result or TF_INTERFACE
@@ -74,10 +68,6 @@ internal class RTTIGenerator(
 
         if (irClass.hasAnnotation(KonanFqNames.hasFinalizer)) {
             result = result or TF_HAS_FINALIZER
-        }
-
-        if (irClass.hasAnnotation(KonanFqNames.hasFreezeHook)) {
-            result = result or TF_HAS_FREEZE_HOOK
         }
 
         return result

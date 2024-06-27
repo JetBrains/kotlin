@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.objcinterop.getExternalObjCClassBinaryName
 import org.jetbrains.kotlin.ir.objcinterop.isExternalObjCClass
-import org.jetbrains.kotlin.ir.objcinterop.isObjCProtocolClass
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.findAnnotation
@@ -26,8 +25,6 @@ internal enum class IntrinsicType {
     TIMES,
     SIGNED_DIV,
     SIGNED_REM,
-    UNSIGNED_DIV,
-    UNSIGNED_REM,
     INC,
     DEC,
     UNARY_PLUS,
@@ -46,7 +43,6 @@ internal enum class IntrinsicType {
     FLOAT_EXTEND,
     SIGNED_TO_FLOAT,
     UNSIGNED_TO_FLOAT,
-    FLOAT_TO_SIGNED,
     SIGNED_COMPARE_TO,
     UNSIGNED_COMPARE_TO,
     NOT,
@@ -67,7 +63,6 @@ internal enum class IntrinsicType {
     IMMUTABLE_BLOB,
     INIT_INSTANCE,
     IS_SUBTYPE,
-    IS_EXPERIMENTAL_MM,
     THE_UNIT_INSTANCE,
     // Enums
     ENUM_VALUES,
@@ -94,7 +89,6 @@ internal enum class IntrinsicType {
     INTEROP_NARROW,
     INTEROP_STATIC_C_FUNCTION,
     INTEROP_FUNPTR_INVOKE,
-    INTEROP_MEMORY_COPY,
     // Worker
     WORKER_EXECUTE,
     // Atomics
@@ -224,8 +218,6 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
                 IntrinsicType.TIMES -> emitTimes(args)
                 IntrinsicType.SIGNED_DIV -> emitSignedDiv(args)
                 IntrinsicType.SIGNED_REM -> emitSignedRem(args)
-                IntrinsicType.UNSIGNED_DIV -> emitUnsignedDiv(args)
-                IntrinsicType.UNSIGNED_REM -> emitUnsignedRem(args)
                 IntrinsicType.INC -> emitInc(args)
                 IntrinsicType.DEC -> emitDec(args)
                 IntrinsicType.UNARY_PLUS -> emitUnaryPlus(args)
@@ -247,7 +239,6 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
                 IntrinsicType.INT_TRUNCATE -> emitIntTruncate(callSite, args)
                 IntrinsicType.SIGNED_TO_FLOAT -> emitSignedToFloat(callSite, args)
                 IntrinsicType.UNSIGNED_TO_FLOAT -> emitUnsignedToFloat(callSite, args)
-                IntrinsicType.FLOAT_TO_SIGNED -> emitFloatToSigned(callSite, args)
                 IntrinsicType.FLOAT_EXTEND -> emitFloatExtend(callSite, args)
                 IntrinsicType.FLOAT_TRUNCATE -> emitFloatTruncate(callSite, args)
                 IntrinsicType.ARE_EQUAL_BY_VALUE -> emitAreEqualByValue(args)
@@ -267,8 +258,6 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
                 IntrinsicType.INTEROP_NATIVE_PTR_PLUS_LONG -> emitNativePtrPlusLong(args)
                 IntrinsicType.INTEROP_GET_NATIVE_NULL_PTR -> emitGetNativeNullPtr()
                 IntrinsicType.IDENTITY -> emitIdentity(args)
-                IntrinsicType.INTEROP_MEMORY_COPY -> emitMemoryCopy(callSite, args)
-                IntrinsicType.IS_EXPERIMENTAL_MM -> emitIsExperimentalMM()
                 IntrinsicType.THE_UNIT_INSTANCE -> theUnitInstanceRef.llvm
                 IntrinsicType.ATOMIC_GET_FIELD -> reportNonLoweredIntrinsic(intrinsicType)
                 IntrinsicType.ATOMIC_SET_FIELD -> reportNonLoweredIntrinsic(intrinsicType)
@@ -346,9 +335,6 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
     private fun FunctionGenerationContext.emitIdentity(args: List<LLVMValueRef>): LLVMValueRef =
             args.single()
 
-    private fun FunctionGenerationContext.emitIsExperimentalMM(): LLVMValueRef =
-            llvm.int1(context.memoryModel == MemoryModel.EXPERIMENTAL)
-
     // cmpxcgh llvm instruction return pair. idnex is index of required element of this pair
     enum class CmpExchangeMode(val index:Int) {
         SWAP(0),
@@ -358,7 +344,6 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
     private fun FunctionGenerationContext.emitCmpExchange(callSite: IrCall, args: List<LLVMValueRef>, mode: CmpExchangeMode, resultSlot: LLVMValueRef?): LLVMValueRef {
         require(args.size == 3) { "The call to ${callSite.symbol.owner.name.asString()} expects 3 value arguments." }
         return if (callSite.symbol.owner.valueParameters.last().type.binaryTypeIsReference()) {
-            require(context.memoryModel == MemoryModel.EXPERIMENTAL)
             when (mode) {
                 CmpExchangeMode.SET -> call(llvm.CompareAndSetVolatileHeapRef, args)
                 CmpExchangeMode.SWAP -> call(llvm.CompareAndSwapVolatileHeapRef, args,
@@ -379,7 +364,6 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
         require(args.size == 2) { "The call to ${callSite.symbol.owner.name.asString()} expects 2 value arguments." }
         return if (callSite.symbol.owner.valueParameters.last().type.binaryTypeIsReference()) {
             require(op == LLVMAtomicRMWBinOp.LLVMAtomicRMWBinOpXchg)
-            require(context.memoryModel == MemoryModel.EXPERIMENTAL)
             call(llvm.GetAndSetVolatileHeapRef, args,
                     environment.calculateLifetime(callSite), resultSlot = resultSlot)
         } else {
@@ -585,12 +569,6 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
         return codegen.theUnitInstanceRef.llvm
     }
 
-    private fun FunctionGenerationContext.emitMemoryCopy(callSite: IrCall, args: List<LLVMValueRef>): LLVMValueRef {
-        println("memcpy at ${callSite}")
-        args.map { println(llvm2string(it)) }
-        TODO("Implement me")
-    }
-
     private fun FunctionGenerationContext.emitObjCCreateSuperStruct(args: List<LLVMValueRef>): LLVMValueRef {
         assert(args.size == 2)
         val receiver = args[0]
@@ -711,9 +689,6 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
 
     private fun FunctionGenerationContext.emitUnsignedToFloat(callSite: IrCall, args: List<LLVMValueRef>) =
             LLVMBuildUIToFP(builder, args[0], callSite.llvmReturnType, "")!!
-
-    private fun FunctionGenerationContext.emitFloatToSigned(callSite: IrCall, args: List<LLVMValueRef>) =
-            LLVMBuildFPToSI(builder, args[0], callSite.llvmReturnType, "")!!
 
     private fun FunctionGenerationContext.emitFloatExtend(callSite: IrCall, args: List<LLVMValueRef>) =
             LLVMBuildFPExt(builder, args[0], callSite.llvmReturnType, "")!!
@@ -839,18 +814,6 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
         val overflowValue = if (retZeroOnOverflow) Zero(type).llvm else minValue
 
         return ifThenElse(and(icmpEq(dividend, minValue), icmpEq(divisor, minusOne)), overflowValue, nonOverflowValue)
-    }
-
-    private fun FunctionGenerationContext.emitUnsignedDiv(args: List<LLVMValueRef>): LLVMValueRef {
-        val (first, second) = args
-        emitThrowIfZero(second)
-        return LLVMBuildUDiv(builder, first, second, "")!!
-    }
-
-    private fun FunctionGenerationContext.emitUnsignedRem(args: List<LLVMValueRef>): LLVMValueRef {
-        val (first, second) = args
-        emitThrowIfZero(second)
-        return LLVMBuildURem(builder, first, second, "")!!
     }
 
     private fun FunctionGenerationContext.emitInc(args: List<LLVMValueRef>): LLVMValueRef {

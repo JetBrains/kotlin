@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.linkage.partial.setupPartialLinkageConfig
@@ -138,6 +139,25 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
         putIfNotNull(BinaryOptions.memoryModel, memoryModelFromArgument)
     }
 
+    get(BinaryOptions.memoryModel)?.also {
+        if (it != MemoryModel.EXPERIMENTAL) {
+            report(ERROR, "Legacy MM is deprecated and no longer works.")
+        } else {
+            report(STRONG_WARNING, "-memory-model and memoryModel switches are deprecated and will be removed in a future release.")
+        }
+    }
+
+    get(BinaryOptions.freezing)?.also {
+        if (it != Freezing.Disabled) {
+            report(
+                    CompilerMessageSeverity.ERROR,
+                    "`freezing` is not supported with the new MM. Freezing API is deprecated since 1.7.20. See https://kotlinlang.org/docs/native-migration-guide.html for details"
+            )
+        } else {
+            report(STRONG_WARNING, "freezing switch is deprecated and will be removed in a future release.")
+        }
+    }
+
     when {
         arguments.generateWorkerTestRunner -> put(GENERATE_TEST_RUNNER, TestRunnerKind.WORKER)
         arguments.generateTestRunner -> put(GENERATE_TEST_RUNNER, TestRunnerKind.MAIN_THREAD)
@@ -199,15 +219,18 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     put(FAKE_OVERRIDE_VALIDATOR, arguments.fakeOverrideValidator)
     putIfNotNull(PRE_LINK_CACHES, parsePreLinkCachesValue(this@setupFromArguments, arguments.preLinkCaches))
     putIfNotNull(OVERRIDE_KONAN_PROPERTIES, parseOverrideKonanProperties(arguments, this@setupFromArguments))
-    putIfNotNull(DESTROY_RUNTIME_MODE, when (arguments.destroyRuntimeMode) {
-        null -> null
-        "legacy" -> DestroyRuntimeMode.LEGACY
-        "on-shutdown" -> DestroyRuntimeMode.ON_SHUTDOWN
+    when (arguments.destroyRuntimeMode) {
+        null -> {}
+        "legacy" -> {
+            report(ERROR, "New MM is incompatible with 'legacy' destroy runtime mode.")
+        }
+        "on-shutdown" -> {
+            report(STRONG_WARNING, "-Xdestroy-runtime-mode switch is deprecated and will be removed in a future release.")
+        }
         else -> {
             report(ERROR, "Unsupported destroy runtime mode ${arguments.destroyRuntimeMode}")
-            null
         }
-    })
+    }
 
     val gcFromArgument = when (arguments.gc) {
         null -> null
@@ -261,15 +284,18 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
             AllocationMode.STD
         }
     })
-    putIfNotNull(WORKER_EXCEPTION_HANDLING, when (arguments.workerExceptionHandling) {
-        null -> null
-        "legacy" -> WorkerExceptionHandling.LEGACY
-        "use-hook" -> WorkerExceptionHandling.USE_HOOK
+    when (arguments.workerExceptionHandling) {
+        null -> {}
+        "legacy" -> {
+            report(ERROR, "Legacy exception handling in workers is deprecated")
+        }
+        "use-hook" -> {
+            report(STRONG_WARNING, "-Xworker-exception-handling is deprecated")
+        }
         else -> {
             report(ERROR, "Unsupported worker exception handling mode ${arguments.workerExceptionHandling}")
-            WorkerExceptionHandling.LEGACY
         }
-    })
+    }
     put(LAZY_IR_FOR_CACHES, when (arguments.lazyIrForCaches) {
         null -> false
         "enable" -> true
