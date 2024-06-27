@@ -6,8 +6,12 @@ rootProject.name = "build-logic"
 
 pluginManagement {
     repositories {
-        mavenCentral()
-        gradlePluginPortal()
+        maven("https://cache-redirector.jetbrains.com/repo.maven.apache.org/maven2") {
+            name = "MavenCentral-JBCache"
+        }
+        maven("https://cache-redirector.jetbrains.com/plugins.gradle.org/m2") {
+            name = "GradlePluginPortal-JBCache"
+        }
     }
     includeBuild("../build-settings-logic")
 }
@@ -15,9 +19,15 @@ pluginManagement {
 dependencyResolutionManagement {
     @Suppress("UnstableApiUsage")
     repositories {
-        mavenCentral()
-        google()
-        gradlePluginPortal()
+        maven("https://cache-redirector.jetbrains.com/repo.maven.apache.org/maven2") {
+            name = "MavenCentral-JBCache"
+        }
+        maven("https://cache-redirector.jetbrains.com/dl.google.com.android.maven2") {
+            name = "Google-JBCache"
+        }
+        maven("https://cache-redirector.jetbrains.com/plugins.gradle.org/m2") {
+            name = "GradlePluginPortal-JBCache"
+        }
     }
 
     versionCatalogs {
