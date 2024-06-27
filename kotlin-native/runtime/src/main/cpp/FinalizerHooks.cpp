@@ -25,8 +25,6 @@ NO_INLINE void RunFinalizerHooksImpl(ObjHeader* object, const TypeInfo* type) no
     // TODO: Consider some global registration.
     if (type == theCleanerImplTypeInfo) {
         DisposeCleaner(object);
-    } else if (type == theWorkerBoundReferenceTypeInfo) {
-        DisposeWorkerBoundReference(object);
     } else if (type == theRegularWeakReferenceImplTypeInfo) {
         DisposeRegularWeakReferenceImpl(object);
     }

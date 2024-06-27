@@ -26,9 +26,7 @@ package kotlin.text.regex
 import kotlin.experimental.ExperimentalNativeApi
 import kotlin.collections.associate
 import kotlin.concurrent.AtomicReference
-import kotlin.native.concurrent.freeze
 import kotlin.native.BitSet
-import kotlin.native.FreezingIsDeprecated
 import kotlin.native.ObsoleteNativeApi
 
 /**
@@ -51,7 +49,7 @@ internal class UnicodeCategoryScope(category: Int) : UnicodeCategory(category) {
  * This class represents character classes, i.e. sets of character either predefined or user defined.
  * Note: this class represent a token, not node, so being constructed by lexer.
  */
-@OptIn(FreezingIsDeprecated::class, ObsoleteNativeApi::class)
+@OptIn(ObsoleteNativeApi::class)
 internal abstract class AbstractCharClass : SpecialToken() {
     /**
      * Show if the class has alternative meaning:
@@ -130,7 +128,7 @@ internal abstract class AbstractCharClass : SpecialToken() {
         result.alt = this.alt
         result.altSurrogates = this.altSurrogates
         result.mayContainSupplCodepoints = this.mayContainSupplCodepoints
-        surrogates_.compareAndSet(null, result.freeze())
+        surrogates_.compareAndSet(null, result)
         return surrogates_.value!!
     }
 
@@ -653,7 +651,7 @@ internal abstract class AbstractCharClass : SpecialToken() {
         fun getPredefinedClass(name: String, negative: Boolean): AbstractCharClass {
             val charClass = classCacheMap[name] ?: throw PatternSyntaxException("No such character class")
             val cachedClass = classCache[charClass.ordinal].value ?: run {
-                classCache[charClass.ordinal].compareAndExchange(null, charClass.factory().freeze())
+                classCache[charClass.ordinal].compareAndExchange(null, charClass.factory())
                 classCache[charClass.ordinal].value!!
             }
             return cachedClass.getValue(negative)

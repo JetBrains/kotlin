@@ -5,8 +5,6 @@
 
 package kotlin.native.concurrent
 
-import kotlin.native.internal.Frozen
-
 /**
  * State of the future object.
  */

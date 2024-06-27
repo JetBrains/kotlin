@@ -68,7 +68,6 @@ extern const TypeInfo* theShortArrayTypeInfo;
 extern const TypeInfo* theStringTypeInfo;
 extern const TypeInfo* theThrowableTypeInfo;
 extern const TypeInfo* theUnitTypeInfo;
-extern const TypeInfo* theWorkerBoundReferenceTypeInfo;
 extern const TypeInfo* theCleanerImplTypeInfo;
 extern const TypeInfo* theRegularWeakReferenceImplTypeInfo;
 

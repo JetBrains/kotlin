@@ -6,14 +6,11 @@
 package kotlin
 
 import kotlin.native.internal.ExportTypeInfo
-import kotlin.native.internal.Frozen
 import kotlin.native.internal.GCUnsafeCall
 import kotlin.native.internal.IntrinsicType
 import kotlin.native.internal.TypedIntrinsic
 
 @ExportTypeInfo("theStringTypeInfo")
-@OptIn(FreezingIsDeprecated::class)
-@Frozen
 public final class String : Comparable<String>, CharSequence {
     public companion object {
     }

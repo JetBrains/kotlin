@@ -11,9 +11,8 @@ import kotlin.native.internal.*
 /**
  * Initializes Kotlin runtime for the current thread, if not inited already.
  */
-@GCUnsafeCall("Kotlin_initRuntimeIfNeededFromKotlin")
 @Deprecated("Initializing runtime is not possible in the new memory model.", level = DeprecationLevel.WARNING)
-external public fun initRuntimeIfNeeded(): Unit
+public fun initRuntimeIfNeeded() {}
 
 
 /**
@@ -47,13 +46,8 @@ public typealias ReportUnhandledExceptionHook = Function1<Throwable, Unit>
  * With the legacy MM the hook must be a frozen lambda so that it could be called from any thread/worker.
  */
 @ExperimentalNativeApi
-@OptIn(FreezingIsDeprecated::class)
 public fun setUnhandledExceptionHook(hook: ReportUnhandledExceptionHook?): ReportUnhandledExceptionHook? {
-    try {
-        return UnhandledExceptionHookHolder.hook.getAndSet(hook)
-    } catch (e: InvalidMutabilityException) {
-        throw InvalidMutabilityException("Unhandled exception hook must be frozen")
-    }
+    return UnhandledExceptionHookHolder.hook.getAndSet(hook)
 }
 
 /**
@@ -61,7 +55,6 @@ public fun setUnhandledExceptionHook(hook: ReportUnhandledExceptionHook?): Repor
  */
 @ExperimentalNativeApi
 @SinceKotlin("1.6")
-@OptIn(FreezingIsDeprecated::class)
 public fun getUnhandledExceptionHook(): ReportUnhandledExceptionHook? {
     return UnhandledExceptionHookHolder.hook.value
 }
