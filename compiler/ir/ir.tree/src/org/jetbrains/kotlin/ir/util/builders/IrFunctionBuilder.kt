@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.util.builders
 import com.intellij.util.containers.addIfNotNull
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
@@ -45,6 +46,7 @@ abstract class IrFunctionBuilder<F: IrFunction> : IrDeclarationWithVisibilityBui
     var valueParameters = mutableListOf<IrValueParameterBuilder>()
     var typeParametersRemapping = mutableMapOf<IrTypeParameterSymbol, IrTypeParameterSymbol>()
     var valueParameterRemapping = mutableMapOf<IrValueParameterSymbol, IrValueParameterSymbol>()
+    var body: IrBody? = null
 
     protected abstract fun create(factory: IrFactory): F
 
@@ -61,6 +63,7 @@ abstract class IrFunctionBuilder<F: IrFunction> : IrDeclarationWithVisibilityBui
             builder.build(factory, index, it)
         }.toMutableList()
         it.contextReceiverParametersCount = contextParameters.size
+        it.body = body?.patchDeclarationParents(it)
     }
 
     fun reshapeParameters(

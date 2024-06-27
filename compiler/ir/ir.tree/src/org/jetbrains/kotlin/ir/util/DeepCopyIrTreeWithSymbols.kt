@@ -22,20 +22,18 @@ import org.jetbrains.kotlin.utils.memoryOptimizedMap
 inline fun <reified T : IrElement> T.deepCopyWithSymbols(
     initialParent: IrDeclarationParent? = null,
     symbolRemapper: DeepCopySymbolRemapper = DeepCopySymbolRemapper(),
-    createTypeRemapper: (SymbolRemapper) -> TypeRemapper = ::DeepCopyTypeRemapper
+    createTypeRemapper: (SymbolRemapper) -> TypeRemapper = { DeepCopyTypeRemapper(it) }
 ): T {
-    return (deepCopyImpl(symbolRemapper, createTypeRemapper) as T).patchDeclarationParents(initialParent)
+    return deepCopyWithoutPatchingParents(symbolRemapper, createTypeRemapper).patchDeclarationParents(initialParent)
 }
 
-inline fun <reified T : IrElement> T.deepCopyWithoutPatchingParents(): T {
-    return deepCopyImpl(DeepCopySymbolRemapper(), ::DeepCopyTypeRemapper) as T
-}
-
-@PublishedApi
-internal inline fun <T : IrElement> T.deepCopyImpl(symbolRemapper: DeepCopySymbolRemapper, createTypeRemapper: (SymbolRemapper) -> TypeRemapper): IrElement {
+inline fun <reified T : IrElement> T.deepCopyWithoutPatchingParents(
+    symbolRemapper: DeepCopySymbolRemapper = DeepCopySymbolRemapper(),
+    createTypeRemapper: (SymbolRemapper) -> TypeRemapper = { DeepCopyTypeRemapper(it) }
+): T {
     acceptVoid(symbolRemapper)
     val typeRemapper = createTypeRemapper(symbolRemapper)
-    return transform(DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper), null)
+    return transform(DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper), null) as T
 }
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)

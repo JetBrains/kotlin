@@ -7,14 +7,17 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrTypeAbbreviationImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
+import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 class DeepCopyTypeRemapper(
-    private val symbolRemapper: ReferencedSymbolRemapper
+    private val symbolRemapper: ReferencedSymbolRemapper,
+    private val typeSubstitutor: IrTypeSubstitutor? = null,
 ) : TypeRemapper {
 
     lateinit var deepCopy: DeepCopyIrTreeWithSymbols
@@ -28,15 +31,16 @@ class DeepCopyTypeRemapper(
     }
 
     override fun remapType(type: IrType): IrType {
-        return when (type) {
+        val substitutedType = typeSubstitutor?.substitute(type) ?: type
+        return when (substitutedType) {
             is IrSimpleType -> IrSimpleTypeImpl(
-                symbolRemapper.getReferencedClassifier(type.classifier),
-                type.nullability,
-                type.arguments.memoryOptimizedMap { remapTypeArgument(it) },
-                type.annotations.memoryOptimizedMap { it.transform(deepCopy, null) as IrConstructorCall },
-                type.abbreviation?.remapTypeAbbreviation()
+                symbolRemapper.getReferencedClassifier(substitutedType.classifier),
+                substitutedType.nullability,
+                substitutedType.arguments.memoryOptimizedMap { remapTypeArgument(it) },
+                substitutedType.annotations.memoryOptimizedMap { it.transform(deepCopy, null) as IrConstructorCall },
+                substitutedType.abbreviation?.remapTypeAbbreviation()
             )
-            else -> type
+            else -> substitutedType
         }
     }
 

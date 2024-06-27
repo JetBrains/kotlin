@@ -7,17 +7,18 @@ package org.jetbrains.kotlin.ir.util.builders
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrErrorExpression
+import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
-import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
+import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
+import org.jetbrains.kotlin.ir.util.DeepCopyTypeRemapper
 import org.jetbrains.kotlin.ir.util.deepCopyWithoutPatchingParents
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.name.Name
 
 fun IrFactory.buildSimpleFunction(
@@ -115,34 +116,21 @@ inline fun IrProperty.addSetter(builder: IrSimpleFunctionBuilder.() -> Unit): Ir
     }
 }
 
-fun interface DefaultValuesPolicy {
-    fun process(irExpressionBody: IrExpression, deepCopy: IrElementTransformerVoid): IrExpression?
-
-    companion object {
-        val remove = DefaultValuesPolicy { _, _  -> null }
-        val leaveAsIs = DefaultValuesPolicy { it, _ -> it }
-        val copy = DefaultValuesPolicy { it, copy -> it.transform(copy, null) }
-        val replaceWithStub = DefaultValuesPolicy { _, _ -> IrExpressionBodyImpl(IrErrorExpression("stub")}
-    }
-}
-
 fun IrSimpleFunction.toBuilder(
-    asMemberOf: IrClass?,
     withName: Name? = null,
+    withBody: Boolean = false,
     typeSubstitutor: IrTypeSubstitutor = IrTypeSubstitutor.EMPTY,
 ) = IrSimpleFunctionBuilder(withName ?: this.name, this).also { builder ->
-    if (asMemberOf != null) {
-        builder.addDispatchReceiver(asMemberOf)
-    }
-    val typeParametersRemapping = mutableMapOf<IrTypeParameterSymbol, IrTypeArgument>()
+    val typeParametersRemapping = mutableMapOf<IrTypeParameterSymbol, IrTypeParameterSymbol>()
+    val valueParametersRemapping = mutableMapOf<IrValueParameterSymbol, IrValueParameterSymbol>()
     for (typeParameter in typeParameters) {
         if (!typeSubstitutor.hasSubstitutionFor(typeParameter.symbol)) {
             builder.typeParameters.add(IrTypeParameterBuilder(typeParameter))
-            typeParametersRemapping[typeParameter.symbol] = builder.typeParameters.last().symbol.defaultType
+            typeParametersRemapping[typeParameter.symbol] = builder.typeParameters.last().symbol
         }
     }
     val fullTypeSubstitutor = IrChainedSubstitutor(
-        IrTypeSubstitutor(typeParametersRemapping),
+        IrTypeSubstitutor(typeParametersRemapping.mapValues { (_, it) -> it.defaultType }),
         typeSubstitutor
     )
     for (parameter in builder.typeParameters) {
@@ -150,12 +138,30 @@ fun IrSimpleFunction.toBuilder(
             parameter.superTypes[index] = fullTypeSubstitutor.substitute(parameter.superTypes[index])
         }
     }
+    val deepCopySymbolRemapper = object : DeepCopySymbolRemapper() {
+        override fun getReferencedTypeParameter(symbol: IrTypeParameterSymbol): IrClassifierSymbol {
+            typeParametersRemapping[symbol]?.let { return it }
+            return super.getReferencedTypeParameter(symbol)
+        }
+
+        override fun getReferencedValueParameter(symbol: IrValueParameterSymbol): IrValueSymbol {
+            valueParametersRemapping[symbol]?.let { return it }
+            return super.getReferencedValueParameter(symbol)
+        }
+    }
     fun IrValueParameter.copy() : IrValueParameterBuilder {
         return IrValueParameterBuilder(fullTypeSubstitutor.substitute(type), this).also { builder ->
-            defaultValue?.let { builder.defaultValue = it.deepCopyWithoutPatchingParents() }
+            valueParametersRemapping[this.symbol] = builder.symbol
+            defaultValue?.let {
+                builder.defaultValue = it.deepCopyWithoutPatchingParents(
+                    symbolRemapper = deepCopySymbolRemapper,
+                    createTypeRemapper = { DeepCopyTypeRemapper(it, typeSubstitutor) }
+                )
+            }
         }
     }
     builder.returnType = fullTypeSubstitutor.substitute(returnType)
+    dispatchReceiverParameter?.let { builder.dispatchReceiverParameter = it.copy() }
     for (i in 0 until contextReceiverParametersCount) {
         builder.contextParameters.add(valueParameters[i].copy())
     }
@@ -163,5 +169,10 @@ fun IrSimpleFunction.toBuilder(
     for (i in contextReceiverParametersCount until valueParameters.size) {
         builder.valueParameters.add(valueParameters[i].copy())
     }
-
+    if (withBody) {
+        builder.body = body?.deepCopyWithoutPatchingParents(
+            symbolRemapper = deepCopySymbolRemapper,
+            createTypeRemapper = { DeepCopyTypeRemapper(it, typeSubstitutor) }
+        )
+    }
 }
