@@ -633,6 +633,7 @@ class Fir2IrConverter(
             fun FirModuleData.friendsMapName() = name.asStringStripSpecialMarkers()
             fun FirModuleData.collectDependsOnRecursive(set: MutableSet<FirModuleData>) {
                 if (!set.add(this)) return
+                sourceModuleData?.let { set.add(it) }
                 for (dep in dependsOnDependencies) {
                     dep.collectDependsOnRecursive(set)
                 }

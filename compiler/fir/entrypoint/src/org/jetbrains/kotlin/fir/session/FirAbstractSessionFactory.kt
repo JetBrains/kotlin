@@ -203,7 +203,7 @@ abstract class FirAbstractSessionFactory {
             Name.special("<common-from-${sourceModuleData.name.asStringStripSpecialMarkers()}>"),
             sourceModuleData.dependencies, sourceModuleData.dependsOnDependencies, sourceModuleData.friendDependencies,
             sourceModuleData.platform, sourceModuleData.capabilities, sourceModuleData.isCommon,
-            isFromCommonArtefact = true
+            sourceModuleData = sourceModuleData
         )
         firProjectSessionProvider.registerSession(commonArtefactModuleData, commonArtefactSession)
         firProjectSessionProvider.registerModuleDataByOriginal(commonArtefactModuleData, sourceModuleData)

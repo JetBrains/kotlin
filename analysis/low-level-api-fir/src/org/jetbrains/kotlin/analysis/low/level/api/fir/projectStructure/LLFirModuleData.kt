@@ -59,7 +59,7 @@ class LLFirModuleData private constructor(val ktModule: KaModule) : FirModuleDat
 
     override val isCommon: Boolean get() = ktModule.targetPlatform.isCommon()
 
-    override val isFromCommonArtefact: Boolean = false
+    override val sourceModuleData: FirModuleData? = null
 
     override val session: FirSession
         get() = boundSession ?: LLFirSessionCache.getInstance(ktModule.project).getSession(ktModule, preferBinary = true)
