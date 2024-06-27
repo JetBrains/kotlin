@@ -116,11 +116,11 @@ inline fun IrProperty.addSetter(builder: IrSimpleFunctionBuilder.() -> Unit): Ir
     }
 }
 
-fun IrSimpleFunction.toBuilder(
-    withName: Name? = null,
-    withBody: Boolean = false,
-    typeSubstitutor: IrTypeSubstitutor = IrTypeSubstitutor.EMPTY,
-) = IrSimpleFunctionBuilder(withName ?: this.name, this).also { builder ->
+private fun <T: IrFunction> T.fillBuilder(
+    builder: IrFunctionBuilder<T>,
+    typeSubstitutor: IrTypeSubstitutor,
+    withBody: Boolean
+) {
     val typeParametersRemapping = mutableMapOf<IrTypeParameterSymbol, IrTypeParameterSymbol>()
     val valueParametersRemapping = mutableMapOf<IrValueParameterSymbol, IrValueParameterSymbol>()
     for (typeParameter in typeParameters) {
@@ -175,4 +175,21 @@ fun IrSimpleFunction.toBuilder(
             createTypeRemapper = { DeepCopyTypeRemapper(it, typeSubstitutor) }
         )
     }
+
+}
+
+fun IrSimpleFunction.toBuilder(
+    withName: Name? = null,
+    withBody: Boolean = false,
+    typeSubstitutor: IrTypeSubstitutor = IrTypeSubstitutor.EMPTY,
+) = IrSimpleFunctionBuilder(withName ?: this.name, this).also { builder ->
+    fillBuilder(builder, typeSubstitutor, withBody)
+}
+
+
+fun IrConstructor.toBuilder(
+    withBody: Boolean = false,
+    typeSubstitutor: IrTypeSubstitutor = IrTypeSubstitutor.EMPTY,
+) = IrConstructorBuilder(this).also { builder ->
+    fillBuilder(builder, typeSubstitutor, withBody)
 }
