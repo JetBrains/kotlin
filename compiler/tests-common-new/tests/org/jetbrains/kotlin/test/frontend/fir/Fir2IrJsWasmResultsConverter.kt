@@ -51,7 +51,6 @@ abstract class Fir2IrJsWasmResultsConverter(testServices: TestServices) : Abstra
         fir2IrResult: Fir2IrActualizedResult,
         fir2KlibMetadataSerializer: Fir2KlibMetadataSerializer,
     ): IrBackendInput {
-        val manglers = fir2IrResult.components.manglers
         return artifactFactory(
             fir2IrResult.irModuleFragment,
             fir2IrResult.pluginContext,
@@ -59,7 +58,7 @@ abstract class Fir2IrJsWasmResultsConverter(testServices: TestServices) : Abstra
             diagnosticReporter,
             testServices.firDiagnosticCollectorService.containsErrors(inputArtifact),
             /*descriptorMangler = */null,
-            manglers.irMangler,
+            fir2IrResult.components.irMangler,
             fir2KlibMetadataSerializer,
         )
     }

@@ -127,7 +127,7 @@ class Fir2IrJvmResultsConverter(
             backendInput,
             sourceFiles,
             descriptorMangler = null,
-            irMangler = fir2irResult.components.manglers.irMangler,
+            irMangler = fir2irResult.components.irMangler,
         )
     }
 }

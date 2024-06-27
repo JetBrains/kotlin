@@ -27,7 +27,7 @@ class Fir2IrComponentsStorage(
     override val configuration: Fir2IrConfiguration,
     override val visibilityConverter: Fir2IrVisibilityConverter,
     commonMemberStorage: Fir2IrCommonMemberStorage,
-    irMangler: KotlinMangler.IrMangler,
+    override val irMangler: KotlinMangler.IrMangler,
     kotlinBuiltIns: KotlinBuiltIns,
     override val specialAnnotationsProvider: IrSpecialAnnotationsProvider?,
     override val firProvider: FirProviderWithGeneratedFiles,
@@ -67,9 +67,4 @@ class Fir2IrComponentsStorage(
     override val symbolsMappingForLazyClasses: Fir2IrSymbolsMappingForLazyClasses = Fir2IrSymbolsMappingForLazyClasses()
 
     override val annotationsFromPluginRegistrar: Fir2IrIrGeneratedDeclarationsRegistrar = Fir2IrIrGeneratedDeclarationsRegistrar(this)
-
-    override val manglers: Fir2IrComponents.Manglers = object : Fir2IrComponents.Manglers {
-        override val irMangler: KotlinMangler.IrMangler
-            get() = irMangler
-    }
 }

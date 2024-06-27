@@ -47,13 +47,12 @@ class Fir2IrNativeResultsConverter(testServices: TestServices) : AbstractFir2IrN
         fir2IrResult: Fir2IrActualizedResult,
         fir2KlibMetadataSerializer: Fir2KlibMetadataSerializer,
     ): IrBackendInput {
-        val manglers = fir2IrResult.components.manglers
         return IrBackendInput.NativeBackendInput(
             fir2IrResult.irModuleFragment,
             fir2IrResult.pluginContext,
             diagnosticReporter = diagnosticReporter,
             descriptorMangler = null,
-            irMangler = manglers.irMangler,
+            irMangler = fir2IrResult.components.irMangler,
             metadataSerializer = fir2KlibMetadataSerializer
         )
     }

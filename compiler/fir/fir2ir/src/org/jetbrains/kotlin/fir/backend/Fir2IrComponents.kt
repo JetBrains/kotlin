@@ -32,7 +32,7 @@ interface Fir2IrComponents {
 
     val builtins: Fir2IrBuiltinSymbolsContainer
     val specialAnnotationsProvider: IrSpecialAnnotationsProvider?
-    val manglers: Manglers
+    val irMangler: KotlinMangler.IrMangler
 
     val irFactory: IrFactory
     val irProviders: List<IrProvider>
@@ -76,8 +76,4 @@ interface Fir2IrComponents {
      * the first scenario above. We set [filesBeingCompiled] as `null` if we do not use the CodeGen analysis API.
      */
     val filesBeingCompiled: Set<FirFile>?
-
-    interface Manglers {
-        val irMangler: KotlinMangler.IrMangler
-    }
 }
