@@ -460,7 +460,7 @@ class FirCallResolver(
                     },
                     calleeReference.source
                 )
-                resolvedCallableReferenceAtom.resultingReference = errorReference
+                resolvedCallableReferenceAtom.initializeResultingReference(errorReference)
                 return@runCallableReferenceResolution applicability to false
             }
             reducedCandidates.size > 1 -> {
@@ -470,7 +470,7 @@ class FirCallResolver(
                         ConeAmbiguityError(info.name, applicability, reducedCandidates),
                         calleeReference.source
                     )
-                    resolvedCallableReferenceAtom.resultingReference = errorReference
+                    resolvedCallableReferenceAtom.initializeResultingReference(errorReference)
                     return@runCallableReferenceResolution applicability to false
                 }
                 resolvedCallableReferenceAtom.hasBeenPostponed = true
@@ -494,7 +494,7 @@ class FirCallResolver(
             applicability,
             createResolvedReferenceWithoutCandidateForLocalVariables = false
         )
-        resolvedCallableReferenceAtom.resultingReference = reference
+        resolvedCallableReferenceAtom.initializeResultingReference(reference)
         resolvedCallableReferenceAtom.resultingTypeForCallableReference = chosenCandidate.resultingTypeForCallableReference
 
         return@runCallableReferenceResolution applicability to true
