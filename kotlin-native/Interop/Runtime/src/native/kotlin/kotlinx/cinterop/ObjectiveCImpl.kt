@@ -25,8 +25,6 @@ public typealias ObjCObjectMeta = ObjCClass
 public interface ObjCProtocol : ObjCObject
 
 @ExportTypeInfo("theForeignObjCObjectTypeInfo")
-@OptIn(FreezingIsDeprecated::class)
-@kotlin.native.internal.Frozen
 internal open class ForeignObjCObject : kotlin.native.internal.ObjCObjectWrapper
 
 @BetaInteropApi

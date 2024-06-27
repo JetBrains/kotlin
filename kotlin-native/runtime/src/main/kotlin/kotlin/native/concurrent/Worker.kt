@@ -5,9 +5,6 @@
 @file:OptIn(ExperimentalForeignApi::class)
 package kotlin.native.concurrent
 
-import kotlin.experimental.ExperimentalNativeApi
-import kotlin.native.internal.ExportForCppRuntime
-import kotlin.native.internal.Frozen
 import kotlin.native.internal.VolatileLambda
 import kotlin.native.internal.IntrinsicType
 import kotlin.native.internal.TypedIntrinsic
@@ -33,7 +30,6 @@ import kotlinx.cinterop.*
  *     - It includes such things as innocuous [Worker.current] from the **current** worker.
  */
 @Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
-@OptIn(FreezingIsDeprecated::class)
 @ObsoleteWorkersApi
 public value class Worker @PublishedApi internal constructor(public val id: Int) {
     public companion object {
@@ -135,10 +131,7 @@ public value class Worker @PublishedApi internal constructor(public val id: Int)
      * @throws [IllegalArgumentException] on negative values of [afterMicroseconds].
      * @throws [IllegalStateException] if [operation] parameter is not frozen and worker is not current.
      */
-    @OptIn(ExperimentalNativeApi::class)
     public fun executeAfter(afterMicroseconds: Long = 0, operation: () -> Unit): Unit {
-        val current = currentInternal()
-        if (Platform.memoryModel != MemoryModel.EXPERIMENTAL && current != id && !operation.isFrozen) throw IllegalStateException("Job for another worker must be frozen")
         if (afterMicroseconds < 0) throw IllegalArgumentException("Timeout parameter must be non-negative")
         executeAfterInternal(id, operation, afterMicroseconds)
     }

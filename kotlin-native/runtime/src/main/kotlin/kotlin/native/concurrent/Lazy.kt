@@ -8,31 +8,17 @@
 package kotlin.native.concurrent
 
 import kotlin.experimental.ExperimentalNativeApi
-import kotlin.native.internal.Frozen
 import kotlin.concurrent.AtomicReference
 import kotlinx.cinterop.ExperimentalForeignApi
 
-@OptIn(FreezingIsDeprecated::class)
-internal object UNINITIALIZED {
-    // So that single-threaded configs can use those as well.
-    init {
-        freeze()
-    }
-}
+internal object UNINITIALIZED
 
-@OptIn(FreezingIsDeprecated::class)
-internal object INITIALIZING {
-    // So that single-threaded configs can use those as well.
-    init {
-        freeze()
-    }
-}
+internal object INITIALIZING
 
 @OptIn(ExperimentalNativeApi::class)
 @FreezingIsDeprecated
-@Frozen
 internal class AtomicLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
-    private val initializer_ = AtomicReference<Function0<T>?>(initializer.freeze())
+    private val initializer_ = AtomicReference<Function0<T>?>(initializer)
     private val value_ = AtomicReference<Any?>(UNINITIALIZED)
 
     override val value: T
@@ -41,7 +27,7 @@ internal class AtomicLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
                 // We execute exclusively here.
                 val ctor = initializer_.value
                 if (ctor != null && initializer_.compareAndSet(ctor, null)) {
-                    value_.compareAndSet(INITIALIZING, ctor().freeze())
+                    value_.compareAndSet(INITIALIZING, ctor())
                 } else {
                     // Something wrong.
                     assert(false)
@@ -73,7 +59,6 @@ internal class AtomicLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
 public fun <T> atomicLazy(initializer: () -> T): Lazy<T> = AtomicLazyImpl(initializer)
 
 @Suppress("UNCHECKED_CAST")
-@OptIn(FreezingIsDeprecated::class)
 internal class SynchronizedLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
     private var initializer = AtomicReference<(() -> T)?>(initializer)
     private var valueRef = AtomicReference<Any?>(UNINITIALIZED)

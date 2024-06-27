@@ -28,10 +28,6 @@ extern "C" void checkRangeIndexes(KInt from, KInt to, KInt size);
 namespace {
 
 ALWAYS_INLINE inline void mutabilityCheck(KConstRef thiz) {
-  // TODO: optimize it!
-  if (!thiz->local() && isPermanentOrFrozen(thiz)) {
-      ThrowInvalidMutabilityException(thiz);
-  }
 }
 
 ALWAYS_INLINE inline void boundsCheck(const ArrayHeader* array, KInt index) {

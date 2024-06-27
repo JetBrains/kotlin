@@ -6,7 +6,6 @@
 package kotlin.native.concurrent
 
 import kotlinx.cinterop.*
-import kotlin.native.internal.Frozen
 import kotlin.concurrent.AtomicNativePtr
 
 /**
@@ -54,7 +53,6 @@ public enum class TransferMode(public val value: Int) {
  * Detached object graph encapsulates transferrable detached subgraph which cannot be accessed
  * externally, until it is attached with the [attach] extension function.
  */
-@Frozen
 @FreezingIsDeprecated
 @ObsoleteWorkersApi
 public class DetachedObjectGraph<T> internal constructor(pointer: NativePtr) {
