@@ -9,24 +9,40 @@ pluginManagement {
     includeBuild("build-settings-logic")
 
     repositories {
-        mavenCentral()
-        gradlePluginPortal()
+        maven("https://cache-redirector.jetbrains.com/repo.maven.apache.org/maven2") {
+            name = "MavenCentral-JBCache"
+        }
+        maven("https://cache-redirector.jetbrains.com/plugins.gradle.org/m2") {
+            name = "GradlePluginPortal-JBCache"
+        }
     }
 }
 
 dependencyResolutionManagement {
     @Suppress("UnstableApiUsage")
     repositories {
-        maven("https://cache-redirector.jetbrains.com/maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-ide")
-        maven("https://cache-redirector.jetbrains.com/maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-ide-plugin-dependencies")
+        maven("https://cache-redirector.jetbrains.com/maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-ide") {
+            name = "KotlinIde-JBCache"
+        }
+        maven("https://cache-redirector.jetbrains.com/maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-ide-plugin-dependencies") {
+            name = "KotlinIdePluginDependencies-JBCache"
+        }
 
-        maven("https://cache-redirector.jetbrains.com/intellij-repository/releases")
-        maven("https://cache-redirector.jetbrains.com/intellij-third-party-dependencies")
+        maven("https://cache-redirector.jetbrains.com/intellij-repository/releases") {
+            name = "IjRepository-JBCache"
+        }
+        maven("https://cache-redirector.jetbrains.com/intellij-third-party-dependencies") {
+            name = "IjThirdParty-JBCache"
+        }
 
-        mavenCentral()
-        google()
+        maven("https://cache-redirector.jetbrains.com/repo.maven.apache.org/maven2") {
+            name = "MavenCentral-JBCache"
+        }
+        maven("https://cache-redirector.jetbrains.com/dl.google.com.android.maven2") {
+            name = "Google-JBCache"
+        }
 
-        // Declare the Node.js & Yarn download repositories
+        //region Declare the Node.js & Yarn download repositories
         // Required by Gradle Node plugin: https://github.com/node-gradle/gradle-node-plugin/blob/3.5.1/docs/faq.md#is-this-plugin-compatible-with-centralized-repositories-declaration
         exclusiveContent {
             forRepository {
@@ -42,7 +58,7 @@ dependencyResolutionManagement {
 
         exclusiveContent {
             forRepository {
-                ivy("https://github.com/yarnpkg/yarn/releases/download") {
+                ivy("https://cache-redirector.jetbrains.com/github.com/yarnpkg/yarn/releases/download") {
                     name = "Yarn Distributions at $url"
                     patternLayout { artifact("v[revision]/[artifact](-v[revision]).[ext]") }
                     metadataSources { artifact() }
@@ -51,6 +67,7 @@ dependencyResolutionManagement {
             }
             filter { includeGroup("com.yarnpkg") }
         }
+        //endregion
     }
 }
 
