@@ -134,7 +134,7 @@ internal object ArgumentCheckingProcessor {
 
             is ConeResolvedAtom, is ConeAtomWithCandidate -> resolvePlainExpressionArgument(argument)
 
-            else -> error("Unexpected type of atom: ${argument::class.java}")
+            is ConePostponedResolvedAtom -> error("Unexpected type of atom: ${argument::class.java}")
         }
     }
 

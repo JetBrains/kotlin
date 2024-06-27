@@ -52,7 +52,7 @@ class Candidate(
     // It's only true if we're in the member scope of smart cast receiver and this particular candidate came from original type
     val isFromOriginalTypeInPresenceOfSmartCast: Boolean = false,
     bodyResolveContext: BodyResolveContext,
-) : AbstractCallCandidate() {
+) : AbstractCallCandidate<ConeCallAtom>() {
 
     // ---------------------------------------- Symbol ----------------------------------------
 
