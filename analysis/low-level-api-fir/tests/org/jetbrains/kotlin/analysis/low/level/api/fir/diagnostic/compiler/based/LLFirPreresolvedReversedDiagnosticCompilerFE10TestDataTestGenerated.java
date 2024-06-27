@@ -27516,9 +27516,21 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         }
 
         @Test
+        @TestMetadata("expectEnumIntersection.kt")
+        public void testExpectEnumIntersection() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/exhaustiveness/expectEnumIntersection.kt");
+        }
+
+        @Test
         @TestMetadata("expectSealedClass.kt")
         public void testExpectSealedClass() {
           runTest("compiler/testData/diagnostics/tests/multiplatform/exhaustiveness/expectSealedClass.kt");
+        }
+
+        @Test
+        @TestMetadata("expectSealedClassIntersection.kt")
+        public void testExpectSealedClassIntersection() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/exhaustiveness/expectSealedClassIntersection.kt");
         }
 
         @Test
