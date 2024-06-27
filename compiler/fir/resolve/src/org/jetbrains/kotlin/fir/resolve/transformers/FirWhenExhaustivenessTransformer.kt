@@ -140,10 +140,10 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
 
         var status: ExhaustivenessStatus = ExhaustivenessStatus.NotExhaustive.NO_ELSE_BRANCH
 
-        if (subjectType.toRegularClassSymbol(session)?.isExpect != true) {
-            val unwrappedIntersectionTypes = subjectType.unwrapIntersectionType()
+        val unwrappedIntersectionTypes = subjectType.unwrapIntersectionType()
 
-            for (unwrappedSubjectType in unwrappedIntersectionTypes) {
+        for (unwrappedSubjectType in unwrappedIntersectionTypes) {
+            if (unwrappedSubjectType.toRegularClassSymbol(session)?.isExpect != true) {
                 val localStatus = computeStatusForNonIntersectionType(unwrappedSubjectType, session, whenExpression)
                 when {
                     localStatus === ExhaustivenessStatus.ProperlyExhaustive -> {
