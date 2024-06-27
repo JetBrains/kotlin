@@ -222,15 +222,6 @@ object JsKlibTestModuleCompiler : CliTestModuleCompiler() {
  * can be registered directly. Once new test compilers are introduced, they should be added to [DispatchingTestModuleCompiler].
  */
 object DispatchingTestModuleCompiler : TestModuleCompiler() {
-    private enum class CompilerKind {
-        JVM, JS
-    }
-
-    private val compilersByKind = mapOf(
-        CompilerKind.JVM to JvmJarTestModuleCompiler,
-        CompilerKind.JS to JsKlibTestModuleCompiler,
-    )
-
     override fun compile(tmpDir: Path, module: TestModule, dependencyBinaryRoots: Collection<Path>, testServices: TestServices): Path {
         return getCompiler(module).compileTestModuleToLibrary(module, dependencyBinaryRoots, testServices)
     }
@@ -240,13 +231,10 @@ object DispatchingTestModuleCompiler : TestModuleCompiler() {
     }
 
     private fun getCompiler(module: TestModule): CliTestModuleCompiler {
-        val compilerKindForModule = when {
-            module.targetPlatform.isJvm() -> CompilerKind.JVM
-            module.targetPlatform.isJs() -> CompilerKind.JS
+        return when {
+            module.targetPlatform.isJvm() -> JvmJarTestModuleCompiler
+            module.targetPlatform.isJs() -> JsKlibTestModuleCompiler
             else -> error("DispatchingTestModuleCompiler doesn't support the platform: ${module.targetPlatform}")
         }
-
-        return compilersByKind[compilerKindForModule]
-            ?: error("TestModuleCompiler is not available for ${compilerKindForModule.name}")
     }
 }
