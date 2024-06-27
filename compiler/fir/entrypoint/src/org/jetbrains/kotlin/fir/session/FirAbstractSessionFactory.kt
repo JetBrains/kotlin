@@ -25,9 +25,6 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
-import org.jetbrains.kotlin.fir.serialization.FirProvidedDeclarationsForMetadataService
-import org.jetbrains.kotlin.fir.types.FirFunctionTypeKindService
-import org.jetbrains.kotlin.fir.types.functionTypeService
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ImportTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -126,7 +123,7 @@ abstract class FirAbstractSessionFactory {
             }.configure()
             registerCommonComponentsAfterExtensionsAreConfigured()
 
-            val dependencyProviders = computeDependencyProviderList(moduleData, registerExtraComponents, createKotlinScopeProvider)
+            val dependencyProviders = computeDependencyProviderList(moduleData, extensionRegistrars, registerExtraComponents, createKotlinScopeProvider)
             val generatedSymbolsProvider = FirSwitchableExtensionDeclarationsSymbolProvider.createIfNeeded(this)
 
             val providers = createProviders(
@@ -152,6 +149,7 @@ abstract class FirAbstractSessionFactory {
 
     private fun FirSession.computeDependencyProviderList(
         moduleData: FirModuleData,
+        extensionRegistrars: List<FirExtensionRegistrar>,
         registerExtraComponents: (FirSession) -> Unit,
         createKotlinScopeProvider: () -> FirKotlinScopeProvider,
     ): List<FirSymbolProvider> {
@@ -160,7 +158,7 @@ abstract class FirAbstractSessionFactory {
                 moduleDataImpl.dependsOnDependencies.map {
                     val session = sessionProvider?.getSession(it) ?: return@map it
                     if (it.isCommon && session.kind == FirSession.Kind.Source && !it.isFromCommonArtefact) { // too much
-                        getOrCreateCommonArtefactModuleDataWithSession(it, session, registerExtraComponents, createKotlinScopeProvider)
+                        getOrCreateCommonArtefactModuleDataWithSession(it, session, extensionRegistrars, registerExtraComponents, createKotlinScopeProvider)
                     } else it
                 }
             )
@@ -179,6 +177,7 @@ abstract class FirAbstractSessionFactory {
     private fun getOrCreateCommonArtefactModuleDataWithSession(
         sourceModuleData: FirModuleData,
         sourceSession: FirSession,
+        extensionRegistrars: List<FirExtensionRegistrar>,
         registerExtraComponents: (FirSession) -> Unit,
         createKotlinScopeProvider: () -> FirKotlinScopeProvider,
     ): FirModuleData {
@@ -192,9 +191,13 @@ abstract class FirAbstractSessionFactory {
                 registerExtraComponents(this)
                 val kotlinScopeProvider = createKotlinScopeProvider.invoke()
                 register(FirKotlinScopeProvider::class, kotlinScopeProvider)
-                // instead of registerCommonComponentsAfterExtensionsAreConfigured()
-                register(FirFunctionTypeKindService::class, sourceSession.functionTypeService)
-                register(FirProvidedDeclarationsForMetadataService::class, FirProvidedDeclarationsForMetadataService.create(this))
+
+                FirSessionConfigurator(this).apply {
+                    for (extensionRegistrar in extensionRegistrars) {
+                        registerExtensions(extensionRegistrar.configure())
+                    }
+                }.configure()
+                registerCommonComponentsAfterExtensionsAreConfigured()
             }
         val commonArtefactModuleData = FirModuleDataImpl(
             Name.special("<common-from-${sourceModuleData.name.asStringStripSpecialMarkers()}>"),
@@ -213,7 +216,7 @@ abstract class FirAbstractSessionFactory {
                     sourceSession.kotlinScopeProvider,
                     { sourceSession.serializedMetadata?.serializedMetadata }
                 )
-            ) + sourceSession.computeDependencyProviderList(sourceModuleData, registerExtraComponents, createKotlinScopeProvider)
+            ) + sourceSession.computeDependencyProviderList(sourceModuleData, extensionRegistrars, registerExtraComponents, createKotlinScopeProvider)
         val symbolProvider = FirCachingCompositeSymbolProvider(commonArtefactSession, providers)
         commonArtefactSession.register(FirSymbolProvider::class, symbolProvider)
         commonArtefactSession.register(FirProvider::class, FirLibrarySessionProvider(symbolProvider))
