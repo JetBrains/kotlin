@@ -25,6 +25,9 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
+import org.jetbrains.kotlin.fir.serialization.FirProvidedDeclarationsForMetadataService
+import org.jetbrains.kotlin.fir.types.FirFunctionTypeKindService
+import org.jetbrains.kotlin.fir.types.functionTypeService
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ImportTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -189,7 +192,9 @@ abstract class FirAbstractSessionFactory {
                 registerExtraComponents(this)
                 val kotlinScopeProvider = createKotlinScopeProvider.invoke()
                 register(FirKotlinScopeProvider::class, kotlinScopeProvider)
-                registerCommonComponentsAfterExtensionsAreConfigured()
+                // instead of registerCommonComponentsAfterExtensionsAreConfigured()
+                register(FirFunctionTypeKindService::class, sourceSession.functionTypeService)
+                register(FirProvidedDeclarationsForMetadataService::class, FirProvidedDeclarationsForMetadataService.create(this))
             }
         val commonArtefactModuleData = FirModuleDataImpl(
             Name.special("<common-from-${sourceModuleData.name.asStringStripSpecialMarkers()}>"),
