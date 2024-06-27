@@ -33,7 +33,7 @@ public class FirWasmInvalidationPerFileTestGenerated extends AbstractFirWasmInva
 
   @Test
   public void testAllFilesPresentInInvalidation() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/incremental/invalidation"), Pattern.compile("^([^_](.+))$"), Pattern.compile("abstractClassWithJsExport|classWithJsExport|inlineFunctionAnnotations|interfaceWithJsExport|jsExportWithMultipleFiles|typeScriptExportsPerFile|typeScriptExportsPerModule|fileNameClash|jsCode|jsCodeWithConstString|jsModuleAnnotation|jsModuleAnnotationOnObjectWithUsage|jsName"), TargetBackend.WASM, false);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/incremental/invalidation"), Pattern.compile("^([^_](.+))$"), Pattern.compile("abstractClassWithJsExport|classWithJsExport|inlineFunctionAnnotations|interfaceWithJsExport|jsExportWithMultipleFiles|typeScriptExportsPerFile|typeScriptExportsPerModule|fileNameClash|jsCode|jsCodeWithConstString|jsModuleAnnotation|jsModuleAnnotationOnObjectWithUsage|jsName|fileNameCaseClash"), TargetBackend.WASM, false);
   }
 
   @Test

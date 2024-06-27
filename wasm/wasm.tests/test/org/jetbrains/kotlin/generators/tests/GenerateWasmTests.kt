@@ -67,6 +67,7 @@ fun main(args: Array<String>) {
                     "jsModuleAnnotation",
                     "jsModuleAnnotationOnObjectWithUsage",
                     "jsName",
+                    "fileNameCaseClash",
                 )
                 model(
                     "incremental/invalidation/",
