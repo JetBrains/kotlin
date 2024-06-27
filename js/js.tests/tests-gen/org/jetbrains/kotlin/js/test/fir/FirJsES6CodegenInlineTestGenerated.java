@@ -957,6 +957,12 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
     }
 
     @Test
+    @TestMetadata("kt69470.kt")
+    public void testKt69470() {
+      runTest("compiler/testData/codegen/boxInline/callableReference/kt69470.kt");
+    }
+
+    @Test
     @TestMetadata("propertyIntrinsic.kt")
     public void testPropertyIntrinsic() {
       runTest("compiler/testData/codegen/boxInline/callableReference/propertyIntrinsic.kt");
