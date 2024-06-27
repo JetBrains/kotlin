@@ -24,3 +24,10 @@ class TestModuleDecompilerJar : TestModuleDecompiler {
     override fun getAllPsiFilesFromLibrary(artifact: Path, project: Project): List<PsiFile> =
         LibraryUtils.getAllPsiFilesFromJar(artifact, project)
 }
+
+class TestModuleDecompilerDirectory : TestModuleDecompiler {
+    @OptIn(KaImplementationDetail::class)
+    override fun getAllPsiFilesFromLibrary(artifact: Path, project: Project): List<PsiFile> {
+        return LibraryUtils.getAllPsiFilesFromDirectory(artifact, project)
+    }
+}
