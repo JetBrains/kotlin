@@ -170,13 +170,13 @@ internal object FirCompileTimeConstantEvaluator {
         val function = functionCall.getOriginalFunction() as? FirSimpleFunction ?: return null
 
         val opr1 = evaluate(functionCall.explicitReceiver) ?: return null
-        opr1.evaluate(function)?.let {
+        opr1.evaluate(functionCall, function)?.let {
             return it.adjustType(functionCall.resolvedType)
         }
 
         val argument = functionCall.arguments.firstOrNull() ?: return null
         val opr2 = evaluate(argument) ?: return null
-        opr1.evaluate(function, opr2)?.let {
+        opr1.evaluate(functionCall, function, opr2)?.let {
             return it.adjustType(functionCall.resolvedType)
         }
         return null
@@ -221,7 +221,10 @@ internal object FirCompileTimeConstantEvaluator {
     }
 
     // Unary operators
-    private fun FirLiteralExpression.evaluate(function: FirSimpleFunction): FirLiteralExpression? {
+    private fun FirLiteralExpression.evaluate(
+        firFunctionCall: FirFunctionCall,
+        function: FirSimpleFunction,
+    ): FirLiteralExpression? {
         if (value == null) return null
         (value as? String)?.let { opr ->
             evalUnaryOp(
@@ -229,7 +232,7 @@ internal object FirCompileTimeConstantEvaluator {
                 kind.toCompileTimeType(),
                 opr
             )?.let {
-                return it.toConstantValueKind().toLiteralExpression(source, it)
+                return it.toConstantValueKind().toLiteralExpression(firFunctionCall.source, it)
             }
         }
         return kind.convertToNumber(value)?.let { opr ->
@@ -238,7 +241,7 @@ internal object FirCompileTimeConstantEvaluator {
                 kind.toCompileTimeType(),
                 opr
             )?.let {
-                it.toConstantValueKind().toLiteralExpression(source, it)
+                it.toConstantValueKind().toLiteralExpression(firFunctionCall.source, it)
             }
         }
     }
@@ -251,8 +254,9 @@ internal object FirCompileTimeConstantEvaluator {
 
     // Binary operators
     private fun FirLiteralExpression.evaluate(
+        firFunctionCall: FirFunctionCall,
         function: FirSimpleFunction,
-        other: FirLiteralExpression
+        other: FirLiteralExpression,
     ): FirLiteralExpression? {
         if (value == null || other.value == null) return null
         // NB: some utils accept very general types, and due to the way operation map works, we should up-cast rhs type.
@@ -270,7 +274,7 @@ internal object FirCompileTimeConstantEvaluator {
                     rightType,
                     opr2
                 )?.let {
-                    return it.toConstantValueKind().toLiteralExpression(source, it)
+                    return it.toConstantValueKind().toLiteralExpression(firFunctionCall.source, it)
                 }
             }
         }
@@ -283,7 +287,7 @@ internal object FirCompileTimeConstantEvaluator {
                     other.kind.toCompileTimeType(),
                     opr2
                 )?.let {
-                    it.toConstantValueKind().toLiteralExpression(source, it)
+                    it.toConstantValueKind().toLiteralExpression(firFunctionCall.source, it)
                 }
             }
         }
