@@ -1,0 +1,20 @@
+STEP 0:
+    dependencies: libA, libB, libC
+    added file: d.kt
+STEP 1:
+    dependencies: libA, libB, libC
+
+STEP 2..6:
+    dependencies: libA, libB, libC
+    updated imports <wasm>: d.kt
+STEP 7:
+    dependencies: libA, libB, libC
+    updated imports: d.kt
+STEP 8:
+    dependencies: libA, libB, libC
+STEP 9:
+    dependencies: libA, libB, libC
+    updated imports <wasm>: d.kt
+STEP 10..13:
+    dependencies: libA, libB, libC
+    updated imports: d.kt
