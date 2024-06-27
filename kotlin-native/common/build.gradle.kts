@@ -33,14 +33,15 @@ bitcode {
 kotlinNativeInterop {
     create("files") {
         pkg("org.jetbrains.kotlin.backend.konan.files")
-        linker("clang++")
+        // FIXME: ???
+        linker("/usr/bin/clang++")
         linkOutputs(bitcode.hostTarget.module("files").get().sourceSets.main.get().task.get())
         headers(layout.projectDirectory.files("src/files/headers/Files.h"))
     }
 
     create("env") {
         pkg("org.jetbrains.kotlin.backend.konan.env")
-        linker("clang++")
+        linker("/usr/bin/clang++")
         linkOutputs(bitcode.hostTarget.module("env").get().sourceSets.main.get().task.get())
         headers(layout.projectDirectory.files("src/env/headers/Env.h"))
     }
