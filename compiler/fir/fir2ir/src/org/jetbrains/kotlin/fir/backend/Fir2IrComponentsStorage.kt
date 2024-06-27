@@ -71,8 +71,5 @@ class Fir2IrComponentsStorage(
     override val manglers: Fir2IrComponents.Manglers = object : Fir2IrComponents.Manglers {
         override val irMangler: KotlinMangler.IrMangler
             get() = irMangler
-
-        override val firMangler: FirMangler
-            get() = commonMemberStorage.mangler
     }
 }

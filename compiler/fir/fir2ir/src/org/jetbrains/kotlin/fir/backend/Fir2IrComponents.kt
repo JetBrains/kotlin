@@ -79,6 +79,5 @@ interface Fir2IrComponents {
 
     interface Manglers {
         val irMangler: KotlinMangler.IrMangler
-        val firMangler: FirMangler
     }
 }

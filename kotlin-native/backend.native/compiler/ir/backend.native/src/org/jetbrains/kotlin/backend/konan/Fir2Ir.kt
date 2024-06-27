@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.*
-import org.jetbrains.kotlin.fir.backend.native.FirNativeKotlinMangler
 import org.jetbrains.kotlin.fir.backend.native.interop.isExternalObjCClassProperty
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
@@ -101,7 +100,6 @@ internal fun PhaseContext.fir2Ir(
             fir2IrConfiguration,
             IrGenerationExtension.getInstances(config.project),
             irMangler = KonanManglerIr,
-            firMangler = FirNativeKotlinMangler,
             visibilityConverter = Fir2IrVisibilityConverter.Default,
             kotlinBuiltIns = builtInsModule ?: DefaultBuiltIns.Instance,
             specialAnnotationsProvider = null,

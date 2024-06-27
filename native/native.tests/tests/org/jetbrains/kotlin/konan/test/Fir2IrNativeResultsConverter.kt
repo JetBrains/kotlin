@@ -10,8 +10,6 @@ import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.fir.backend.FirMangler
-import org.jetbrains.kotlin.fir.backend.native.FirNativeKotlinMangler
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.fir.pipeline.Fir2KlibMetadataSerializer
 import org.jetbrains.kotlin.ir.util.KotlinMangler
@@ -30,10 +28,6 @@ class Fir2IrNativeResultsConverter(testServices: TestServices) : AbstractFir2IrN
 
     override fun createIrMangler(): KotlinMangler.IrMangler {
         return KonanManglerIr
-    }
-
-    override fun createFirMangler(): FirMangler {
-        return FirNativeKotlinMangler
     }
 
     override fun resolveLibraries(module: TestModule, compilerConfiguration: CompilerConfiguration): List<KotlinResolvedLibrary> {
@@ -60,7 +54,6 @@ class Fir2IrNativeResultsConverter(testServices: TestServices) : AbstractFir2IrN
             diagnosticReporter = diagnosticReporter,
             descriptorMangler = null,
             irMangler = manglers.irMangler,
-            firMangler = manglers.firMangler,
             metadataSerializer = fir2KlibMetadataSerializer
         )
     }

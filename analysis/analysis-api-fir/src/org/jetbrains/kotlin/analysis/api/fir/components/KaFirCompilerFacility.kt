@@ -298,7 +298,6 @@ internal class KaFirCompilerFacility(
             fir2IrConfiguration,
             irGeneratorExtensions,
             JvmIrMangler,
-            FirJvmKotlinMangler,
             FirJvmVisibilityConverter,
             DefaultBuiltIns.Instance,
             ::JvmIrTypeSystemContext,

@@ -81,7 +81,6 @@ class ClassicFrontend2IrConverter(
             sourceFiles = emptyList(),
             descriptorMangler = conversionResult.symbolTable.signaturer!!.mangler,
             irMangler = JvmIrMangler,
-            firMangler = null,
         )
     }
 
@@ -127,7 +126,6 @@ class ClassicFrontend2IrConverter(
             hasErrors,
             descriptorMangler = (pluginContext.symbolTable as SymbolTable).signaturer!!.mangler,
             irMangler = JsManglerIr,
-            firMangler = null,
             metadataSerializer = metadataSerializer,
         )
     }
@@ -175,7 +173,6 @@ class ClassicFrontend2IrConverter(
             hasErrors,
             descriptorMangler = (pluginContext.symbolTable as SymbolTable).signaturer!!.mangler,
             irMangler = JsManglerIr,
-            firMangler = null,
             metadataSerializer = metadataSerializer,
         )
     }

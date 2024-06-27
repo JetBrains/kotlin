@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap
  *
  * See `/docs/fir/k2_kmp.md`
  */
-class Fir2IrCommonMemberStorage(val mangler: FirMangler) {
+class Fir2IrCommonMemberStorage {
     val lock: IrLock = IrLock()
 
     val classCache: MutableMap<FirRegularClass, IrClassSymbol> = mutableMapOf()

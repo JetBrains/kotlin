@@ -113,7 +113,6 @@ class ClassicNativeKlibBackendFacade(testServices: TestServices) : AbstractNativ
         module: TestModule,
         inputArtifact: IrBackendInput.NativeBackendInput,
     ): SerializerOutput<KotlinLibrary> {
-        testServices.assertions.assertTrue(inputArtifact.firMangler == null) { "unexpected Fir mangler" }
         testServices.assertions.assertTrue(inputArtifact.metadataSerializer == null) { "unexpected single-file metadata serializer" }
 
         val frontendOutput = testServices.dependencyProvider.getArtifact(module, FrontendKinds.ClassicFrontend)
