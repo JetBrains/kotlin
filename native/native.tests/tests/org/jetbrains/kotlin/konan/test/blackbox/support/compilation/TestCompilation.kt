@@ -63,7 +63,7 @@ abstract class BasicCompilation<A : TestCompilationArtifact>(
             doCompile()
     }
 
-    private fun ArgsBuilder.applyCommonArgs() {
+    protected open fun ArgsBuilder.applyCommonArgs() {
         add("-kotlin-home", home.dir.absolutePath)
         add("-target", targets.testTarget.name)
         optimizationMode.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
@@ -762,6 +762,26 @@ internal class TestBundleCompilation(
     override val binaryOptions = BinaryOptions.RuntimeAssertionsMode.chooseFor(cacheMode, optimizationMode, freeCompilerArgs.assertionsMode)
 
     private val partialLinkageConfig: UsedPartialLinkageConfig = settings.get()
+
+    override fun ArgsBuilder.applyCommonArgs() {
+        add("-kotlin-home", home.dir.absolutePath)
+        add("-target", targets.testTarget.name)
+        optimizationMode.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
+        if (freeCompilerArgs.assertionsMode.assertionsEnabledWith(optimizationMode))
+            add("-enable-assertions")
+
+        // Enable basic IR validation before all lowerings (IrValidationBeforeLoweringPhase)
+        // and after all lowerings (IrValidationAfterLoweringPhase).
+        add("-Xverify-ir=warning")
+
+        // Additionally, validate IR after each compilation phase
+        add("-Xphases-to-validate-after=all")
+
+        // We use dev distribution for tests as it provides a full set of testing utilities,
+        // which might not be available in user distribution.
+        add("-Xllvm-variant=dev")
+        addFlattened(binaryOptions.entries) { (name, value) -> listOf("-Xbinary=$name=$value") }
+    }
 
     override fun applySpecificArgs(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
         add(
