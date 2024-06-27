@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.enumWhenTracker
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.reportEnumUsageInWhen
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -47,7 +49,7 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
             val subjectType =
                 getSubjectType(session, whenExpression) ?: return ExhaustivenessStatus.NotExhaustive.NO_ELSE_BRANCH.reasons
             return buildList {
-                for (type in subjectType.unwrapIntersectionType()) {
+                for (type in subjectType.unwrapTypeParameterAndIntersectionTypes(session)) {
                     val checkers = getCheckers(type, session)
                     collectMissingCases(checkers, whenExpression, type, session)
                 }
@@ -62,10 +64,14 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
             return subjectType.fullyExpandedType(session).lowerBoundIfFlexible()
         }
 
-        private fun ConeKotlinType.unwrapIntersectionType(): Collection<ConeKotlinType> {
-            return (this as? ConeIntersectionType)?.intersectedTypes ?: listOf(this)
+        private fun ConeKotlinType.unwrapTypeParameterAndIntersectionTypes(session: FirSession): Collection<ConeKotlinType> {
+            return when {
+                this is ConeIntersectionType -> intersectedTypes
+                this is ConeTypeParameterType && session.languageVersionSettings.supportsFeature(LanguageFeature.ExhaustivenessChecksOnTypeParameterBounds)
+                    -> lookupTag.typeParameterSymbol.resolvedBounds.flatMap { it.coneType.unwrapTypeParameterAndIntersectionTypes(session) }
+                else -> listOf(this)
+            }
         }
-
 
         private fun getCheckers(
             subjectType: ConeKotlinType,
@@ -138,7 +144,7 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
 
         var status: ExhaustivenessStatus = ExhaustivenessStatus.NotExhaustive.NO_ELSE_BRANCH
 
-        val unwrappedIntersectionTypes = subjectType.unwrapIntersectionType()
+        val unwrappedIntersectionTypes = subjectType.unwrapTypeParameterAndIntersectionTypes(bodyResolveComponents.session)
 
         for (unwrappedSubjectType in unwrappedIntersectionTypes) {
             if (unwrappedSubjectType.toRegularClassSymbol(session)?.isExpect != true) {

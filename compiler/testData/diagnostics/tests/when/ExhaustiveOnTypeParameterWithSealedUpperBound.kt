@@ -1,3 +1,4 @@
+// LANGUAGE: +ExhaustivenessChecksOnTypeParameterBounds
 sealed class Bird
 
 class Penguin : Bird()
