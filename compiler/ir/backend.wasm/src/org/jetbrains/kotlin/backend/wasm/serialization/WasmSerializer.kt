@@ -549,10 +549,31 @@ class WasmSerializer(outputStream: OutputStream) {
         serialize(jsCodeSnippet.jsCode)
     }
 
-    private fun serialize(str: String) {
-        val bytes = str.toByteArray()
+
+    private fun serialize(bytes: ByteArray) {
         b.writeUInt32(bytes.size.toUInt())
         b.writeBytes(bytes)
+    }
+
+    private fun serialize(str: String) {
+        val chars = str.toCharArray()
+        if (chars.none { it.isSurrogate() }) {
+            withFlags(true) {
+                serialize(str.toByteArray())
+            }
+        } else {
+            val charsByteArray = ByteArray(chars.size * Char.SIZE_BYTES)
+            var index = 0
+            for (char in chars) {
+                val code = char.code
+                charsByteArray[index * Char.SIZE_BYTES] = (code and 0xFF).toByte()
+                charsByteArray[index * Char.SIZE_BYTES + 1] = (code ushr Byte.SIZE_BITS).toByte()
+                index++
+            }
+            withFlags(false) {
+                serialize(charsByteArray)
+            }
+        }
     }
 
     private fun serialize(int: Int) {
