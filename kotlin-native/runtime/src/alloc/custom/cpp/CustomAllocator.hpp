@@ -58,7 +58,7 @@ private:
 
     Heap& heap_;
     NextFitPage* nextFitPage_;
-    FixedBlockPage* fixedBlockPages_[FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE + 1];
+    FixedBlockPage* fixedBlockPages_[FixedBlockPage::MAX_BLOCK_SIZE + 1];
     ExtraObjectPage* extraObjectPage_;
     FinalizerQueue finalizerQueue_;
 };

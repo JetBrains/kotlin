@@ -10,9 +10,9 @@
 #include <cstdlib>
 #include <cinttypes>
 #include <cstring>
+#include <unistd.h>
 #include <new>
 
-#include "CustomAllocConstants.hpp"
 #include "CustomLogging.hpp"
 #include "ExtraObjectData.hpp"
 #include "ExtraObjectPage.hpp"
@@ -24,7 +24,6 @@
 #include "Memory.h"
 #include "FixedBlockPage.hpp"
 #include "GCApi.hpp"
-#include "TypeInfo.h"
 
 namespace kotlin::alloc {
 
@@ -96,9 +95,9 @@ ALWAYS_INLINE uint8_t* CustomAllocator::Allocate(uint64_t size) noexcept {
     RuntimeAssert(size, "CustomAllocator::Allocate cannot allocate 0 bytes");
     CustomAllocDebug("CustomAllocator::Allocate(%" PRIu64 ")", size);
     uint64_t cellCount = (size + sizeof(Cell) - 1) / sizeof(Cell);
-    if (cellCount <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE) {
+    if (cellCount <= FixedBlockPage::MAX_BLOCK_SIZE) {
         return AllocateInFixedBlockPage(cellCount);
-    } else if (cellCount > NEXT_FIT_PAGE_MAX_BLOCK_SIZE) {
+    } else if (cellCount > NextFitPage::maxBlockSize()) {
         return AllocateInSingleObjectPage(cellCount);
     } else {
         return AllocateInNextFitPage(cellCount);

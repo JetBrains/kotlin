@@ -6,7 +6,6 @@
 #include <cstdint>
 #include <random>
 
-#include "CustomAllocConstants.hpp"
 #include "CustomAllocator.hpp"
 #include "Memory.h"
 #include "gtest/gtest.h"
@@ -16,6 +15,8 @@
 namespace {
 
 using Heap = typename kotlin::alloc::Heap;
+using FixedBlockPage = typename kotlin::alloc::FixedBlockPage;
+using NextFitPage = typename kotlin::alloc::NextFitPage;
 using CustomAllocator = typename kotlin::alloc::CustomAllocator;
 
 inline constexpr int MIN_BLOCK_SIZE = 2;
@@ -37,8 +38,8 @@ TEST(CustomAllocTest, SmallAllocNonNull) {
 }
 
 TEST(CustomAllocTest, SmallAllocSameFixedBlockPage) {
-    const int N = FIXED_BLOCK_PAGE_CELL_COUNT / FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE;
-    for (int blocks = MIN_BLOCK_SIZE; blocks < FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE; ++blocks) {
+    const int N = FixedBlockPage::cellCount() / FixedBlockPage::MAX_BLOCK_SIZE;
+    for (int blocks = MIN_BLOCK_SIZE; blocks < FixedBlockPage::MAX_BLOCK_SIZE; ++blocks) {
         Heap heap;
         CustomAllocator ca(heap);
         TypeInfo fakeType = {.typeInfo_ = &fakeType, .instanceSize_ = 8 * blocks, .flags_ = 0};
@@ -46,7 +47,7 @@ TEST(CustomAllocTest, SmallAllocSameFixedBlockPage) {
         for (int i = 1; i < N; ++i) {
             uint8_t* obj = reinterpret_cast<uint8_t*>(ca.CreateObject(&fakeType));
             uint64_t dist = abs(obj - first);
-            EXPECT_TRUE(dist < FIXED_BLOCK_PAGE_SIZE);
+            EXPECT_TRUE(dist < kotlin::alloc::FixedBlockPage::SIZE);
         }
     }
 }
@@ -54,8 +55,8 @@ TEST(CustomAllocTest, SmallAllocSameFixedBlockPage) {
 TEST(CustomAllocTest, FixedBlockPageThreshold) {
     Heap heap;
     CustomAllocator ca(heap);
-    const int FROM = FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE - 10;
-    const int TO = FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE + 10;
+    const int FROM = FixedBlockPage::MAX_BLOCK_SIZE - 10;
+    const int TO = FixedBlockPage::MAX_BLOCK_SIZE + 10;
     for (int blocks = FROM; blocks <= TO; ++blocks) {
         TypeInfo fakeType = {.typeInfo_ = &fakeType, .instanceSize_ = 8 * blocks, .flags_ = 0};
         ca.CreateObject(&fakeType);
@@ -65,8 +66,9 @@ TEST(CustomAllocTest, FixedBlockPageThreshold) {
 TEST(CustomAllocTest, NextFitPageThreshold) {
     Heap heap;
     CustomAllocator ca(heap);
-    const int FROM = NEXT_FIT_PAGE_MAX_BLOCK_SIZE - 10;
-    const int TO = NEXT_FIT_PAGE_MAX_BLOCK_SIZE + 10;
+    const int MAX_BLOCK_SIZE = NextFitPage::maxBlockSize();
+    const int FROM = MAX_BLOCK_SIZE - 10;
+    const int TO = MAX_BLOCK_SIZE + 10;
     for (int blocks = FROM; blocks <= TO; ++blocks) {
         TypeInfo fakeType = {.typeInfo_ = &fakeType, .instanceSize_ = 8 * blocks, .flags_ = 0};
         ca.CreateObject(&fakeType);
@@ -82,7 +84,7 @@ TEST(CustomAllocTest, TwoAllocatorsDifferentPages) {
         uint8_t* obj1 = reinterpret_cast<uint8_t*>(ca1.CreateObject(&fakeType));
         uint8_t* obj2 = reinterpret_cast<uint8_t*>(ca2.CreateObject(&fakeType));
         uint64_t dist = abs(obj2 - obj1);
-        EXPECT_TRUE(dist >= FIXED_BLOCK_PAGE_SIZE);
+        EXPECT_TRUE(dist >= kotlin::alloc::FixedBlockPage::SIZE);
     }
 }
 

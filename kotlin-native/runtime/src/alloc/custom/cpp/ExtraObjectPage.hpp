@@ -10,6 +10,7 @@
 #include <cstddef>
 #include <cstdint>
 
+#include "Constants.hpp"
 #include "AnyPage.hpp"
 #include "AtomicStack.hpp"
 #include "CustomFinalizerProcessor.hpp"
@@ -21,6 +22,12 @@ namespace kotlin::alloc {
 
 class alignas(kPageAlignment) ExtraObjectPage : public AnyPage<ExtraObjectPage> {
 public:
+    static inline constexpr const size_t SIZE = 64 * KiB;
+
+    static inline constexpr int extraObjectCount() {
+        return (SIZE - sizeof(ExtraObjectPage)) / sizeof(ExtraObjectCell);
+    }
+
     using GCSweepScope = gc::GCHandle::GCSweepExtraObjectsScope;
 
     static GCSweepScope currentGCSweepScope(gc::GCHandle& handle) noexcept { return handle.sweepExtraObjects(); }
@@ -33,6 +40,20 @@ public:
     uint8_t* TryAllocate() noexcept;
 
     bool Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept;
+
+    template <typename F>
+    void TraverseAllocatedObjects(F process) noexcept(noexcept(process(std::declval<kotlin::mm::ExtraObjectData*>()))) {
+        ExtraObjectCell* end = cells_ + extraObjectCount();
+        std::atomic<ExtraObjectCell*>* nextFree = &nextFree_;
+        for (ExtraObjectCell* cell = cells_; cell < end; ++cell) {
+            // If the current cell is free, move on.
+            if (cell == nextFree->load(std::memory_order_relaxed)) {
+                nextFree = &cell->next_;
+                continue;
+            }
+            process(cell->extraObject());
+        }
+    }
 
 private:
     ExtraObjectPage() noexcept;

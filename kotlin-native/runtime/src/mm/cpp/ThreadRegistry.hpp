@@ -59,6 +59,8 @@ public:
         }
     }
 
+    void PublishAll() noexcept;
+
 private:
     friend class GlobalData;
 

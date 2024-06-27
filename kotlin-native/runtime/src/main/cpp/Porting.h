@@ -45,6 +45,9 @@ uint64_t getTimeMillis();
 uint64_t getTimeMicros();
 uint64_t getTimeNanos();
 
+// Endianness
+bool isLittleEndian();
+
 }  // namespace konan
 
 #endif  // RUNTIME_PORTING_H

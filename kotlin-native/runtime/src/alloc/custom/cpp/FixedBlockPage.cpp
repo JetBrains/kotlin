@@ -11,26 +11,25 @@
 #include <random>
 
 #include "CustomLogging.hpp"
-#include "CustomAllocConstants.hpp"
 #include "GCApi.hpp"
 
 namespace kotlin::alloc {
 
 FixedBlockPage* FixedBlockPage::Create(uint32_t blockSize) noexcept {
     CustomAllocInfo("FixedBlockPage::Create(%u)", blockSize);
-    RuntimeAssert(blockSize <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE, "blockSize too large for FixedBlockPage");
-    return new (SafeAlloc(FIXED_BLOCK_PAGE_SIZE)) FixedBlockPage(blockSize);
+    RuntimeAssert(blockSize <= MAX_BLOCK_SIZE, "blockSize too large for FixedBlockPage");
+    return new (SafeAlloc(SIZE)) FixedBlockPage(blockSize);
 }
 
 void FixedBlockPage::Destroy() noexcept {
-    Free(this, FIXED_BLOCK_PAGE_SIZE);
+    Free(this, SIZE);
 }
 
 FixedBlockPage::FixedBlockPage(uint32_t blockSize) noexcept : blockSize_(blockSize) {
     CustomAllocInfo("FixedBlockPage(%p)::FixedBlockPage(%u)", this, blockSize);
     nextFree_.first = 0;
-    nextFree_.last = FIXED_BLOCK_PAGE_CELL_COUNT / blockSize * blockSize;
-    end_ = FIXED_BLOCK_PAGE_CELL_COUNT / blockSize * blockSize;
+    nextFree_.last = cellCount() / blockSize * blockSize;
+    end_ = cellCount() / blockSize * blockSize;
 }
 
 ALWAYS_INLINE uint8_t* FixedBlockPage::TryAllocate(uint32_t blockSize) noexcept {
@@ -40,7 +39,7 @@ ALWAYS_INLINE uint8_t* FixedBlockPage::TryAllocate(uint32_t blockSize) noexcept 
         nextFree_.first += blockSize;
         return cells_[next].data;
     }
-    auto end = FIXED_BLOCK_PAGE_CELL_COUNT / blockSize * blockSize;
+    auto end = cellCount() / blockSize * blockSize;
     if (next >= end) {
         return nullptr;
     }
@@ -103,17 +102,9 @@ bool FixedBlockPage::Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQ
 std::vector<uint8_t*> FixedBlockPage::GetAllocatedBlocks() noexcept {
     std::vector<uint8_t*> allocated;
     CustomAllocInfo("FixedBlockPage(%p)::Sweep()", this);
-    FixedCellRange nextFree = nextFree_; // Accessing the previous free list structure.
-    for (uint32_t cell = 0 ; cell < end_ ; cell += blockSize_) {
-        for (; cell < nextFree.first ; cell += blockSize_) {
-            allocated.push_back(cells_[cell].data);
-        }
-        if (nextFree.last >= end_) {
-            break;
-        }
-        cell = nextFree.last;
-        nextFree = cells_[cell].nextFree;
-    }
+    TraverseAllocatedBlocks([&allocated](uint8_t* block) {
+        allocated.push_back(block);
+    });
     return allocated;
 }
 

@@ -46,6 +46,12 @@ ALWAYS_INLINE mm::ThreadData* mm::ThreadRegistry::CurrentThreadData() const noex
     return CurrentThreadDataNode()->Get();
 }
 
+void mm::ThreadRegistry::PublishAll() noexcept {
+    for (auto& thread : LockForIter()) {
+        thread.Publish();
+    }
+}
+
 mm::ThreadRegistry::ThreadRegistry() = default;
 mm::ThreadRegistry::~ThreadRegistry() = default;
 

@@ -10,6 +10,7 @@
 #include <cstdint>
 #include <vector>
 
+#include "Constants.hpp"
 #include "AtomicStack.hpp"
 #include "ExtraObjectPage.hpp"
 #include "GCStatistics.hpp"
@@ -32,6 +33,14 @@ struct alignas(8) FixedBlockCell {
 
 class alignas(kPageAlignment) FixedBlockPage : public AnyPage<FixedBlockPage> {
 public:
+    static inline constexpr const size_t SIZE = 256 * KiB;
+
+    static inline constexpr const int MAX_BLOCK_SIZE = 128;
+
+    static inline constexpr size_t cellCount() {
+        return (SIZE - sizeof(FixedBlockPage)) / sizeof(FixedBlockCell);
+    }
+
     using GCSweepScope = gc::GCHandle::GCSweepScope;
 
     static GCSweepScope currentGCSweepScope(gc::GCHandle& handle) noexcept { return handle.sweep(); }
@@ -46,6 +55,21 @@ public:
     void OnPageOverflow() noexcept;
 
     bool Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept;
+
+    template <typename F>
+    void TraverseAllocatedBlocks(F process) noexcept(noexcept(process(std::declval<uint8_t*>()))) {
+        FixedCellRange nextFree = nextFree_; // Accessing the previous free list structure.
+        for (uint32_t cell = 0 ; cell < end_ ; cell += blockSize_) {
+            for (; cell < nextFree.first ; cell += blockSize_) {
+                process(cells_[cell].data);
+            }
+            if (nextFree.last >= end_) {
+                break;
+            }
+            cell = nextFree.last;
+            nextFree = cells_[cell].nextFree;
+        }
+    }
 
     // Testing method
     std::vector<uint8_t*> GetAllocatedBlocks() noexcept;

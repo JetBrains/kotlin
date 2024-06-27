@@ -10,6 +10,7 @@
 #include <cstdint>
 #include <vector>
 
+#include "Constants.hpp"
 #include "AnyPage.hpp"
 #include "AtomicStack.hpp"
 #include "Cell.hpp"
@@ -20,6 +21,16 @@ namespace kotlin::alloc {
 
 class alignas(kPageAlignment) NextFitPage : public AnyPage<NextFitPage> {
 public:
+    static inline constexpr const size_t SIZE = 256 * KiB;
+
+    static inline constexpr int cellCount() {
+        return (SIZE - sizeof(NextFitPage)) / sizeof(Cell);
+    }
+
+    static inline constexpr int maxBlockSize() {
+        return cellCount() - 2;
+    }
+
     using GCSweepScope = gc::GCHandle::GCSweepScope;
 
     static GCSweepScope currentGCSweepScope(gc::GCHandle& handle) noexcept { return handle.sweep(); }
@@ -32,6 +43,17 @@ public:
     uint8_t* TryAllocate(uint32_t blockSize) noexcept;
 
     bool Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept;
+
+    // TODO: Do we need this, or should we implement Dump on top of GetAllocatedBlocks()?
+    template <typename F>
+    void TraverseAllocatedBlocks(F process) noexcept(noexcept(process(std::declval<uint8_t*>()))) {
+        Cell* end = cells_ + cellCount();
+        for (Cell* block = cells_ + 1; block != end; block = block->Next()) {
+            if (block->isAllocated_) {
+                process(block->data_);
+            }
+        }
+    }
 
     // Testing method
     bool CheckInvariants() noexcept;

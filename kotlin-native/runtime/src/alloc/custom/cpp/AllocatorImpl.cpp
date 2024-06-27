@@ -51,6 +51,14 @@ void alloc::Allocator::clearForTests() noexcept {
     impl_->heap().ClearForTests();
 }
 
+void alloc::Allocator::TraverseAllocatedObjects(std::function<void(ObjHeader*)> fn) noexcept {
+    impl_->heap().TraverseAllocatedObjects(fn);
+}
+
+void alloc::Allocator::TraverseAllocatedExtraObjects(std::function<void(mm::ExtraObjectData*)> fn) noexcept {
+    impl_->heap().TraverseAllocatedExtraObjects(fn);
+}
+
 void alloc::initObjectPool() noexcept {}
 
 void alloc::compactObjectPoolInCurrentThread() noexcept {}

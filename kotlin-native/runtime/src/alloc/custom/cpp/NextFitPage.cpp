@@ -10,24 +10,23 @@
 #include <vector>
 
 #include "CustomLogging.hpp"
-#include "CustomAllocConstants.hpp"
 #include "GCApi.hpp"
 
 namespace kotlin::alloc {
 
 NextFitPage* NextFitPage::Create(uint32_t cellCount) noexcept {
     CustomAllocInfo("NextFitPage::Create(%u)", cellCount);
-    RuntimeAssert(cellCount < NEXT_FIT_PAGE_CELL_COUNT, "cellCount is too large for NextFitPage");
-    return new (SafeAlloc(NEXT_FIT_PAGE_SIZE)) NextFitPage(cellCount);
+    RuntimeAssert(cellCount < NextFitPage::cellCount(), "cellCount is too large for NextFitPage");
+    return new (SafeAlloc(SIZE)) NextFitPage(cellCount);
 }
 
 void NextFitPage::Destroy() noexcept {
-    Free(this, NEXT_FIT_PAGE_SIZE);
+    Free(this, SIZE);
 }
 
 NextFitPage::NextFitPage(uint32_t cellCount) noexcept : curBlock_(cells_) {
     cells_[0] = Cell(0); // Size 0 ensures any actual use would break
-    cells_[1] = Cell(NEXT_FIT_PAGE_CELL_COUNT - 1);
+    cells_[1] = Cell(NextFitPage::cellCount() - 1);
 }
 
 ALWAYS_INLINE uint8_t* NextFitPage::TryAllocate(uint32_t blockSize) noexcept {
@@ -47,7 +46,7 @@ ALWAYS_INLINE uint8_t* NextFitPage::TryAllocate(uint32_t blockSize) noexcept {
 
 bool NextFitPage::Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept {
     CustomAllocDebug("NextFitPage@%p::Sweep()", this);
-    Cell* end = cells_ + NEXT_FIT_PAGE_CELL_COUNT;
+    Cell* end = cells_ + NextFitPage::cellCount();
     std::size_t aliveBytes = 0;
     for (Cell* block = cells_ + 1; block != end; block = block->Next()) {
         if (block->isAllocated_) {
@@ -82,7 +81,7 @@ bool NextFitPage::Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueu
 NO_INLINE void NextFitPage::UpdateCurBlock(uint32_t cellsNeeded) noexcept {
     CustomAllocDebug("NextFitPage@%p::UpdateCurBlock(%u)", this, cellsNeeded);
     if (curBlock_ == cells_) curBlock_ = cells_ + 1; // only used as a starting point
-    Cell* end = cells_ + NEXT_FIT_PAGE_CELL_COUNT;
+    Cell* end = cells_ + NextFitPage::cellCount();
     Cell* maxBlock = cells_; // size 0 block
     for (Cell* block = curBlock_; block != end; block = block->Next()) {
         if (!block->isAllocated_ && block->size_ > maxBlock->size_) {
@@ -107,28 +106,25 @@ NO_INLINE void NextFitPage::UpdateCurBlock(uint32_t cellsNeeded) noexcept {
 }
 
 bool NextFitPage::CheckInvariants() noexcept {
-    if (curBlock_ < cells_ || curBlock_ >= cells_ + NEXT_FIT_PAGE_CELL_COUNT) return false;
+    if (curBlock_ < cells_ || curBlock_ >= cells_ + cellCount()) return false;
     for (Cell* cur = cells_ + 1;; cur = cur->Next()) {
         if (cur->Next() <= cur) return false;
-        if (cur->Next() > cells_ + NEXT_FIT_PAGE_CELL_COUNT) return false;
-        if (cur->Next() == cells_ + NEXT_FIT_PAGE_CELL_COUNT) return true;
+        if (cur->Next() > cells_ + NextFitPage::cellCount()) return false;
+        if (cur->Next() == cells_ + NextFitPage::cellCount()) return true;
     }
 }
 
 std::vector<uint8_t*> NextFitPage::GetAllocatedBlocks() noexcept {
     std::vector<uint8_t*> allocated;
-    Cell* end = cells_ + NEXT_FIT_PAGE_CELL_COUNT;
-    for (Cell* block = cells_ + 1; block != end; block = block->Next()) {
-        if (block->isAllocated_) {
-            allocated.push_back(block->data_);
-        }
-    }
+    TraverseAllocatedBlocks([&allocated](uint8_t* block) {
+        allocated.push_back(block);
+    });
     return allocated;
 }
 
 std::size_t NextFitPage::GetAllocatedSizeBytes() noexcept {
     std::size_t allocatedBytes = 0;
-    Cell* end = cells_ + NEXT_FIT_PAGE_CELL_COUNT;
+    Cell* end = cells_ + NextFitPage::cellCount();
     for (Cell* block = cells_ + 1; block != end; block = block->Next()) {
         if (block->isAllocated_) {
             allocatedBytes += block->size_ * sizeof(Cell);
