@@ -238,6 +238,18 @@ public class FirIdeNormalAnalysisSourceModuleExpectedExpressionTypeTestGenerated
   }
 
   @Test
+  @TestMetadata("lambdaReturnToExplicitLabel.kt")
+  public void testLambdaReturnToExplicitLabel() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/lambdaReturnToExplicitLabel.kt");
+  }
+
+  @Test
+  @TestMetadata("lambdaReturnToImplicitLabel.kt")
+  public void testLambdaReturnToImplicitLabel() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/lambdaReturnToImplicitLabel.kt");
+  }
+
+  @Test
   @TestMetadata("lambdaWithExplicitTypeFromVariable.kt")
   public void testLambdaWithExplicitTypeFromVariable() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/lambdaWithExplicitTypeFromVariable.kt");

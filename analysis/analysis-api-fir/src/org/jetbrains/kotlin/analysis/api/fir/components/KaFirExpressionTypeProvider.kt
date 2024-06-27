@@ -244,7 +244,7 @@ internal class KaFirExpressionTypeProvider(
                     is FirNamedArgumentExpression, is FirSpreadArgumentExpression ->
                         arg.psi == argumentExpression.parent
                     else ->
-                        arg.psi == argumentExpression
+                        arg.psi == argumentExpression.unwrap()
                 }
             }?.value ?: return null
         return if (firParameterForExpression.isVararg)
