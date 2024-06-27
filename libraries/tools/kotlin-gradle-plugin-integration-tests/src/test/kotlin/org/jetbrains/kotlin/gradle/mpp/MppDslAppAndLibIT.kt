@@ -161,8 +161,7 @@ class MppDslAppAndLibIT : KGPBaseTest() {
                     assertFileExists(resolve("com/example/app/Jdk8ApiUsageKt.class"))
                 }
 
-                val nativeExeName = if (isWindows) "main.exe" else "main.kexe"
-                assertFileInProjectExists("build/bin/linux64/mainDebugExecutable/$nativeExeName")
+                assertFileInProjectExists("build/bin/linux64/mainDebugExecutable/main.kexe")
 
                 // Check that linker options were correctly passed to the K/N compiler.
                 extractNativeTasksCommandLineArgumentsFromOutput(":linkMainDebugExecutableLinux64") {
