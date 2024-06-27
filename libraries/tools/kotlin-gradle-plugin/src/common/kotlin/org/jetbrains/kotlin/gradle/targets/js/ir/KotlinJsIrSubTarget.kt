@@ -69,7 +69,6 @@ abstract class KotlinJsIrSubTarget(
     }
 
     internal open fun configure() {
-        configureTests()
         target.compilations.all { compilation ->
             compilation.compileTaskProvider.configure { task ->
                 task.compilerOptions {
@@ -132,6 +131,8 @@ abstract class KotlinJsIrSubTarget(
                 }
             }
         }
+
+        configureTests()
     }
 
     private val produceBinary: Unit by lazy {
