@@ -193,7 +193,9 @@ static void injectToRuntime();
   return [self retain];
 }
 
+// TODO: KT-69636 - obtain the most appropriate wrapper type and replace self with the instance of it
 - (instancetype)initWithExternalRCRef:(uintptr_t)ref {
+
     kotlin::CalledFromNativeGuard guard;
 
     RuntimeAssert(kotlin::compiler::swiftExport(), "Must be used in Swift Export only");
@@ -214,7 +216,11 @@ static void injectToRuntime();
     }
 
     // Kotlin object did have an associated object attached.
-    RuntimeAssert([old class] == [self class], "Object %p had associated object of type %p but we try to init with %p", obj, [old class], [self class]);
+    RuntimeAssert(
+        [[old class] isSubclassOfClass:[self class]],
+        "Object %p had associated object of type %s but we try to init with %s",
+        obj, class_getName([old class]), class_getName([self class])
+    );
 
     // Make self point to that object.
     KotlinBase* retiredSelf = self;
