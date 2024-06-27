@@ -96,7 +96,7 @@ class ResultTypeResolver(
     ): KotlinTypeMarker? = with(c) {
         // If we have no proper hard constraints and a soft constraint that doesn't lead to a contradiction, use it.
         variableWithConstraints.softConstraint?.let { softConstraint ->
-            if (variableWithConstraints.constraints.none { c -> c.isProperArgumentConstraint { isProperTypeForFixation(it) } } &&
+            if (variableWithConstraints.hasNoProperConstraints { isProperTypeForFixation(it) } &&
                 !createsContradiction(softConstraint.type, variableWithConstraints)
             ) {
                 return softConstraint.type
@@ -139,11 +139,7 @@ class ResultTypeResolver(
             resultTypeFromEqualConstraint == null -> resultTypeFromDirection
             resultTypeFromDirection == null -> resultTypeFromEqualConstraint
             !resultTypeFromDirection.typeConstructor().isNothingConstructor() &&
-                    AbstractTypeChecker.isSubtypeOf(
-                        c,
-                        resultTypeFromDirection,
-                        resultTypeFromEqualConstraint
-                    ) -> resultTypeFromDirection
+                    AbstractTypeChecker.isSubtypeOf(c, resultTypeFromDirection, resultTypeFromEqualConstraint) -> resultTypeFromDirection
             else -> resultTypeFromEqualConstraint
         }
     }

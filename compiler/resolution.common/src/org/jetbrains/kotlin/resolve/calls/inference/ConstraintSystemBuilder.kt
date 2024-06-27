@@ -94,31 +94,15 @@ private fun ConstraintSystemBuilder.addConstraintIfCompatible(
     upperType: KotlinTypeMarker,
     position: ConstraintPosition,
     kind: ConstraintKind
-): Boolean {
-    if (hasContradiction) return false
-    val isSoft = position is LastStatementInBlockWithExpectedUnitType
-
-    var leadsToContradiction = false
-
-    runTransaction {
+): Boolean = runTransaction {
+    if (!hasContradiction) {
         when (kind) {
             ConstraintKind.LOWER -> addSubtypeConstraint(lowerType, upperType, position)
             ConstraintKind.UPPER -> addSubtypeConstraint(upperType, lowerType, position)
-            // Even if isSoft == true, we want to try adding a hard constraint in the transaction
-            // to determine if it would lead to a contradiction.
-            // If yes, we don't add a constraint at all.
-            // If no, we roll back the transaction and add it as a soft constraint.
             ConstraintKind.EQUALITY -> addEqualityConstraint(lowerType, upperType, position)
         }
-        leadsToContradiction = hasContradiction
-        !leadsToContradiction && !isSoft
     }
-
-    if (!leadsToContradiction && isSoft) {
-        addEqualityConstraint(lowerType, upperType, position)
-    }
-
-    return !leadsToContradiction
+    !hasContradiction
 }
 
 fun ConstraintSystemBuilder.isSubtypeConstraintCompatible(

@@ -208,7 +208,7 @@ class VariableFixationFinder(
 
     private fun Context.variableHasOnlySoftConstraints(variable: TypeConstructorMarker): Boolean {
         val variableWithConstraints = notFixedTypeVariables[variable] ?: return false
-        return variableWithConstraints.constraints.none { isProperArgumentConstraint(it) } && variableWithConstraints.softConstraint != null
+        return variableWithConstraints.hasNoProperConstraints { isProperType(it) } && variableWithConstraints.softConstraint != null
     }
 
     private fun Context.isProperArgumentConstraint(c: Constraint): Boolean {
@@ -266,6 +266,10 @@ inline fun Constraint.isProperArgumentConstraint(isProperType: (KotlinTypeMarker
     return isProperType(type)
             && position.initialConstraint.position !is DeclaredUpperBoundConstraintPosition<*>
             && !isNullabilityConstraint
+}
+
+inline fun VariableWithConstraints.hasNoProperConstraints(isProperType: (KotlinTypeMarker) -> Boolean): Boolean {
+    return constraints.none { c -> c.isProperArgumentConstraint(isProperType) }
 }
 
 /**
