@@ -60,8 +60,8 @@ if (libclangextIsEnabled) {
             "__ZN4llvm3omp33getOpenMPContextTraitPropertyNameENS0_13TraitPropertyENS_9StringRefE",
     )
     ldflags.addAll(
-            listOf("-Wl,--no-demangle", "-Wl,-search_paths_first", "-Wl,-headerpad_max_install_names", "-Wl,-U,_futimens") +
-                    unnecessarySymbols.map { "-Wl,-U,$it" }
+            listOf("-search_paths_first", "-headerpad_max_install_names", "-U", "_futimens") +
+                    unnecessarySymbols.flatMap { listOf("-U", it) }
     )
 
     val llvmLibs = listOf(
@@ -114,11 +114,25 @@ native {
                          sourceSets["main-cpp"]!!.transform(".cpp" to ".$obj"))
 
     target(solib("clangstubs"), *objSet) {
-        tool(*hostPlatform.clangForJni.clangCXX_WithXcode16Hacks(layout.buildDirectory.dir("3").get().asFile,"").toTypedArray())
-        flags(
-            "-shared",
-            "-o", ruleOut(), *ruleInAll(),
-            *ldflags.toTypedArray())
+        if (HostManager.hostIsMac) {
+            tool(
+                *hostPlatform.linker.finalLinkCommands(
+                    objectFiles = ruleInAll().toList(),
+                    executable = ruleOut(),
+                    libraries = emptyList(),
+                    linkerArgs = ldflags,
+                    optimize = false,
+                    debug = false,
+                    kind = LinkerOutputKind.DYNAMIC_LIBRARY,
+                    outputDsymBundle = layout.buildDirectory.dir("5").get().asFile.path,
+                    mimallocEnabled = false,
+                )[0].argsWithExecutable.toTypedArray()
+            )
+        } else {
+            tool(*hostPlatform.clangForJni.clangCXX("").toTypedArray())
+            flags("-shared", "-o", ruleOut(), *ruleInAll(),
+                    *ldflags.toTypedArray())
+        }
     }
 }
 
