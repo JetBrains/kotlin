@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.candidate
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.processPostponedAtoms
 import org.jetbrains.kotlin.fir.resolve.initialTypeOfCandidate
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer
@@ -174,7 +175,7 @@ class FirDelegatedPropertyInferenceSession(
                 // Reversed here bc we want top-most call to avoid exponential visit
                 val containingCandidateForLambda = notCompletedCalls.asReversed().first {
                     var found = false
-                    it.expression.processPostponedAtomsInOrder { postponedAtom ->
+                    it.processPostponedAtoms { postponedAtom ->
                         found = found || postponedAtom == lambdaAtom
                     }
                     found
