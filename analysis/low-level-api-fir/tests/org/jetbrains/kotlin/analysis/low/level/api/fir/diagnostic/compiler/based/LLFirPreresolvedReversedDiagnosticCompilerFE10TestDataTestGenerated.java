@@ -40025,6 +40025,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("conversionInLastStatementOfWhenBranch.kt")
+      public void testConversionInLastStatementOfWhenBranch() {
+        runTest("compiler/testData/diagnostics/tests/suspendConversion/conversionInLastStatementOfWhenBranch.kt");
+      }
+
+      @Test
       @TestMetadata("implicitInvoke.kt")
       public void testImplicitInvoke() {
         runTest("compiler/testData/diagnostics/tests/suspendConversion/implicitInvoke.kt");
