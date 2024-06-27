@@ -8,8 +8,12 @@ rootProject.name = "build-settings-logic"
 
 pluginManagement {
     repositories {
-        mavenCentral()
-        gradlePluginPortal()
+        maven("https://cache-redirector.jetbrains.com/repo.maven.apache.org/maven2") {
+            name = "MavenCentral-JBCache"
+        }
+        maven("https://cache-redirector.jetbrains.com/plugins.gradle.org/m2") {
+            name = "GradlePluginPortal-JBCache"
+        }
     }
 }
 
@@ -17,8 +21,12 @@ pluginManagement {
 dependencyResolutionManagement {
     repositoriesMode = PREFER_SETTINGS
     repositories {
-        mavenCentral()
-        gradlePluginPortal()
+        maven("https://cache-redirector.jetbrains.com/repo.maven.apache.org/maven2") {
+            name = "MavenCentral-JBCache"
+        }
+        maven("https://cache-redirector.jetbrains.com/plugins.gradle.org/m2") {
+            name = "GradlePluginPortal-JBCache"
+        }
     }
 
     versionCatalogs {
