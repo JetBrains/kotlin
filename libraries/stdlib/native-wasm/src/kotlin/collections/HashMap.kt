@@ -5,10 +5,6 @@
 
 package kotlin.collections
 
-import kotlin.native.concurrent.isFrozen
-import kotlin.native.FreezingIsDeprecated
-
-@OptIn(FreezingIsDeprecated::class)
 public actual class HashMap<K, V> private constructor(
     // keys in insert order
     private var keysArray: Array<K>,
@@ -165,8 +161,7 @@ public actual class HashMap<K, V> private constructor(
         val cur = keysView
         return if (cur == null) {
             val new = HashMapKeys(this)
-            if (!isFrozen)
-                keysView = new
+            keysView = new
             new
         } else cur
     }
@@ -175,8 +170,7 @@ public actual class HashMap<K, V> private constructor(
         val cur = valuesView
         return if (cur == null) {
             val new = HashMapValues(this)
-            if (!isFrozen)
-                valuesView = new
+            valuesView = new
             new
         } else cur
     }
@@ -185,8 +179,7 @@ public actual class HashMap<K, V> private constructor(
         val cur = entriesView
         return if (cur == null) {
             val new = HashMapEntrySet(this)
-            if (!isFrozen)
-                entriesView = new
+            entriesView = new
             new
         } else cur
     }

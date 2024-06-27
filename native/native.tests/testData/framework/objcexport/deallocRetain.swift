@@ -101,9 +101,7 @@ class DeallocRetainTests : SimpleTestProvider {
 
 #if !NOOP_GC
         test("Test1", test1)
-        if (DeallocRetainKt.isExperimentalMM()) {
-            test("Test2", test2)
-        }
+        test("Test2", test2)
 #endif
     }
 }

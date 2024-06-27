@@ -20,10 +20,6 @@ NO_INLINE void RunFreezeHooksImpl(ObjHeader* object, const TypeInfo* type) noexc
         g_hookOverrideForTesting(object);
         return;
     }
-    // TODO: Consider some global registration.
-    if (type == theWorkerBoundReferenceTypeInfo) {
-        WorkerBoundReferenceFreezeHook(object);
-    }
 }
 
 } // namespace

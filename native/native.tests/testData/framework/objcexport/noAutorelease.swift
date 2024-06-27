@@ -118,11 +118,9 @@ private struct TestFlags {
     var checkAutorelease: Bool = true
 
     // When Kotlin refers to a Swift object which refers to a Kotlin object, to reclaim the latter
-    // we have to run the GC twice if experimental MM is enabled:
+    // we have to run the GC twice:
     // first GC finds the Kotlin wrapper of the Swift object and releases it during the sweep phase.
     // The second GC is then able to reclaim the Kotlin object.
-    // This behaviour is different from the legacy MM, which calls objc_release right in the middle of the GC,
-    // so is able to process its outcome during the same GC.
     var runGCTwice: Bool = false
 }
 

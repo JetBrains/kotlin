@@ -41,7 +41,6 @@ extern "C" {
 
 RUNTIME_NORETURN void ThrowWorkerAlreadyTerminated();
 RUNTIME_NORETURN void ThrowWrongWorkerOrAlreadyTerminated();
-RUNTIME_NORETURN void ThrowCannotTransferOwnership();
 RUNTIME_NORETURN void ThrowFutureInvalidState();
 OBJ_GETTER(WorkerLaunchpad, KRef);
 
@@ -219,7 +218,6 @@ KNativePtr transfer(ObjHolder* holder, KInt mode) {
   void* result = CreateStablePointer(holder->obj());
   if (!ClearSubgraphReferences(holder->obj(), mode == CHECKED)) {
     DisposeStablePointer(result);
-    ThrowCannotTransferOwnership();
   }
   holder->clear();
   return result;

@@ -34,10 +34,7 @@ public class InvalidMutabilityException(message: String) : RuntimeException(mess
  * @see ensureNeverFrozen
  */
 @FreezingIsDeprecated
-public actual fun <T> T.freeze(): T {
-    freezeInternal(this)
-    return this
-}
+public fun <T> T.freeze(): T = this
 
 /**
  * Checks if given object is null or frozen or permanent (i.e. instantiated at compile-time).
@@ -45,8 +42,8 @@ public actual fun <T> T.freeze(): T {
  * @return true if given object is null or frozen or permanent
  */
 @FreezingIsDeprecated
-public actual val Any?.isFrozen: Boolean
-    get() = isFrozenInternal(this)
+public val Any?.isFrozen: Boolean
+    get() = false
 
 /**
  * This function ensures that if we see such an object during freezing attempt - freeze fails and
@@ -55,6 +52,5 @@ public actual val Any?.isFrozen: Boolean
  * @throws FreezingException thrown immediately if this object is already frozen
  * @see freeze
  */
-@GCUnsafeCall("Kotlin_Worker_ensureNeverFrozen")
 @FreezingIsDeprecated
-public external fun Any.ensureNeverFrozen()
+public fun Any.ensureNeverFrozen() {}

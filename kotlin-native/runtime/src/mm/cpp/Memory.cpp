@@ -552,8 +552,6 @@ extern "C" RUNTIME_NOTHROW OBJ_GETTER(AdoptStablePointer, void* pointer) {
 extern "C" void MutationCheck(ObjHeader* obj) {
     if (obj->local()) return;
     if (!isPermanentOrFrozen(obj)) return;
-
-    ThrowInvalidMutabilityException(obj);
 }
 
 extern "C" RUNTIME_NOTHROW void CheckLifetimesConstraint(ObjHeader* obj, ObjHeader* pointee) {
@@ -564,15 +562,9 @@ extern "C" RUNTIME_NOTHROW void CheckLifetimesConstraint(ObjHeader* obj, ObjHead
 }
 
 extern "C" void FreezeSubgraph(ObjHeader* obj) {
-    if (auto* blocker = mm::FreezeSubgraph(obj)) {
-        ThrowFreezingException(obj, blocker);
-    }
 }
 
 extern "C" void EnsureNeverFrozen(ObjHeader* obj) {
-    if (!mm::EnsureNeverFrozen(obj)) {
-        ThrowFreezingException(obj, obj);
-    }
 }
 
 extern "C" void CheckGlobalsAccessible() {

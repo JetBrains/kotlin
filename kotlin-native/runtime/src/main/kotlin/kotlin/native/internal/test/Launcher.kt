@@ -41,12 +41,11 @@ public fun main(args: Array<String>) {
     }
 }
 
-@OptIn(FreezingIsDeprecated::class)
 @ExperimentalNativeApi
 @ObsoleteWorkersApi
 public fun worker(args: Array<String>) {
     val worker = Worker.start()
-    val exitCode = worker.execute(TransferMode.SAFE, { args.freeze() }) {
+    val exitCode = worker.execute(TransferMode.SAFE, { args }) {
         it -> testLauncherEntryPoint(it)
     }.result
     worker.requestTermination().result

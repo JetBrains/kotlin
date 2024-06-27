@@ -10,37 +10,20 @@ import kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.internal.*
 import kotlinx.cinterop.*
 
-@GCUnsafeCall("Kotlin_Any_share")
-external private fun Any.share()
-
 @GCUnsafeCall("Kotlin_CPointer_CopyMemory")
 external private fun CopyMemory(to: COpaquePointer?, from: COpaquePointer?, count: Int)
-
-@GCUnsafeCall("ReadHeapRefNoLock")
-internal external fun readHeapRefNoLock(where: Any, index: Int): Any?
 
 /**
  * Mutable concurrently accessible data buffer. Could be accessed from several workers simultaneously.
  */
-@Frozen
 @NoReorderFields
 @FreezingIsDeprecated
 public class MutableData constructor(capacity: Int = 16) {
     init {
         if (capacity <= 0) throw IllegalArgumentException()
-        // Instance of MutableData is shared.
-        share()
     }
 
-    private var buffer_ = ByteArray(capacity).apply { share() }
-    private var buffer: ByteArray
-        @OptIn(ExperimentalNativeApi::class)
-        get() =
-            when (kotlin.native.Platform.memoryModel) {
-                kotlin.native.MemoryModel.EXPERIMENTAL -> buffer_
-                else -> readHeapRefNoLock(this, 0) as ByteArray
-            }
-        set(value) { buffer_ = value}
+    private var buffer = ByteArray(capacity)
     private var size_ = 0
     private val lock = Lock()
 
@@ -51,7 +34,6 @@ public class MutableData constructor(capacity: Int = 16) {
             val actualSize = maxOf(buffer.size * 3 / 2 + 1, newSize)
             val newBuffer = ByteArray(actualSize)
             buffer.copyInto(newBuffer, startIndex = 0, endIndex = size)
-            newBuffer.share()
             buffer = newBuffer
         }
         val position = size
