@@ -344,18 +344,6 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
         return LlvmCallable(functionType, returnsObjectType, function, attributesCopier)
     }
 
-    private fun importGlobal(name: String, otherModule: LLVMModuleRef): LLVMValueRef {
-        if (LLVMGetNamedGlobal(module, name) != null) {
-            throw IllegalArgumentException("global $name already exists")
-        }
-
-        val externalGlobal = LLVMGetNamedGlobal(otherModule, name)!!
-        val globalType = getGlobalType(externalGlobal)
-        val global = LLVMAddGlobal(module, globalType, name)!!
-
-        return global
-    }
-
     private fun importMemset(): LlvmCallable {
         val functionType = functionType(voidType, false, int8PtrType, int8Type, int32Type, int1Type)
         return llvmIntrinsic(
@@ -447,10 +435,6 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     val addTLSRecord = importRtFunction("AddTLSRecord")
     val lookupTLS = importRtFunction("LookupTLS")
     val initRuntimeIfNeeded = importRtFunction("Kotlin_initRuntimeIfNeeded")
-    val mutationCheck = importRtFunction("MutationCheck")
-    val checkLifetimesConstraint = importRtFunction("CheckLifetimesConstraint")
-    val freezeSubgraph = importRtFunction("FreezeSubgraph")
-    val checkGlobalsAccessible = importRtFunction("CheckGlobalsAccessible")
     val Kotlin_getExceptionObject = importRtFunction("Kotlin_getExceptionObject", true)
 
     val kRefSharedHolderInitLocal = importRtFunction("KRefSharedHolder_initLocal")

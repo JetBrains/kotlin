@@ -1206,9 +1206,6 @@ private class InteropTransformer(
                         builder.irConvertInteger(source, target, valueToConvert)
                     }
                 }
-                IntrinsicType.INTEROP_MEMORY_COPY -> {
-                    TODO("So far unsupported")
-                }
                 IntrinsicType.WORKER_EXECUTE -> {
                     val irCallableReference = unwrapStaticFunctionArgument(expression.getValueArgument(2)!!)
 

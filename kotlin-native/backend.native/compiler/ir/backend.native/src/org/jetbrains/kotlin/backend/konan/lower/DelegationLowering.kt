@@ -82,7 +82,6 @@ internal class PropertyDelegationLowering(val generationState: NativeGenerationS
                 ).apply {
                     parent = irFile
                     annotations += buildSimpleAnnotation(context.irBuiltIns, startOffset, endOffset, context.ir.symbols.eagerInitialization.owner)
-                    annotations += buildSimpleAnnotation(context.irBuiltIns, startOffset, endOffset, context.ir.symbols.sharedImmutable.owner)
                     initializer = value
                 }
 

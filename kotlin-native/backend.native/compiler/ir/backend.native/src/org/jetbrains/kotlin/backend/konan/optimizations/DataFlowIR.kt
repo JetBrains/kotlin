@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.implementedInterfaces
 import org.jetbrains.kotlin.backend.konan.ir.isAbstract
 import org.jetbrains.kotlin.backend.konan.ir.isBuiltInOperator
-import org.jetbrains.kotlin.backend.konan.ir.isFrozen
 import org.jetbrains.kotlin.backend.konan.llvm.computeFunctionName
 import org.jetbrains.kotlin.backend.konan.llvm.computeSymbolName
 import org.jetbrains.kotlin.backend.konan.llvm.isExported
@@ -623,14 +622,10 @@ internal object DataFlowIR {
                     val placeToFunctionsTable = !isAbstract && it !is IrConstructor && irClass != null
                             && (it.isOverridableOrOverrides || bridgeTarget != null || function.isSpecial || !irClass.isFinalClass)
                     val symbolTableIndex = if (placeToFunctionsTable) module.numberOfFunctions++ else -1
-                    val frozen = it is IrConstructor && irClass!!.isFrozen(context)
                     val functionSymbol = if (it.isExported())
                         FunctionSymbol.Public(localHash(name.toByteArray()), module, symbolTableIndex, attributes, it, bridgeTargetSymbol, takeName { name })
                     else
                         FunctionSymbol.Private(privateFunIndex++, module, symbolTableIndex, attributes, it, bridgeTargetSymbol, takeName { name })
-                    if (frozen) {
-                        functionSymbol.escapes = 0b1 // Assume instances of frozen classes escape.
-                    }
                     functionSymbol
                 }
             }

@@ -147,17 +147,12 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
                         it.backingField?.hasAnnotation(KonanFqNames.volatile) != true -> null
                         else -> {
                             val field = it.backingField!!
-                            if (field.type.binaryTypeIsReference() && context.memoryModel != MemoryModel.EXPERIMENTAL) {
-                                it.annotations = it.annotations.filterNot { it.symbol.owner.parentAsClass.hasEqualFqName(KonanFqNames.volatile) }
-                                null
-                            } else {
-                                listOfNotNull(it,
-                                        compareAndSetFunction(field),
-                                        compareAndExchangeFunction(field),
-                                        getAndSetFunction(field),
-                                        if (field.isInteger()) getAndAddFunction(field) else null
-                                )
-                            }
+                            listOfNotNull(it,
+                                    compareAndSetFunction(field),
+                                    compareAndExchangeFunction(field),
+                                    getAndSetFunction(field),
+                                    if (field.isInteger()) getAndAddFunction(field) else null
+                            )
                         }
                     }
                 }
@@ -228,9 +223,6 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
                         ?: return unsupported("Only compile-time known IrProperties supported for $intrinsicType")
                 val property = reference.symbol.owner
                 val backingField = property.backingField
-                if (backingField?.type?.binaryTypeIsReference() == true && context.memoryModel != MemoryModel.EXPERIMENTAL) {
-                    return unsupported("Only primitives are supported for $intrinsicType with legacy memory model")
-                }
                 if (backingField?.hasAnnotation(KonanFqNames.volatile) != true) {
                     return unsupported("Only volatile properties are supported for $intrinsicType")
                 }

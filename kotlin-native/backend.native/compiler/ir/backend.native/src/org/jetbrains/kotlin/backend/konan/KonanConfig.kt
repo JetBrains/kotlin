@@ -76,22 +76,6 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         return@takeIf true
     }
 
-    val memoryModel: MemoryModel
-        get() = configuration.get(BinaryOptions.memoryModel)?.also {
-            if (it != MemoryModel.EXPERIMENTAL) {
-                configuration.report(CompilerMessageSeverity.ERROR, "Legacy MM is deprecated and no longer works.")
-            } else {
-                configuration.report(CompilerMessageSeverity.STRONG_WARNING, "-memory-model and memoryModel switches are deprecated and will be removed in a future release.")
-            }
-        }.let { MemoryModel.EXPERIMENTAL }
-    val destroyRuntimeMode: DestroyRuntimeMode
-        get() = configuration.get(KonanConfigKeys.DESTROY_RUNTIME_MODE)?.also {
-            if (it != DestroyRuntimeMode.ON_SHUTDOWN) {
-                configuration.report(CompilerMessageSeverity.ERROR, "New MM is incompatible with 'legacy' destroy runtime mode.")
-            } else {
-                configuration.report(CompilerMessageSeverity.STRONG_WARNING, "-Xdestroy-runtime-mode switch is deprecated and will be removed in a future release.")
-            }
-        }.let { DestroyRuntimeMode.ON_SHUTDOWN }
     private val defaultGC get() = GC.PARALLEL_MARK_CONCURRENT_SWEEP
     val gc: GC get() = configuration.get(BinaryOptions.gc) ?: defaultGC
     val runtimeAssertsMode: RuntimeAssertsMode get() = configuration.get(BinaryOptions.runtimeAssertionsMode) ?: RuntimeAssertsMode.IGNORE
@@ -117,14 +101,6 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     val packFields: Boolean by lazy {
         configuration.get(BinaryOptions.packFields) ?: true
     }
-    val workerExceptionHandling: WorkerExceptionHandling
-        get() = configuration.get(KonanConfigKeys.WORKER_EXCEPTION_HANDLING)?.also {
-            if (it != WorkerExceptionHandling.USE_HOOK) {
-                configuration.report(CompilerMessageSeverity.ERROR, "Legacy exception handling in workers is deprecated")
-        } else {
-            configuration.report(CompilerMessageSeverity.STRONG_WARNING, "-Xworker-exception-handling is deprecated")
-            }
-        } ?: WorkerExceptionHandling.USE_HOOK
 
     val runtimeLogsEnabled: Boolean by lazy {
         configuration.get(KonanConfigKeys.RUNTIME_LOGS) != null
@@ -164,17 +140,6 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
                 ObjCExportSuspendFunctionLaunchThreadRestriction.MAIN
     }
 
-    val freezing: Freezing
-        get() = configuration.get(BinaryOptions.freezing)?.also {
-            if (it != Freezing.Disabled) {
-                configuration.report(
-                        CompilerMessageSeverity.ERROR,
-                        "`freezing` is not supported with the new MM. Freezing API is deprecated since 1.7.20. See https://kotlinlang.org/docs/native-migration-guide.html for details"
-                )
-            } else {
-                configuration.report(CompilerMessageSeverity.STRONG_WARNING, "freezing switch is deprecated and will be removed in a future release.")
-            }
-        }.let { Freezing.Disabled }
     val sourceInfoType: SourceInfoType
         get() = configuration.get(BinaryOptions.sourceInfoType)
                 ?: SourceInfoType.CORESYMBOLICATION.takeIf { debug && target.supportsCoreSymbolication() }

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.*
 import llvm.*
-import org.jetbrains.kotlin.backend.konan.MemoryModel
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.binaryTypeIsReference
@@ -123,12 +122,7 @@ internal inline fun generateFunction(
             switchToRunnable = isCToKotlinBridge,
             needSafePoint = true,
             function)
-
-    if (isCToKotlinBridge) {
-        // Enable initRuntimeIfNeeded for legacy MM too:
-        functionGenerationContext.needsRuntimeInit = true
-        // This fixes https://youtrack.jetbrains.com/issue/KT-44283.
-    }
+    functionGenerationContext.needsRuntimeInit = isCToKotlinBridge
 
     try {
         generateFunctionBody(functionGenerationContext, code)
@@ -409,7 +403,7 @@ internal class StackLocalsManagerImpl(
     fun isEmpty() = stackLocals.isEmpty()
 
     private fun FunctionGenerationContext.createRootSetSlot() =
-            if (context.memoryModel == MemoryModel.EXPERIMENTAL) alloca(kObjHeaderPtr, true) else null
+            alloca(kObjHeaderPtr, true)
 
     override fun alloc(irClass: IrClass): LLVMValueRef = with(functionGenerationContext) {
         val classInfo = llvmDeclarations.forClass(irClass)
@@ -572,8 +566,8 @@ internal abstract class FunctionGenerationContext(
         val codegen: CodeGenerator,
         private val startLocation: LocationInfo?,
         protected val endLocation: LocationInfo?,
-        switchToRunnable: Boolean,
-        needSafePoint: Boolean,
+        private val switchToRunnable: Boolean,
+        private val needSafePoint: Boolean,
         internal val irFunction: IrFunction? = null
 ) : ContextUtils {
 
@@ -620,17 +614,9 @@ internal abstract class FunctionGenerationContext(
     // Functions that can be exported and called not only from Kotlin code should have cleanup_landingpad and `LeaveFrame`
     // because there is no guarantee of catching Kotlin exception in Kotlin code.
     protected open val needCleanupLandingpadAndLeaveFrame: Boolean
-        get() = irFunction?.annotations?.hasAnnotation(RuntimeNames.exportForCppRuntime) == true ||     // Exported to foreign code
-                (!stackLocalsManager.isEmpty() && context.memoryModel != MemoryModel.EXPERIMENTAL) ||
-                switchToRunnable
+        get() = irFunction?.annotations?.hasAnnotation(RuntimeNames.exportForCppRuntime) == true || switchToRunnable
 
     private var setCurrentFrameIsCalled: Boolean = false
-
-    private val switchToRunnable: Boolean =
-            context.memoryModel == MemoryModel.EXPERIMENTAL && switchToRunnable
-
-    private val needSafePoint: Boolean =
-            context.memoryModel == MemoryModel.EXPERIMENTAL && needSafePoint
 
     val stackLocalsManager = StackLocalsManagerImpl(this, stackLocalsInitBb)
 
@@ -766,16 +752,8 @@ internal abstract class FunctionGenerationContext(
         }
     }
 
-    fun checkGlobalsAccessible(exceptionHandler: ExceptionHandler) {
-        if (context.memoryModel == MemoryModel.STRICT)
-            call(llvm.checkGlobalsAccessible, emptyList(), Lifetime.IRRELEVANT, exceptionHandler)
-    }
-
     private fun updateReturnRef(value: LLVMValueRef, address: LLVMValueRef) {
-        if (context.memoryModel == MemoryModel.STRICT)
-            store(value, address)
-        else
-            call(llvm.updateReturnRefFunction, listOf(address, value))
+        call(llvm.updateReturnRefFunction, listOf(address, value))
     }
 
     private fun updateRef(value: LLVMValueRef, address: LLVMValueRef, onStack: Boolean,
@@ -783,12 +761,9 @@ internal abstract class FunctionGenerationContext(
         require(alignment == null || alignment % runtime.pointerAlignment == 0)
         if (onStack) {
             require(!isVolatile) { "Stack ref update can't be volatile"}
-            if (context.memoryModel == MemoryModel.STRICT)
-                store(value, address)
-            else
-                call(llvm.updateStackRefFunction, listOf(address, value))
+            call(llvm.updateStackRefFunction, listOf(address, value))
         } else {
-            if (isVolatile && context.memoryModel == MemoryModel.EXPERIMENTAL) {
+            if (isVolatile) {
                 call(llvm.UpdateVolatileHeapRef, listOf(address, value))
             } else {
                 call(llvm.updateHeapRefFunction, listOf(address, value))
@@ -799,9 +774,6 @@ internal abstract class FunctionGenerationContext(
     //-------------------------------------------------------------------------//
 
     fun switchThreadState(state: ThreadState) {
-        check(context.memoryModel == MemoryModel.EXPERIMENTAL) {
-            "Thread state switching is allowed in the new MM only."
-        }
         check(!forbidRuntime) {
             "Attempt to switch the thread state when runtime is forbidden"
         }
@@ -809,12 +781,6 @@ internal abstract class FunctionGenerationContext(
             Native -> call(llvm.Kotlin_mm_switchThreadStateNative, emptyList())
             Runnable -> call(llvm.Kotlin_mm_switchThreadStateRunnable, emptyList())
         }.let {} // Force exhaustive.
-    }
-
-    fun switchThreadStateIfExperimentalMM(state: ThreadState) {
-        if (context.memoryModel == MemoryModel.EXPERIMENTAL) {
-            switchThreadState(state)
-        }
     }
 
     fun memset(pointer: LLVMValueRef, value: Byte, size: Int, isVolatile: Boolean = false) =
@@ -1291,14 +1257,6 @@ internal abstract class FunctionGenerationContext(
         return load(codegen.kTypeInfoPtr, typeInfoPtrPtr, memoryOrder = LLVMAtomicOrdering.LLVMAtomicOrderingMonotonic)
     }
 
-    @Suppress("UNUSED_PARAMETER")
-    fun getObjectValue(irClass: IrClass, exceptionHandler: ExceptionHandler,
-                       startLocationInfo: LocationInfo?, endLocationInfo: LocationInfo? = null,
-                       resultSlot: LLVMValueRef? = null
-    ): LLVMValueRef {
-        error("Should be lowered out: ${irClass.render()} while generating ${irFunction?.dump()}")
-    }
-
     /**
      * Note: the same code is generated as IR in [org.jetbrains.kotlin.backend.konan.lower.EnumUsageLowering].
      */
@@ -1453,7 +1411,7 @@ internal abstract class FunctionGenerationContext(
             } else {
                 check(!setCurrentFrameIsCalled)
             }
-            if (context.memoryModel == MemoryModel.EXPERIMENTAL && !forbidRuntime && needSafePoint) {
+            if (!forbidRuntime && needSafePoint) {
                 call(llvm.Kotlin_mm_safePointFunctionPrologue, emptyList())
             }
             resetDebugLocation()
@@ -1646,9 +1604,6 @@ internal abstract class FunctionGenerationContext(
             check(!forbidRuntime) { "Attempt to leave a frame where runtime usage is forbidden" }
             call(llvm.leaveFrameFunction,
                     listOf(slotsPhi!!, llvm.int32(vars.skipSlots), llvm.int32(slotCount)))
-        }
-        if (!stackLocalsManager.isEmpty() && context.memoryModel != MemoryModel.EXPERIMENTAL) {
-            stackLocalsManager.clean(refsOnly = true) // Only bother about not leaving any dangling references.
         }
     }
 }

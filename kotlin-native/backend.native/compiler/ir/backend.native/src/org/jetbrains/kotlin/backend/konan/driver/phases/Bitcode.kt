@@ -163,9 +163,7 @@ internal fun <T : BitcodePostProcessingContext> PhaseEngine<T>.runBitcodePostPro
             null -> {}
         }
     }
-    if (context.config.memoryModel == MemoryModel.EXPERIMENTAL) {
-        runPhase(RemoveRedundantSafepointsPhase)
-    }
+    runPhase(RemoveRedundantSafepointsPhase)
     if (context.config.optimizationsEnabled) {
         runPhase(OptimizeTLSDataLoadsPhase)
     }

@@ -1753,11 +1753,10 @@ internal object EscapeAnalysis {
         try {
             InterproceduralAnalysis(context, generationState, callGraph,
                     moduleDFG, lifetimes,
-                    propagateExiledToHeapObjects = context.config.memoryModel != MemoryModel.EXPERIMENTAL
-                            // The GC must be careful not to scan exiled objects, that have already became dead,
-                            // as they may reference other already destroyed stack-allocated objects.
-                            // TODO somehow tag these object, so that GC could handle them properly.
-                            || context.config.gc == GC.CONCURRENT_MARK_AND_SWEEP
+                    // The GC must be careful not to scan exiled objects, that have already became dead,
+                    // as they may reference other already destroyed stack-allocated objects.
+                    // TODO somehow tag these object, so that GC could handle them properly.
+                    propagateExiledToHeapObjects = context.config.gc == GC.CONCURRENT_MARK_AND_SWEEP
             ).analyze()
         } catch (t: Throwable) {
             val extraUserInfo =
