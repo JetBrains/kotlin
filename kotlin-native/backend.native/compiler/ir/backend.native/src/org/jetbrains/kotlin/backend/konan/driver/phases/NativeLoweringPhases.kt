@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.common.lower.optimizations.LivenessAnalysis
 import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorInlineLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
+import org.jetbrains.kotlin.backend.jvm.ir.isReifiable
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrSuspensionPoint
 import org.jetbrains.kotlin.ir.inline.isConsideredAsPrivateForInlining
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
@@ -86,7 +88,17 @@ internal val validateIrAfterInliningAllFunctions = createSimpleNamedCompilerPhas
                     context = context.context,
                     checkInlineFunctionCallSites = { inlineFunctionUseSite ->
                         // No inline function call sites should remain at this stage.
-                        inlineFunctionUseSite.symbol.owner.isExternal // TODO: remove this condition after the fix of KT-66734
+                        val inlineFunction = inlineFunctionUseSite.symbol.owner
+
+                        when {
+                            // TODO: remove this condition after the fix of KT-66734:
+                            inlineFunction.isExternal -> true // temporarily permitted
+
+                            // TODO: remove this condition after the fix of KT-69457:
+                            inlineFunctionUseSite is IrFunctionReference && !inlineFunction.isReifiable() -> true // temporarily permitted
+
+                            else -> false // forbidden
+                        }
                     }
             ).lower(module)
         }

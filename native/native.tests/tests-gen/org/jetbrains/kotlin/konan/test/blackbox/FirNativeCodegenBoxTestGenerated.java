@@ -47343,6 +47343,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
       }
 
       @Test
+      @TestMetadata("kt69457.kt")
+      public void testKt69457() {
+        runTest("compiler/testData/codegen/boxInline/callableReference/kt69457.kt");
+      }
+
+      @Test
       @TestMetadata("propertyIntrinsic.kt")
       public void testPropertyIntrinsic() {
         runTest("compiler/testData/codegen/boxInline/callableReference/propertyIntrinsic.kt");
