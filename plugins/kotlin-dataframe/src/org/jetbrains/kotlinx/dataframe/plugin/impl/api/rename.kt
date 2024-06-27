@@ -14,22 +14,23 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.varargString
 
 class Rename : AbstractInterpreter<RenameClauseApproximation>() {
     private val Arguments.receiver by dataFrame()
-    private val Arguments.columns: List<ColumnWithPathApproximation> by arg()
+    private val Arguments.columns: ColumnsResolver by arg()
     override fun Arguments.interpret(): RenameClauseApproximation {
         return RenameClauseApproximation(receiver, columns)
     }
 }
 
-class RenameClauseApproximation(val schema: PluginDataFrameSchema, val columns: List<ColumnWithPathApproximation>)
+class RenameClauseApproximation(val schema: PluginDataFrameSchema, val columns: ColumnsResolver)
 
 class RenameInto : AbstractSchemaModificationInterpreter() {
     val Arguments.receiver: RenameClauseApproximation by arg()
     val Arguments.newNames: List<String> by varargString()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        require(receiver.columns.size == newNames.size)
+        val columns = receiver.columns.resolve(receiver.schema)
+        require(columns.size == newNames.size)
         var i = 0
-        return receiver.schema.map(receiver.columns.mapTo(mutableSetOf()) { it.path.path }, nextName = { newNames[i].also { i += 1 } })
+        return receiver.schema.map(columns.mapTo(mutableSetOf()) { it.path.path }, nextName = { newNames[i].also { i += 1 } })
     }
 }
 

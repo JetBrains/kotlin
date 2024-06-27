@@ -16,12 +16,12 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.dataFrame
 internal class Explode0 : AbstractInterpreter<PluginDataFrameSchema>() {
     val Arguments.dropEmpty: Boolean by arg(defaultValue = Present(true))
     val Arguments.receiver: PluginDataFrameSchema by dataFrame()
-    val Arguments.selector: List<ColumnWithPathApproximation>? by arg(defaultValue = Present(null))
+    val Arguments.selector: ColumnsResolver? by arg(defaultValue = Present(null))
     override val Arguments.startingSchema get() = receiver
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         val columns = selector ?: TODO()
-        return receiver.explodeImpl(dropEmpty, columns.map { ColumnPathApproximation(it.path.path) })
+        return receiver.explodeImpl(dropEmpty, columns.resolve(receiver).map { ColumnPathApproximation(it.path.path) })
     }
 }
 

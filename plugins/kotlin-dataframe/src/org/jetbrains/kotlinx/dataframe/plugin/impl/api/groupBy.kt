@@ -32,10 +32,10 @@ class GroupBy(val df: PluginDataFrameSchema, val keys: List<ColumnWithPathApprox
 class DataFrameGroupBy : AbstractInterpreter<GroupBy>() {
     val Arguments.receiver: PluginDataFrameSchema by dataFrame()
     val Arguments.moveToTop: Boolean by arg(defaultValue = Present(true))
-    val Arguments.cols: List<ColumnWithPathApproximation> by arg()
+    val Arguments.cols: ColumnsResolver by arg()
 
     override fun Arguments.interpret(): GroupBy {
-        return GroupBy(receiver, cols, moveToTop)
+        return GroupBy(receiver, cols.resolve(receiver), moveToTop)
     }
 }
 

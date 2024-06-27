@@ -12,21 +12,21 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.dataFrame
 
 class Group0 : AbstractInterpreter<GroupClauseApproximation>() {
     val Arguments.receiver: PluginDataFrameSchema by dataFrame()
-    val Arguments.columns: List<ColumnWithPathApproximation> by arg()
+    val Arguments.columns: ColumnsResolver by arg()
 
     override fun Arguments.interpret(): GroupClauseApproximation {
         return GroupClauseApproximation(receiver, columns)
     }
 }
 
-class GroupClauseApproximation(val df: PluginDataFrameSchema, val columns: List<ColumnWithPathApproximation>)
+class GroupClauseApproximation(val df: PluginDataFrameSchema, val columns: ColumnsResolver)
 
 class Into0 : AbstractSchemaModificationInterpreter() {
     val Arguments.receiver: GroupClauseApproximation by arg()
     val Arguments.column: String by arg()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        val grouped = groupImpl(receiver.df.columns(), receiver.columns.mapTo(mutableSetOf()) { it.path.path }, column)
+        val grouped = groupImpl(receiver.df.columns(), receiver.columns.resolve(receiver.df).mapTo(mutableSetOf()) { it.path.path }, column)
         return grouped
     }
 }

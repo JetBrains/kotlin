@@ -20,12 +20,12 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.type
 import org.jetbrains.kotlinx.dataframe.plugin.impl.varargString
 
 internal class Convert0 : AbstractInterpreter<ConvertApproximation>() {
-    val Arguments.columns: List<ColumnWithPathApproximation> by arg()
+    val Arguments.columns: ColumnsResolver by arg()
     val Arguments.receiver: PluginDataFrameSchema by dataFrame()
     override val Arguments.startingSchema get() = receiver
 
     override fun Arguments.interpret(): ConvertApproximation {
-        return ConvertApproximation(receiver, columns.map { it.path.path })
+        return ConvertApproximation(receiver, columns.resolve(receiver).map { it.path.path })
     }
 }
 

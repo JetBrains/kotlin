@@ -11,10 +11,10 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.dataFrame
 
 class Remove0 : AbstractSchemaModificationInterpreter() {
     val Arguments.receiver: PluginDataFrameSchema by dataFrame()
-    val Arguments.columns: List<ColumnWithPathApproximation> by arg()
+    val Arguments.columns: ColumnsResolver by arg()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        val removeResult = removeImpl(receiver.columns(), columns.mapTo(mutableSetOf()) { it.path.path })
+        val removeResult = removeImpl(receiver.columns(), columns.resolve(receiver).mapTo(mutableSetOf()) { it.path.path })
         return PluginDataFrameSchema(removeResult.updatedColumns)
     }
 }
