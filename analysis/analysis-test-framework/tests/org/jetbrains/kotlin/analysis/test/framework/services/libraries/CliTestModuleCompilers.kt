@@ -8,12 +8,17 @@ package org.jetbrains.kotlin.analysis.test.framework.services.libraries
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
+import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.test.CompilerTestUtil
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
@@ -216,6 +221,38 @@ object JsKlibTestModuleCompiler : CliTestModuleCompiler() {
         inputPath / "$libraryName.klib"
 }
 
+object MetadataKlibDirTestModuleCompiler : CliTestModuleCompiler() {
+    override fun buildPlatformCompilerOptions(
+        module: TestModule,
+        testServices: TestServices,
+    ): List<String> {
+        return emptyList()
+    }
+
+    override fun doCompile(
+        sourcesPath: Path,
+        options: List<String>,
+        libraryOutputPath: Path,
+        extraClasspath: List<String>,
+    ) {
+        val sourceFiles = sourcesPath.toFile().walkBottomUp()
+
+        CompilerTestUtil.executeCompilerAssertSuccessful(
+            K2MetadataCompiler(), buildList {
+                addAll(sourceFiles.mapTo(this) { it.absolutePath })
+                add(K2MetadataCompilerArguments::destination.cliArgument); add(libraryOutputPath.absolutePathString())
+                add(K2MetadataCompilerArguments::moduleName.cliArgument); add(libraryOutputPath.nameWithoutExtension)
+                add(K2MetadataCompilerArguments::classpath.cliArgument)
+                addAll(listOf(ForTestCompileRuntime.stdlibCommonForTests().absolutePath) + extraClasspath)
+                addAll(options)
+            }
+        )
+    }
+
+    override fun libraryOutputPath(inputPath: Path, libraryName: String): Path =
+        inputPath / libraryName
+}
+
 /**
  * [DispatchingTestModuleCompiler] chooses the appropriate compiler for a module based on its platform.
  * In case all tests in a suite should compile libraries for a single platform, one of the underlying [TestModuleCompiler]s
@@ -234,6 +271,7 @@ object DispatchingTestModuleCompiler : TestModuleCompiler() {
         return when {
             module.targetPlatform.isJvm() -> JvmJarTestModuleCompiler
             module.targetPlatform.isJs() -> JsKlibTestModuleCompiler
+            module.targetPlatform.isCommon() -> MetadataKlibDirTestModuleCompiler
             else -> error("DispatchingTestModuleCompiler doesn't support the platform: ${module.targetPlatform}")
         }
     }

@@ -46,10 +46,7 @@ object LibraryUtils {
         includeRoot: Boolean = true,
     ): List<PsiFile> {
         val virtualFiles = getAllVirtualFilesFromJar(jar, jarFileSystem, includeRoot)
-        return virtualFiles
-            .mapNotNull { virtualFile ->
-                PsiManager.getInstance(project).findFile(virtualFile)
-            }
+        return virtualFiles.mapToPsiFiles(project)
     }
 
     /**
@@ -65,6 +62,14 @@ object LibraryUtils {
         val fs = StandardFileSystems.local()
         return fs.findFileByPath(dir.toString())
             ?.let { getAllVirtualFilesFromRoot(it, includeRoot) } ?: emptySet()
+    }
+
+    fun getAllPsiFilesFromDirectory(
+        dir: Path,
+        project: Project,
+        includeRoot: Boolean = true,
+    ): List<PsiFile> {
+        return getAllVirtualFilesFromDirectory(dir, includeRoot).mapToPsiFiles(project)
     }
 
     fun getAllVirtualFilesFromRoot(
@@ -92,6 +97,12 @@ object LibraryUtils {
         return JdkClassFinder.findClasses(jdkHome, isJre).map { rawPath ->
             val path = URLUtil.extractPath(rawPath).removeSuffix("/").removeSuffix("!")
             Paths.get(path)
+        }
+    }
+
+    private fun Collection<VirtualFile>.mapToPsiFiles(project: Project): List<PsiFile> {
+        return mapNotNull { virtualFile ->
+            PsiManager.getInstance(project).findFile(virtualFile)
         }
     }
 }
