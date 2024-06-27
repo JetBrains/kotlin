@@ -214,7 +214,11 @@ static void injectToRuntime();
     }
 
     // Kotlin object did have an associated object attached.
-    RuntimeAssert([old class] == [self class], "Object %p had associated object of type %p but we try to init with %p", obj, [old class], [self class]);
+    RuntimeAssert(
+        [[old class] isSubclassOfClass:[self class]],
+        "Object %p had associated object of type %s but we try to init with %s",
+        obj, class_getName([old class]), class_getName([self class])
+    );
 
     // Make self point to that object.
     KotlinBase* retiredSelf = self;
