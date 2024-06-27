@@ -33,7 +33,7 @@ class A : Java1 {
     //   Mangled name: A#<set-b>(kotlin.Int){}
     //   Public signature: /A.b.<set-b>|393614520529327556[0]
     //   Public signature debug description: <set-b>(kotlin.Int){}
-    /* fake */ override set(<set-?>: Int): Unit
+    /* fake */ override set(value: Int): Unit
 
   // CHECK:
   //   Mangled name: A{}c
@@ -60,7 +60,7 @@ class A : Java1 {
     //   Mangled name: A#<set-d>(kotlin.Int){}
     //   Public signature: /A.d.<set-d>|4161969082808539024[0]
     //   Public signature debug description: <set-d>(kotlin.Int){}
-    /* fake */ override set(<set-?>: Int): Unit
+    /* fake */ override set(value: Int): Unit
 
   // CHECK:
   //   Mangled name: A{}e
@@ -87,7 +87,7 @@ class A : Java1 {
     //   Mangled name: A#<set-f>(kotlin.Int){}
     //   Public signature: /A.f.<set-f>|3759249595734875908[0]
     //   Public signature debug description: <set-f>(kotlin.Int){}
-    protected /* fake */ override set(<set-?>: Int): Unit
+    protected /* fake */ override set(value: Int): Unit
 
   // CHECK:
   //   Mangled name: A{}h
@@ -103,7 +103,7 @@ class A : Java1 {
     //   Mangled name: A#<set-h>(kotlin.Int){}
     //   Public signature: /A.h.<set-h>|4870088823312964600[0]
     //   Public signature debug description: <set-h>(kotlin.Int){}
-    internal /* fake */ override set(<set-?>: Int): Unit
+    internal /* fake */ override set(value: Int): Unit
 
   // CHECK:
   //   Mangled name: A{}i
@@ -157,7 +157,7 @@ class A : Java1 {
     //   Mangled name: A#<set-l>(kotlin.Boolean){}
     //   Public signature: /A.l.<set-l>|179600990731663245[0]
     //   Public signature debug description: <set-l>(kotlin.Boolean){}
-    /* fake */ override set(<set-?>: Boolean): Unit
+    /* fake */ override set(value: Boolean): Unit
 
 }
 
@@ -276,7 +276,7 @@ class B : Java1 {
     //   Mangled name: B#<set-f>(kotlin.Int){}
     //   Public signature: /B.f.<set-f>|3759249595734875908[0]
     //   Public signature debug description: <set-f>(kotlin.Int){}
-    protected /* fake */ override set(<set-?>: Int): Unit
+    protected /* fake */ override set(value: Int): Unit
 
   // CHECK:
   //   Mangled name: B{}h
@@ -292,7 +292,7 @@ class B : Java1 {
     //   Mangled name: B#<set-h>(kotlin.Int){}
     //   Public signature: /B.h.<set-h>|4870088823312964600[0]
     //   Public signature debug description: <set-h>(kotlin.Int){}
-    internal /* fake */ override set(<set-?>: Int): Unit
+    internal /* fake */ override set(value: Int): Unit
 
   // CHECK:
   //   Mangled name: B{}i
@@ -364,7 +364,7 @@ class C : Java2 {
     //   Mangled name: C#<set-b>(kotlin.Int){}
     //   Public signature: /C.b.<set-b>|393614520529327556[0]
     //   Public signature debug description: <set-b>(kotlin.Int){}
-    /* fake */ override set(<set-?>: Int): Unit
+    /* fake */ override set(value: Int): Unit
 
   // CHECK:
   //   Mangled name: C{}c
@@ -391,7 +391,7 @@ class C : Java2 {
     //   Mangled name: C#<set-d>(kotlin.Int){}
     //   Public signature: /C.d.<set-d>|4161969082808539024[0]
     //   Public signature debug description: <set-d>(kotlin.Int){}
-    /* fake */ override set(<set-?>: Int): Unit
+    /* fake */ override set(value: Int): Unit
 
   // CHECK:
   //   Mangled name: C{}e
@@ -418,7 +418,7 @@ class C : Java2 {
     //   Mangled name: C#<set-f>(kotlin.Int){}
     //   Public signature: /C.f.<set-f>|3759249595734875908[0]
     //   Public signature debug description: <set-f>(kotlin.Int){}
-    protected /* fake */ override set(<set-?>: Int): Unit
+    protected /* fake */ override set(value: Int): Unit
 
   // CHECK:
   //   Mangled name: C{}h
@@ -434,7 +434,7 @@ class C : Java2 {
     //   Mangled name: C#<set-h>(kotlin.Int){}
     //   Public signature: /C.h.<set-h>|4870088823312964600[0]
     //   Public signature debug description: <set-h>(kotlin.Int){}
-    internal /* fake */ override set(<set-?>: Int): Unit
+    internal /* fake */ override set(value: Int): Unit
 
   // CHECK:
   //   Mangled name: C{}i
@@ -488,7 +488,7 @@ class C : Java2 {
     //   Mangled name: C#<set-l>(kotlin.Boolean){}
     //   Public signature: /C.l.<set-l>|179600990731663245[0]
     //   Public signature debug description: <set-l>(kotlin.Boolean){}
-    /* fake */ override set(<set-?>: Boolean): Unit
+    /* fake */ override set(value: Boolean): Unit
 
 }
 
@@ -559,7 +559,7 @@ class D : Java2 {
     //   Mangled name: D#<set-f>(kotlin.Int){}
     //   Public signature: /D.f.<set-f>|3759249595734875908[0]
     //   Public signature debug description: <set-f>(kotlin.Int){}
-    protected /* fake */ override set(<set-?>: Int): Unit
+    protected /* fake */ override set(value: Int): Unit
 
   // CHECK:
   //   Mangled name: D{}h
@@ -575,7 +575,7 @@ class D : Java2 {
     //   Mangled name: D#<set-h>(kotlin.Int){}
     //   Public signature: /D.h.<set-h>|4870088823312964600[0]
     //   Public signature debug description: <set-h>(kotlin.Int){}
-    internal /* fake */ override set(<set-?>: Int): Unit
+    internal /* fake */ override set(value: Int): Unit
 
   // CHECK:
   //   Mangled name: D{}i
@@ -629,7 +629,7 @@ class D : Java2 {
     //   Mangled name: D#<set-l>(kotlin.Boolean){}
     //   Public signature: /D.l.<set-l>|179600990731663245[0]
     //   Public signature debug description: <set-l>(kotlin.Boolean){}
-    /* fake */ override set(<set-?>: Boolean): Unit
+    /* fake */ override set(value: Boolean): Unit
 
   // CHECK:
   //   Mangled name: D{}a
@@ -849,3 +849,4 @@ open class KotlinClass {
 //   Public signature: /test|7656439746344069424[0]
 //   Public signature debug description: test(A;B;C;D){}
 fun test(a: A, b: B, c: C, d: D): Unit
+
