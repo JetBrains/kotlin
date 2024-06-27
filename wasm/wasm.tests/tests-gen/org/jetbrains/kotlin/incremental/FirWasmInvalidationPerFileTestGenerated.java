@@ -343,6 +343,12 @@ public class FirWasmInvalidationPerFileTestGenerated extends AbstractFirWasmInva
   }
 
   @Test
+  @TestMetadata("modifyClassAncestors")
+  public void testModifyClassAncestors() {
+    runTest("js/js.translator/testData/incremental/invalidation/modifyClassAncestors/");
+  }
+
+  @Test
   @TestMetadata("moveAndModifyInlineFunction")
   public void testMoveAndModifyInlineFunction() {
     runTest("js/js.translator/testData/incremental/invalidation/moveAndModifyInlineFunction/");

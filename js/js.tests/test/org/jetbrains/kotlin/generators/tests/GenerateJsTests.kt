@@ -64,36 +64,69 @@ fun main(args: Array<String>) {
         }
 
         testGroup("js/js.tests/tests-gen", "js/js.translator/testData/incremental") {
+            val wasmTargetedInvalidationTests = listOf(
+                "modifyClassAncestors"
+            ).joinToString("|")
             testClass<AbstractJsIrInvalidationPerFileTest> {
-                model("invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
+                model("invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false, excludedPattern = wasmTargetedInvalidationTests)
             }
 
             testClass<AbstractJsIrInvalidationPerModuleTest> {
-                model("invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
+                model("invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false, excludedPattern = wasmTargetedInvalidationTests)
             }
 
             testClass<AbstractJsIrES6InvalidationPerFileTest> {
-                model("invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR_ES6, recursive = false)
+                model("invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR_ES6, recursive = false, excludedPattern = wasmTargetedInvalidationTests)
             }
 
             testClass<AbstractJsIrES6InvalidationPerModuleTest> {
-                model("invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR_ES6, recursive = false)
+                model(
+                    "invalidation/",
+                    pattern = "^([^_](.+))$",
+                    targetBackend = TargetBackend.JS_IR_ES6,
+                    recursive = false,
+                    excludedPattern = wasmTargetedInvalidationTests
+                )
             }
 
             testClass<AbstractJsFirInvalidationPerFileTest> {
-                model("invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
+                model(
+                    "invalidation/",
+                    pattern = "^([^_](.+))$",
+                    targetBackend = TargetBackend.JS_IR,
+                    recursive = false,
+                    excludedPattern = wasmTargetedInvalidationTests
+                )
             }
 
             testClass<AbstractJsFirInvalidationPerModuleTest> {
-                model("invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
+                model(
+                    "invalidation/",
+                    pattern = "^([^_](.+))$",
+                    targetBackend = TargetBackend.JS_IR,
+                    recursive = false,
+                    excludedPattern = wasmTargetedInvalidationTests
+                )
             }
 
             testClass<AbstractJsFirES6InvalidationPerFileTest> {
-                model("invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR_ES6, recursive = false)
+                model(
+                    "invalidation/",
+                    pattern = "^([^_](.+))$",
+                    targetBackend = TargetBackend.JS_IR_ES6,
+                    recursive = false,
+                    excludedPattern = wasmTargetedInvalidationTests
+                )
             }
 
             testClass<AbstractJsFirES6InvalidationPerModuleTest> {
-                model("invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR_ES6, recursive = false)
+                model(
+                    "invalidation/",
+                    pattern = "^([^_](.+))$",
+                    targetBackend = TargetBackend.JS_IR_ES6,
+                    recursive = false,
+                    excludedPattern = wasmTargetedInvalidationTests
+                )
             }
 
             testClass<AbstractJsIrInvalidationPerFileWithPLTest> {
