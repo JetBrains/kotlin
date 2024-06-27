@@ -1,0 +1,18 @@
+MODULES: libA, libB, libC, libD, main
+
+STEP 0:
+    libs: libA, libB, libC, libD, main
+    dirty js modules: libA, libB, libC, libD, main
+    dirty js files:   libA/a, libB/b, libC/c, libD/d, main/m
+STEP 1..6:
+    libs: libA, libB, libC, libD, main
+    dirty js modules: libB
+    dirty js files:   libB/b
+STEP 7:
+    libs: libA, libB, libC, libD, main
+    dirty js modules: libB, libC, main
+    dirty js files:   libB/b, libC/c, main/m
+STEP 8..13:
+    libs: libA, libB, libC, libD, main
+    dirty js modules: libB
+    dirty js files:   libB/b

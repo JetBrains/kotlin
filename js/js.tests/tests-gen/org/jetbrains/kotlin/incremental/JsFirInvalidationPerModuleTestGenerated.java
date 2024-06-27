@@ -39,7 +39,7 @@ public class JsFirInvalidationPerModuleTestGenerated extends AbstractJsFirInvali
 
   @Test
   public void testAllFilesPresentInInvalidation() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/incremental/invalidation"), Pattern.compile("^([^_](.+))$"), Pattern.compile("modifyClassAncestors"), TargetBackend.JS_IR, false);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/incremental/invalidation"), Pattern.compile("^([^_](.+))$"), Pattern.compile("modifyClassAncestors|crossModuleModifyClassAncestors"), TargetBackend.JS_IR, false);
   }
 
   @Test
