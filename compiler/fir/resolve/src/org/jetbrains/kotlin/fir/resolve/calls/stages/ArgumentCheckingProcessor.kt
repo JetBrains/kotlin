@@ -350,6 +350,7 @@ internal object ArgumentCheckingProcessor {
         ) ?: extractLambdaInfo(expression, sourceForFunctionExpression = expression.source)
 
         atom.subAtom = resolvedArgument
+        candidate.addPostponedAtom(resolvedArgument)
 
         if (expectedType != null) {
             val parameters = resolvedArgument.parameters
@@ -426,9 +427,7 @@ internal object ArgumentCheckingProcessor {
             typeVariable.takeIf { newTypeVariableUsed },
             coerceFirstParameterToExtensionReceiver = false,
             sourceForFunctionExpression,
-        ).also {
-            candidate.addPostponedAtom(it)
-        }
+        )
     }
 
     private fun ConeInferenceContext.argumentTypeWithCustomConversion(
