@@ -14,6 +14,7 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
         DiscriminateSyntheticProperties,
         CheckExplicitReceiverConsistency,
         NoTypeArguments,
+        InitializeEmptyArgumentMap,
         CreateFreshTypeVariableSubstitutorStage,
         CollectTypeVariableUsagesInfo,
         CheckDispatchReceiver,
