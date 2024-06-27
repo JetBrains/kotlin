@@ -360,4 +360,269 @@ class HexFormats {
             assertFailsWith<IllegalArgumentException> { "000100000000".hexToInt() }
         }
     }
+
+    class Extensions {
+        @Sample
+        fun byteArrayToHexString() {
+            val data = byteArrayOf(0xDE.toByte(), 0x2D, 0x02, 0xC0.toByte(), 0x5C, 0x0E)
+
+            // Using the default format
+            assertPrints(data.toHexString(), "de2d02c05c0e")
+
+            // Using a custom format
+            val format = HexFormat {
+                upperCase = true
+                bytes {
+                    bytesPerLine = 4
+                    byteSeparator = " " // One space
+                    bytePrefix = "0x"
+                }
+            }
+            assertPrints(data.toHexString(format), "0xDE 0x2D 0x02 0xC0\n0x5C 0x0E")
+
+            // Formatting a segment of the byte array
+            assertPrints(data.toHexString(startIndex = 2, endIndex = 5, format), "0x02 0xC0 0x5C")
+
+            // Formatting unsigned bytes with the same binary representations yields the same string
+            val unsignedData = data.toUByteArray()
+            assertPrints(unsignedData.toHexString(format), "0xDE 0x2D 0x02 0xC0\n0x5C 0x0E")
+        }
+
+        @Sample
+        fun hexToByteArray() {
+            val expectedData = byteArrayOf(0xDE.toByte(), 0x2D, 0x02, 0xC0.toByte(), 0x5C, 0x0E)
+
+            // Using the default format
+            assertPrints("de2d02c05c0e".hexToByteArray().contentEquals(expectedData), "true")
+
+            // Parsing is case-insensitive
+            assertPrints("DE2D02C05C0E".hexToByteArray().contentEquals(expectedData), "true")
+
+            // Using a custom format
+            val format = HexFormat {
+                bytes {
+                    bytesPerLine = 4
+                    byteSeparator = " " // One space
+                    bytePrefix = "0x"
+                }
+            }
+            assertPrints("0xDE 0x2D 0x02 0xC0\n0x5C 0x0E".hexToByteArray(format).contentEquals(expectedData), "true")
+
+            // Parsing unsigned bytes results in the unsigned versions of the same bytes
+            val expectedUnsignedData = expectedData.toUByteArray()
+            assertPrints("de2d02c05c0e".hexToUByteArray().contentEquals(expectedUnsignedData), "true")
+
+            // Parsing fails if the input string does not conform to the specified format.
+            // In this case, there is no line separator after the fourth formatted byte.
+            assertFailsWith<IllegalArgumentException> {
+                "0xDE 0x2D 0x02 0xC0 0x5C 0x0E".hexToByteArray(format)
+            }
+        }
+
+        @Sample
+        fun byteToHexString() {
+            // Using the default format
+            val value: Byte = 58
+            assertPrints(value.toHexString(), "3a")
+
+            // Converts the Byte to an unsigned hexadecimal representation
+            assertPrints((-1).toByte().toHexString(), "ff")
+
+            // Using a custom format
+            val format = HexFormat {
+                upperCase = true
+                number {
+                    prefix = "\\u" // A Unicode escape prefix
+                    minLength = 4
+                }
+            }
+            assertPrints(value.toHexString(format), "\\u003A")
+
+            // Formatting an unsigned value with the same binary representations yields the same string
+            val uValue: UByte = 58u
+            assertPrints(uValue.toHexString(format), "\\u003A")
+        }
+
+        @Sample
+        fun hexToByte() {
+            // Using the default format
+            assertPrints("3a".hexToByte(), "58")
+
+            // Parsing is case-insensitive
+            assertPrints("3A".hexToByte(), "58")
+
+            // Up to 2 hexadecimal digits can fit into a Byte
+            assertPrints("ff".hexToByte(), "-1")
+
+            // Excess leading hexadecimal digits must be zeros
+            assertPrints("00ff".hexToByte(), "-1")
+            assertFailsWith<IllegalArgumentException> { "0100".hexToByte() }
+
+            // Parsing an UByte results in the unsigned version of the same value
+            // In this case, (-1).toUByte() = UByte.MAX_VALUE
+            assertPrints("ff".hexToULong(), "255")
+
+            // Using a custom format
+            val format = HexFormat { number.prefix = "0x" }
+            assertPrints("0x3A".hexToByte(format), "58")
+
+            // Parsing fails if the input string does not conform to the specified format.
+            // In this case, the prefix is not present.
+            assertFailsWith<IllegalArgumentException> { "3A".hexToByte(format) }
+        }
+
+        @Sample
+        fun shortToHexString() {
+            // Using the default format
+            val value: Short = 58
+            assertPrints(value.toHexString(), "003a")
+
+            // Converts the Short to an unsigned hexadecimal representation
+            assertPrints((-1).toShort().toHexString(), "ffff")
+
+            // Using a custom format
+            val format = HexFormat {
+                upperCase = true
+                number {
+                    prefix = "0x"
+                    removeLeadingZeros = true
+                }
+            }
+            assertPrints(value.toHexString(format), "0x3A")
+
+            // Formatting an unsigned value with the same binary representations yields the same string
+            val uValue: UShort = 58u
+            assertPrints(uValue.toHexString(format), "0x3A")
+        }
+
+        @Sample
+        fun hexToShort() {
+            // Using the default format
+            assertPrints("3a".hexToShort(), "58")
+
+            // Parsing is case-insensitive
+            assertPrints("3A".hexToShort(), "58")
+
+            // Up to 4 hexadecimal digits can fit into a Short
+            assertPrints("ffff".hexToShort(), "-1")
+
+            // Excess leading hexadecimal digits must be zeros
+            assertPrints("00ffff".hexToShort(), "-1")
+            assertFailsWith<IllegalArgumentException> { "010000".hexToShort() }
+
+            // Parsing an UShort results in the unsigned version of the same value
+            // In this case, (-1).toUShort() = UShort.MAX_VALUE
+            assertPrints("ffff".hexToULong(), "65535")
+
+            // Using a custom format
+            val format = HexFormat { number.prefix = "0x" }
+            assertPrints("0x3A".hexToShort(format), "58")
+
+            // Parsing fails if the input string does not conform to the specified format.
+            // In this case, the prefix is not present.
+            assertFailsWith<IllegalArgumentException> { "3A".hexToShort(format) }
+        }
+
+        @Sample
+        fun intToHexString() {
+            // Using the default format
+            val value = 58
+            assertPrints(value.toHexString(), "0000003a")
+
+            // Converts the Int to an unsigned hexadecimal representation
+            assertPrints((-1).toHexString(), "ffffffff")
+
+            // Using a custom format
+            val format = HexFormat {
+                upperCase = true
+                number {
+                    prefix = "#"
+                    removeLeadingZeros = true
+                    minLength = 6
+                }
+            }
+            assertPrints(value.toHexString(format), "#00003A")
+
+            // Formatting an unsigned value with the same binary representations yields the same string
+            val uValue = 58u
+            assertPrints(uValue.toHexString(format), "#00003A")
+        }
+
+        @Sample
+        fun hexToInt() {
+            // Using the default format
+            assertPrints("3a".hexToInt(), "58")
+
+            // Parsing is case-insensitive
+            assertPrints("3A".hexToInt(), "58")
+
+            // Up to 8 hexadecimal digits can fit into an Int
+            assertPrints("ffffffff".hexToInt(), "-1")
+
+            // Excess leading hexadecimal digits must be zeros
+            assertPrints("00ffffffff".hexToInt(), "-1")
+            assertFailsWith<IllegalArgumentException> { "0100000000".hexToInt() }
+
+            // Parsing an UInt results in the unsigned version of the same value
+            // In this case, (-1).toUInt() = UInt.MAX_VALUE
+            assertPrints("ffffffff".hexToULong(), "4294967295")
+
+            // Using a custom format
+            val format = HexFormat { number.prefix = "0x" }
+            assertPrints("0x3A".hexToInt(format), "58")
+
+            // Parsing fails if the input string does not conform to the specified format.
+            // In this case, the prefix is not present.
+            assertFailsWith<IllegalArgumentException> { "3A".hexToInt(format) }
+        }
+
+        @Sample
+        fun longToHexString() {
+            // Using the default format
+            val value = 58L
+            assertPrints(value.toHexString(), "000000000000003a")
+
+            // Converts the Long to an unsigned hexadecimal representation
+            assertPrints((-1L).toHexString(), "ffffffffffffffff")
+
+            // Using a custom format
+            val format = HexFormat {
+                upperCase = true
+                number.removeLeadingZeros = true
+            }
+            assertPrints(value.toHexString(format), "3A")
+
+            // Formatting an unsigned value with the same binary representations yields the same string
+            val uValue = 58uL
+            assertPrints(uValue.toHexString(format), "3A")
+        }
+
+        @Sample
+        fun hexToLong() {
+            // Using the default format
+            assertPrints("3a".hexToLong(), "58")
+
+            // Parsing is case-insensitive
+            assertPrints("3A".hexToLong(), "58")
+
+            // Up to 16 hexadecimal digits can fit into a Long
+            assertPrints("ffffffffffffffff".hexToLong(), "-1")
+
+            // Excess leading hexadecimal digits must be zeros
+            assertPrints("00ffffffffffffffff".hexToLong(), "-1")
+            assertFailsWith<IllegalArgumentException> { "010000000000000000".hexToLong() }
+
+            // Parsing an ULong results in the unsigned version of the same value
+            // In this case, (-1L).toULong() = ULong.MAX_VALUE
+            assertPrints("ffffffffffffffff".hexToULong(), "18446744073709551615")
+
+            // Using a custom format
+            val format = HexFormat { number.prefix = "0x" }
+            assertPrints("0x3A".hexToLong(format), "58")
+
+            // Parsing fails if the input string does not conform to the specified format.
+            // In this case, the prefix is not present.
+            assertFailsWith<IllegalArgumentException> { "3A".hexToLong(format) }
+        }
+    }
 }
