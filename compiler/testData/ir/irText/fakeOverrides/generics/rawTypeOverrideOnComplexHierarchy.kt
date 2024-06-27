@@ -1,6 +1,7 @@
 // SKIP_KT_DUMP
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
+// SEPARATE_SIGNATURE_DUMP_FOR_K2
 
 // FILE: Java1.java
 public class Java1 extends KotlinClass { }

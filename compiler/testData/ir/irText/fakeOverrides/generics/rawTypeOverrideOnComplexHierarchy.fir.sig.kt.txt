@@ -1,0 +1,465 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+class A : Java1, Java2 {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#bar(){}kotlin.collections.List<*>
+  //   Public signature: /A.bar|9146304308611802181[0]
+  //   Public signature debug description: bar(){}kotlin.collections.List<*>
+  /* fake */ override fun bar(): List<*>
+
+  // CHECK:
+  //   Mangled name: A#foo(kotlin.collections.List<*>){}
+  //   Public signature: /A.foo|2923589974738683515[0]
+  //   Public signature debug description: foo(kotlin.collections.List<*>){}
+  /* fake */ override fun foo(a: List<*>): Unit
+
+  // CHECK:
+  //   Mangled name: A{}a
+  //   Public signature: /A.a|-1200697420457237799[0]
+  //   Public signature debug description: {}a
+  /* fake */ override var a: List<*>
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-a>(){}kotlin.collections.List<*>
+    //   Public signature: /A.a.<get-a>|7420054975261155862[0]
+    //   Public signature debug description: <get-a>(){}kotlin.collections.List<*>
+    /* fake */ override get(): List<*>
+    // CHECK:
+    //   Mangled name: A#<set-a>(kotlin.collections.List<*>){}
+    //   Public signature: /A.a.<set-a>|-1742626468354620590[0]
+    //   Public signature debug description: <set-a>(kotlin.collections.List<*>){}
+    /* fake */ override set(value: List<*>): Unit
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+class B : Java1, Java2 {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#bar(){}kotlin.collections.List<*>
+  //   Public signature: /B.bar|9146304308611802181[0]
+  //   Public signature debug description: bar(){}kotlin.collections.List<*>
+  override fun bar(): List<*>
+
+  // CHECK:
+  //   Mangled name: B#foo(kotlin.collections.List<*>){}
+  //   Public signature: /B.foo|2923589974738683515[0]
+  //   Public signature debug description: foo(kotlin.collections.List<*>){}
+  override fun foo(a: List<*>): Unit
+
+  // CHECK:
+  //   Mangled name: B{}a
+  //   Public signature: /B.a|-1200697420457237799[0]
+  //   Public signature debug description: {}a
+  override var a: List<*>
+    // CHECK JVM_IR:
+    //   Mangled name: B#<get-a>(){}kotlin.collections.List<*>
+    //   Public signature: /B.a.<get-a>|7420054975261155862[0]
+    //   Public signature debug description: <get-a>(){}kotlin.collections.List<*>
+    override get(): List<*>
+    // CHECK:
+    //   Mangled name: B#<set-a>(kotlin.collections.List<*>){}
+    //   Public signature: /B.a.<set-a>|-1742626468354620590[0]
+    //   Public signature debug description: <set-a>(kotlin.collections.List<*>){}
+    override set(value: List<*>): Unit
+
+}
+
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C : Java1, KotlinInterface {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#bar(){}kotlin.collections.List<*>
+  //   Public signature: /C.bar|9146304308611802181[0]
+  //   Public signature debug description: bar(){}kotlin.collections.List<*>
+  /* fake */ override fun bar(): List<*>
+
+  // CHECK:
+  //   Mangled name: C#foo(kotlin.collections.List<*>){}
+  //   Public signature: /C.foo|2923589974738683515[0]
+  //   Public signature debug description: foo(kotlin.collections.List<*>){}
+  /* fake */ override fun foo(a: List<*>): Unit
+
+  // CHECK:
+  //   Mangled name: C{}a
+  //   Public signature: /C.a|-1200697420457237799[0]
+  //   Public signature debug description: {}a
+  /* fake */ override var a: List<*>
+    // CHECK JVM_IR:
+    //   Mangled name: C#<get-a>(){}kotlin.collections.List<*>
+    //   Public signature: /C.a.<get-a>|7420054975261155862[0]
+    //   Public signature debug description: <get-a>(){}kotlin.collections.List<*>
+    /* fake */ override get(): List<*>
+    // CHECK:
+    //   Mangled name: C#<set-a>(kotlin.collections.List<*>){}
+    //   Public signature: /C.a.<set-a>|-1742626468354620590[0]
+    //   Public signature debug description: <set-a>(kotlin.collections.List<*>){}
+    /* fake */ override set(value: List<*>): Unit
+
+}
+
+// CHECK:
+//   Mangled name: D
+//   Public signature: /D|null[0]
+class D : Java1, KotlinInterface {
+  // CHECK:
+  //   Mangled name: D#<init>(){}
+  //   Public signature: /D.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: D#bar(){}kotlin.collections.List<*>
+  //   Public signature: /D.bar|9146304308611802181[0]
+  //   Public signature debug description: bar(){}kotlin.collections.List<*>
+  /* fake */ override fun bar(): List<*>
+
+  // CHECK:
+  //   Mangled name: D#foo(kotlin.collections.List<*>){}
+  //   Public signature: /D.foo|2923589974738683515[0]
+  //   Public signature debug description: foo(kotlin.collections.List<*>){}
+  override fun foo(a: List<*>): Unit
+
+  // CHECK:
+  //   Mangled name: D{}a
+  //   Public signature: /D.a|-1200697420457237799[0]
+  //   Public signature debug description: {}a
+  override var a: List<*>
+    // CHECK JVM_IR:
+    //   Mangled name: D#<get-a>(){}kotlin.collections.List<*>
+    //   Public signature: /D.a.<get-a>|7420054975261155862[0]
+    //   Public signature debug description: <get-a>(){}kotlin.collections.List<*>
+    override get(): List<*>
+    // CHECK:
+    //   Mangled name: D#<set-a>(kotlin.collections.List<*>){}
+    //   Public signature: /D.a.<set-a>|-1742626468354620590[0]
+    //   Public signature debug description: <set-a>(kotlin.collections.List<*>){}
+    override set(value: List<*>): Unit
+
+}
+
+// CHECK:
+//   Mangled name: E
+//   Public signature: /E|null[0]
+class E : Java1, KotlinInterface2 {
+  // CHECK:
+  //   Mangled name: E#<init>(){}
+  //   Public signature: /E.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#bar(){}kotlin.collections.List<*>
+  //   Public signature: /E.bar|9146304308611802181[0]
+  //   Public signature debug description: bar(){}kotlin.collections.List<*>
+  /* fake */ override fun bar(): List<*>
+
+  // CHECK:
+  //   Mangled name: E#foo(kotlin.collections.List<*>){}
+  //   Public signature: /E.foo|2923589974738683515[0]
+  //   Public signature debug description: foo(kotlin.collections.List<*>){}
+  /* fake */ override fun foo(a: List<*>): Unit
+
+  // CHECK:
+  //   Mangled name: E{}a
+  //   Public signature: /E.a|-1200697420457237799[0]
+  //   Public signature debug description: {}a
+  /* fake */ override var a: List<*>
+    // CHECK JVM_IR:
+    //   Mangled name: E#<get-a>(){}kotlin.collections.List<*>
+    //   Public signature: /E.a.<get-a>|7420054975261155862[0]
+    //   Public signature debug description: <get-a>(){}kotlin.collections.List<*>
+    /* fake */ override get(): List<*>
+    // CHECK:
+    //   Mangled name: E#<set-a>(kotlin.collections.List<*>){}
+    //   Public signature: /E.a.<set-a>|-1742626468354620590[0]
+    //   Public signature debug description: <set-a>(kotlin.collections.List<*>){}
+    /* fake */ override set(value: List<*>): Unit
+
+}
+
+// CHECK:
+//   Mangled name: F
+//   Public signature: /F|null[0]
+class F : Java1, KotlinInterface2 {
+  // CHECK:
+  //   Mangled name: F#<init>(){}
+  //   Public signature: /F.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: F#foo(kotlin.collections.List<*>){}
+  //   Public signature: /F.foo|2923589974738683515[0]
+  //   Public signature debug description: foo(kotlin.collections.List<*>){}
+  /* fake */ override fun foo(a: List<*>): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: F#bar(){}kotlin.collections.List<kotlin.Any?>
+  //   Public signature: /F.bar|7957968205035256403[0]
+  //   Public signature debug description: bar(){}kotlin.collections.List<kotlin.Any?>
+  override fun bar(): List<Any?>
+
+  // CHECK:
+  //   Mangled name: F{}a
+  //   Public signature: /F.a|-1200697420457237799[0]
+  //   Public signature debug description: {}a
+  /* fake */ override var a: List<*>
+    // CHECK JVM_IR:
+    //   Mangled name: F#<get-a>(){}kotlin.collections.List<*>
+    //   Public signature: /F.a.<get-a>|7420054975261155862[0]
+    //   Public signature debug description: <get-a>(){}kotlin.collections.List<*>
+    /* fake */ override get(): List<*>
+    // CHECK:
+    //   Mangled name: F#<set-a>(kotlin.collections.List<*>){}
+    //   Public signature: /F.a.<set-a>|-1742626468354620590[0]
+    //   Public signature debug description: <set-a>(kotlin.collections.List<*>){}
+    /* fake */ override set(value: List<*>): Unit
+
+}
+
+// CHECK:
+//   Mangled name: G
+//   Public signature: /G|null[0]
+class G : Java1, Java3 {
+  // CHECK:
+  //   Mangled name: G#<init>(){}
+  //   Public signature: /G.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: G#bar(){}kotlin.collections.List<*>
+  //   Public signature: /G.bar|9146304308611802181[0]
+  //   Public signature debug description: bar(){}kotlin.collections.List<*>
+  /* fake */ override fun bar(): List<*>
+
+  // CHECK:
+  //   Mangled name: G#foo(kotlin.collections.List<*>){}
+  //   Public signature: /G.foo|2923589974738683515[0]
+  //   Public signature debug description: foo(kotlin.collections.List<*>){}
+  /* fake */ override fun foo(a: List<*>): Unit
+
+  // CHECK:
+  //   Mangled name: G{}a
+  //   Public signature: /G.a|-1200697420457237799[0]
+  //   Public signature debug description: {}a
+  /* fake */ override var a: List<*>
+    // CHECK JVM_IR:
+    //   Mangled name: G#<get-a>(){}kotlin.collections.List<*>
+    //   Public signature: /G.a.<get-a>|7420054975261155862[0]
+    //   Public signature debug description: <get-a>(){}kotlin.collections.List<*>
+    /* fake */ override get(): List<*>
+    // CHECK:
+    //   Mangled name: G#<set-a>(kotlin.collections.List<*>){}
+    //   Public signature: /G.a.<set-a>|-1742626468354620590[0]
+    //   Public signature debug description: <set-a>(kotlin.collections.List<*>){}
+    /* fake */ override set(value: List<*>): Unit
+
+}
+
+// CHECK:
+//   Mangled name: H
+//   Public signature: /H|null[0]
+class H : Java1, Java3 {
+  // CHECK:
+  //   Mangled name: H#<init>(){}
+  //   Public signature: /H.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: H#bar(){}kotlin.collections.List<*>
+  //   Public signature: /H.bar|9146304308611802181[0]
+  //   Public signature debug description: bar(){}kotlin.collections.List<*>
+  /* fake */ override fun bar(): List<*>
+
+  // CHECK:
+  //   Mangled name: H#foo(kotlin.collections.List<*>){}
+  //   Public signature: /H.foo|2923589974738683515[0]
+  //   Public signature debug description: foo(kotlin.collections.List<*>){}
+  override fun foo(a: List<*>): Unit
+
+  // CHECK:
+  //   Mangled name: H{}a
+  //   Public signature: /H.a|-1200697420457237799[0]
+  //   Public signature debug description: {}a
+  /* fake */ override var a: List<*>
+    // CHECK JVM_IR:
+    //   Mangled name: H#<get-a>(){}kotlin.collections.List<*>
+    //   Public signature: /H.a.<get-a>|7420054975261155862[0]
+    //   Public signature debug description: <get-a>(){}kotlin.collections.List<*>
+    /* fake */ override get(): List<*>
+    // CHECK:
+    //   Mangled name: H#<set-a>(kotlin.collections.List<*>){}
+    //   Public signature: /H.a.<set-a>|-1742626468354620590[0]
+    //   Public signature debug description: <set-a>(kotlin.collections.List<*>){}
+    /* fake */ override set(value: List<*>): Unit
+
+}
+
+// CHECK:
+//   Mangled name: I
+//   Public signature: /I|null[0]
+abstract class I : Java4 {
+  // CHECK:
+  //   Mangled name: I#<init>(){}
+  //   Public signature: /I.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: I#bar(){}kotlin.collections.MutableList<kotlin.Any?>?
+  //   Public signature: /I.bar|2549972836650137141[0]
+  //   Public signature debug description: bar(){}kotlin.collections.MutableList<kotlin.Any?>?
+  abstract /* fake */ override fun bar(): MutableList<Any?>?
+
+  // CHECK:
+  //   Mangled name: I#foo(kotlin.collections.MutableList<kotlin.Any?>?){}
+  //   Public signature: /I.foo|1823979372554704958[0]
+  //   Public signature debug description: foo(kotlin.collections.MutableList<kotlin.Any?>?){}
+  abstract /* fake */ override fun foo(a: MutableList<Any?>?): Unit
+
+}
+
+// CHECK:
+//   Mangled name: J
+//   Public signature: /J|null[0]
+class J : Java4 {
+  // CHECK:
+  //   Mangled name: J#<init>(){}
+  //   Public signature: /J.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: J#bar(){}kotlin.collections.MutableList<kotlin.Any?>
+  //   Public signature: /J.bar|2717899934593573586[0]
+  //   Public signature debug description: bar(){}kotlin.collections.MutableList<kotlin.Any?>
+  override fun bar(): MutableList<Any?>
+
+  // CHECK:
+  //   Mangled name: J#foo(kotlin.collections.MutableList<kotlin.Any?>?){}
+  //   Public signature: /J.foo|1823979372554704958[0]
+  //   Public signature debug description: foo(kotlin.collections.MutableList<kotlin.Any?>?){}
+  override fun foo(a: MutableList<Any?>?): Unit
+
+}
+
+// CHECK:
+//   Mangled name: KotlinClass
+//   Public signature: /KotlinClass|null[0]
+open class KotlinClass {
+  // CHECK:
+  //   Mangled name: KotlinClass{}a
+  //   Public signature: /KotlinClass.a|-1200697420457237799[0]
+  //   Public signature debug description: {}a
+  open var a: List<*>
+    // CHECK JVM_IR:
+    //   Mangled name: KotlinClass#<get-a>(){}kotlin.collections.List<*>
+    //   Public signature: /KotlinClass.a.<get-a>|7420054975261155862[0]
+    //   Public signature debug description: <get-a>(){}kotlin.collections.List<*>
+    open get
+    // CHECK:
+    //   Mangled name: KotlinClass#<set-a>(kotlin.collections.List<*>){}
+    //   Public signature: /KotlinClass.a.<set-a>|-1742626468354620590[0]
+    //   Public signature debug description: <set-a>(kotlin.collections.List<*>){}
+    open set
+
+  // CHECK:
+  //   Mangled name: KotlinClass#<init>(){}
+  //   Public signature: /KotlinClass.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: KotlinClass#bar(){}kotlin.collections.List<*>
+  //   Public signature: /KotlinClass.bar|9146304308611802181[0]
+  //   Public signature debug description: bar(){}kotlin.collections.List<*>
+  open fun bar(): List<*>
+
+  // CHECK:
+  //   Mangled name: KotlinClass#foo(kotlin.collections.List<*>){}
+  //   Public signature: /KotlinClass.foo|2923589974738683515[0]
+  //   Public signature debug description: foo(kotlin.collections.List<*>){}
+  open fun foo(a: List<*>): Unit
+
+}
+
+// CHECK:
+//   Mangled name: KotlinInterface
+//   Public signature: /KotlinInterface|null[0]
+interface KotlinInterface {
+  // CHECK JVM_IR:
+  //   Mangled name: KotlinInterface#bar(){}kotlin.collections.List<kotlin.Any?>
+  //   Public signature: /KotlinInterface.bar|7957968205035256403[0]
+  //   Public signature debug description: bar(){}kotlin.collections.List<kotlin.Any?>
+  abstract fun bar(): List<Any?>
+
+  // CHECK:
+  //   Mangled name: KotlinInterface#foo(kotlin.collections.List<kotlin.Any?>){}
+  //   Public signature: /KotlinInterface.foo|-8908280896721730733[0]
+  //   Public signature debug description: foo(kotlin.collections.List<kotlin.Any?>){}
+  abstract fun foo(a: List<Any?>): Unit
+
+  // CHECK:
+  //   Mangled name: KotlinInterface{}a
+  //   Public signature: /KotlinInterface.a|-1200697420457237799[0]
+  //   Public signature debug description: {}a
+  abstract var a: List<Any?>
+    // CHECK JVM_IR:
+    //   Mangled name: KotlinInterface#<get-a>(){}kotlin.collections.List<kotlin.Any?>
+    //   Public signature: /KotlinInterface.a.<get-a>|1236722346785329618[0]
+    //   Public signature debug description: <get-a>(){}kotlin.collections.List<kotlin.Any?>
+    abstract get
+    // CHECK:
+    //   Mangled name: KotlinInterface#<set-a>(kotlin.collections.List<kotlin.Any?>){}
+    //   Public signature: /KotlinInterface.a.<set-a>|8524237986202439368[0]
+    //   Public signature debug description: <set-a>(kotlin.collections.List<kotlin.Any?>){}
+    abstract set
+
+}
+
+// CHECK:
+//   Mangled name: KotlinInterface2
+//   Public signature: /KotlinInterface2|null[0]
+interface KotlinInterface2 : Java2 {
+  // CHECK JVM_IR:
+  //   Mangled name: KotlinInterface2#bar(){}kotlin.collections.MutableList<kotlin.Any?>?
+  //   Public signature: /KotlinInterface2.bar|2549972836650137141[0]
+  //   Public signature debug description: bar(){}kotlin.collections.MutableList<kotlin.Any?>?
+  abstract /* fake */ override fun bar(): MutableList<Any?>?
+
+  // CHECK:
+  //   Mangled name: KotlinInterface2#foo(kotlin.collections.MutableList<kotlin.Any?>?){}
+  //   Public signature: /KotlinInterface2.foo|1823979372554704958[0]
+  //   Public signature debug description: foo(kotlin.collections.MutableList<kotlin.Any?>?){}
+  abstract /* fake */ override fun foo(a: MutableList<Any?>?): Unit
+
+}
+
+// CHECK:
+//   Mangled name: #test(A;B;C;D;E;F;G;H;I;J){}
+//   Public signature: /test|-6013363711736718138[0]
+//   Public signature debug description: test(A;B;C;D;E;F;G;H;I;J){}
+fun test(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J): Unit
