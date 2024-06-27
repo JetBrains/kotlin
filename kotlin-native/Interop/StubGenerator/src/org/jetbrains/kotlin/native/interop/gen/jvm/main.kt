@@ -277,7 +277,11 @@ private fun processCLib(
 
     val entryPoint = def.config.entryPoints.atMostOne()
     val linkerName = cinteropArguments.linker ?: def.config.linker
-    val linker = "${tool.llvmHome}/bin/$linkerName"
+    val linker = if (linkerName.startsWith("/")) {
+        linkerName
+    } else {
+        "${tool.llvmHome}/bin/$linkerName"
+    }
     val compiler = "${tool.llvmHome}/bin/clang"
     val excludedFunctions = def.config.excludedFunctions.toSet()
     val excludedMacros = def.config.excludedMacros.toSet()
