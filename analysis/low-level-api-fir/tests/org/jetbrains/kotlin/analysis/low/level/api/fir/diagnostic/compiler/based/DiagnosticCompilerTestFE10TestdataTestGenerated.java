@@ -48553,6 +48553,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("duplicateSupertype.kt")
+      public void testDuplicateSupertype() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/multiplatform/duplicateSupertype.kt");
+      }
+
+      @Test
       @TestMetadata("jvmOverloads.kt")
       public void testJvmOverloads() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/multiplatform/jvmOverloads.kt");
