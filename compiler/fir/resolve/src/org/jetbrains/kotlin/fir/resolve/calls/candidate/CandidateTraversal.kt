@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.resolve.calls.candidate
 
 import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 fun ConeCallAtom.processCandidatesAndPostponedAtoms(
     candidateProcessor: (Candidate) -> Unit,
@@ -72,7 +71,5 @@ private fun Context.processCandidatesAndPostponedAtoms(atom: ConeCallAtom?) {
         is ConeWrappedExpressionAtom -> processCandidatesAndPostponedAtoms(atom.subAtom)
         is ConeErrorExpressionAtom -> processCandidatesAndPostponedAtoms(atom.subAtom)
         is ConeSafeCallAtom -> processCandidatesAndPostponedAtoms(atom.selector)
-
-        else -> shouldNotBeCalled()
     }
 }

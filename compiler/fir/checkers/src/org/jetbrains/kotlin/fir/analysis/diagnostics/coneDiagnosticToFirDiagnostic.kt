@@ -114,7 +114,7 @@ private fun ConeDiagnostic.toKtDiagnostic(
     is ConeAmbiguityError -> @OptIn(ApplicabilityDetail::class) when {
         // Don't report ambiguity when some non-lambda, non-callable-reference argument has an error type
         candidates.all {
-            if (it !is AbstractCallCandidate) return@all false
+            if (it !is AbstractCallCandidate<*>) return@all false
             // Ambiguous candidates may be not fully processed, so argument mapping may be not initialized
             if (!it.argumentMappingInitialized) return@all false
             it.argumentMapping.keys.any { atom ->

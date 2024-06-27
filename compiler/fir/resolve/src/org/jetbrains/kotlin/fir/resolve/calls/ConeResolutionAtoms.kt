@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.candidate.candidate
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeVariableForLambdaReturnType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.model.LambdaWithTypeVariableAsExpectedTypeMarker
 import org.jetbrains.kotlin.resolve.calls.model.PostponedCallableReferenceMarker
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
@@ -26,32 +27,89 @@ import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
-@JvmName("createRawAtomNullable")
-fun ConeCallAtom.Companion.createRawAtom(expression: FirExpression?): ConeCallAtom? {
-    return expression?.let { createRawAtom(it) }
-}
+//  -------------------------- Atoms --------------------------
 
-fun ConeCallAtom.Companion.createRawAtom(expression: FirExpression): ConeCallAtom {
-    return when (expression) {
-        is FirAnonymousFunctionExpression -> ConeRawLambdaAtom(expression)
-        is FirCallableReferenceAccess -> when {
-            expression.isResolved -> ConeResolvedAtom(expression)
-            else -> ConeRawCallableReferenceAtom(expression)
+sealed class ConeCallAtom : AbstractConeCallAtom() {
+    companion object {
+        @JvmName("createRawAtomNullable")
+        fun createRawAtom(expression: FirExpression?): ConeCallAtom? {
+            return expression?.let { createRawAtom(it) }
         }
-        is FirSafeCallExpression -> ConeSafeCallAtom(expression, createRawAtom((expression.selector as? FirExpression)?.unwrapSmartcastExpression()))
-        is FirResolvable -> when (val candidate = expression.candidate()) {
-            null -> ConeResolvedAtom(expression)
-            else -> ConeAtomWithCandidate(expression, candidate)
+
+        fun createRawAtom(expression: FirExpression): ConeCallAtom {
+            return when (expression) {
+                is FirAnonymousFunctionExpression -> ConeRawLambdaAtom(expression)
+                is FirCallableReferenceAccess -> when {
+                    expression.isResolved -> ConeResolvedAtom(expression)
+                    else -> ConeRawCallableReferenceAtom(expression)
+                }
+                is FirSafeCallExpression -> ConeSafeCallAtom(expression, createRawAtom((expression.selector as? FirExpression)?.unwrapSmartcastExpression()))
+                is FirResolvable -> when (val candidate = expression.candidate()) {
+                    null -> ConeResolvedAtom(expression)
+                    else -> ConeAtomWithCandidate(expression, candidate)
+                }
+                is FirNamedArgumentExpression -> ConeNamedArgumentAtom(expression, createRawAtom(expression.expression))
+                is FirSpreadArgumentExpression -> ConeSpreadExpressionAtom(expression, createRawAtom(expression.expression))
+                is FirErrorExpression -> ConeErrorExpressionAtom(expression, createRawAtom(expression.expression))
+                is FirBlock -> ConeBlockAtom(expression, createRawAtom(expression.lastExpression))
+                else -> ConeResolvedAtom(expression)
+            }
         }
-        is FirNamedArgumentExpression -> ConeNamedArgumentAtom(expression, createRawAtom(expression.expression))
-        is FirSpreadArgumentExpression -> ConeSpreadExpressionAtom(expression, createRawAtom(expression.expression))
-        is FirErrorExpression -> ConeErrorExpressionAtom(expression, createRawAtom(expression.expression))
-        is FirBlock -> ConeBlockAtom(expression, createRawAtom(expression.lastExpression))
-        else -> ConeResolvedAtom(expression)
     }
 }
 
-//  -------------------------- Atoms --------------------------
+class ConeResolvedAtom(override val fir: FirExpression) : ConeCallAtom() {
+    init {
+        check(fir.isResolved) { "ConeResolvedAtom should be created only for resolved expressions" }
+    }
+
+    override val expression: FirExpression
+        get() = fir
+}
+
+class ConeSafeCallAtom(override val fir: FirSafeCallExpression, val selector: ConeCallAtom?) : ConeCallAtom() {
+    override val expression: FirSafeCallExpression
+        get() = fir
+}
+
+class ConeErrorExpressionAtom(override val fir: FirErrorExpression, val subAtom: ConeCallAtom?) : ConeCallAtom() {
+    override val expression: FirErrorExpression
+        get() = fir
+}
+
+class ConeBlockAtom(override val fir: FirBlock, val lastExpressionAtom: ConeCallAtom?) : ConeCallAtom() {
+    override val expression: FirBlock
+        get() = fir
+}
+
+sealed class ConeWrappedExpressionAtom(val subAtom: ConeCallAtom) : ConeCallAtom() {
+    abstract override val fir: FirWrappedArgumentExpression
+    abstract override val expression: FirWrappedArgumentExpression
+
+    val isSpread: Boolean
+        get() = fir.isSpread
+}
+
+class ConeSpreadExpressionAtom(
+    override val fir: FirSpreadArgumentExpression,
+    subAtom: ConeCallAtom
+) : ConeWrappedExpressionAtom(subAtom) {
+    override val expression: FirSpreadArgumentExpression
+        get() = fir
+}
+
+class ConeNamedArgumentAtom(
+    override val fir: FirNamedArgumentExpression,
+    subAtom: ConeCallAtom
+) : ConeWrappedExpressionAtom(subAtom) {
+    override val expression: FirNamedArgumentExpression
+        get() = fir
+
+    val name: Name
+        get() = fir.name
+}
+
+//  -------------------------- Not-resolved atoms --------------------------
 
 class ConeAtomWithCandidate(
     override val fir: FirResolvable,
@@ -272,5 +330,12 @@ internal fun extractInputOutputTypesFromCallableReferenceExpectedType(
 //        }
 
         else -> null
+    }
+}
+
+fun ConeCallAtom.unwrap(): ConeCallAtom {
+    return when (this) {
+        is ConeWrappedExpressionAtom -> subAtom
+        else -> this
     }
 }
