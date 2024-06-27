@@ -179,12 +179,11 @@ class Candidate(
 
     // ---------------------------------------- Postponed atoms ----------------------------------------
 
-    private val _postponedAtomsByFir: MutableMap<FirElement, MutableList<ConePostponedResolvedAtom>> = mutableMapOf()
-    val postponedAtomsByFir: Map<FirElement, List<ConePostponedResolvedAtom>> get() = _postponedAtomsByFir
-    val postponedAtoms: Collection<ConePostponedResolvedAtom> get() = _postponedAtomsByFir.values.flatten()
+    private val _postponedAtoms: MutableList<ConePostponedResolvedAtom> = mutableListOf()
+    val postponedAtoms: List<ConePostponedResolvedAtom> get() = _postponedAtoms
 
     fun addPostponedAtom(atom: ConePostponedResolvedAtom) {
-        _postponedAtomsByFir.getOrPut(atom.fir) { mutableListOf() }.add(atom)
+        _postponedAtoms += atom
     }
 
     // ---------------------------------------- PCLA-related parts ----------------------------------------
