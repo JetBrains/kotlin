@@ -940,7 +940,7 @@ abstract class AbstractComposeLowering(
             val classKotlinVersion =
                 ((this as? Fir2IrLazyClass)?.fir?.klibSourceFile as? DeserializedSourceFile)?.library?.versions?.compilerVersion
             if (classKotlinVersion != null && classKotlinVersion.startsWith("1.9")) {
-                val stableField = this.buildStabilityProp()
+                val stableField = this.buildStabilityProp(false)
                 val backingField = stableField.backingField!!
 
                 return irGetField(backingField)
@@ -973,8 +973,7 @@ abstract class AbstractComposeLowering(
     }
 
     private fun IrClass.makeStabilityFieldNonJvm(): IrField {
-        val prop = this.buildStabilityProp()
-        this.buildStabilityGetter(prop)
+        val prop = this.buildStabilityProp(true)
         return prop.backingField!!
     }
 
@@ -990,11 +989,11 @@ abstract class AbstractComposeLowering(
         }
     }
 
-    private fun IrClass.buildStabilityProp(): IrProperty {
-        val fieldParent = this.getPackageFragment()
+    private fun IrClass.buildStabilityProp(buildGetter: Boolean): IrProperty {
+        val parent = this.getPackageFragment()
 
-        val propName = this@buildStabilityProp.uniqueStabilityPropertyName()
-        val existingProp = fieldParent.declarations.firstOrNull {
+        val propName = this.uniqueStabilityPropertyName()
+        val existingProp = parent.declarations.firstOrNull {
             it is IrProperty && it.name == propName
         } as? IrProperty
         if (existingProp != null) {
@@ -1002,7 +1001,7 @@ abstract class AbstractComposeLowering(
         }
 
         val stabilityField = buildStabilityField(uniqueStabilityFieldName()).also {
-            it.parent = fieldParent
+            it.parent = parent
         }
 
         val property = context.irFactory.buildProperty {
@@ -1011,10 +1010,14 @@ abstract class AbstractComposeLowering(
             name = propName
             visibility = DescriptorVisibilities.PUBLIC
         }.also { property ->
-            property.parent = fieldParent
+            property.parent = parent
             stabilityField.correspondingPropertySymbol = property.symbol
             property.backingField = stabilityField
-            fieldParent.addChild(property)
+            parent.addChild(property)
+        }
+
+        if (buildGetter) {
+            this.buildStabilityGetter(property, parent)
         }
 
         return property
@@ -1026,8 +1029,7 @@ abstract class AbstractComposeLowering(
         constructorSymbol = hiddenFromObjCAnnotationSymbol.constructors.first()
     )
 
-    private fun IrClass.buildStabilityGetter(stabilityProp: IrProperty) {
-        val fieldParent = stabilityProp.parent as IrPackageFragment
+    private fun IrClass.buildStabilityGetter(stabilityProp: IrProperty, parent: IrPackageFragment) {
         val getterName = uniqueStabilityGetterName()
 
         val stabilityField = stabilityProp.backingField!!
@@ -1044,11 +1046,11 @@ abstract class AbstractComposeLowering(
             origin = IrDeclarationOrigin.GeneratedByPlugin(ComposeCompilerKey)
             annotations = listOf(hiddenFromObjCAnnotation)
         }.also { fn ->
-            fn.parent = fieldParent
+            fn.parent = parent
             fn.body = DeclarationIrBuilder(context, fn.symbol).irBlockBody {
                 +irReturn(irGetField(stabilityField))
             }
-            fieldParent.addChild(fn)
+            parent.addChild(fn)
         }
 
         context.metadataDeclarationRegistrar.addMetadataVisibleAnnotationsToElement(stabilityGetter, hiddenFromObjCAnnotation)
