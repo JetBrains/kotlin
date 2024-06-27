@@ -1172,7 +1172,7 @@ class LightTreeRawFirDeclarationBuilder(
         if (isImplicit && (classWrapper.modifiers.hasExternal() || isExpect)) {
             return null
         }
-        val isThis = thisKeywordPresent //|| (isImplicit && classWrapper.hasPrimaryConstructor)
+        val isThis = thisKeywordPresent
         val delegatedType =
             when {
                 isThis -> classWrapper.delegatedSelfTypeRef
