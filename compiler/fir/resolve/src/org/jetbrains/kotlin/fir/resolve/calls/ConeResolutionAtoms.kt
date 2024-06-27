@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.lastExpression
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.candidate
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeVariableForLambdaReturnType
 import org.jetbrains.kotlin.fir.types.*
@@ -190,12 +191,26 @@ class ConeResolvedCallableReferenceAtom(
     override val expression: FirCallableReferenceAccess
         get() = fir
 
+    var subAtom: ConeAtomWithCandidate? = null
+        private set
+
     var hasBeenResolvedOnce: Boolean = false
     var hasBeenPostponed: Boolean = false
 
     val mightNeedAdditionalResolution: Boolean get() = !hasBeenResolvedOnce || hasBeenPostponed
 
     var resultingReference: FirNamedReference? = null
+        private set
+
+    fun initializeResultingReference(resultingReference: FirNamedReference) {
+        require(this.resultingReference == null) { "resultingReference already initialized" }
+        this.resultingReference = resultingReference
+        val candidate = (resultingReference as? FirNamedReferenceWithCandidate)?.candidate
+        if (candidate != null) {
+            subAtom = ConeAtomWithCandidate(fir, candidate)
+        }
+    }
+
     var resultingTypeForCallableReference: ConeKotlinType? = null
 
     override val inputTypes: Collection<ConeKotlinType>
