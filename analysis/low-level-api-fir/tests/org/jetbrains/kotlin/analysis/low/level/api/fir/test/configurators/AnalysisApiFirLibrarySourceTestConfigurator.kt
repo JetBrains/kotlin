@@ -39,7 +39,7 @@ object AnalysisApiFirLibrarySourceTestConfigurator : AnalysisApiTestConfigurator
     ) {
         builder.apply {
             useAdditionalService<KtTestModuleFactory> { KtLibrarySourceTestModuleFactory }
-            useAdditionalService<TestModuleCompiler> { DispatchingTestModuleCompiler() }
+            useAdditionalService<TestModuleCompiler> { DispatchingTestModuleCompiler }
             useAdditionalService { AnalysisApiIndexingConfiguration(AnalysisApiBinaryLibraryIndexingMode.INDEX_STUBS) }
             useConfigurators(
                 ::AnalysisApiJvmEnvironmentConfigurator,
