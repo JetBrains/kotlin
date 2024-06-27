@@ -12,7 +12,7 @@ interface I
 
 fun testCommon(base: Base) {
     if (base is I) {
-        val x = when (base) { // must be an error
+        val x = <!NO_ELSE_IN_WHEN!>when<!> (base) { // must be an error
             <!USELESS_IS_CHECK!>is A<!> -> 1
             B -> 2
         }
