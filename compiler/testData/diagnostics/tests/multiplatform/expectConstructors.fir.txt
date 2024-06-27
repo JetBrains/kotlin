@@ -1,0 +1,96 @@
+Module: m1-common
+FILE: common.kt
+    public sealed expect class Owner : R|kotlin/Any| {
+        public final expect class WithoutConstructor : R|Owner| {
+            public expect constructor(arg: R|kotlin/Int|): R|Owner.WithoutConstructor| {
+                super<R|Owner|>()
+            }
+
+        }
+
+        public final expect class WithConstructor : R|Owner| {
+            public expect constructor(arg: R|kotlin/Int|): R|Owner.WithConstructor|
+
+            public expect constructor(s: R|kotlin/String|): R|Owner.WithConstructor| {
+                super<R|Owner|>()
+            }
+
+        }
+
+    }
+FILE: jvm.kt
+    public sealed actual class Owner : R|kotlin/Any| {
+        protected constructor(): R|Owner| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final actual class WithoutConstructor : R|Owner| {
+            public actual constructor(arg: R|kotlin/Int|): R|Owner.WithoutConstructor| {
+                super<R|Owner|>()
+            }
+
+        }
+
+        public final actual class WithConstructor : R|Owner| {
+            public actual constructor(arg: R|kotlin/Int|): R|Owner.WithConstructor| {
+                super<R|Owner|>()
+            }
+
+            public final val arg: R|kotlin/Int| = R|<local>/arg|
+                public get(): R|kotlin/Int|
+
+            public actual constructor(s: R|kotlin/String|): R|Owner.WithConstructor| {
+                this<R|Owner.WithConstructor|>(Int(0))
+            }
+
+        }
+
+    }
+Module: m2-jvm
+FILE: common.kt
+    public sealed expect class Owner : R|kotlin/Any| {
+        public final expect class WithoutConstructor : R|Owner| {
+            public expect constructor(arg: R|kotlin/Int|): R|Owner.WithoutConstructor| {
+                super<R|Owner|>()
+            }
+
+        }
+
+        public final expect class WithConstructor : R|Owner| {
+            public expect constructor(arg: R|kotlin/Int|): R|Owner.WithConstructor|
+
+            public expect constructor(s: R|kotlin/String|): R|Owner.WithConstructor| {
+                super<R|Owner|>()
+            }
+
+        }
+
+    }
+FILE: jvm.kt
+    public sealed actual class Owner : R|kotlin/Any| {
+        protected constructor(): R|Owner| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final actual class WithoutConstructor : R|Owner| {
+            public actual constructor(arg: R|kotlin/Int|): R|Owner.WithoutConstructor| {
+                super<R|Owner|>()
+            }
+
+        }
+
+        public final actual class WithConstructor : R|Owner| {
+            public actual constructor(arg: R|kotlin/Int|): R|Owner.WithConstructor| {
+                super<R|Owner|>()
+            }
+
+            public final val arg: R|kotlin/Int| = R|<local>/arg|
+                public get(): R|kotlin/Int|
+
+            public actual constructor(s: R|kotlin/String|): R|Owner.WithConstructor| {
+                this<R|Owner.WithConstructor|>(Int(0))
+            }
+
+        }
+
+    }

@@ -26215,6 +26215,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("expectConstructors.kt")
+      public void testExpectConstructors() {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/expectConstructors.kt");
+      }
+
+      @Test
       @TestMetadata("expectDataObject.kt")
       public void testExpectDataObject() {
         runTest("compiler/testData/diagnostics/tests/multiplatform/expectDataObject.kt");

@@ -26215,6 +26215,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("expectConstructors.kt")
+      public void testExpectConstructors() {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/expectConstructors.kt");
+      }
+
+      @Test
       @TestMetadata("expectDataObject.kt")
       public void testExpectDataObject() {
         runTest("compiler/testData/diagnostics/tests/multiplatform/expectDataObject.kt");
