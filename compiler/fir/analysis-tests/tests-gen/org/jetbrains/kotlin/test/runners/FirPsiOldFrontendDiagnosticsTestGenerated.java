@@ -40961,6 +40961,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("ExhaustiveOnTypeParameterWithSealedUpperBound.kt")
+      public void testExhaustiveOnTypeParameterWithSealedUpperBound() {
+        runTest("compiler/testData/diagnostics/tests/when/ExhaustiveOnTypeParameterWithSealedUpperBound.kt");
+      }
+
+      @Test
       @TestMetadata("ExhaustivePlatformBoolean.kt")
       public void testExhaustivePlatformBoolean() {
         runTest("compiler/testData/diagnostics/tests/when/ExhaustivePlatformBoolean.kt");
