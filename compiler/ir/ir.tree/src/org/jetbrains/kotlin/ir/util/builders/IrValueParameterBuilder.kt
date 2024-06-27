@@ -65,5 +65,6 @@ class IrValueParameterBuilder : IrDeclarationBuilder<IrValueParameter> {
         ).also {
             it.parent = irFunction
             it.defaultValue = defaultValue?.patchDeclarationParents(irFunction)
+            it.annotations = annotations.toList()
         }
 }

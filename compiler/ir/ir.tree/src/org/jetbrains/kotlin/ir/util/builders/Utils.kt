@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.ir.util.builders
 
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrBody
-import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
@@ -18,56 +15,37 @@ import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.DeepCopyTypeRemapper
 import org.jetbrains.kotlin.ir.util.deepCopyWithoutPatchingParents
 import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.Name
 
-fun IrFactory.buildSimpleFunction(
-    builder: IrSimpleFunctionBuilder,
-    parent: IrDeclarationParent,
-): IrSimpleFunction {
-    return builder
-        .build(this)
-        .also { it.parent = parent }
-}
-
-fun IrFactory.buildConstructor(
-    builder: IrConstructorBuilder,
-    parent: IrDeclarationParent,
-): IrConstructor {
-    return builder
-        .build(this)
-        .also { it.parent = parent }
-}
 
 fun IrDeclarationContainer.addSimpleFunction(
     builder: IrSimpleFunctionBuilder,
     factory: IrFactory,
 ): IrSimpleFunction {
-    return factory.buildSimpleFunction(builder, this)
+    return builder.build(factory, this)
         .also { declarations.add(it) }
 }
 
 fun IrClass.addConstructor(
     builder: IrConstructorBuilder,
 ): IrConstructor {
-    return factory.buildConstructor(builder, this)
+    return builder.build(factory, this)
         .also { declarations.add(it) }
 }
-
 
 inline fun IrFactory.buildSimpleFunction(
     name: Name,
     parent: IrDeclarationParent,
     builder: IrSimpleFunctionBuilder.() -> Unit
 ): IrSimpleFunction {
-    return buildSimpleFunction(IrSimpleFunctionBuilder(name).apply(builder), parent)
+    return IrSimpleFunctionBuilder(name).apply(builder).build(this, parent)
 }
 
 inline fun IrFactory.buildConstructor(
     parent: IrDeclarationContainer,
     builder: IrConstructorBuilder.() -> Unit
 ): IrConstructor {
-    return buildConstructor(IrConstructorBuilder().apply(builder), parent)
+    return IrConstructorBuilder().apply(builder).build(this, parent)
 }
 
 inline fun IrDeclarationContainer.addSimpleStaticFunction(
@@ -100,9 +78,8 @@ inline fun IrProperty.addGetter(builder: IrSimpleFunctionBuilder.() -> Unit): Ir
         (parent as? IrClass)?.let { addDispatchReceiver(it) }
         builder()
     }.also {
-        this@addGetter.getter = it
         it.correspondingPropertySymbol = this@addGetter.symbol
-        it.parent = this@addGetter.parent
+        this@addGetter.getter = it
     }
 }
 
@@ -110,30 +87,32 @@ inline fun IrProperty.addSetter(builder: IrSimpleFunctionBuilder.() -> Unit): Ir
     return factory.buildSimpleFunction(Name.special("<set-${this@addSetter.name}>"), parent) {
         (parent as? IrClass)?.let { addDispatchReceiver(it) }
     }.also {
-        this@addSetter.setter = it
         it.correspondingPropertySymbol = this@addSetter.symbol
-        it.parent = this@addSetter.parent
+        this@addSetter.setter = it
     }
 }
 
-private fun <T: IrFunction> T.fillBuilder(
-    builder: IrFunctionBuilder<T>,
-    typeSubstitutor: IrTypeSubstitutor,
-    withBody: Boolean
+fun <T: IrFunction> IrFunctionBuilder<T>.fillParametersFrom(
+    function: T,
+    typeSubstitutor: IrTypeSubstitutor? = null,
+    withBody: Boolean = false
 ) {
     val typeParametersRemapping = mutableMapOf<IrTypeParameterSymbol, IrTypeParameterSymbol>()
     val valueParametersRemapping = mutableMapOf<IrValueParameterSymbol, IrValueParameterSymbol>()
-    for (typeParameter in typeParameters) {
-        if (!typeSubstitutor.hasSubstitutionFor(typeParameter.symbol)) {
-            builder.typeParameters.add(IrTypeParameterBuilder(typeParameter))
-            typeParametersRemapping[typeParameter.symbol] = builder.typeParameters.last().symbol
+    for (typeParameter in function.typeParameters) {
+        if (typeSubstitutor?.hasSubstitutionFor(typeParameter.symbol) != true) {
+            typeParameters.add(IrTypeParameterBuilder(typeParameter))
+            typeParametersRemapping[typeParameter.symbol] = typeParameters.last().symbol
         }
     }
-    val fullTypeSubstitutor = IrChainedSubstitutor(
-        IrTypeSubstitutor(typeParametersRemapping.mapValues { (_, it) -> it.defaultType }),
-        typeSubstitutor
-    )
-    for (parameter in builder.typeParameters) {
+    val partialSubstitutor = IrTypeSubstitutor(typeParametersRemapping.mapValues { (_, it) -> it.defaultType }, allowEmptySubstitution = true)
+    val fullTypeSubstitutor = if (typeSubstitutor == null) { partialSubstitutor } else {
+        IrChainedSubstitutor(
+            partialSubstitutor,
+            typeSubstitutor
+        )
+    }
+    for (parameter in typeParameters) {
         for (index in parameter.superTypes.indices) {
             parameter.superTypes[index] = fullTypeSubstitutor.substitute(parameter.superTypes[index])
         }
@@ -160,36 +139,56 @@ private fun <T: IrFunction> T.fillBuilder(
             }
         }
     }
-    builder.returnType = fullTypeSubstitutor.substitute(returnType)
-    dispatchReceiverParameter?.let { builder.dispatchReceiverParameter = it.copy() }
-    for (i in 0 until contextReceiverParametersCount) {
-        builder.contextParameters.add(valueParameters[i].copy())
+    returnType = fullTypeSubstitutor.substitute(function.returnType)
+    function.dispatchReceiverParameter?.let { dispatchReceiverParameter = it.copy() }
+    for (i in 0 until function.contextReceiverParametersCount) {
+        contextParameters.add(function.valueParameters[i].copy())
     }
-    extensionReceiverParameter?.let { builder.extensionReceiverParameter = it.copy() }
-    for (i in contextReceiverParametersCount until valueParameters.size) {
-        builder.valueParameters.add(valueParameters[i].copy())
+    function.extensionReceiverParameter?.let { extensionReceiverParameter = it.copy() }
+    for (i in function.contextReceiverParametersCount until function.valueParameters.size) {
+        valueParameters.add(function.valueParameters[i].copy())
     }
     if (withBody) {
-        builder.body = body?.deepCopyWithoutPatchingParents(
+        body = function.body?.deepCopyWithoutPatchingParents(
             symbolRemapper = deepCopySymbolRemapper,
             createTypeRemapper = { DeepCopyTypeRemapper(it, typeSubstitutor) }
         )
     }
-
 }
 
 fun IrSimpleFunction.toBuilder(
     withName: Name? = null,
+    withParameters: Boolean = true,
     withBody: Boolean = false,
-    typeSubstitutor: IrTypeSubstitutor = IrTypeSubstitutor.EMPTY,
-) = IrSimpleFunctionBuilder(withName ?: this.name, this).also { builder ->
-    fillBuilder(builder, typeSubstitutor, withBody)
+    typeSubstitutor: IrTypeSubstitutor? = null,
+): IrSimpleFunctionBuilder = IrSimpleFunctionBuilder(withName ?: this.name, this).also { builder ->
+    if (withParameters) {
+        builder.fillParametersFrom(this, typeSubstitutor, withBody)
+    }
 }
+
+inline fun IrSimpleFunction.toBuilder(
+    withName: Name? = null,
+    withParameters: Boolean = true,
+    withBody: Boolean = false,
+    typeSubstitutor: IrTypeSubstitutor? = null,
+    builder: IrSimpleFunctionBuilder.() -> Unit
+): IrSimpleFunctionBuilder = toBuilder(withName, withParameters, withBody, typeSubstitutor).apply(builder)
 
 
 fun IrConstructor.toBuilder(
     withBody: Boolean = false,
-    typeSubstitutor: IrTypeSubstitutor = IrTypeSubstitutor.EMPTY,
-) = IrConstructorBuilder(this).also { builder ->
-    fillBuilder(builder, typeSubstitutor, withBody)
+    withParameters: Boolean = true,
+    typeSubstitutor: IrTypeSubstitutor? = null,
+): IrConstructorBuilder = IrConstructorBuilder(this).also { builder ->
+    if (withParameters) {
+        builder.fillParametersFrom(this, typeSubstitutor, withBody)
+    }
 }
+
+inline fun IrConstructor.toBuilder(
+    withBody: Boolean = false,
+    withParameters: Boolean = true,
+    typeSubstitutor: IrTypeSubstitutor? = null,
+    builder: IrConstructorBuilder.() -> Unit
+): IrConstructorBuilder = toBuilder(withBody, withParameters, typeSubstitutor).apply(builder)

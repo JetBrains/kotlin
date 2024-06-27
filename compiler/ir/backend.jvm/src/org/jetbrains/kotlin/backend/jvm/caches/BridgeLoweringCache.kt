@@ -8,12 +8,12 @@ package org.jetbrains.kotlin.backend.jvm.caches
 import org.jetbrains.kotlin.backend.common.lower.SpecialBridgeMethods
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.SpecialBridge
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.util.copyTo
+import org.jetbrains.kotlin.ir.util.builders.fillParametersFrom
+import org.jetbrains.kotlin.ir.util.builders.toBuilder
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.org.objectweb.asm.commons.Method
 import java.util.concurrent.ConcurrentHashMap
@@ -83,17 +83,16 @@ class BridgeLoweringCache(private val context: JvmBackendContext) {
                 if (index < erasedParameterCount) context.irBuiltIns.anyNType else param.type
             }
 
-            val substitutedOverride = context.irFactory.buildFun {
-                updateFrom(specialBridge.overridden)
-                name = Name.identifier(specialBridge.signature.name)
-                returnType = function.returnType
-            }.apply {
+            val substitutedOverride = specialBridge.overridden.toBuilder(withParameters = false) {
+                fillParametersFrom(function)
                 // All existing special bridges only have value parameter types.
-                valueParameters = function.valueParameters.zip(substitutedParameterTypes).map { (param, type) ->
-                    param.copyTo(this, IrDeclarationOrigin.BRIDGE, type = type)
+                for ((parameter, type) in valueParameters.zip(substitutedParameterTypes)) {
+                    parameter.origin = IrDeclarationOrigin.BRIDGE
+                    parameter.type = type
                 }
+                name = Name.identifier(specialBridge.signature.name)
+            }.build(context.irFactory, function.parent).apply {
                 overriddenSymbols = listOf(specialBridge.overridden.symbol)
-                parent = function.parent
             }
 
             val substitutedOverrideSignature = computeJvmMethod(substitutedOverride)

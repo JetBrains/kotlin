@@ -23,6 +23,9 @@ import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.builders.addDispatchReceiver
+import org.jetbrains.kotlin.ir.util.builders.buildSimpleFunction
+import org.jetbrains.kotlin.ir.util.builders.toBuilder
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
@@ -114,17 +117,9 @@ class JvmCachedDeclarations(
             if (jvmStaticFunction.isExternal) {
                 // We move external functions to the enclosing class and potentially add accessors there.
                 // The JVM backend also adds accessors in the companion object, but these are superfluous.
-                val staticExternal = context.irFactory.buildFun {
-                    updateFrom(jvmStaticFunction)
-                    name = jvmStaticFunction.name
-                    returnType = jvmStaticFunction.returnType
-                }.apply {
-                    parent = companion.parent
-                    copyAttributes(jvmStaticFunction)
-                    copyAnnotationsFrom(jvmStaticFunction)
-                    copyCorrespondingPropertyFrom(jvmStaticFunction)
-                    copyParameterDeclarationsFrom(jvmStaticFunction)
+                val staticExternal = jvmStaticFunction.toBuilder {
                     dispatchReceiverParameter = null
+                }.build(context.irFactory, companion.parent).apply {
                     metadata = jvmStaticFunction.metadata
                 }
                 staticExternal to companion.makeProxy(staticExternal, isStatic = false)
@@ -259,29 +254,16 @@ class JvmCachedDeclarations(
         defaultImplsRedirections.getOrPut(fakeOverride) {
             assert(fakeOverride.isFakeOverride)
             val irClass = fakeOverride.parentAsClass
-            val redirectFunction = context.irFactory.buildFun {
+            val redirectFunction = fakeOverride.toBuilder().apply {
                 origin = JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE
-                name = fakeOverride.name
-                visibility = fakeOverride.visibility
-                modality = fakeOverride.modality
-                returnType = fakeOverride.returnType
-                isInline = fakeOverride.isInline
-                isExternal = false
-                isTailrec = false
-                isSuspend = fakeOverride.isSuspend
-                isOperator = fakeOverride.isOperator
-                isInfix = fakeOverride.isInfix
-                isExpect = false
                 isFakeOverride = false
-            }.apply {
-                parent = irClass
-                overriddenSymbols = fakeOverride.overriddenSymbols
-                copyParameterDeclarationsFrom(fakeOverride)
+
                 // The fake override's dispatch receiver has the same type as the real declaration's,
                 // i.e. some superclass of the current class. This is not good for accessibility checks.
-                dispatchReceiverParameter?.type = irClass.defaultType
-                annotations = fakeOverride.annotations
+                addDispatchReceiver(irClass)
+            }.build(context.irFactory, irClass).apply {
                 copyCorrespondingPropertyFrom(fakeOverride)
+                overriddenSymbols = fakeOverride.overriddenSymbols
             }
             context.remapMultiFieldValueClassStructure(fakeOverride, redirectFunction, parametersMappingOrNull = null)
             redirectFunction

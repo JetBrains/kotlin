@@ -9,6 +9,7 @@ import com.intellij.util.containers.addIfNotNull
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
@@ -50,20 +51,20 @@ abstract class IrFunctionBuilder<F: IrFunction> : IrDeclarationWithVisibilityBui
 
     protected abstract fun create(factory: IrFactory): F
 
-    fun build(factory: IrFactory): F = create(factory).also {
-        it.typeParameters = typeParameters.mapIndexed { index, builder ->
-            builder.build(factory, index, it).apply {
-                parent = it
-            }
+    fun build(factory: IrFactory, parent: IrDeclarationParent): F = create(factory).also { function ->
+        function.parent = parent
+        function.annotations = annotations.toList()
+        function.typeParameters = typeParameters.mapIndexed { index, builder ->
+            builder.build(factory, index, function)
         }.toMutableList()
-        it.dispatchReceiverParameter = dispatchReceiverParameter?.build(factory, -1, it)
-        it.extensionReceiverParameter = extensionReceiverParameter?.build(factory, -1, it)
-        it.contextReceiverParametersCount = contextParameters.size
-        it.valueParameters = (contextParameters + valueParameters).mapIndexed { index, builder ->
-            builder.build(factory, index, it)
+        function.dispatchReceiverParameter = dispatchReceiverParameter?.build(factory, -1, function)
+        function.extensionReceiverParameter = extensionReceiverParameter?.build(factory, -1, function)
+        function.contextReceiverParametersCount = contextParameters.size
+        function.valueParameters = (contextParameters + valueParameters).mapIndexed { index, builder ->
+            builder.build(factory, index, function)
         }.toMutableList()
-        it.contextReceiverParametersCount = contextParameters.size
-        it.body = body?.patchDeclarationParents(it)
+        function.contextReceiverParametersCount = contextParameters.size
+        function.body = body?.patchDeclarationParents(function)
     }
 
     fun reshapeParameters(
@@ -135,6 +136,9 @@ class IrSimpleFunctionBuilder : IrFunctionBuilder<IrSimpleFunction> {
     var isOperator: Boolean
     var isInfix: Boolean
     var isFakeOverride: Boolean
+    var attributeOwnerId: IrAttributeContainer? = null
+    var originalBeforeInline: IrAttributeContainer? = null
+
 
     @PublishedApi internal constructor(name: Name) : super(name) {
         modality = Modality.FINAL
@@ -144,7 +148,10 @@ class IrSimpleFunctionBuilder : IrFunctionBuilder<IrSimpleFunction> {
         isInline = false
         isInfix = false
         isFakeOverride = false
+        attributeOwnerId = null
+        originalBeforeInline = null
     }
+
     @PublishedApi internal constructor(name: Name, from: IrSimpleFunction) : super(name, from) {
         modality = from.modality
         isTailrec = from.isTailrec
@@ -152,8 +159,9 @@ class IrSimpleFunctionBuilder : IrFunctionBuilder<IrSimpleFunction> {
         isOperator = from.isOperator
         isInfix = from.isInfix
         isFakeOverride = from.isFakeOverride
+        attributeOwnerId = from.attributeOwnerId
+        originalBeforeInline = from.originalBeforeInline
     }
-
 
     override fun create(factory: IrFactory) = factory.createSimpleFunction(
         startOffset = startOffset,
@@ -173,7 +181,11 @@ class IrSimpleFunctionBuilder : IrFunctionBuilder<IrSimpleFunction> {
         isExternal = isExternal,
         containerSource = containerSource,
         isFakeOverride = isFakeOverride
-    )
+    ).also { function ->
+        // should remain equal to function if not set
+        attributeOwnerId?.let { function.attributeOwnerId = it }
+        function.originalBeforeInline = originalBeforeInline
+    }
 }
 
 class IrConstructorBuilder : IrFunctionBuilder<IrConstructor> {

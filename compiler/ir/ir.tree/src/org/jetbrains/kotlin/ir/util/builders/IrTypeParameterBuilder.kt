@@ -45,5 +45,6 @@ class IrTypeParameterBuilder : IrDeclarationBuilder<IrTypeParameter> {
     ).also {
         it.parent = irFunction
         it.superTypes = superTypes
+        it.annotations = annotations.toList()
     }
 }

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrRawFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
+import org.jetbrains.kotlin.ir.util.builders.buildSimpleFunction
 import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -33,7 +34,7 @@ class MainFunctionCallWrapperLowering(private val context: JsIrBackendContext) :
         if (context.mainCallArguments == null) return
         val mainFunction = mainFunctionDetector.getMainFunctionOrNull(irFile) ?: return
         val mainFunctionWrapper = context.irFactory.stageController.restrictTo(mainFunction) {
-            mainFunction.generateWrapperForMainFunction().also {
+            generateWrapperForMainFunction(mainFunction).also {
                 mainFunction.mainFunctionWrapper = it
             }
         }
@@ -41,30 +42,23 @@ class MainFunctionCallWrapperLowering(private val context: JsIrBackendContext) :
         irFile.declarations.add(mainFunctionWrapper)
     }
 
-    private fun IrSimpleFunction.generateWrapperForMainFunction(): IrSimpleFunction {
-        val originalFunctionSymbol = symbol
-        return context.irFactory.createSimpleFunction(
-            startOffset = UNDEFINED_OFFSET,
-            endOffset = UNDEFINED_OFFSET,
-            origin = JsIrBuilder.SYNTHESIZED_DECLARATION,
-            name = Name.identifier("mainWrapper"),
-            visibility = visibility,
-            isInline = false,
-            isExpect = false,
-            returnType = returnType,
-            modality = modality,
-            symbol = IrSimpleFunctionSymbolImpl(),
-            isTailrec = false,
-            isSuspend = false,
-            isOperator = false,
-            isInfix = false
-        ).also {
-            it.parent = parent
-            it.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET).apply {
-                val shouldCallMainFunctionAsCoroutine = isLoweredSuspendFunction(context) && context.compileSuspendAsJsGenerator
+    private fun generateWrapperForMainFunction(from: IrSimpleFunction): IrSimpleFunction {
+        val originalFunctionSymbol = from.symbol
+        return context.irFactory.buildSimpleFunction(
+            Name.identifier("mainWrapper"),
+            from.parent,
+        ) {
+            startOffset = UNDEFINED_OFFSET
+            endOffset = UNDEFINED_OFFSET
+            origin = JsIrBuilder.SYNTHESIZED_DECLARATION
+            visibility = from.visibility
+            returnType = from.returnType
+            modality = from.modality
+            body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET).apply {
+                val shouldCallMainFunctionAsCoroutine = from.isLoweredSuspendFunction(this@MainFunctionCallWrapperLowering.context) && context.compileSuspendAsJsGenerator
                 val functionSymbolToCall = when {
                     !shouldCallMainFunctionAsCoroutine -> originalFunctionSymbol
-                    hasStringArrayParameter() -> context.intrinsics.startCoroutineUninterceptedOrReturnGeneratorVersion2
+                    from.hasStringArrayParameter() -> context.intrinsics.startCoroutineUninterceptedOrReturnGeneratorVersion2
                     else -> context.intrinsics.startCoroutineUninterceptedOrReturnGeneratorVersion1
                 }
 
@@ -77,7 +71,7 @@ class MainFunctionCallWrapperLowering(private val context: JsIrBackendContext) :
                             originalFunctionSymbol
                         )
                     }
-                    generateMainArguments().forEachIndexed { index, arg ->
+                    from.generateMainArguments().forEachIndexed { index, arg ->
                         putValueArgument(index, arg)
                     }
                 }
