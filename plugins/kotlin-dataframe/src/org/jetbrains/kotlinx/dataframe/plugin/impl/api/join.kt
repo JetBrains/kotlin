@@ -18,7 +18,7 @@ internal class Join0 : AbstractInterpreter<PluginDataFrameSchema>() {
     override fun Arguments.interpret(): PluginDataFrameSchema {
         val nameGenerator = ColumnNameGenerator()
         val left = receiver.columns()
-        val right = removeImpl(other.columns(), setOf(selector.right.path.path)).updatedColumns
+        val right = removeImpl(other.columns(), setOf(selector.right.resolve(receiver).single().path.path)).updatedColumns
 
         val rightColumnGroups = right.filterIsInstance<SimpleColumnGroup>().associateBy { it.name }
 

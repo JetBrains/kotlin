@@ -17,10 +17,10 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.dataFrame
 
 class DropNulls0 : AbstractSchemaModificationInterpreter() {
     val Arguments.receiver: PluginDataFrameSchema by dataFrame()
-    val Arguments.columns: List<ColumnWithPathApproximation> by arg()
+    val Arguments.columns: ColumnsResolver by arg()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return PluginDataFrameSchema(fillNullsImpl(receiver.columns(), columns.mapTo(mutableSetOf()) { it.path.path }, emptyList()))
+        return PluginDataFrameSchema(fillNullsImpl(receiver.columns(), columns.resolve(receiver).mapTo(mutableSetOf()) { it.path.path }, emptyList()))
     }
 }
 

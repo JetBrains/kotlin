@@ -11,10 +11,10 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.dataFrame
 
 class Ungroup0 : AbstractSchemaModificationInterpreter() {
     val Arguments.receiver: PluginDataFrameSchema by dataFrame()
-    val Arguments.columns: List<ColumnWithPathApproximation> by arg()
+    val Arguments.columns: ColumnsResolver by arg()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        val ungrouped = ungroupImpl(receiver.columns(), columns.mapTo(mutableSetOf()) { it.path.path }, emptyList())
+        val ungrouped = ungroupImpl(receiver.columns(), columns.resolve(receiver).mapTo(mutableSetOf()) { it.path.path }, emptyList())
         return PluginDataFrameSchema(ungrouped)
     }
 }

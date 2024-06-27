@@ -14,28 +14,32 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.type
 
 internal class Select0 : AbstractInterpreter<PluginDataFrameSchema>() {
     val Arguments.receiver: PluginDataFrameSchema by dataFrame()
-    val Arguments.columns: List<ColumnWithPathApproximation> by arg()
+    val Arguments.columns: ColumnsResolver by arg()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return PluginDataFrameSchema(columns.map { it.column })
+        return PluginDataFrameSchema(columns.resolve(receiver).map { it.column })
     }
 }
 
-internal class Expr0 : AbstractInterpreter<List<ColumnWithPathApproximation>>() {
+internal class Expr0 : AbstractInterpreter<ColumnsResolver>() {
     val Arguments.name: String by arg(defaultValue = Present("untitled"))
     val Arguments.infer: Infer by enum(defaultValue = Present(Infer.Nulls))
     val Arguments.expression: TypeApproximation by type()
 
-    override fun Arguments.interpret(): List<ColumnWithPathApproximation> {
-        return listOf(ColumnWithPathApproximation(ColumnPathApproximation(listOf(name)), SimpleDataColumn(name, expression)))
+    override fun Arguments.interpret(): ColumnsResolver {
+        return SingleColumnApproximation(ColumnWithPathApproximation(ColumnPathApproximation(listOf(name)), SimpleDataColumn(name, expression)))
     }
 }
 
-internal class And0 : AbstractInterpreter<List<ColumnWithPathApproximation>>() {
-    val Arguments.receiver: List<ColumnWithPathApproximation> by arg()
-    val Arguments.other: List<ColumnWithPathApproximation> by arg()
+internal class And0 : AbstractInterpreter<ColumnsResolver>() {
+    val Arguments.receiver: ColumnsResolver by arg()
+    val Arguments.other: ColumnsResolver by arg()
 
-    override fun Arguments.interpret(): List<ColumnWithPathApproximation> {
-        return receiver + other
+    override fun Arguments.interpret(): ColumnsResolver {
+        return object : ColumnsResolver {
+            override fun resolve(df: PluginDataFrameSchema): List<ColumnWithPathApproximation> {
+                return receiver.resolve(df) + other.resolve(df)
+            }
+        }
     }
 }

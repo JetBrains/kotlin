@@ -76,6 +76,8 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleCol
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleFrameColumn
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnsResolver
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SingleColumnApproximation
 
 fun <T> KotlinTypeFacade.interpret(
     functionCall: FirFunctionCall,
@@ -331,7 +333,7 @@ fun KotlinTypeFacade.pluginDataFrameSchema(coneClassLikeType: ConeClassLikeType)
     return PluginDataFrameSchema(columns)
 }
 
-private fun KotlinTypeFacade.columnWithPathApproximations(result: FirPropertyAccessExpression): List<ColumnWithPathApproximation> {
+private fun KotlinTypeFacade.columnWithPathApproximations(result: FirPropertyAccessExpression): ColumnsResolver {
     return result.resolvedType.let {
         val column = when (it.classId) {
             Names.DATA_COLUMN_CLASS_ID -> {
@@ -346,9 +348,13 @@ private fun KotlinTypeFacade.columnWithPathApproximations(result: FirPropertyAcc
                 val path = f(result)
                 SimpleColumnGroup(path, pluginDataFrameSchema(arg).columns())
             }
-            else -> return emptyList()
+            else -> return object : ColumnsResolver {
+                override fun resolve(df: PluginDataFrameSchema): List<ColumnWithPathApproximation> {
+                    return emptyList()
+                }
+            }
         }
-        listOf(
+        SingleColumnApproximation(
             ColumnWithPathApproximation(
                 path = ColumnPathApproximation(path(result)),
                 column
