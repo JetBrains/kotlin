@@ -1085,6 +1085,7 @@ class LightTreeRawFirDeclarationBuilder(
 
         val constructorSymbol = FirConstructorSymbol(callableIdForClassConstructor())
         withContainerSymbol(constructorSymbol) {
+            var delegatedConstructorNode: LighterASTNode? = null
             secondaryConstructor.forEachChildren {
                 when (it.tokenType) {
                     MODIFIER_LIST -> {
@@ -1096,17 +1097,21 @@ class LightTreeRawFirDeclarationBuilder(
                         constructorSymbol,
                         ValueParameterDeclaration.FUNCTION
                     )
-                    CONSTRUCTOR_DELEGATION_CALL -> constructorDelegationCall = convertConstructorDelegationCall(it, classWrapper)
+                    CONSTRUCTOR_DELEGATION_CALL -> delegatedConstructorNode = it
                     BLOCK -> block = it
                 }
             }
 
             val delegatedSelfTypeRef = classWrapper.delegatedSelfTypeRef
             val calculatedModifiers = modifiers ?: Modifier()
+            val isExpect = calculatedModifiers.hasExpect() || context.containerIsExpect
+            if (delegatedConstructorNode != null) {
+                constructorDelegationCall = convertConstructorDelegationCall(delegatedConstructorNode, classWrapper, isExpect)
+            }
 
             val explicitVisibility = calculatedModifiers.getVisibility().takeUnless { it == Visibilities.Unknown }
             val status = FirDeclarationStatusImpl(explicitVisibility ?: classWrapper.defaultConstructorVisibility(), Modality.FINAL).apply {
-                isExpect = calculatedModifiers.hasExpect() || context.containerIsExpect
+                this.isExpect = isExpect
                 isActual = calculatedModifiers.hasActual()
                 isInner = classWrapper.isInner()
                 isFromSealedClass = classWrapper.isSealed() && explicitVisibility !== Visibilities.Private
@@ -1151,7 +1156,8 @@ class LightTreeRawFirDeclarationBuilder(
      */
     private fun convertConstructorDelegationCall(
         constructorDelegationCall: LighterASTNode,
-        classWrapper: ClassWrapper
+        classWrapper: ClassWrapper,
+        isExpect: Boolean,
     ): FirDelegatedConstructorCall? {
         var thisKeywordPresent = false
         val firValueArguments = mutableListOf<FirExpression>()
@@ -1163,7 +1169,7 @@ class LightTreeRawFirDeclarationBuilder(
         }
 
         val isImplicit = constructorDelegationCall.textLength == 0
-        if (isImplicit && classWrapper.modifiers.hasExternal()) {
+        if (isImplicit && (classWrapper.modifiers.hasExternal() || isExpect)) {
             return null
         }
         val isThis = thisKeywordPresent //|| (isImplicit && classWrapper.hasPrimaryConstructor)

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FIR_DUMP
 
 // MODULE: m1-common

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
 import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.builder.buildDestructuringVariable
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.expressions.FirMultiDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.references.FirSuperReference
@@ -179,7 +180,8 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             val classOrObject = constructor.getContainingClassOrObject()
             val params = extractContructorConversionParams(classOrObject, constructor)
             val delegatedTypeRef = (originalDeclaration as FirConstructor).delegatedConstructor?.constructedTypeRef
-                ?: errorWithAttachment("Secondary constructor without delegated call") {
+                ?: if (containingClass?.isExpect == true) params.selfType
+                else errorWithAttachment("Non-expect secondary constructor without delegated call") {
                     withPsiEntry("constructor", constructor, baseSession.llFirModuleData.ktModule)
                 }
             return constructor.toFirConstructor(

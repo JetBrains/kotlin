@@ -2,18 +2,14 @@ Module: m1-common
 FILE: common.kt
     public sealed expect class Owner : R|kotlin/Any| {
         public final expect class WithoutConstructor : R|Owner| {
-            public expect constructor(arg: R|kotlin/Int|): R|Owner.WithoutConstructor| {
-                super<R|Owner|>()
-            }
+            public expect constructor(arg: R|kotlin/Int|): R|Owner.WithoutConstructor|
 
         }
 
         public final expect class WithConstructor : R|Owner| {
             public expect constructor(arg: R|kotlin/Int|): R|Owner.WithConstructor|
 
-            public expect constructor(s: R|kotlin/String|): R|Owner.WithConstructor| {
-                super<R|Owner|>()
-            }
+            public expect constructor(s: R|kotlin/String|): R|Owner.WithConstructor|
 
         }
 
@@ -50,18 +46,14 @@ Module: m2-jvm
 FILE: common.kt
     public sealed expect class Owner : R|kotlin/Any| {
         public final expect class WithoutConstructor : R|Owner| {
-            public expect constructor(arg: R|kotlin/Int|): R|Owner.WithoutConstructor| {
-                super<R|Owner|>()
-            }
+            public expect constructor(arg: R|kotlin/Int|): R|Owner.WithoutConstructor|
 
         }
 
         public final expect class WithConstructor : R|Owner| {
             public expect constructor(arg: R|kotlin/Int|): R|Owner.WithConstructor|
 
-            public expect constructor(s: R|kotlin/String|): R|Owner.WithConstructor| {
-                super<R|Owner|>()
-            }
+            public expect constructor(s: R|kotlin/String|): R|Owner.WithConstructor|
 
         }
 
