@@ -1,6 +1,5 @@
 // SKIP_KT_DUMP
 // TARGET_BACKEND: JVM
-// MUTE_SIGNATURE_COMPARISON_K2: JVM_IR
 
 // FILE: Java1.java
 public class Java1 extends A { }

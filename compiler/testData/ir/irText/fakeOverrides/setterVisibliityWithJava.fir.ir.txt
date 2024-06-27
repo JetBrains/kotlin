@@ -26,12 +26,12 @@ FILE fqName:<root> fileName:/1.kt
         overridden:
           public final fun <get-a> (): kotlin.Int declared in <root>.JavaChild
         $this: VALUE_PARAMETER name:<this> type:<root>.JavaChild
-      FUN FAKE_OVERRIDE name:<set-a> visibility:public modality:FINAL <> ($this:<root>.JavaChild, <set-?>:kotlin.Int) returnType:kotlin.Unit [fake_override]
+      FUN FAKE_OVERRIDE name:<set-a> visibility:public modality:FINAL <> ($this:<root>.JavaChild, value:kotlin.Int) returnType:kotlin.Unit [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
         overridden:
-          public final fun <set-a> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.JavaChild
+          public final fun <set-a> (value: kotlin.Int): kotlin.Unit declared in <root>.JavaChild
         $this: VALUE_PARAMETER name:<this> type:<root>.JavaChild
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+        VALUE_PARAMETER name:value index:0 type:kotlin.Int
     PROPERTY FAKE_OVERRIDE name:b visibility:public modality:FINAL [fake_override,var]
       overridden:
         public final b: kotlin.Int declared in <root>.JavaChild
