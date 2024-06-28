@@ -1,4 +1,5 @@
 // ISSUE: KT-64640, KT-65441
+// DIAGNOSTICS: -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE
 
 fun bar(x: List<String>) {
     x.<!UNRESOLVED_REFERENCE!>addFirst<!>("")
@@ -12,28 +13,51 @@ fun bar(x: List<String>) {
 }
 
 // Additional test for other SequenceCollection inheritor
-fun baz(x: ArrayDeque<String>, y: LinkedHashSet<String>) {
+fun baz(x: ArrayDeque<String>, y: LinkedHashSet<String>, z: java.util.LinkedList<String>) {
     x.addFirst("")
     x.addLast("")
     x.addFirst(<!NULL_FOR_NONNULL_TYPE!>null<!>)
     x.addLast(<!NULL_FOR_NONNULL_TYPE!>null<!>)
-    x.removeFirst()
-    x.removeLast()
-    x.<!UNRESOLVED_REFERENCE!>getFirst<!>()
-    x.<!UNRESOLVED_REFERENCE!>getLast<!>()
-    x.<!FUNCTION_CALL_EXPECTED!>first<!>
-    x.<!FUNCTION_CALL_EXPECTED!>last<!>
+    val removed1 = x.removeFirst()
+    val removed2 = x.removeLast()
+    val got1 = x.<!UNRESOLVED_REFERENCE!>getFirst<!>()
+    val got2 = x.<!UNRESOLVED_REFERENCE!>getLast<!>()
+    val got3 = x.<!FUNCTION_CALL_EXPECTED!>first<!>
+    val got4 = x.<!FUNCTION_CALL_EXPECTED!>last<!>
 
     y.addFirst("")
     y.addLast("")
     y.addFirst(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
     y.addLast(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
-    y.removeFirst()
-    y.removeLast()
-    y.getFirst()
-    y.getLast()
-    y.first
-    y.last
+    var removed3 = y.removeFirst()
+    removed3 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
+    var removed4 = y.removeLast()
+    removed4 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
+    var got5 = y.getFirst()
+    got5 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
+    var got6 = y.getLast()
+    got6 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
+    var got7 = y.first
+    got7 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
+    var got8 = y.last
+    got8 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
+
+    z.addFirst("")
+    z.addLast("")
+    z.addFirst(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
+    z.addLast(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
+    var removed5 = z.removeFirst()
+    removed5 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
+    var removed6 = z.removeLast()
+    removed6 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
+    var got9 = z.<!DEPRECATION!>getFirst<!>()
+    got9 = null
+    var got10 = z.<!DEPRECATION!>getLast<!>()
+    got10 = null
+    var got11 = z.<!DEPRECATION!>first<!>
+    got11 = null
+    var got12 = z.<!DEPRECATION!>last<!>
+    got12 = null
 }
 
 // Test for collections with (add/remove)(First/Last) methods which are not covered by autotests

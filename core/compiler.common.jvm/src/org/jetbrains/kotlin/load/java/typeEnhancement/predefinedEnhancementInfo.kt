@@ -138,6 +138,18 @@ val PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE: Map<String, PredefinedFun
             function("addLast", errorsSinceLanguageVersion = "2.2") {
                 parameter(JLObject, NOT_PLATFORM)
             }
+            function("removeFirst", errorsSinceLanguageVersion = "2.2") {
+                returns(JLObject, NOT_PLATFORM)
+            }
+            function("removeLast", errorsSinceLanguageVersion = "2.2") {
+                returns(JLObject, NOT_PLATFORM)
+            }
+            function("getFirst", errorsSinceLanguageVersion = "2.2") {
+                returns(JLObject, NOT_PLATFORM)
+            }
+            function("getLast", errorsSinceLanguageVersion = "2.2") {
+                returns(JLObject, NOT_PLATFORM)
+            }
         }
         forClass(javaUtil("Map")) {
             function("forEach") {

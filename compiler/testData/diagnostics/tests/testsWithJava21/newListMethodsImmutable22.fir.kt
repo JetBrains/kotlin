@@ -1,11 +1,13 @@
 // ISSUE: KT-64640, KT-65441
+// LANGUAGE_VERSION: 2.2
+// ALLOW_DANGEROUS_LANGUAGE_VERSION_TESTING
 // DIAGNOSTICS: -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE
 
 fun bar(x: List<String>) {
     x.<!UNRESOLVED_REFERENCE!>addFirst<!>("")
     x.<!UNRESOLVED_REFERENCE!>addLast<!>("")
-    x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>removeFirst<!>()
-    x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>removeLast<!>()
+    x.<!UNRESOLVED_REFERENCE!>removeFirst<!>()
+    x.<!UNRESOLVED_REFERENCE!>removeLast<!>()
     x.<!UNRESOLVED_REFERENCE!>getFirst<!>()
     x.<!UNRESOLVED_REFERENCE!>getLast<!>()
     x.<!FUNCTION_CALL_EXPECTED!>first<!>
@@ -27,36 +29,36 @@ fun baz(x: ArrayDeque<String>, y: LinkedHashSet<String>, z: java.util.LinkedList
 
     y.addFirst("")
     y.addLast("")
-    y.addFirst(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
-    y.addLast(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
+    y.addFirst(<!NULL_FOR_NONNULL_TYPE!>null<!>)
+    y.addLast(<!NULL_FOR_NONNULL_TYPE!>null<!>)
     var removed3 = y.removeFirst()
-    removed3 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
+    removed3 = <!NULL_FOR_NONNULL_TYPE!>null<!>
     var removed4 = y.removeLast()
-    removed4 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
+    removed4 = <!NULL_FOR_NONNULL_TYPE!>null<!>
     var got5 = y.getFirst()
-    got5 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
+    got5 = <!NULL_FOR_NONNULL_TYPE!>null<!>
     var got6 = y.getLast()
-    got6 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
+    got6 = <!NULL_FOR_NONNULL_TYPE!>null<!>
     var got7 = y.first
-    got7 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
+    got7 = <!NULL_FOR_NONNULL_TYPE!>null<!>
     var got8 = y.last
-    got8 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
+    got8 = <!NULL_FOR_NONNULL_TYPE!>null<!>
 
     z.addFirst("")
     z.addLast("")
-    z.addFirst(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
-    z.addLast(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
+    z.addFirst(<!NULL_FOR_NONNULL_TYPE!>null<!>)
+    z.addLast(<!NULL_FOR_NONNULL_TYPE!>null<!>)
     var removed5 = z.removeFirst()
-    removed5 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
+    removed5 = <!NULL_FOR_NONNULL_TYPE!>null<!>
     var removed6 = z.removeLast()
-    removed6 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
-    var got9 = z.getFirst()
+    removed6 = <!NULL_FOR_NONNULL_TYPE!>null<!>
+    var got9 = z.<!DEPRECATION!>getFirst<!>()
     got9 = null
-    var got10 = z.getLast()
+    var got10 = z.<!DEPRECATION!>getLast<!>()
     got10 = null
-    var got11 = z.first
+    var got11 = z.<!DEPRECATION!>first<!>
     got11 = null
-    var got12 = z.last
+    var got12 = z.<!DEPRECATION!>last<!>
     got12 = null
 }
 

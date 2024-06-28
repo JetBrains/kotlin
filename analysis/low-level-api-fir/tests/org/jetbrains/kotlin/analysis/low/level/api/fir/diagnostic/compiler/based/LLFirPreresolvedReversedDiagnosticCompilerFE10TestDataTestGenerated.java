@@ -40971,6 +40971,18 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("newListMethodsImmutable21.kt")
+      public void testNewListMethodsImmutable21() {
+        runTest("compiler/testData/diagnostics/tests/testsWithJava21/newListMethodsImmutable21.kt");
+      }
+
+      @Test
+      @TestMetadata("newListMethodsImmutable22.kt")
+      public void testNewListMethodsImmutable22() {
+        runTest("compiler/testData/diagnostics/tests/testsWithJava21/newListMethodsImmutable22.kt");
+      }
+
+      @Test
       @TestMetadata("newListMethodsNullability20.kt")
       public void testNewListMethodsNullability20() {
         runTest("compiler/testData/diagnostics/tests/testsWithJava21/newListMethodsNullability20.kt");
