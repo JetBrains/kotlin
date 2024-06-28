@@ -32,8 +32,6 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.EnhancedNullability
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.FlexibleNullability
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
@@ -215,7 +213,6 @@ class Fir2IrDelegatedMembersGenerationStrategy(
                     delegateField,
                     parent
                 )
-                else -> error("Unexpected member kind: ${delegatedMember::class.qualifiedName}")
             }
         }
     }

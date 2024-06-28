@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeCheckerState
-import org.jetbrains.kotlin.utils.addToStdlib.unreachableBranch
 
 /**
  * @param member declaration that should be checked for overridability.
@@ -74,14 +73,12 @@ class IrOverrideChecker(
                 if (superMember.getter == null || subMember.getter == null) return incompatible("Fields are not overridable")
                 superMember.getter to subMember.getter
             }
-            else -> error("Unexpected type of declaration: ${superMember::class.java}, $superMember")
         }
 
         if (checkIsInlineFlag) {
             val isInline = when (superMember) {
                 is IrSimpleFunction -> superMember.isInline
                 is IrProperty -> superMember.getter?.isInline == true || superMember.setter?.isInline == true
-                else -> unreachableBranch(superMember)
             }
             if (isInline) return incompatible("Inline declaration can't be overridden")
         }

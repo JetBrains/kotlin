@@ -175,7 +175,7 @@ object IrTree : AbstractTreeBuilder() {
         but this is only for performance purposes (before it was done using simple maps).
         """.trimIndent()
     }
-    val overridableMember: Element by element(Declaration) {
+    val overridableMember: Element by sealedElement(Declaration) {
         parent(declaration)
         parent(declarationWithVisibility)
         parent(declarationWithName)
@@ -183,7 +183,7 @@ object IrTree : AbstractTreeBuilder() {
 
         +field("modality", type<Modality>())
     }
-    val overridableDeclaration: Element by element(Declaration) {
+    val overridableDeclaration: Element by sealedElement(Declaration) {
         val s = +param("S", IrSymbolTree.rootElement)
 
         parent(overridableMember)
