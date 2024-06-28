@@ -14,7 +14,7 @@ expect fun <T> Array<T>.f()
 fun <T> Array<out T>.f() {}
 
 fun test() {
-    Array(0) { _ -> "" }.f() // Disambiugation to regular function doesn't work because `actual` function is unreachable from here
+    Array(0) { _ -> "" }.<!OVERLOAD_RESOLUTION_AMBIGUITY!>f<!>() // Disambiugation to regular function doesn't work because `actual` function is unreachable from here
 }
 
 // MODULE: target()()(intermediate)
