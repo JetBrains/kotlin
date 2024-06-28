@@ -49,7 +49,8 @@ import java.io.InputStream
 open class FirBuiltinSymbolProvider(
     session: FirSession,
     val moduleData: FirModuleData,
-    val kotlinScopeProvider: FirKotlinScopeProvider
+    val kotlinScopeProvider: FirKotlinScopeProvider,
+    deserializeAsActual: Boolean = false,
 ) : FirSymbolProvider(session) {
 
     companion object {
@@ -73,7 +74,7 @@ open class FirBuiltinSymbolProvider(
     }
 
     private val allPackageFragments = builtInsPackageFragments.mapValues { (fqName, foo) ->
-        BuiltInsPackageFragmentWrapper(foo, fqName, moduleData, kotlinScopeProvider)
+        BuiltInsPackageFragmentWrapper(foo, fqName, moduleData, kotlinScopeProvider, deserializeAsActual)
     }
 
     override fun getPackage(fqName: FqName): FqName? {
@@ -138,6 +139,7 @@ open class FirBuiltinSymbolProvider(
         val fqName: FqName,
         val moduleData: FirModuleData,
         val kotlinScopeProvider: FirKotlinScopeProvider,
+        deserializeAsActual: Boolean,
     ) {
 
         private val packageProto get() = builtInsPackageFragment.packageProto
@@ -150,7 +152,8 @@ open class FirBuiltinSymbolProvider(
                 FirBuiltinAnnotationDeserializer(moduleData.session),
                 FirTypeDeserializer.FlexibleTypeFactory.Default,
                 FirConstDeserializer(moduleData.session, BuiltInSerializerProtocol),
-                containerSource = null
+                containerSource = null,
+                deserializeAsActual = deserializeAsActual,
             ).memberDeserializer
         }
 
@@ -167,6 +170,7 @@ open class FirBuiltinSymbolProvider(
                 null,
                 origin = FirDeclarationOrigin.BuiltIns,
                 this::findAndDeserializeClass,
+                isActual = deserializeAsActual,
             )
         }
 

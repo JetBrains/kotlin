@@ -105,7 +105,8 @@ class JvmClassFileBasedSymbolProvider(
                 JvmBinaryAnnotationDeserializer(session, kotlinClass, kotlinClassFinder, byteContent),
                 JavaAwareFlexibleTypeFactory,
                 FirJvmConstDeserializer(session, facadeBinaryClass ?: kotlinClass, BuiltInSerializerProtocol),
-                source
+                source,
+                deserializeAsActual = false,
             ),
         )
     }

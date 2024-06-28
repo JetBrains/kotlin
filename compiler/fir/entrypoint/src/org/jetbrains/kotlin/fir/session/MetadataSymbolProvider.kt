@@ -60,7 +60,8 @@ class MetadataSymbolProvider(
                 annotationDeserializer = annotationDeserializer,
                 FirTypeDeserializer.FlexibleTypeFactory.Default,
                 constDeserializer = constDeserializer,
-                containerSource = null
+                containerSource = null,
+                deserializeAsActual = false,
             )
 
             return@mapNotNull PackagePartsCacheData(proto.`package`, context)

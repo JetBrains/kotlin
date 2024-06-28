@@ -88,6 +88,7 @@ abstract class MetadataLibraryBasedSymbolProvider<L : MetadataLibrary>(
                         FirTypeDeserializer.FlexibleTypeFactory.Default,
                         constDeserializer,
                         createDeserializedContainerSource(resolvedLibrary, packageFqName),
+                        deserializeAsActual = false,
                     ),
                     MetadataLibraryPackagePartCacheDataExtra(resolvedLibrary)
                 )

@@ -41,7 +41,8 @@ class FirJvmActualizingBuiltinSymbolProvider(
     kotlinScopeProvider: FirKotlinScopeProvider,
     private val refinedSourceSymbolProviders: List<FirSymbolProvider>,
 ) : FirSymbolProvider(session) {
-    val builtinSymbolProvider: FirBuiltinSymbolProvider = FirBuiltinSymbolProvider(session, session.moduleData, kotlinScopeProvider)
+    val builtinSymbolProvider: FirBuiltinSymbolProvider =
+        FirBuiltinSymbolProvider(session, session.moduleData, kotlinScopeProvider, deserializeAsActual = true)
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol? {
         for (symbolProvider in refinedSourceSymbolProviders) {
