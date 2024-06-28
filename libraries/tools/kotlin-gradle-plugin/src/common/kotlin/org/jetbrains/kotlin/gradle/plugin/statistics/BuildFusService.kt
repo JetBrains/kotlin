@@ -128,6 +128,8 @@ abstract class BuildFusService : BuildService<BuildFusService.Parameters>, AutoC
                 })
                 spec.parameters.useBuildFinishFlowAction.set(GradleVersion.current().baseVersion >= GradleVersion.version("8.1"))
                 spec.parameters.buildStatisticsConfiguration.set(KotlinBuildStatsConfiguration(project))
+                //init value to avoid `java.lang.IllegalStateException: GradleScopeServices has been closed` exception on close
+                spec.parameters.configurationMetrics.add(MetricContainer())
             }.also { buildService ->
                 //DO NOT call buildService.get() before all parameters.configurationMetrics are set.
                 // buildService.get() call will cause parameters calculation and configuration cache storage.
