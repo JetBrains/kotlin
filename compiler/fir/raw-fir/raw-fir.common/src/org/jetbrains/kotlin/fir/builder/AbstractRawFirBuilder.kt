@@ -548,8 +548,8 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
                             val characterWithDiagnostic = escapedStringToCharacter(entry.asText)
                             arguments += buildConstOrErrorExpression(
                                 entry.toFirSourceElement(),
-                                ConstantValueKind.Char,
-                                characterWithDiagnostic.value,
+                                ConstantValueKind.String,
+                                characterWithDiagnostic.value?.toString(),
                                 ConeSimpleDiagnostic(
                                     "Incorrect character: ${entry.asText}",
                                     characterWithDiagnostic.getDiagnostic() ?: DiagnosticKind.IllegalConstExpression
