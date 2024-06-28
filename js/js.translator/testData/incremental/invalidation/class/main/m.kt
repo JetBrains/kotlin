@@ -9,7 +9,7 @@ fun box(stepId: Int): String {
         1, 3-> {
             if (testEquals(d, Demo(15))) return "Fail equals"
             if (testHashCode(d) == Demo(15).hashCode()) return "Fail hashCode"
-            if (testToString(d) != "[object Object]") return "Fail toString"
+            if (testToString(d) != "Simple Demo") return "Fail toString"
         }
         else -> return "Unknown"
     }
