@@ -477,11 +477,10 @@ private fun compileSources(
     val mangledFileName = "${index}_${File(source).nameWithoutExtension}"
     val outputFileName = "$nativeLibsDir/${mangledFileName}.bc"
     val compilerArgs = cinteropArguments.sourceCompileOptions.toTypedArray()
-    val xcode16Args = prepareXcode16HacksIfNeeded(
-        target = toolConfig.target,
-        temporaryRoot = File(tempFiles.create("xcode16Hacks_compileSources").path)
-    ).toTypedArray()
-    val compilerCmd = toolConfig.clang.clangCXX(*compilerArgs, *xcode16Args, source, "-emit-llvm", "-c", "-o", outputFileName)
+    val compilerCmd = toolConfig.clang.clangCXX_WithXcode16Hacks(
+        File(tempFiles.create("xcode16Hacks_compileSources").path),
+        *compilerArgs, source, "-emit-llvm", "-c", "-o", outputFileName
+    )
     runCmd(compilerCmd.toTypedArray(), verbose = cinteropArguments.verbose)
     outputFileName
 }
