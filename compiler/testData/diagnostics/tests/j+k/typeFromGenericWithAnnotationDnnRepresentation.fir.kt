@@ -58,8 +58,8 @@ fun genericTypeAnnotationCheck(
     val k14: String? = d.foo("")
     val k15: JavaBox<String?> = d.foo2(null)
     val k16: JavaBox<String?> = d.foo2(JavaBox(null))
-    val k17: JavaBox<String> = d.foo2(null)
-    val k18: JavaBox<String> = d.foo2(JavaBox(null))
+    val k17: JavaBox<String> = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>d.foo2(null)<!>
+    val k18: JavaBox<String> = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>d.foo2(JavaBox(null))<!>
 
     val k19: String = e.foo(null)
     val k20: String = e.foo("")

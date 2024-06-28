@@ -85,7 +85,7 @@ fun main() {
     A().doOnSuccessOut(::takeAny)
     A().doOnSuccessStar(::takeAny)
     A().doOnSuccessString(::takeAny)
-    A().doOnSuccessNullableString(::takeAny)
+    A().doOnSuccessNullableString(::<!INAPPLICABLE_CANDIDATE!>takeAny<!>)
     A().doOnSuccessNullableString(::takeNullableAny)
     A().doOnSuccessTypeParameter(::takeAny)
     A().doOnSuccessTypeParameter(::takeNullableAny)

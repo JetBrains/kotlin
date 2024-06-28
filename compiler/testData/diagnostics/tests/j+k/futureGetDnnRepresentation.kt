@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FULL_JDK
 // LANGUAGE: +JavaTypeParameterDefaultRepresentationWithDNN
 // JVM_TARGET: 1.8

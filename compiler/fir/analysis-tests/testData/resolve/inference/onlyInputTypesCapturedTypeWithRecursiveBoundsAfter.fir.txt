@@ -41,9 +41,9 @@ FILE: onlyInputTypesCapturedTypeWithRecursiveBoundsAfter.kt
 
     }
     private final fun test(node: R|FooEnumMap<*>|): R|kotlin/Unit| {
-        R|<local>/node|.R|SubstitutionOverride</FooEnumMap.data: R|java/util/EnumMap<CapturedType(*), kotlin/Any?>|>|.R|kotlin/collections/get|<R|ft<it(kotlin/Enum<*> & I), it(kotlin/Enum<*>? & I?)>|, R|kotlin/Any!|>(Q|MyEnum|.R|/MyEnum.EnumEntry|)
+        R|<local>/node|.R|SubstitutionOverride</FooEnumMap.data: R|java/util/EnumMap<CapturedType(*), kotlin/Any?>|>|.R|kotlin/collections/get|<R|ft<it(kotlin/Enum<*> & I), it(kotlin/Enum<*>? & I?)>|, R|kotlin/Any?|>(Q|MyEnum|.R|/MyEnum.EnumEntry|)
         lval map: R|java/util/EnumMap<out it(kotlin/Enum<*> & I), kotlin/Any?>| = R|<local>/node|.R|SubstitutionOverride</FooEnumMap.data: R|java/util/EnumMap<CapturedType(*), kotlin/Any?>|>|
-        R|<local>/map|.R|kotlin/collections/get|<R|ft<it(kotlin/Enum<*> & I), it(kotlin/Enum<*>? & I?)>|, R|kotlin/Any!|>(Q|MyEnum|.R|/MyEnum.EnumEntry|)
+        R|<local>/map|.R|kotlin/collections/get|<R|ft<it(kotlin/Enum<*> & I), it(kotlin/Enum<*>? & I?)>|, R|kotlin/Any?|>(Q|MyEnum|.R|/MyEnum.EnumEntry|)
     }
     public open class Foo2<P : R|I|> : R|kotlin/Any| {
         public constructor<P : R|I|>(data: R|kotlin/collections/Map<P, kotlin/Any?>|): R|Foo2<P>| {

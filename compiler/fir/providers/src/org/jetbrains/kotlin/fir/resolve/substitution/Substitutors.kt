@@ -274,6 +274,24 @@ class ConeSubstitutorByMap private constructor(
             ?: return null
     }
 
+    override fun substituteOrNull(type: ConeKotlinType): ConeKotlinType? {
+        if (type is ConeFlexibleType) {
+            // (T & Any ... T?) with T = String? gives just String?
+            val lowerBound = type.lowerBound
+            if (lowerBound is ConeDefinitelyNotNullType) {
+                val upperBound = type.upperBound
+                val lowerBoundOriginal = lowerBound.original
+                if (lowerBoundOriginal is ConeTypeParameterType && upperBound is ConeTypeParameterType &&
+                    upperBound.lookupTag == lowerBoundOriginal.lookupTag
+                    && substitution[upperBound.lookupTag.symbol]?.nullability == ConeNullability.NULLABLE
+                ) {
+                    return super.substituteOrNull(upperBound)
+                }
+            }
+        }
+        return super.substituteOrNull(type)
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is ConeSubstitutorByMap) return false

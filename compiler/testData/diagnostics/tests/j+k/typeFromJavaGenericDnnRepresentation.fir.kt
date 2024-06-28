@@ -68,5 +68,5 @@ fun genericClassTest(a1: JavaGeneric<String>,
     val k26: Any = a2.foo6(JavaBox(null)).a
 
     val k27: JavaBox<String?> = a2.foo7(JavaBox(null))
-    val k28: Any = a2.foo7(JavaBox(null)).a
+    val k28: Any = <!INITIALIZER_TYPE_MISMATCH!>a2.foo7(JavaBox(null)).a<!>
 }
