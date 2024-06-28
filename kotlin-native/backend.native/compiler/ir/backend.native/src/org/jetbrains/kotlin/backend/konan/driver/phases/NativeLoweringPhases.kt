@@ -69,7 +69,7 @@ internal val validateIrBeforeLowering = createSimpleNamedCompilerPhase<NativeGen
 )
 
 internal val validateIrAfterInliningOnlyPrivateFunctions = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
-        name = "validateIrAfterInliningOnlyPrivateFunctions",
+        name = "ValidateIrAfterInliningOnlyPrivateFunctions",
         description = "Validate IR after only private functions have been inlined",
         op = { context, module ->
             IrValidationAfterInliningOnlyPrivateFunctionsPhase(
@@ -92,7 +92,7 @@ internal val validateIrAfterInliningOnlyPrivateFunctions = createSimpleNamedComp
 )
 
 internal val validateIrAfterInliningAllFunctions = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
-        name = "validateIrAfterInliningAllFunctions",
+        name = "ValidateIrAfterInliningAllFunctions",
         description = "Validate IR after all functions have been inlined",
         op = { context, module ->
             IrValidationAfterInliningAllFunctionsPhase(
