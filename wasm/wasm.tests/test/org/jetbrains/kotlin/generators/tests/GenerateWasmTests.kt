@@ -68,6 +68,7 @@ fun main(args: Array<String>) {
                     "jsModuleAnnotationOnObjectWithUsage",
                     "jsName",
                     "fileNameCaseClash",
+                    "jsCodeWithConstStringFromOtherModule",
                 )
                 model(
                     "incremental/invalidation/",

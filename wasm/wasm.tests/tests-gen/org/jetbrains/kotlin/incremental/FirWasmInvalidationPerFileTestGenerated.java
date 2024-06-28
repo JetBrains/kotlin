@@ -33,7 +33,7 @@ public class FirWasmInvalidationPerFileTestGenerated extends AbstractFirWasmInva
 
   @Test
   public void testAllFilesPresentInInvalidation() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/incremental/invalidation"), Pattern.compile("^([^_](.+))$"), Pattern.compile("abstractClassWithJsExport|classWithJsExport|inlineFunctionAnnotations|interfaceWithJsExport|jsExportWithMultipleFiles|typeScriptExportsPerFile|typeScriptExportsPerModule|fileNameClash|jsCode|jsCodeWithConstString|jsModuleAnnotation|jsModuleAnnotationOnObjectWithUsage|jsName|fileNameCaseClash"), TargetBackend.WASM, false);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/incremental/invalidation"), Pattern.compile("^([^_](.+))$"), Pattern.compile("abstractClassWithJsExport|classWithJsExport|inlineFunctionAnnotations|interfaceWithJsExport|jsExportWithMultipleFiles|typeScriptExportsPerFile|typeScriptExportsPerModule|fileNameClash|jsCode|jsCodeWithConstString|jsModuleAnnotation|jsModuleAnnotationOnObjectWithUsage|jsName|fileNameCaseClash|jsCodeWithConstStringFromOtherModule"), TargetBackend.WASM, false);
   }
 
   @Test
@@ -292,12 +292,6 @@ public class FirWasmInvalidationPerFileTestGenerated extends AbstractFirWasmInva
   @TestMetadata("interfaceWithDefaultParams")
   public void testInterfaceWithDefaultParams() {
     runTest("js/js.translator/testData/incremental/invalidation/interfaceWithDefaultParams/");
-  }
-
-  @Test
-  @TestMetadata("jsCodeWithConstStringFromOtherModule")
-  public void testJsCodeWithConstStringFromOtherModule() {
-    runTest("js/js.translator/testData/incremental/invalidation/jsCodeWithConstStringFromOtherModule/");
   }
 
   @Test
