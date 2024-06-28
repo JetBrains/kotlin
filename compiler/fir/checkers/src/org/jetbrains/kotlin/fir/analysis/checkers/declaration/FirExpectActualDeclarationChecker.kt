@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory2
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.*
@@ -32,6 +34,9 @@ import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCheckingCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
+
+typealias NoActualClassMemberForExpectedClassDiagFactory = KtDiagnosticFactory2<FirBasedSymbol<*>, List<Pair<FirBasedSymbol<*>,
+        Map<out ExpectActualCompatibility.MismatchOrIncompatible<FirBasedSymbol<*>>, Collection<FirBasedSymbol<*>>>>>>
 
 @Suppress("DuplicatedCode")
 object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Platform) {
@@ -212,15 +217,16 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
     }
 
     private fun reportClassScopesIncompatibility(
-        symbol: FirBasedSymbol<FirDeclaration>,
+        actualSymbol: FirBasedSymbol<FirDeclaration>,
         expectedSingleCandidate: FirBasedSymbol<*>?,
         checkingCompatibility: ExpectActualCheckingCompatibility.ClassScopes<FirBasedSymbol<*>>,
         reporter: DiagnosticReporter,
         source: KtSourceElement?,
         context: CheckerContext,
+        noActualForExpectDiagFactory: NoActualClassMemberForExpectedClassDiagFactory = FirErrors.NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS,
     ) {
-        require((symbol is FirRegularClassSymbol || symbol is FirTypeAliasSymbol) && expectedSingleCandidate is FirRegularClassSymbol) {
-            "Incompatible.ClassScopes is only possible for a class or a typealias: $symbol $expectedSingleCandidate"
+        require((actualSymbol is FirRegularClassSymbol || actualSymbol is FirTypeAliasSymbol) && expectedSingleCandidate is FirRegularClassSymbol) {
+            "Incompatible.ClassScopes is only possible for a class or a typealias: $actualSymbol $expectedSingleCandidate"
         }
 
         // Do not report "expected members have no actual ones" for those expected members, for which there's a clear
@@ -258,14 +264,14 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
                 )
             }
             if (otherIncompatibleMembers.isNotEmpty()) {
-                reporter.reportOn(source, FirErrors.NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS, symbol, otherIncompatibleMembers, context)
+                reporter.reportOn(source, noActualForExpectDiagFactory, actualSymbol, otherIncompatibleMembers, context)
             }
         }
         if (checkingCompatibility.mismatchedMembers.isNotEmpty()) {
             reporter.reportOn(
                 source,
-                FirErrors.NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS,
-                symbol,
+                noActualForExpectDiagFactory,
+                actualSymbol,
                 checkingCompatibility.mismatchedMembers,
                 context
             )
@@ -375,6 +381,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
         context: CheckerContext,
         reporter: DiagnosticReporter,
         reportOn: KtSourceElement?,
+        expectActualOptInAnnotationDiagFactory: KtDiagnosticFactory0 = FirErrors.EXPECT_ACTUAL_OPT_IN_ANNOTATION,
     ) {
         if (context.languageVersionSettings.supportsFeature(LanguageFeature.MultiplatformRestrictions) &&
             declaration is FirClass &&
@@ -382,7 +389,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
             !expectDeclarationSymbol.hasAnnotation(StandardClassIds.Annotations.OptionalExpectation, context.session) &&
             declaration.hasAnnotation(OptInNames.REQUIRES_OPT_IN_CLASS_ID, context.session)
         ) {
-            reporter.reportOn(reportOn, FirErrors.EXPECT_ACTUAL_OPT_IN_ANNOTATION, context)
+            reporter.reportOn(reportOn, expectActualOptInAnnotationDiagFactory, context)
         }
     }
 }
