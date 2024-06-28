@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.test.frontend.fir
 
+import org.jetbrains.kotlin.backend.common.IrSpecialAnnotationsProvider
+import org.jetbrains.kotlin.backend.common.actualizer.IrExtraActualDeclarationExtractor
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -19,7 +21,8 @@ import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
+import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
@@ -43,6 +46,12 @@ abstract class AbstractFir2IrNonJvmResultsConverter(
     BackendKinds.IrBackend
 ) {
     protected abstract fun createIrMangler(): KotlinMangler.IrMangler
+    protected abstract fun createFir2IrExtensions(compilerConfiguration: CompilerConfiguration): Fir2IrExtensions
+    protected abstract fun createFir2IrVisibilityConverter(): Fir2IrVisibilityConverter
+    protected abstract fun createTypeSystemContextProvider(): (IrBuiltIns) -> IrTypeSystemContext
+    protected abstract fun createSpecialAnnotationsProvider(): IrSpecialAnnotationsProvider?
+    protected abstract fun createExtraActualDeclarationExtractorInitializer(): (Fir2IrComponents) -> IrExtraActualDeclarationExtractor?
+
     protected abstract fun resolveLibraries(module: TestModule, compilerConfiguration: CompilerConfiguration): List<KotlinResolvedLibrary>
     protected abstract val klibFactories: KlibMetadataFactories
 
@@ -72,24 +81,24 @@ abstract class AbstractFir2IrNonJvmResultsConverter(
         val irMangler = createIrMangler()
         val diagnosticReporter = DiagnosticReporterFactory.createReporter()
 
+        val fir2IrExtensions = createFir2IrExtensions(compilerConfiguration)
+
         val libraries = resolveLibraries(module, compilerConfiguration)
         val (dependencies, builtIns) = loadResolvedLibraries(libraries, compilerConfiguration.languageVersionSettings, testServices)
 
-        val fir2IrConfiguration = Fir2IrConfiguration.forKlibCompilation(
-            compilerConfiguration,
-            diagnosticReporter,
-        )
+        val fir2IrConfiguration = Fir2IrConfiguration.forKlibCompilation(compilerConfiguration, diagnosticReporter)
+
         val firResult = inputArtifact.toFirResult()
         val fir2irResult = firResult.convertToIrAndActualize(
-            Fir2IrExtensions.Default,
+            fir2IrExtensions,
             fir2IrConfiguration,
             module.irGenerationExtensions(testServices),
             irMangler,
-            Fir2IrVisibilityConverter.Default,
+            createFir2IrVisibilityConverter(),
             builtIns ?: DefaultBuiltIns.Instance, // TODO: consider passing externally,
-            ::IrTypeSystemContextImpl,
-            specialAnnotationsProvider = null,
-            extraActualDeclarationExtractorInitializer = { null },
+            createTypeSystemContextProvider(),
+            specialAnnotationsProvider = createSpecialAnnotationsProvider(),
+            extraActualDeclarationExtractorInitializer = createExtraActualDeclarationExtractorInitializer(),
         ).also {
             (it.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = dependencies }
         }
