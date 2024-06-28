@@ -149,7 +149,7 @@ open class FirBuiltinSymbolProvider(
                 fqName, packageProto.`package`, nameResolver, moduleData,
                 FirBuiltinAnnotationDeserializer(moduleData.session),
                 FirTypeDeserializer.FlexibleTypeFactory.Default,
-                FirConstDeserializer(moduleData.session, BuiltInSerializerProtocol),
+                FirConstDeserializer(BuiltInSerializerProtocol),
                 containerSource = null
             ).memberDeserializer
         }

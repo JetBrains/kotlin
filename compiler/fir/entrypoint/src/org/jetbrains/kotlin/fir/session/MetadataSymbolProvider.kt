@@ -40,7 +40,7 @@ class MetadataSymbolProvider(
 
     private val annotationDeserializer = MetadataBasedAnnotationDeserializer(session)
 
-    private val constDeserializer = FirConstDeserializer(session, BuiltInSerializerProtocol)
+    private val constDeserializer = FirConstDeserializer(BuiltInSerializerProtocol)
 
     private val metadataTopLevelClassesInPackageCache = session.firCachesFactory.createCache(::findMetadataTopLevelClassesInPackage)
 

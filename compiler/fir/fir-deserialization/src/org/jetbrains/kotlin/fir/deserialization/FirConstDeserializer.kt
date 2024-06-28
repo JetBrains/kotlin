@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.deserialization
 
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildLiteralExpression
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -18,7 +17,6 @@ import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.types.ConstantValueKind
 
 open class FirConstDeserializer(
-    val session: FirSession,
     private val protocol: SerializerExtensionProtocol
 ) {
     protected val constantCache: MutableMap<CallableId, FirExpression> = mutableMapOf()

@@ -31,7 +31,7 @@ class FirJvmDeserializationExtension(session: FirSession) : FirDeserializationEx
         serializerExtensionProtocol: SerializerExtensionProtocol,
     ): FirConstDeserializer? =
         if (containerSource is KotlinJvmBinarySourceElement)
-            FirJvmConstDeserializer(session, containerSource.binaryClass, serializerExtensionProtocol)
+            FirJvmConstDeserializer(containerSource.binaryClass, serializerExtensionProtocol)
         else
             null
 
