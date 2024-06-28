@@ -16,7 +16,11 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionService
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.resolve.calls.overloads.ConeCallConflictResolverFactory
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinsSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirClasspathBuiltinSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirFallbackBuiltinSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirDefaultImportProviderHolder
+import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.scopes.FirPlatformClassMapper
 import org.jetbrains.kotlin.fir.scopes.impl.FirDelegatedMembersFilter
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
@@ -24,6 +28,7 @@ import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchSco
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ImportTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
@@ -145,4 +150,18 @@ object FirSessionFactoryHelper {
         register(FirDefaultImportProviderHolder::class, FirDefaultImportProviderHolder(CommonPlatformAnalyzerServices))
         register(FirIdentityLessPlatformDeterminer::class, FirIdentityLessPlatformDeterminer.Default)
     }
+
+    fun initializeBuiltinsProvider(
+        session: FirSession,
+        builtinsModuleData: FirModuleData,
+        kotlinScopeProvider: FirKotlinScopeProvider,
+        kotlinClassFinder: KotlinClassFinder,
+    ): FirBuiltinsSymbolProvider = FirBuiltinsSymbolProvider(
+        session, FirClasspathBuiltinSymbolProvider(
+            session,
+            builtinsModuleData,
+            kotlinScopeProvider
+        ) { kotlinClassFinder.findBuiltInsData(it) },
+        FirFallbackBuiltinSymbolProvider(session, builtinsModuleData, kotlinScopeProvider)
+    )
 }

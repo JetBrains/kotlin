@@ -50,7 +50,7 @@ class FirJvmBuiltinProviderActualDeclarationExtractor private constructor(
                 val firJvmActualizingBuiltinSymbolProvider =
                     dependencyProviders.filterIsInstance<FirJvmActualizingBuiltinSymbolProvider>().single()
                 FirJvmBuiltinProviderActualDeclarationExtractor(
-                    firJvmActualizingBuiltinSymbolProvider.builtinSymbolProvider,
+                    firJvmActualizingBuiltinSymbolProvider.builtinsSymbolProvider,
                     platformComponents.classifierStorage,
                     platformComponents.declarationStorage
                 )
