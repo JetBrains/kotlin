@@ -37,10 +37,16 @@ private inline fun isInsideSpecificClass(
             context.containingDeclarations.asReversed().any { it is FirRegularClass && predicate.invoke(it) }
 }
 
-internal fun FirMemberDeclaration.isEffectivelyFinal(context: CheckerContext): Boolean =
-    this.symbol.isEffectivelyFinal(context.session)
+/**
+ * The containing symbol is resolved using the declaration-site session.
+ */
+internal fun FirMemberDeclaration.isEffectivelyFinal(): Boolean =
+    this.symbol.isEffectivelyFinal()
 
-internal fun FirBasedSymbol<*>.isEffectivelyFinal(session: FirSession): Boolean {
+/**
+ * The containing symbol is resolved using the declaration-site session.
+ */
+internal fun FirBasedSymbol<*>.isEffectivelyFinal(): Boolean {
     if (this.isFinal()) return true
 
     val containingClass = this.getContainingClassSymbol() as? FirClassSymbol<*> ?: return true

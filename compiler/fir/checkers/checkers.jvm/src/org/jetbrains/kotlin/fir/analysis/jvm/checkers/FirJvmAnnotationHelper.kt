@@ -17,6 +17,9 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 
+/**
+ * The containing symbol is resolved using the declaration-site session.
+ */
 fun <D> FirBasedSymbol<D>.isCompiledToJvmDefault(
     session: FirSession,
     jvmDefaultMode: JvmDefaultMode,

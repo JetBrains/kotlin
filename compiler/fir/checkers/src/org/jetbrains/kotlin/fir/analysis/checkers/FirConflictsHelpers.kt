@@ -505,8 +505,8 @@ private fun FirDeclarationCollector<*>.areNonConflictingCallables(
 
     if (declaration !is FirCallableSymbol<*> || conflicting !is FirCallableSymbol<*>) return false
 
-    val declarationIsFinal = declaration.isEffectivelyFinal(session)
-    val conflictingIsFinal = conflicting.isEffectivelyFinal(session)
+    val declarationIsFinal = declaration.isEffectivelyFinal()
+    val conflictingIsFinal = conflicting.isEffectivelyFinal()
 
     if (declarationIsFinal && conflictingIsFinal) {
         val declarationIsHidden = declaration.isDeprecationLevelHidden(session)

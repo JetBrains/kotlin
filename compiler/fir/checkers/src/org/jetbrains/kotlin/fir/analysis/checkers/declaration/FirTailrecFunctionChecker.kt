@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.fir.types.toSymbol
 object FirTailrecFunctionChecker : FirSimpleFunctionChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!declaration.isTailRec) return
-        if (!(declaration.isEffectivelyFinal(context) || declaration.visibility == Visibilities.Private)) {
+        if (!(declaration.isEffectivelyFinal() || declaration.visibility == Visibilities.Private)) {
             reporter.reportOn(declaration.source, FirErrors.TAILREC_ON_VIRTUAL_MEMBER_ERROR, context)
         }
         val graph = declaration.controlFlowGraphReference?.controlFlowGraph ?: return

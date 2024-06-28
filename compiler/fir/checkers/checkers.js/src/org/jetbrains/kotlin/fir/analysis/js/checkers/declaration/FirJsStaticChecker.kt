@@ -72,7 +72,7 @@ object FirJsStaticChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
 
         val container = declaration.getContainingClassSymbol() ?: return
 
-        if (!container.isCompanion() || container.containerIsInterface(context)) {
+        if (!container.isCompanion() || container.containerIsInterface()) {
             reporter.reportOn(targetSource, FirJsErrors.JS_STATIC_NOT_IN_CLASS_COMPANION, context)
         }
 
@@ -147,7 +147,7 @@ object FirJsStaticChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         if (declaration.isConst) reporter.reportOn(targetSource, FirJsErrors.JS_STATIC_ON_CONST, context)
     }
 
-    private fun FirClassLikeSymbol<*>.containerIsInterface(context: CheckerContext): Boolean {
+    private fun FirClassLikeSymbol<*>.containerIsInterface(): Boolean {
         return getContainingClassSymbol()?.classKind?.isInterface == true
     }
 

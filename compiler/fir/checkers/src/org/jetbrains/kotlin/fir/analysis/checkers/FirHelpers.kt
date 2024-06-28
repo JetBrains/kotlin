@@ -160,6 +160,7 @@ fun FirTypeRef.toRegularClassSymbol(session: FirSession): FirRegularClassSymbol?
 /**
  * Returns the ClassLikeDeclaration where the Fir object has been defined
  * or null if no proper declaration has been found.
+ * The containing symbol is resolved using the declaration-site session.
  */
 fun FirBasedSymbol<*>.getContainingClassSymbol(): FirClassLikeSymbol<*>? = when (this) {
     is FirCallableSymbol<*> -> containingClassLookupTag()?.toSymbol(moduleData.session)
@@ -170,12 +171,16 @@ fun FirBasedSymbol<*>.getContainingClassSymbol(): FirClassLikeSymbol<*>? = when 
 
 /**
  * Returns the containing class or file if the callable is top-level.
+ * The containing symbol is resolved using the declaration-site session.
  */
 fun FirCallableSymbol<*>.getContainingSymbol(session: FirSession): FirBasedSymbol<*>? {
     return getContainingClassSymbol()
         ?: session.firProvider.getFirCallableContainerFile(this)?.symbol
 }
 
+/**
+ * The containing symbol is resolved using the declaration-site session.
+ */
 fun FirDeclaration.getContainingClassSymbol() = symbol.getContainingClassSymbol()
 
 fun FirClassLikeSymbol<*>.outerClassSymbol(context: CheckerContext): FirClassLikeSymbol<*>? {
@@ -332,6 +337,7 @@ fun FirBasedSymbol<*>.isVisibleInClass(classSymbol: FirClassSymbol<*>, status: F
 
 /**
  * Get the [ImplementationStatus] for this member.
+ * The containing symbol is resolved using the declaration-site session.
  *
  * @param parentClassSymbol the contextual class for this query.
  */
@@ -797,6 +803,9 @@ fun CheckerContext.closestNonLocalWith(declaration: FirDeclaration) =
 
 val CheckerContext.isTopLevel get() = containingDeclarations.lastOrNull().let { it is FirFile || it is FirScript }
 
+/**
+ * The containing symbol is resolved using the declaration-site session.
+ */
 fun FirBasedSymbol<*>.hasAnnotationOrInsideAnnotatedClass(classId: ClassId, session: FirSession): Boolean {
     if (hasAnnotation(classId, session)) return true
     val container = getContainingClassSymbol() ?: return false
