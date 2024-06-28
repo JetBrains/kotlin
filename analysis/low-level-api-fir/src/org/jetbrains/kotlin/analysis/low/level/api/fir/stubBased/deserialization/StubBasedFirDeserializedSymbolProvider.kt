@@ -30,9 +30,7 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getTopmostParentOfType
 import org.jetbrains.kotlin.psi.stubs.impl.*
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 typealias DeserializedTypeAliasPostProcessor = (FirTypeAliasSymbol) -> Unit
@@ -174,8 +172,9 @@ internal open class StubBasedFirDeserializedSymbolProvider(
             for (function in topLevelFunctions) {
                 val functionStub = function.stub as? KotlinFunctionStubImpl ?: loadStubByElement(function)
                 val functionFile = function.containingKtFile
-                val containerSource = deserializedContainerSourceProvider.getContainerSource(functionFile, functionStub?.origin)
                 val functionOrigin = getDeclarationOriginFor(functionFile)
+                val containerSource =
+                    deserializedContainerSourceProvider.getContainerSource(functionFile, functionStub?.origin, functionOrigin)
 
                 if (functionOrigin != FirDeclarationOrigin.BuiltIns &&
                     containerSource is FacadeClassSource &&
@@ -200,8 +199,12 @@ internal open class StubBasedFirDeserializedSymbolProvider(
             for (property in topLevelProperties) {
                 val propertyStub = property.stub as? KotlinPropertyStubImpl ?: loadStubByElement(property)
                 val propertyFile = property.containingKtFile
-                val containerSource = deserializedContainerSourceProvider.getContainerSource(propertyFile, propertyStub?.origin)
                 val propertyOrigin = getDeclarationOriginFor(propertyFile)
+                val containerSource = deserializedContainerSourceProvider.getContainerSource(
+                    propertyFile,
+                    propertyStub?.origin,
+                    propertyOrigin,
+                )
 
                 val symbol = FirPropertySymbol(callableId)
                 val rootContext = StubBasedFirDeserializationContext

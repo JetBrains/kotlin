@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization
 
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
@@ -13,25 +14,37 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 internal interface DeserializedContainerSourceProvider {
-    fun getContainerSource(file: KtFile, origin: KotlinStubOrigin?): DeserializedContainerSource?
+    fun getContainerSource(
+        file: KtFile,
+        stubOrigin: KotlinStubOrigin?,
+        declarationOrigin: FirDeclarationOrigin,
+    ): DeserializedContainerSource?
 }
 
 // Currently, `null` is returned for KLIBs to avoid incorrect application of JVM file facade logic and overload filtering.
 // We might want to provide non-`null` container source for all types of binaries in the future.
-internal object NoSourceDeserializedContainerSourceProvider : DeserializedContainerSourceProvider {
-    override fun getContainerSource(file: KtFile, origin: KotlinStubOrigin?): DeserializedContainerSource? = null
+internal object NullDeserializedContainerSourceProvider : DeserializedContainerSourceProvider {
+    override fun getContainerSource(
+        file: KtFile,
+        stubOrigin: KotlinStubOrigin?,
+        declarationOrigin: FirDeclarationOrigin,
+    ): DeserializedContainerSource? = null
 }
 
 internal object JvmDeserializedContainerSourceProvider : DeserializedContainerSourceProvider {
-    override fun getContainerSource(file: KtFile, origin: KotlinStubOrigin?): DeserializedContainerSource {
-        return when (origin) {
+    override fun getContainerSource(
+        file: KtFile,
+        stubOrigin: KotlinStubOrigin?,
+        declarationOrigin: FirDeclarationOrigin,
+    ): DeserializedContainerSource {
+        return when (stubOrigin) {
             is KotlinStubOrigin.Facade -> {
-                val className = JvmClassName.byInternalName(origin.className)
+                val className = JvmClassName.byInternalName(stubOrigin.className)
                 JvmStubDeserializedFacadeContainerSource(className, facadeClassName = null)
             }
             is KotlinStubOrigin.MultiFileFacade -> {
-                val className = JvmClassName.byInternalName(origin.className)
-                val facadeClassName = JvmClassName.byInternalName(origin.facadeClassName)
+                val className = JvmClassName.byInternalName(stubOrigin.className)
+                val facadeClassName = JvmClassName.byInternalName(stubOrigin.facadeClassName)
                 JvmStubDeserializedFacadeContainerSource(className, facadeClassName)
             }
             else -> {
@@ -45,13 +58,31 @@ internal object JvmDeserializedContainerSourceProvider : DeserializedContainerSo
 }
 
 internal object BuiltinsDeserializedContainerSourceProvider : DeserializedContainerSourceProvider {
-    override fun getContainerSource(file: KtFile, origin: KotlinStubOrigin?): DeserializedContainerSource? {
-        require(origin is KotlinStubOrigin.Facade) {
-            "Expected builtins file to have Facade origin, got origin=$origin instead"
+    override fun getContainerSource(
+        file: KtFile,
+        stubOrigin: KotlinStubOrigin?,
+        declarationOrigin: FirDeclarationOrigin,
+    ): DeserializedContainerSource {
+        require(stubOrigin is KotlinStubOrigin.Facade) {
+            "Expected builtins file to have Facade origin, got origin=$stubOrigin instead"
         }
 
         return JvmStubDeserializedBuiltInsContainerSource(
-            facadeClassName = JvmClassName.byInternalName(origin.className)
+            facadeClassName = JvmClassName.byInternalName(stubOrigin.className)
         )
+    }
+}
+
+internal object JvmAndBuiltinsDeserializedContainerSourceProvider : DeserializedContainerSourceProvider {
+    override fun getContainerSource(
+        file: KtFile,
+        stubOrigin: KotlinStubOrigin?,
+        declarationOrigin: FirDeclarationOrigin
+    ): DeserializedContainerSource? {
+        if (declarationOrigin is FirDeclarationOrigin.BuiltIns) {
+            return BuiltinsDeserializedContainerSourceProvider.getContainerSource(file, stubOrigin, declarationOrigin)
+        }
+
+        return JvmDeserializedContainerSourceProvider.getContainerSource(file, stubOrigin, declarationOrigin)
     }
 }

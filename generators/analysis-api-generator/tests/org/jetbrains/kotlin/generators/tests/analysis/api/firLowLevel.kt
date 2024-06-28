@@ -251,6 +251,10 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
             model("getOrBuildFirForStdLib")
         }
 
+        testClass<AbstractDeserializedContainerSourceFirTest> {
+            model("getOrBuildFirForFileFacade")
+        }
+
         testClass<AbstractSourceFileBasedKotlinDeclarationProviderTest> {
             model("fileBasedDeclarationProvider", pattern = TestGeneratorUtil.KT)
         }
