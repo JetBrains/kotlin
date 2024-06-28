@@ -5,14 +5,9 @@
 
 package org.jetbrains.kotlin.formver.embeddings
 
-import org.jetbrains.kotlin.formver.conversion.AccessPolicy
 import org.jetbrains.kotlin.formver.domains.Injection
 import org.jetbrains.kotlin.formver.domains.RuntimeTypeDomain
 import org.jetbrains.kotlin.formver.embeddings.callables.CallableSignatureData
-import org.jetbrains.kotlin.formver.embeddings.expression.PlaceholderVariableEmbedding
-import org.jetbrains.kotlin.formver.embeddings.expression.PrimitiveFieldAccess
-import org.jetbrains.kotlin.formver.embeddings.expression.toConjunction
-import org.jetbrains.kotlin.formver.linearization.pureToViper
 import org.jetbrains.kotlin.formver.names.*
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.Exp
@@ -66,19 +61,9 @@ interface TypeEmbedding {
      */
     fun accessInvariants(): List<TypeInvariantEmbedding> = emptyList()
 
-    // Note: this function will replace accessInvariants when nested unfold will be implemented
-    fun predicateAccessInvariant(): TypeInvariantEmbedding? = null
-
-    /**
-     * A list of invariants that are already known to be true based on the Kotlin code being well-formed.
-     *
-     * We can provide these to Viper as assumptions rather than requiring them to be explicitly proven.
-     * An example of this is when other systems (e.g. the type checker) have already proven these.
-     *
-     * TODO: Can be included in the class predicate when unfolding works
-     */
-    fun provenInvariants(): List<TypeInvariantEmbedding> =
-        listOf(SubTypeInvariantEmbedding(this))
+    // Note: these functions will replace accessInvariants when nested unfold will be implemented
+    fun sharedPredicateAccessInvariant(): TypeInvariantEmbedding? = null
+    fun uniquePredicateAccessInvariant(): TypeInvariantEmbedding? = null
 
     /**
      * Invariants that do not depend on the heap, and so do not need to be repeated
@@ -146,8 +131,6 @@ data object AnyTypeEmbedding : TypeEmbedding {
     override val name = object : MangledName {
         override val mangled: String = "T_Any"
     }
-
-    override fun provenInvariants(): List<TypeInvariantEmbedding> = listOf(SubTypeInvariantEmbedding(this))
 }
 
 data object NullableAnyTypeEmbedding : TypeEmbedding by NullableTypeEmbedding(AnyTypeEmbedding)
@@ -177,8 +160,11 @@ data class NullableTypeEmbedding(val elementType: TypeEmbedding) : TypeEmbedding
     override fun accessInvariants(): List<TypeInvariantEmbedding> = elementType.accessInvariants().map { IfNonNullInvariant(it) }
 
     // Note: this function will replace accessInvariants when nested unfold will be implemented
-    override fun predicateAccessInvariant(): TypeInvariantEmbedding? =
-        elementType.predicateAccessInvariant()?.let { IfNonNullInvariant(it) }
+    override fun sharedPredicateAccessInvariant(): TypeInvariantEmbedding? =
+        elementType.sharedPredicateAccessInvariant()?.let { IfNonNullInvariant(it) }
+
+    override fun uniquePredicateAccessInvariant(): TypeInvariantEmbedding? =
+        elementType.uniquePredicateAccessInvariant()?.let { IfNonNullInvariant(it) }
 
     override fun getNullable(): NullableTypeEmbedding = this
     override fun getNonNullable(): TypeEmbedding = elementType
@@ -220,45 +206,60 @@ data class ClassTypeEmbedding(val className: ScopedKotlinName, val isInterface: 
     }
 
     private var _fields: Map<SimpleKotlinName, FieldEmbedding>? = null
-    private var _predicate: Predicate? = null
+    private var _sharedPredicate: Predicate? = null
+    private var _uniquePredicate: Predicate? = null
     val fields: Map<SimpleKotlinName, FieldEmbedding>
         get() = _fields ?: error("Fields of $className have not been initialised yet.")
-    val predicate: Predicate
-        get() = _predicate ?: error("Predicate of $className has not been initialised yet.")
+    val sharedPredicate: Predicate
+        get() = _sharedPredicate ?: error("Predicate of $className has not been initialised yet.")
+    val uniquePredicate: Predicate
+        get() = _uniquePredicate ?: error("Unique Predicate of $className has not been initialised yet.")
 
     fun initFields(newFields: Map<SimpleKotlinName, FieldEmbedding>) {
         check(_fields == null) { "Fields of $className are already initialised." }
         _fields = newFields
-        _predicate = initPredicate()
-    }
-
-    private fun initPredicate(): Predicate {
-        val subjectEmbedding = PlaceholderVariableEmbedding(ClassPredicateSubjectName, this)
-        val accessFields = fields.values
-            .mapNotNull { it.accessInvariantsForPredicate()?.fillHole(subjectEmbedding) }
-
-        // For the moment ALWAYS_WRITEABLE fields with some class type do not exist.
-        // Whether to include them here will need to be considered in the future.
-        // We need to pass in the field access since the predicates are simply the ones for the type.
-        val accessFieldPredicates = fields.values
-            .filter { it.accessPolicy == AccessPolicy.ALWAYS_READABLE }
-            .mapNotNull { it.type.predicateAccessInvariant()?.fillHole(PrimitiveFieldAccess(subjectEmbedding, it)) }
-
-        val fieldsProvenInvariants = fields.values
-            .filter { it.accessPolicy == AccessPolicy.ALWAYS_READABLE }
-            .flatMap { it.type.provenInvariants().fillHoles(PrimitiveFieldAccess(subjectEmbedding, it)) }
-
-        val accessSuperTypesPredicates = superTypes
-            .filterIsInstance<ClassTypeEmbedding>()
-            .map { PredicateAccessTypeInvariantEmbedding(it.name, PermExp.WildcardPerm()).fillHole(subjectEmbedding) }
-
-        val body = (accessFields + accessFieldPredicates + accessSuperTypesPredicates + fieldsProvenInvariants).toConjunction()
-        return Predicate(name, listOf(subjectEmbedding.toLocalVarDecl()), body.pureToViper(toBuiltin = true))
+        _sharedPredicate = ClassPredicateBuilder.build(this, name) {
+            forEachField {
+                if (isAlwaysReadable) {
+                    addAccessPermissions(PermExp.WildcardPerm())
+                    forType {
+                        addAccessToSharedPredicate()
+                        includeSubTypeInvariants()
+                    }
+                }
+            }
+            forEachSuperType {
+                addAccessToSharedPredicate()
+            }
+        }
+        _uniquePredicate = ClassPredicateBuilder.build(this, uniquePredicateName) {
+            forEachField {
+                if (isAlwaysReadable) {
+                    addAccessPermissions(PermExp.WildcardPerm())
+                } else {
+                    addAccessPermissions(PermExp.FullPerm())
+                }
+                forType {
+                    addAccessToSharedPredicate()
+                    if (isUnique) {
+                        addAccessToUniquePredicate()
+                    }
+                    includeSubTypeInvariants()
+                }
+            }
+            forEachSuperType {
+                addAccessToUniquePredicate()
+            }
+        }
     }
 
     // TODO: incorporate generic parameters.
     override val name = object : MangledName {
         override val mangled: String = "T_class_${className.mangled}"
+    }
+
+    private val uniquePredicateName = object : MangledName {
+        override val mangled: String = "Unique\$T_class_${className.mangled}"
     }
 
     val runtimeTypeFunc = RuntimeTypeDomain.classTypeFunc(name)
@@ -275,8 +276,11 @@ data class ClassTypeEmbedding(val className: ScopedKotlinName, val isInterface: 
         flatMapUniqueFields { _, field -> field.accessInvariantsForParameter() }
 
     // Note: this function will replace accessInvariants when nested unfold will be implemented
-    override fun predicateAccessInvariant() =
+    override fun sharedPredicateAccessInvariant() =
         PredicateAccessTypeInvariantEmbedding(name, PermExp.WildcardPerm())
+
+    override fun uniquePredicateAccessInvariant() =
+        PredicateAccessTypeInvariantEmbedding(uniquePredicateName, PermExp.FullPerm())
 
     // Returns the sequence of classes in a hierarchy that need to be unfolded in order to access the given field
     fun hierarchyUnfoldPath(fieldName: MangledName): Sequence<ClassTypeEmbedding> = sequence {
@@ -323,4 +327,6 @@ fun TypeEmbedding.isInheritorOfCollectionTypeNamed(name: String): Boolean =
 
 val TypeEmbedding.isCollectionInheritor
     get() = isInheritorOfCollectionTypeNamed("Collection")
+
+fun TypeEmbedding.subTypeInvariant() = SubTypeInvariantEmbedding(this)
 

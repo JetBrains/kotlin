@@ -295,6 +295,12 @@ predicate T_class_global$class_Foo(special$class$predicate$subject: Ref) {
   dom$RuntimeType$intType())
 }
 
+predicate Unique$T_class_global$class_Foo(special$class$predicate$subject: Ref) {
+  acc(special$class$predicate$subject.public$backing_field_x, wildcard) &&
+  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_x),
+  dom$RuntimeType$intType())
+}
+
 method class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(local$x: Ref)
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Foo())

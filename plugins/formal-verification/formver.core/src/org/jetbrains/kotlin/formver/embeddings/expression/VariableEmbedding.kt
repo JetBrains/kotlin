@@ -40,9 +40,9 @@ sealed interface VariableEmbedding : PureExpEmbedding, PropertyAccessEmbedding {
     override fun setValue(value: ExpEmbedding, ctx: StmtConversionContext): ExpEmbedding = Assign(this, value)
 
     fun pureInvariants(): List<ExpEmbedding> = type.pureInvariants().fillHoles(this)
-    fun provenInvariants(): List<ExpEmbedding> = type.provenInvariants().fillHoles(this)
+    fun provenInvariants(): List<ExpEmbedding> = listOf(type.subTypeInvariant().fillHole(this))
     fun accessInvariants(): List<ExpEmbedding> = type.accessInvariants().fillHoles(this)
-    fun predicateAccessInvariant() = type.predicateAccessInvariant()?.fillHole(this)
+    fun predicateAccessInvariant() = type.sharedPredicateAccessInvariant()?.fillHole(this)
 
     fun allAccessInvariants() = accessInvariants() + listOfNotNull(predicateAccessInvariant())
 

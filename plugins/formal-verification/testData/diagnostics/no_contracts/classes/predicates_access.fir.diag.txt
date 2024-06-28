@@ -15,21 +15,51 @@ predicate T_class_global$class_A(special$class$predicate$subject: Ref) {
 
 predicate T_class_global$class_B(special$class$predicate$subject: Ref) {
   acc(special$class$predicate$subject.public$backing_field_b, wildcard) &&
-  acc(T_class_global$class_A(special$class$predicate$subject), wildcard) &&
   dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_b),
-  dom$RuntimeType$intType())
+  dom$RuntimeType$intType()) &&
+  acc(T_class_global$class_A(special$class$predicate$subject), wildcard)
 }
 
 predicate T_class_global$class_C(special$class$predicate$subject: Ref) {
   acc(special$class$predicate$subject.public$backing_field_x, wildcard) &&
   acc(T_class_global$class_A(special$class$predicate$subject.public$backing_field_x), wildcard) &&
-  acc(T_class_global$class_D(special$class$predicate$subject), wildcard) &&
-  acc(T_class_global$class_B(special$class$predicate$subject), wildcard) &&
   dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_x),
-  dom$RuntimeType$T_class_global$class_A())
+  dom$RuntimeType$T_class_global$class_A()) &&
+  acc(T_class_global$class_D(special$class$predicate$subject), wildcard) &&
+  acc(T_class_global$class_B(special$class$predicate$subject), wildcard)
 }
 
 predicate T_class_global$class_D(special$class$predicate$subject: Ref) {
+  true
+}
+
+predicate Unique$T_class_global$class_A(special$class$predicate$subject: Ref) {
+  acc(special$class$predicate$subject.public$backing_field_a, wildcard) &&
+  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_a),
+  dom$RuntimeType$intType())
+}
+
+predicate Unique$T_class_global$class_B(special$class$predicate$subject: Ref) {
+  acc(special$class$predicate$subject.public$backing_field_b, wildcard) &&
+  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_b),
+  dom$RuntimeType$intType()) &&
+  acc(Unique$T_class_global$class_A(special$class$predicate$subject), write)
+}
+
+predicate Unique$T_class_global$class_C(special$class$predicate$subject: Ref) {
+  acc(special$class$predicate$subject.public$backing_field_x, wildcard) &&
+  acc(T_class_global$class_A(special$class$predicate$subject.public$backing_field_x), wildcard) &&
+  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_x),
+  dom$RuntimeType$T_class_global$class_A()) &&
+  acc(special$class$predicate$subject.public$backing_field_y, write) &&
+  acc(T_class_global$class_A(special$class$predicate$subject.public$backing_field_y), wildcard) &&
+  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_y),
+  dom$RuntimeType$T_class_global$class_A()) &&
+  acc(Unique$T_class_global$class_D(special$class$predicate$subject), write) &&
+  acc(Unique$T_class_global$class_B(special$class$predicate$subject), write)
+}
+
+predicate Unique$T_class_global$class_D(special$class$predicate$subject: Ref) {
   true
 }
 
@@ -68,21 +98,51 @@ predicate T_class_global$class_A(special$class$predicate$subject: Ref) {
 
 predicate T_class_global$class_B(special$class$predicate$subject: Ref) {
   acc(special$class$predicate$subject.public$backing_field_b, wildcard) &&
-  acc(T_class_global$class_A(special$class$predicate$subject), wildcard) &&
   dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_b),
-  dom$RuntimeType$intType())
+  dom$RuntimeType$intType()) &&
+  acc(T_class_global$class_A(special$class$predicate$subject), wildcard)
 }
 
 predicate T_class_global$class_C(special$class$predicate$subject: Ref) {
   acc(special$class$predicate$subject.public$backing_field_x, wildcard) &&
   acc(T_class_global$class_A(special$class$predicate$subject.public$backing_field_x), wildcard) &&
-  acc(T_class_global$class_D(special$class$predicate$subject), wildcard) &&
-  acc(T_class_global$class_B(special$class$predicate$subject), wildcard) &&
   dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_x),
-  dom$RuntimeType$T_class_global$class_A())
+  dom$RuntimeType$T_class_global$class_A()) &&
+  acc(T_class_global$class_D(special$class$predicate$subject), wildcard) &&
+  acc(T_class_global$class_B(special$class$predicate$subject), wildcard)
 }
 
 predicate T_class_global$class_D(special$class$predicate$subject: Ref) {
+  true
+}
+
+predicate Unique$T_class_global$class_A(special$class$predicate$subject: Ref) {
+  acc(special$class$predicate$subject.public$backing_field_a, wildcard) &&
+  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_a),
+  dom$RuntimeType$intType())
+}
+
+predicate Unique$T_class_global$class_B(special$class$predicate$subject: Ref) {
+  acc(special$class$predicate$subject.public$backing_field_b, wildcard) &&
+  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_b),
+  dom$RuntimeType$intType()) &&
+  acc(Unique$T_class_global$class_A(special$class$predicate$subject), write)
+}
+
+predicate Unique$T_class_global$class_C(special$class$predicate$subject: Ref) {
+  acc(special$class$predicate$subject.public$backing_field_x, wildcard) &&
+  acc(T_class_global$class_A(special$class$predicate$subject.public$backing_field_x), wildcard) &&
+  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_x),
+  dom$RuntimeType$T_class_global$class_A()) &&
+  acc(special$class$predicate$subject.public$backing_field_y, write) &&
+  acc(T_class_global$class_A(special$class$predicate$subject.public$backing_field_y), wildcard) &&
+  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_y),
+  dom$RuntimeType$T_class_global$class_A()) &&
+  acc(Unique$T_class_global$class_D(special$class$predicate$subject), write) &&
+  acc(Unique$T_class_global$class_B(special$class$predicate$subject), write)
+}
+
+predicate Unique$T_class_global$class_D(special$class$predicate$subject: Ref) {
   true
 }
 
@@ -109,6 +169,12 @@ method public$property_getter_d(this: Ref) returns (ret: Ref)
 field public$backing_field_a: Ref
 
 predicate T_class_global$class_A(special$class$predicate$subject: Ref) {
+  acc(special$class$predicate$subject.public$backing_field_a, wildcard) &&
+  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_a),
+  dom$RuntimeType$intType())
+}
+
+predicate Unique$T_class_global$class_A(special$class$predicate$subject: Ref) {
   acc(special$class$predicate$subject.public$backing_field_a, wildcard) &&
   dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_a),
   dom$RuntimeType$intType())
@@ -143,9 +209,22 @@ predicate T_class_global$class_A(special$class$predicate$subject: Ref) {
 
 predicate T_class_global$class_B(special$class$predicate$subject: Ref) {
   acc(special$class$predicate$subject.public$backing_field_b, wildcard) &&
-  acc(T_class_global$class_A(special$class$predicate$subject), wildcard) &&
   dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_b),
+  dom$RuntimeType$intType()) &&
+  acc(T_class_global$class_A(special$class$predicate$subject), wildcard)
+}
+
+predicate Unique$T_class_global$class_A(special$class$predicate$subject: Ref) {
+  acc(special$class$predicate$subject.public$backing_field_a, wildcard) &&
+  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_a),
   dom$RuntimeType$intType())
+}
+
+predicate Unique$T_class_global$class_B(special$class$predicate$subject: Ref) {
+  acc(special$class$predicate$subject.public$backing_field_b, wildcard) &&
+  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_b),
+  dom$RuntimeType$intType()) &&
+  acc(Unique$T_class_global$class_A(special$class$predicate$subject), write)
 }
 
 method global$fun_accessCast$fun_take$T_class_global$class_A$return$T_Unit(local$x: Ref)
@@ -178,9 +257,22 @@ predicate T_class_global$class_A(special$class$predicate$subject: Ref) {
 
 predicate T_class_global$class_B(special$class$predicate$subject: Ref) {
   acc(special$class$predicate$subject.public$backing_field_b, wildcard) &&
-  acc(T_class_global$class_A(special$class$predicate$subject), wildcard) &&
   dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_b),
+  dom$RuntimeType$intType()) &&
+  acc(T_class_global$class_A(special$class$predicate$subject), wildcard)
+}
+
+predicate Unique$T_class_global$class_A(special$class$predicate$subject: Ref) {
+  acc(special$class$predicate$subject.public$backing_field_a, wildcard) &&
+  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_a),
   dom$RuntimeType$intType())
+}
+
+predicate Unique$T_class_global$class_B(special$class$predicate$subject: Ref) {
+  acc(special$class$predicate$subject.public$backing_field_b, wildcard) &&
+  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_b),
+  dom$RuntimeType$intType()) &&
+  acc(Unique$T_class_global$class_A(special$class$predicate$subject), write)
 }
 
 method global$fun_accessSafeCast$fun_take$T_class_global$class_A$return$T_Unit(local$x: Ref)
@@ -220,9 +312,22 @@ predicate T_class_global$class_A(special$class$predicate$subject: Ref) {
 
 predicate T_class_global$class_B(special$class$predicate$subject: Ref) {
   acc(special$class$predicate$subject.public$backing_field_b, wildcard) &&
-  acc(T_class_global$class_A(special$class$predicate$subject), wildcard) &&
   dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_b),
+  dom$RuntimeType$intType()) &&
+  acc(T_class_global$class_A(special$class$predicate$subject), wildcard)
+}
+
+predicate Unique$T_class_global$class_A(special$class$predicate$subject: Ref) {
+  acc(special$class$predicate$subject.public$backing_field_a, wildcard) &&
+  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_a),
   dom$RuntimeType$intType())
+}
+
+predicate Unique$T_class_global$class_B(special$class$predicate$subject: Ref) {
+  acc(special$class$predicate$subject.public$backing_field_b, wildcard) &&
+  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_b),
+  dom$RuntimeType$intType()) &&
+  acc(Unique$T_class_global$class_A(special$class$predicate$subject), write)
 }
 
 method global$fun_accessSmartCast$fun_take$T_class_global$class_A$return$T_Unit(local$x: Ref)

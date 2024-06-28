@@ -14,14 +14,11 @@ import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.formver.ErrorCollector
-import org.jetbrains.kotlin.formver.PluginConfiguration
-import org.jetbrains.kotlin.formver.UnsupportedFeatureBehaviour
+import org.jetbrains.kotlin.formver.*
 import org.jetbrains.kotlin.formver.domains.RuntimeTypeDomain
 import org.jetbrains.kotlin.formver.embeddings.*
 import org.jetbrains.kotlin.formver.embeddings.callables.*
 import org.jetbrains.kotlin.formver.embeddings.expression.*
-import org.jetbrains.kotlin.formver.isCustom
 import org.jetbrains.kotlin.formver.linearization.Linearizer
 import org.jetbrains.kotlin.formver.linearization.SeqnBuilder
 import org.jetbrains.kotlin.formver.linearization.SharedLinearizationState
@@ -69,7 +66,7 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
                     fields.values.distinctBy { it.name.mangled }.map { it.toViper() },
             functions = SpecialFunctions.all,
             methods = SpecialMethods.all + methods.values.mapNotNull { it.viperMethod }.distinctBy { it.name.mangled },
-            predicates = classes.values.map { it.predicate }
+            predicates = classes.values.flatMap { listOf(it.sharedPredicate, it.uniquePredicate) }
         )
 
     fun registerForVerification(declaration: FirSimpleFunction) {
@@ -297,7 +294,8 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
             UserFieldEmbedding(
                 scopedName,
                 embedType(symbol.resolvedReturnType),
-                symbol
+                symbol,
+                symbol.isUnique(session)
             )
         }
         return backingField?.let { unscopedName to it }

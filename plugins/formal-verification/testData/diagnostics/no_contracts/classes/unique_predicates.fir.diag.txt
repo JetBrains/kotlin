@@ -1,0 +1,65 @@
+/unique_predicates.kt:(217,231): info: Generated Viper text for use_unique_foo:
+field public$backing_field_w: Ref
+
+field public$backing_field_x: Ref
+
+field public$backing_field_y: Ref
+
+field public$backing_field_z: Ref
+
+predicate T_class_global$class_Foo(special$class$predicate$subject: Ref) {
+  acc(special$class$predicate$subject.public$backing_field_w, wildcard) &&
+  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_w),
+  dom$RuntimeType$intType()) &&
+  acc(special$class$predicate$subject.public$backing_field_y, wildcard) &&
+  acc(T_class_global$class_T(special$class$predicate$subject.public$backing_field_y), wildcard) &&
+  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_y),
+  dom$RuntimeType$T_class_global$class_T()) &&
+  acc(T_class_global$class_S(special$class$predicate$subject), wildcard)
+}
+
+predicate T_class_global$class_S(special$class$predicate$subject: Ref) {
+  true
+}
+
+predicate T_class_global$class_T(special$class$predicate$subject: Ref) {
+  true
+}
+
+predicate Unique$T_class_global$class_Foo(special$class$predicate$subject: Ref) {
+  acc(special$class$predicate$subject.public$backing_field_w, wildcard) &&
+  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_w),
+  dom$RuntimeType$intType()) &&
+  acc(special$class$predicate$subject.public$backing_field_x, write) &&
+  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_x),
+  dom$RuntimeType$intType()) &&
+  acc(special$class$predicate$subject.public$backing_field_y, wildcard) &&
+  acc(T_class_global$class_T(special$class$predicate$subject.public$backing_field_y), wildcard) &&
+  acc(Unique$T_class_global$class_T(special$class$predicate$subject.public$backing_field_y), write) &&
+  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_y),
+  dom$RuntimeType$T_class_global$class_T()) &&
+  acc(special$class$predicate$subject.public$backing_field_z, write) &&
+  acc(T_class_global$class_T(special$class$predicate$subject.public$backing_field_z), wildcard) &&
+  acc(Unique$T_class_global$class_T(special$class$predicate$subject.public$backing_field_z), write) &&
+  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_z),
+  dom$RuntimeType$T_class_global$class_T()) &&
+  acc(Unique$T_class_global$class_S(special$class$predicate$subject), write)
+}
+
+predicate Unique$T_class_global$class_S(special$class$predicate$subject: Ref) {
+  true
+}
+
+predicate Unique$T_class_global$class_T(special$class$predicate$subject: Ref) {
+  true
+}
+
+method global$fun_use_unique_foo$fun_take$T_class_global$class_Foo$return$T_Unit(local$foo: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+{
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$foo), dom$RuntimeType$T_class_global$class_Foo())
+  inhale acc(T_class_global$class_Foo(local$foo), wildcard)
+  ret$0 := dom$RuntimeType$unitValue()
+  label label$ret$0
+}

@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.formver
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.contracts.FirEffectDeclaration
+import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -17,6 +19,9 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.formver.embeddings.SourceRole
 import org.jetbrains.kotlin.formver.viper.ast.Position
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 // val FirElement.calleeSymbol: FirBasedSymbol<*>
 //     get() = toReference()?.toResolvedBaseSymbol()!!
@@ -42,3 +47,8 @@ val KtSourceElement?.asPosition: Position
     }
 val FirBasedSymbol<*>.asSourceRole: SourceRole
     get() = SourceRole.FirSymbolHolder(this)
+
+fun FirBasedSymbol<*>.isUnique(session: FirSession) = hasAnnotation(
+    ClassId(FqName.fromSegments(listOf("org", "jetbrains", "kotlin", "formver", "plugin")), Name.identifier("Unique")),
+    session
+)

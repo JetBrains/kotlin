@@ -325,6 +325,12 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
       public void testSubtyping() {
         runTest("plugins/formal-verification/testData/diagnostics/no_contracts/classes/subtyping.kt");
       }
+
+      @Test
+      @TestMetadata("unique_predicates.kt")
+      public void testUnique_predicates() {
+        runTest("plugins/formal-verification/testData/diagnostics/no_contracts/classes/unique_predicates.kt");
+      }
     }
 
     @Nested
