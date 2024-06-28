@@ -29,7 +29,7 @@ NextFitPage::NextFitPage(uint32_t cellCount) noexcept : curBlock_(cells_) {
     cells_[1] = Cell(NextFitPage::cellCount() - 1);
 }
 
-ALWAYS_INLINE uint8_t* NextFitPage::TryAllocate(uint32_t blockSize) noexcept {
+uint8_t* NextFitPage::TryAllocate(uint32_t blockSize) noexcept {
     CustomAllocDebug("NextFitPage@%p::TryAllocate(%u)", this, blockSize);
     // +1 accounts for header, since cell->size also includes header cell
     uint32_t cellsNeeded = blockSize + 1;
@@ -78,7 +78,7 @@ bool NextFitPage::Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueu
     return aliveBytes > 0;
 }
 
-NO_INLINE void NextFitPage::UpdateCurBlock(uint32_t cellsNeeded) noexcept {
+void NextFitPage::UpdateCurBlock(uint32_t cellsNeeded) noexcept {
     CustomAllocDebug("NextFitPage@%p::UpdateCurBlock(%u)", this, cellsNeeded);
     if (curBlock_ == cells_) curBlock_ = cells_ + 1; // only used as a starting point
     Cell* end = cells_ + NextFitPage::cellCount();

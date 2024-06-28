@@ -132,23 +132,23 @@ extern const ObjHeader theEmptyArray;
 // TODO: those must be compiler intrinsics afterwards.
 
 // Array.kt
-ALWAYS_INLINE OBJ_GETTER(Kotlin_Array_get, KConstRef thiz, KInt index) {
+OBJ_GETTER(Kotlin_Array_get, KConstRef thiz, KInt index) {
   RETURN_OBJ(*Kotlin_Array_get_value(thiz, index));
 }
 
-ALWAYS_INLINE OBJ_GETTER(Kotlin_Array_get_without_BoundCheck, KConstRef thiz, KInt index){
+OBJ_GETTER(Kotlin_Array_get_without_BoundCheck, KConstRef thiz, KInt index){
   RETURN_OBJ(*Kotlin_Array_get_value<false>(thiz, index));
 }
 
-ALWAYS_INLINE void Kotlin_Array_set(KRef thiz, KInt index, KConstRef value) {
+void Kotlin_Array_set(KRef thiz, KInt index, KConstRef value) {
   Kotlin_Array_set_value(thiz, index, value);
 }
 
-ALWAYS_INLINE void Kotlin_Array_set_without_BoundCheck(KRef thiz, KInt index, KConstRef value) {
+void Kotlin_Array_set_without_BoundCheck(KRef thiz, KInt index, KConstRef value) {
   Kotlin_Array_set_value<false>(thiz, index, value);
 }
 
-ALWAYS_INLINE KInt Kotlin_Array_getArrayLength(KConstRef thiz) {
+KInt Kotlin_Array_getArrayLength(KConstRef thiz) {
   const ArrayHeader* array = thiz->array();
   return array->count_;
 }
@@ -191,32 +191,32 @@ void Kotlin_Array_copyImpl(KConstRef thiz, KInt fromIndex,
 }
 
 // Arrays.kt
-ALWAYS_INLINE OBJ_GETTER0(Kotlin_emptyArray) {
+OBJ_GETTER0(Kotlin_emptyArray) {
   RETURN_OBJ(const_cast<ObjHeader*>(&theEmptyArray));
 }
 
-ALWAYS_INLINE KByte Kotlin_ByteArray_get(KConstRef thiz, KInt index) {
+KByte Kotlin_ByteArray_get(KConstRef thiz, KInt index) {
   return Kotlin_ByteArray_get_value(thiz, index);
 }
 
-ALWAYS_INLINE KByte Kotlin_ByteArray_get_without_BoundCheck(KConstRef thiz, KInt index) {
+KByte Kotlin_ByteArray_get_without_BoundCheck(KConstRef thiz, KInt index) {
   return Kotlin_ByteArray_get_value<false>(thiz, index);
 }
 
-ALWAYS_INLINE void Kotlin_ByteArray_set(KRef thiz, KInt index, KByte value) {
+void Kotlin_ByteArray_set(KRef thiz, KInt index, KByte value) {
   Kotlin_ByteArray_set_value(thiz, index, value);
 }
 
-ALWAYS_INLINE void Kotlin_ByteArray_set_without_BoundCheck(KRef thiz, KInt index, KByte value) {
+void Kotlin_ByteArray_set_without_BoundCheck(KRef thiz, KInt index, KByte value) {
   Kotlin_ByteArray_set_value<false>(thiz, index, value);
 }
 
-ALWAYS_INLINE KInt Kotlin_ByteArray_getArrayLength(KConstRef thiz) {
+KInt Kotlin_ByteArray_getArrayLength(KConstRef thiz) {
   const ArrayHeader* array = thiz->array();
   return array->count_;
 }
 
-ALWAYS_INLINE KChar Kotlin_ByteArray_getCharAt(KConstRef thiz, KInt index) {
+KChar Kotlin_ByteArray_getCharAt(KConstRef thiz, KInt index) {
   const ArrayHeader* array = thiz->array();
   if (index < 0 || static_cast<uint32_t>(index) + 1 >= array->count_) {
     ThrowArrayIndexOutOfBoundsException();
@@ -234,7 +234,7 @@ ALWAYS_INLINE KChar Kotlin_ByteArray_getCharAt(KConstRef thiz, KInt index) {
 #endif  // KONAN_NO_UNALIGNED_ACCESS
 }
 
-ALWAYS_INLINE KShort Kotlin_ByteArray_getShortAt(KConstRef thiz, KInt index) {
+KShort Kotlin_ByteArray_getShortAt(KConstRef thiz, KInt index) {
   const ArrayHeader* array = thiz->array();
   if (index < 0 || static_cast<uint32_t>(index) + 1 >= array->count_) {
     ThrowArrayIndexOutOfBoundsException();
@@ -252,7 +252,7 @@ ALWAYS_INLINE KShort Kotlin_ByteArray_getShortAt(KConstRef thiz, KInt index) {
 #endif  // KONAN_NO_UNALIGNED_ACCESS
 }
 
-ALWAYS_INLINE KInt Kotlin_ByteArray_getIntAt(KConstRef thiz, KInt index) {
+KInt Kotlin_ByteArray_getIntAt(KConstRef thiz, KInt index) {
   const ArrayHeader* array = thiz->array();
   if (index < 0 || static_cast<uint32_t>(index) + 3 >= array->count_) {
     ThrowArrayIndexOutOfBoundsException();
@@ -271,7 +271,7 @@ ALWAYS_INLINE KInt Kotlin_ByteArray_getIntAt(KConstRef thiz, KInt index) {
 #endif  // KONAN_NO_UNALIGNED_ACCESS
 }
 
-ALWAYS_INLINE KLong Kotlin_ByteArray_getLongAt(KConstRef thiz, KInt index) {
+KLong Kotlin_ByteArray_getLongAt(KConstRef thiz, KInt index) {
   const ArrayHeader* array = thiz->array();
   if (index < 0 || static_cast<uint32_t>(index) + 7 >= array->count_) {
     ThrowArrayIndexOutOfBoundsException();
@@ -292,7 +292,7 @@ ALWAYS_INLINE KLong Kotlin_ByteArray_getLongAt(KConstRef thiz, KInt index) {
 #endif  // KONAN_NO_UNALIGNED_ACCESS
 }
 
-ALWAYS_INLINE KFloat Kotlin_ByteArray_getFloatAt(KConstRef thiz, KInt index) {
+KFloat Kotlin_ByteArray_getFloatAt(KConstRef thiz, KInt index) {
   const ArrayHeader* array = thiz->array();
   if (index < 0 || static_cast<uint32_t>(index) + 3 >= array->count_) {
     ThrowArrayIndexOutOfBoundsException();
@@ -321,7 +321,7 @@ ALWAYS_INLINE KFloat Kotlin_ByteArray_getFloatAt(KConstRef thiz, KInt index) {
 #endif  // KONAN_NO_UNALIGNED_ACCESS
 }
 
-ALWAYS_INLINE KDouble Kotlin_ByteArray_getDoubleAt(KConstRef thiz, KInt index) {
+KDouble Kotlin_ByteArray_getDoubleAt(KConstRef thiz, KInt index) {
   const ArrayHeader* array = thiz->array();
   if (index < 0 || static_cast<uint32_t>(index) + 7 >= array->count_) {
     ThrowArrayIndexOutOfBoundsException();
@@ -357,7 +357,7 @@ ALWAYS_INLINE KDouble Kotlin_ByteArray_getDoubleAt(KConstRef thiz, KInt index) {
 #endif  // KONAN_NO_UNALIGNED_ACCESS
 }
 
-ALWAYS_INLINE void Kotlin_ByteArray_setCharAt(KRef thiz, KInt index, KChar value) {
+void Kotlin_ByteArray_setCharAt(KRef thiz, KInt index, KChar value) {
   ArrayHeader* array = thiz->array();
   if (index < 0 || static_cast<uint32_t>(index) + 1 >= array->count_) {
     ThrowArrayIndexOutOfBoundsException();
@@ -375,7 +375,7 @@ ALWAYS_INLINE void Kotlin_ByteArray_setCharAt(KRef thiz, KInt index, KChar value
 #endif  // KONAN_NO_UNALIGNED_ACCESS
 }
 
-ALWAYS_INLINE void Kotlin_ByteArray_setShortAt(KRef thiz, KInt index, KShort value) {
+void Kotlin_ByteArray_setShortAt(KRef thiz, KInt index, KShort value) {
   ArrayHeader* array = thiz->array();
   if (index < 0 || static_cast<uint32_t>(index) + 1 >= array->count_) {
     ThrowArrayIndexOutOfBoundsException();
@@ -393,7 +393,7 @@ ALWAYS_INLINE void Kotlin_ByteArray_setShortAt(KRef thiz, KInt index, KShort val
 #endif  // KONAN_NO_UNALIGNED_ACCESS
 }
 
-ALWAYS_INLINE void Kotlin_ByteArray_setIntAt(KRef thiz, KInt index, KInt value) {
+void Kotlin_ByteArray_setIntAt(KRef thiz, KInt index, KInt value) {
   ArrayHeader* array = thiz->array();
   if (index < 0 || static_cast<uint32_t>(index) + 3 >= array->count_) {
     ThrowArrayIndexOutOfBoundsException();
@@ -413,7 +413,7 @@ ALWAYS_INLINE void Kotlin_ByteArray_setIntAt(KRef thiz, KInt index, KInt value) 
 #endif  // KONAN_NO_UNALIGNED_ACCESS
 }
 
-ALWAYS_INLINE void Kotlin_ByteArray_setLongAt(KRef thiz, KInt index, KLong value) {
+void Kotlin_ByteArray_setLongAt(KRef thiz, KInt index, KLong value) {
   ArrayHeader* array = thiz->array();
   if (index < 0 || static_cast<uint32_t>(index) + 7 >= array->count_) {
     ThrowArrayIndexOutOfBoundsException();
@@ -437,7 +437,7 @@ ALWAYS_INLINE void Kotlin_ByteArray_setLongAt(KRef thiz, KInt index, KLong value
 #endif  // KONAN_NO_UNALIGNED_ACCESS
 }
 
-ALWAYS_INLINE void Kotlin_ByteArray_setFloatAt(KRef thiz, KInt index, KFloat value) {
+void Kotlin_ByteArray_setFloatAt(KRef thiz, KInt index, KFloat value) {
   ArrayHeader* array = thiz->array();
   if (index < 0 || static_cast<uint32_t>(index) + 3 >= array->count_) {
     ThrowArrayIndexOutOfBoundsException();
@@ -459,7 +459,7 @@ ALWAYS_INLINE void Kotlin_ByteArray_setFloatAt(KRef thiz, KInt index, KFloat val
 #endif  // KONAN_NO_UNALIGNED_ACCESS
 }
 
-ALWAYS_INLINE void Kotlin_ByteArray_setDoubleAt(KRef thiz, KInt index, KDouble value) {
+void Kotlin_ByteArray_setDoubleAt(KRef thiz, KInt index, KDouble value) {
   ArrayHeader* array = thiz->array();
   if (index < 0 || static_cast<uint32_t>(index) + 7 >= array->count_) {
     ThrowArrayIndexOutOfBoundsException();
@@ -485,19 +485,19 @@ ALWAYS_INLINE void Kotlin_ByteArray_setDoubleAt(KRef thiz, KInt index, KDouble v
 #endif  // KONAN_NO_UNALIGNED_ACCESS
 }
 
-ALWAYS_INLINE KChar Kotlin_CharArray_get(KConstRef thiz, KInt index) {
+KChar Kotlin_CharArray_get(KConstRef thiz, KInt index) {
   return PrimitiveArrayGet<KChar>(thiz, index);
 }
 
-ALWAYS_INLINE KChar Kotlin_CharArray_get_without_BoundCheck(KConstRef thiz, KInt index) {
+KChar Kotlin_CharArray_get_without_BoundCheck(KConstRef thiz, KInt index) {
   return PrimitiveArrayGet<KChar, false>(thiz, index);
 }
 
-ALWAYS_INLINE void Kotlin_CharArray_set(KRef thiz, KInt index, KChar value) {
+void Kotlin_CharArray_set(KRef thiz, KInt index, KChar value) {
   PrimitiveArraySet(thiz, index, value);
 }
 
-ALWAYS_INLINE void Kotlin_CharArray_set_without_BoundCheck(KRef thiz, KInt index, KChar value) {
+void Kotlin_CharArray_set_without_BoundCheck(KRef thiz, KInt index, KChar value) {
   PrimitiveArraySet<KChar, false>(thiz, index, value);
 }
 
@@ -515,49 +515,49 @@ OBJ_GETTER(Kotlin_CharArray_copyOf, KConstRef thiz, KInt newSize) {
   RETURN_OBJ(result->obj());
 }
 
-ALWAYS_INLINE KInt Kotlin_CharArray_getArrayLength(KConstRef thiz) {
+KInt Kotlin_CharArray_getArrayLength(KConstRef thiz) {
   const ArrayHeader* array = thiz->array();
   return array->count_;
 }
 
-ALWAYS_INLINE KShort Kotlin_ShortArray_get(KConstRef thiz, KInt index) {
+KShort Kotlin_ShortArray_get(KConstRef thiz, KInt index) {
   return PrimitiveArrayGet<KShort>(thiz, index);
 }
 
-ALWAYS_INLINE KShort Kotlin_ShortArray_get_without_BoundCheck(KConstRef thiz, KInt index) {
+KShort Kotlin_ShortArray_get_without_BoundCheck(KConstRef thiz, KInt index) {
   return PrimitiveArrayGet<KShort, false>(thiz, index);
 }
 
-ALWAYS_INLINE void Kotlin_ShortArray_set(KRef thiz, KInt index, KShort value) {
+void Kotlin_ShortArray_set(KRef thiz, KInt index, KShort value) {
   PrimitiveArraySet(thiz, index, value);
 }
 
-ALWAYS_INLINE void Kotlin_ShortArray_set_without_BoundCheck(KRef thiz, KInt index, KShort value) {
+void Kotlin_ShortArray_set_without_BoundCheck(KRef thiz, KInt index, KShort value) {
   PrimitiveArraySet<KShort, false>(thiz, index, value);
 }
 
-ALWAYS_INLINE KInt Kotlin_ShortArray_getArrayLength(KConstRef thiz) {
+KInt Kotlin_ShortArray_getArrayLength(KConstRef thiz) {
   const ArrayHeader* array = thiz->array();
   return array->count_;
 }
 
-ALWAYS_INLINE KInt Kotlin_IntArray_get(KConstRef thiz, KInt index) {
+KInt Kotlin_IntArray_get(KConstRef thiz, KInt index) {
   return PrimitiveArrayGet<KInt>(thiz, index);
 }
 
-ALWAYS_INLINE KInt Kotlin_IntArray_get_without_BoundCheck(KConstRef thiz, KInt index) {
+KInt Kotlin_IntArray_get_without_BoundCheck(KConstRef thiz, KInt index) {
   return PrimitiveArrayGet<KInt, false>(thiz, index);
 }
 
-ALWAYS_INLINE void Kotlin_IntArray_set(KRef thiz, KInt index, KInt value) {
+void Kotlin_IntArray_set(KRef thiz, KInt index, KInt value) {
   PrimitiveArraySet(thiz, index, value);
 }
 
-ALWAYS_INLINE void Kotlin_IntArray_set_without_BoundCheck(KRef thiz, KInt index, KInt value) {
+void Kotlin_IntArray_set_without_BoundCheck(KRef thiz, KInt index, KInt value) {
   PrimitiveArraySet<KInt, false>(thiz, index, value);
 }
 
-ALWAYS_INLINE KInt Kotlin_IntArray_getArrayLength(KConstRef thiz) {
+KInt Kotlin_IntArray_getArrayLength(KConstRef thiz) {
   const ArrayHeader* array = thiz->array();
   return array->count_;
 }
@@ -634,107 +634,107 @@ void Kotlin_BooleanArray_copyImpl(KConstRef thiz, KInt fromIndex,
   copyImpl<KBoolean>(thiz, fromIndex, destination, toIndex, count);
 }
 
-ALWAYS_INLINE KLong Kotlin_LongArray_get(KConstRef thiz, KInt index) {
+KLong Kotlin_LongArray_get(KConstRef thiz, KInt index) {
   return PrimitiveArrayGet<KLong>(thiz, index);
 }
 
-ALWAYS_INLINE KLong Kotlin_LongArray_get_without_BoundCheck(KConstRef thiz, KInt index) {
+KLong Kotlin_LongArray_get_without_BoundCheck(KConstRef thiz, KInt index) {
   return PrimitiveArrayGet<KLong, false>(thiz, index);
 }
 
-ALWAYS_INLINE void Kotlin_LongArray_set(KRef thiz, KInt index, KLong value) {
+void Kotlin_LongArray_set(KRef thiz, KInt index, KLong value) {
   PrimitiveArraySet(thiz, index, value);
 }
 
-ALWAYS_INLINE void Kotlin_LongArray_set_without_BoundCheck(KRef thiz, KInt index, KLong value) {
+void Kotlin_LongArray_set_without_BoundCheck(KRef thiz, KInt index, KLong value) {
   PrimitiveArraySet<KLong, false>(thiz, index, value);
 }
 
-ALWAYS_INLINE KInt Kotlin_LongArray_getArrayLength(KConstRef thiz) {
+KInt Kotlin_LongArray_getArrayLength(KConstRef thiz) {
   const ArrayHeader* array = thiz->array();
   return array->count_;
 }
 
-ALWAYS_INLINE KFloat Kotlin_FloatArray_get(KConstRef thiz, KInt index) {
+KFloat Kotlin_FloatArray_get(KConstRef thiz, KInt index) {
   return PrimitiveArrayGet<KFloat>(thiz, index);
 }
 
-ALWAYS_INLINE KFloat Kotlin_FloatArray_get_without_BoundCheck(KConstRef thiz, KInt index) {
+KFloat Kotlin_FloatArray_get_without_BoundCheck(KConstRef thiz, KInt index) {
   return PrimitiveArrayGet<KFloat, false>(thiz, index);
 }
 
-ALWAYS_INLINE void Kotlin_FloatArray_set(KRef thiz, KInt index, KFloat value) {
+void Kotlin_FloatArray_set(KRef thiz, KInt index, KFloat value) {
   PrimitiveArraySet(thiz, index, value);
 }
 
-ALWAYS_INLINE void Kotlin_FloatArray_set_without_BoundCheck(KRef thiz, KInt index, KFloat value) {
+void Kotlin_FloatArray_set_without_BoundCheck(KRef thiz, KInt index, KFloat value) {
   PrimitiveArraySet<KFloat, false>(thiz, index, value);
 }
 
-ALWAYS_INLINE KInt Kotlin_FloatArray_getArrayLength(KConstRef thiz) {
+KInt Kotlin_FloatArray_getArrayLength(KConstRef thiz) {
   const ArrayHeader* array = thiz->array();
   return array->count_;
 }
 
-ALWAYS_INLINE KDouble Kotlin_DoubleArray_get(KConstRef thiz, KInt index) {
+KDouble Kotlin_DoubleArray_get(KConstRef thiz, KInt index) {
   return PrimitiveArrayGet<KDouble>(thiz, index);
 }
 
-ALWAYS_INLINE KDouble Kotlin_DoubleArray_get_without_BoundCheck(KConstRef thiz, KInt index) {
+KDouble Kotlin_DoubleArray_get_without_BoundCheck(KConstRef thiz, KInt index) {
   return PrimitiveArrayGet<KDouble, false>(thiz, index);
 }
 
-ALWAYS_INLINE void Kotlin_DoubleArray_set(KRef thiz, KInt index, KDouble value) {
+void Kotlin_DoubleArray_set(KRef thiz, KInt index, KDouble value) {
   PrimitiveArraySet(thiz, index, value);
 }
 
-ALWAYS_INLINE void Kotlin_DoubleArray_set_without_BoundCheck(KRef thiz, KInt index, KDouble value) {
+void Kotlin_DoubleArray_set_without_BoundCheck(KRef thiz, KInt index, KDouble value) {
   PrimitiveArraySet<KDouble, false>(thiz, index, value);
 }
 
-ALWAYS_INLINE KInt Kotlin_DoubleArray_getArrayLength(KConstRef thiz) {
+KInt Kotlin_DoubleArray_getArrayLength(KConstRef thiz) {
   const ArrayHeader* array = thiz->array();
   return array->count_;
 }
 
-ALWAYS_INLINE KBoolean Kotlin_BooleanArray_get(KConstRef thiz, KInt index) {
+KBoolean Kotlin_BooleanArray_get(KConstRef thiz, KInt index) {
   return PrimitiveArrayGet<KBoolean>(thiz, index);
 }
 
-ALWAYS_INLINE KBoolean Kotlin_BooleanArray_get_without_BoundCheck(KConstRef thiz, KInt index) {
+KBoolean Kotlin_BooleanArray_get_without_BoundCheck(KConstRef thiz, KInt index) {
   return PrimitiveArrayGet<KBoolean, false>(thiz, index);
 }
 
-ALWAYS_INLINE void Kotlin_BooleanArray_set(KRef thiz, KInt index, KBoolean value) {
+void Kotlin_BooleanArray_set(KRef thiz, KInt index, KBoolean value) {
   PrimitiveArraySet(thiz, index, value);
 }
 
-ALWAYS_INLINE void Kotlin_BooleanArray_set_without_BoundCheck(KRef thiz, KInt index, KBoolean value) {
+void Kotlin_BooleanArray_set_without_BoundCheck(KRef thiz, KInt index, KBoolean value) {
   PrimitiveArraySet<KBoolean, false>(thiz, index, value);
 }
 
-ALWAYS_INLINE KInt Kotlin_BooleanArray_getArrayLength(KConstRef thiz) {
+KInt Kotlin_BooleanArray_getArrayLength(KConstRef thiz) {
   const ArrayHeader* array = thiz->array();
   return array->count_;
 }
 
-ALWAYS_INLINE KNativePtr Kotlin_NativePtrArray_get(KConstRef thiz, KInt index) {
+KNativePtr Kotlin_NativePtrArray_get(KConstRef thiz, KInt index) {
   return PrimitiveArrayGet<KNativePtr>(thiz, index);
 }
 
-ALWAYS_INLINE KNativePtr Kotlin_NativePtrArray_get_without_BoundCheck(KConstRef thiz, KInt index) {
+KNativePtr Kotlin_NativePtrArray_get_without_BoundCheck(KConstRef thiz, KInt index) {
   return PrimitiveArrayGet<KNativePtr, false>(thiz, index);
 }
 
-ALWAYS_INLINE void Kotlin_NativePtrArray_set(KRef thiz, KInt index, KNativePtr value) {
+void Kotlin_NativePtrArray_set(KRef thiz, KInt index, KNativePtr value) {
   PrimitiveArraySet(thiz, index, value);
 }
 
-ALWAYS_INLINE void Kotlin_NativePtrArray_set_without_BoundCheck(KRef thiz, KInt index, KNativePtr value) {
+void Kotlin_NativePtrArray_set_without_BoundCheck(KRef thiz, KInt index, KNativePtr value) {
   PrimitiveArraySet<KNativePtr, false>(thiz, index, value);
 }
 
-ALWAYS_INLINE KInt Kotlin_NativePtrArray_getArrayLength(KConstRef thiz) {
+KInt Kotlin_NativePtrArray_getArrayLength(KConstRef thiz) {
   const ArrayHeader* array = thiz->array();
   return array->count_;
 }
@@ -763,53 +763,53 @@ KNativePtr Kotlin_ImmutableBlob_asCPointerImpl(KRef thiz, KInt offset) {
   return PrimitiveArrayAddressOfElementAt<KByte>(array, offset);
 }
 
-ALWAYS_INLINE KNativePtr Kotlin_Arrays_getByteArrayAddressOfElement(KRef thiz, KInt index) {
+KNativePtr Kotlin_Arrays_getByteArrayAddressOfElement(KRef thiz, KInt index) {
   ArrayHeader* array = thiz->array();
   boundsCheck(array, index);
 
   return AddressOfElementAt<KByte>(array, index);
 }
 
-ALWAYS_INLINE KNativePtr Kotlin_Arrays_getCharArrayAddressOfElement (KRef thiz, KInt index) {
+KNativePtr Kotlin_Arrays_getCharArrayAddressOfElement (KRef thiz, KInt index) {
   ArrayHeader* array = thiz->array();
   boundsCheck(array, index);
 
   return CharArrayAddressOfElementAt(array, index);
 }
 
-ALWAYS_INLINE KNativePtr Kotlin_Arrays_getStringAddressOfElement (KRef thiz, KInt index) {
+KNativePtr Kotlin_Arrays_getStringAddressOfElement (KRef thiz, KInt index) {
   return Kotlin_Arrays_getCharArrayAddressOfElement(thiz, index);
 }
 
-ALWAYS_INLINE KNativePtr Kotlin_Arrays_getShortArrayAddressOfElement(KRef thiz, KInt index) {
+KNativePtr Kotlin_Arrays_getShortArrayAddressOfElement(KRef thiz, KInt index) {
   ArrayHeader* array = thiz->array();
   boundsCheck(array, index);
 
   return AddressOfElementAt<KShort>(array, index);
 }
 
-ALWAYS_INLINE KNativePtr Kotlin_Arrays_getIntArrayAddressOfElement(KRef thiz, KInt index) {
+KNativePtr Kotlin_Arrays_getIntArrayAddressOfElement(KRef thiz, KInt index) {
   ArrayHeader* array = thiz->array();
   boundsCheck(array, index);
 
   return AddressOfElementAt<KInt>(array, index);
 }
 
-ALWAYS_INLINE KNativePtr Kotlin_Arrays_getLongArrayAddressOfElement(KRef thiz, KInt index) {
+KNativePtr Kotlin_Arrays_getLongArrayAddressOfElement(KRef thiz, KInt index) {
   ArrayHeader* array = thiz->array();
   boundsCheck(array, index);
 
   return AddressOfElementAt<KLong>(array, index);
 }
 
-ALWAYS_INLINE KNativePtr Kotlin_Arrays_getFloatArrayAddressOfElement(KRef thiz, KInt index) {
+KNativePtr Kotlin_Arrays_getFloatArrayAddressOfElement(KRef thiz, KInt index) {
   ArrayHeader* array = thiz->array();
   boundsCheck(array, index);
 
   return AddressOfElementAt<KFloat>(array, index);
 }
 
-ALWAYS_INLINE KNativePtr Kotlin_Arrays_getDoubleArrayAddressOfElement(KRef thiz, KInt index) {
+KNativePtr Kotlin_Arrays_getDoubleArrayAddressOfElement(KRef thiz, KInt index) {
   ArrayHeader* array = thiz->array();
   boundsCheck(array, index);
 

@@ -88,5 +88,19 @@ TEST(CustomAllocTest, TwoAllocatorsDifferentPages) {
     }
 }
 
+using Data = typename kotlin::mm::ExtraObjectData;
+
+TEST(CustomAllocTest, AllocExtraObjectNonNullZeroed) {
+    Heap heap;
+    CustomAllocator ca(heap);
+    for (int i = 1; i < 10; ++i) {
+        uint8_t* obj = reinterpret_cast<uint8_t*>(ca.CreateExtraObject());
+        EXPECT_TRUE(obj);
+        for (size_t j = 0; j < sizeof(Data); ++j) {
+            EXPECT_FALSE(obj[j]);
+        }
+    }
+}
+
 #undef MIN_BLOCK_SIZE
 } // namespace

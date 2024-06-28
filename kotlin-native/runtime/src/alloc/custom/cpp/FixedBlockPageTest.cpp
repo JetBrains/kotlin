@@ -26,7 +26,7 @@ void mark(void* obj) {
 }
 
 uint8_t* alloc(FixedBlockPage* page, size_t blockSize) {
-    uint8_t* ptr = page->TryAllocate(blockSize);
+    uint8_t* ptr = page->TryAllocate();
     if (ptr) {
         EXPECT_TRUE(ptr[0] == 0 && memcmp(ptr, ptr + 1, blockSize * 8 - 1) == 0);
         reinterpret_cast<uint64_t*>(ptr)[1] = reinterpret_cast<uint64_t>(&fakeType);

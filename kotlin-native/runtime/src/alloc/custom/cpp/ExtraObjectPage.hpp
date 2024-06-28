@@ -37,7 +37,7 @@ public:
     void Destroy() noexcept;
 
     // Tries to allocate in current page, returns null if no free block in page
-    uint8_t* TryAllocate() noexcept;
+    mm::ExtraObjectData* TryAllocate() noexcept;
 
     bool Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept;
 
@@ -51,7 +51,7 @@ public:
                 nextFree = &cell->next_;
                 continue;
             }
-            process(cell->extraObject());
+            process(cell->Data());
         }
     }
 
