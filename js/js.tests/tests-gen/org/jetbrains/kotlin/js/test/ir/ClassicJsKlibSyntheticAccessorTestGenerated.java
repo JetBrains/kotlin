@@ -426,9 +426,15 @@ public class ClassicJsKlibSyntheticAccessorTestGenerated extends AbstractClassic
       }
 
       @Test
-      @TestMetadata("leakingPrivateVarThroughReferenceInInlineFun.kt")
-      public void testLeakingPrivateVarThroughReferenceInInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateVarThroughReferenceInInlineFun.kt");
+      @TestMetadata("leakingPrivateVarThroughReferenceInInternalInlineFun.kt")
+      public void testLeakingPrivateVarThroughReferenceInInternalInlineFun() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateVarThroughReferenceInInternalInlineFun.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingPrivateVarThroughReferenceInPublicInlineFun.kt")
+      public void testLeakingPrivateVarThroughReferenceInPublicInlineFun() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateVarThroughReferenceInPublicInlineFun.kt");
       }
 
       @Test
@@ -628,9 +634,15 @@ public class ClassicJsKlibSyntheticAccessorTestGenerated extends AbstractClassic
       }
 
       @Test
-      @TestMetadata("leakingPrivateVarThroughReferenceInInlineFun.kt")
-      public void testLeakingPrivateVarThroughReferenceInInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateVarThroughReferenceInInlineFun.kt");
+      @TestMetadata("leakingPrivateVarThroughReferenceInInternalInlineFun.kt")
+      public void testLeakingPrivateVarThroughReferenceInInternalInlineFun() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateVarThroughReferenceInInternalInlineFun.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingPrivateVarThroughReferenceInPublicInlineFun.kt")
+      public void testLeakingPrivateVarThroughReferenceInPublicInlineFun() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateVarThroughReferenceInPublicInlineFun.kt");
       }
 
       @Test
@@ -653,12 +665,6 @@ public class ClassicJsKlibSyntheticAccessorTestGenerated extends AbstractClassic
       @TestMetadata("leakingPrivateMethodThroughReference.kt")
       public void testLeakingPrivateMethodThroughReference() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/leakingPrivateMethodThroughReference.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateVarThroughReferenceInInlineFun.kt")
-      public void testLeakingPrivateVarThroughReferenceInInlineFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/leakingPrivateVarThroughReferenceInInlineFun.kt");
       }
 
       @Test
@@ -714,6 +720,18 @@ public class ClassicJsKlibSyntheticAccessorTestGenerated extends AbstractClassic
       public void testUsePrivateVarFromInternalInlineVar() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/usePrivateVarFromInternalInlineVar.kt");
       }
+
+      @Test
+      @TestMetadata("usePrivateVarFromReferenceInInternalInlineFun.kt")
+      public void testUsePrivateVarFromReferenceInInternalInlineFun() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/usePrivateVarFromReferenceInInternalInlineFun.kt");
+      }
+
+      @Test
+      @TestMetadata("usePrivateVarFromReferenceInPublicInlineFun.kt")
+      public void testUsePrivateVarFromReferenceInPublicInlineFun() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/usePrivateVarFromReferenceInPublicInlineFun.kt");
+      }
     }
   }
 
@@ -739,6 +757,12 @@ public class ClassicJsKlibSyntheticAccessorTestGenerated extends AbstractClassic
       @TestMetadata("leakingPrivateClassThroughtKlass.kt")
       public void testLeakingPrivateClassThroughtKlass() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateClassThroughtKlass.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingPrivateClassThroughtPrivateTopLevelFun.kt")
+      public void testLeakingPrivateClassThroughtPrivateTopLevelFun() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateClassThroughtPrivateTopLevelFun.kt");
       }
 
       @Test
@@ -781,6 +805,12 @@ public class ClassicJsKlibSyntheticAccessorTestGenerated extends AbstractClassic
       @TestMetadata("leakingPrivateTopLevelFunFromLambdaInsideInternalInline.kt")
       public void testLeakingPrivateTopLevelFunFromLambdaInsideInternalInline() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateTopLevelFunFromLambdaInsideInternalInline.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingPrivateTopLevelFunFromLambdaInsidePublicInline.kt")
+      public void testLeakingPrivateTopLevelFunFromLambdaInsidePublicInline() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateTopLevelFunFromLambdaInsidePublicInline.kt");
       }
 
       @Test
@@ -872,6 +902,12 @@ public class ClassicJsKlibSyntheticAccessorTestGenerated extends AbstractClassic
       }
 
       @Test
+      @TestMetadata("leakingPrivateClassThroughtPrivateTopLevelFun.kt")
+      public void testLeakingPrivateClassThroughtPrivateTopLevelFun() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateClassThroughtPrivateTopLevelFun.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateClassThroughtTypecheck.kt")
       public void testLeakingPrivateClassThroughtTypecheck() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateClassThroughtTypecheck.kt");
@@ -911,6 +947,12 @@ public class ClassicJsKlibSyntheticAccessorTestGenerated extends AbstractClassic
       @TestMetadata("leakingPrivateTopLevelFunFromLambdaInsideInternalInline.kt")
       public void testLeakingPrivateTopLevelFunFromLambdaInsideInternalInline() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateTopLevelFunFromLambdaInsideInternalInline.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingPrivateTopLevelFunFromLambdaInsidePublicInline.kt")
+      public void testLeakingPrivateTopLevelFunFromLambdaInsidePublicInline() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateTopLevelFunFromLambdaInsidePublicInline.kt");
       }
 
       @Test
@@ -996,6 +1038,12 @@ public class ClassicJsKlibSyntheticAccessorTestGenerated extends AbstractClassic
       }
 
       @Test
+      @TestMetadata("usePrivateClassThroughtPrivateTopLevelFun.kt")
+      public void testUsePrivateClassThroughtPrivateTopLevelFun() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/usePrivateClassThroughtPrivateTopLevelFun.kt");
+      }
+
+      @Test
       @TestMetadata("usePrivateTopLevelExtensionFunFromInternalInline.kt")
       public void testUsePrivateTopLevelExtensionFunFromInternalInline() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/usePrivateTopLevelExtensionFunFromInternalInline.kt");
@@ -1011,6 +1059,12 @@ public class ClassicJsKlibSyntheticAccessorTestGenerated extends AbstractClassic
       @TestMetadata("usePrivateTopLevelFunFromLambdaInsideInternalInline.kt")
       public void testUsePrivateTopLevelFunFromLambdaInsideInternalInline() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/usePrivateTopLevelFunFromLambdaInsideInternalInline.kt");
+      }
+
+      @Test
+      @TestMetadata("usePrivateTopLevelFunFromLambdaInsidePublicInline.kt")
+      public void testUsePrivateTopLevelFunFromLambdaInsidePublicInline() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/usePrivateTopLevelFunFromLambdaInsidePublicInline.kt");
       }
 
       @Test
