@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.fir.resolve.providers
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.getSymbolByLookupTag
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -87,6 +89,14 @@ inline fun <reified T : FirBasedSymbol<*>> FirSymbolProvider.getSymbolByTypeRef(
 
 fun FirSymbolProvider.getRegularClassSymbolByClassId(classId: ClassId): FirRegularClassSymbol? {
     return getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol
+}
+
+fun FirSession.getImplicitActualClassSymbolByClassId(classId: ClassId): FirRegularClassSymbol? {
+    return symbolProvider.getRegularClassSymbolByClassId(classId)
+        ?.takeIf { it.origin is FirDeclarationOrigin.Java.Source }
+        ?: moduleData.dependencies.firstNotNullOfOrNull {
+            it.session.symbolProvider.getRegularClassSymbolByClassId(classId)
+        }
 }
 
 fun ClassId.toSymbol(session: FirSession): FirClassifierSymbol<*>? {

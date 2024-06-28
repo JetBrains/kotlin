@@ -92,7 +92,7 @@ class Fir2IrJvmResultsConverter(
             DefaultBuiltIns.Instance,
             ::JvmIrTypeSystemContext,
             JvmIrSpecialAnnotationSymbolProvider,
-            FirJvmBuiltinProviderActualDeclarationExtractor.Companion::initializeIfNeeded,
+            ::FirExtraActualDeclarationExtractor,
         )
 
         val backendInput = JvmIrCodegenFactory.JvmIrBackendInput(

@@ -302,7 +302,7 @@ internal class KaFirCompilerFacility(
             DefaultBuiltIns.Instance,
             ::JvmIrTypeSystemContext,
             JvmIrSpecialAnnotationSymbolProvider,
-            FirJvmBuiltinProviderActualDeclarationExtractor.Companion::initializeIfNeeded,
+            ::FirExtraActualDeclarationExtractor,
         )
     }
 
