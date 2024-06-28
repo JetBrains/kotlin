@@ -323,7 +323,7 @@ private fun mapInapplicableCandidateError(
             is ErrorTypeInArguments -> null
 
             // see EagerResolveOfCallableReferences
-            is UnsuccessfulCallableReferenceAtom -> null
+            is UnsuccessfulCallableReferenceArgument -> null
 
             is MultipleContextReceiversApplicableForExtensionReceivers ->
                 FirErrors.AMBIGUOUS_CALL_WITH_IMPLICIT_CONTEXT_RECEIVER.createOn(qualifiedAccessSource ?: source)
