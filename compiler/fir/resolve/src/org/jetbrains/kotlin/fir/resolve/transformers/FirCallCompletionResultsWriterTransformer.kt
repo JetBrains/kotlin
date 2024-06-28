@@ -1115,11 +1115,8 @@ class FirCallCompletionResultsWriterTransformer(
             val diagnostic = resolvedCalleeReference.diagnostic
             if (diagnostic is ConeConstraintSystemHasContradiction) {
                 val candidate = diagnostic.candidate as Candidate
-                val argumentTypes = candidate.argumentMapping.keys.map {
-                    val expression = (it as? FirBlock)?.returnExpressions()?.lastOrNull() ?: it
-                    expression.resolvedType
-                }
-                val newSyntheticCallType = session.typeContext.commonSuperTypeOrNull(argumentTypes)
+                val newSyntheticCallType =
+                    session.typeContext.commonSuperTypeOrNull(candidate.argumentMapping.keys.map { it.resolvedType })
                 if (newSyntheticCallType != null && !newSyntheticCallType.hasError()) {
                     syntheticCall.replaceConeTypeOrNull(newSyntheticCallType)
                 }
