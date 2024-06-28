@@ -41112,6 +41112,12 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
     }
 
     @Test
+    @TestMetadata("unsignedInStringInterpolation.kt")
+    public void testUnsignedInStringInterpolation() {
+      runTest("compiler/testData/codegen/box/unsignedTypes/unsignedInStringInterpolation.kt");
+    }
+
+    @Test
     @TestMetadata("unsignedIntCompare.kt")
     public void testUnsignedIntCompare() {
       runTest("compiler/testData/codegen/box/unsignedTypes/unsignedIntCompare.kt");
