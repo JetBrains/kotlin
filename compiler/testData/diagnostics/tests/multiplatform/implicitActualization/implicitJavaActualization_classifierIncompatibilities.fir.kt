@@ -8,19 +8,19 @@ import kotlin.jvm.ImplicitlyActualizedByJvmDeclaration
 
 interface I
 
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>@ImplicitlyActualizedByJvmDeclaration expect class A<!>
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>@ImplicitlyActualizedByJvmDeclaration expect value class B(val x: Int)<!>
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>@ImplicitlyActualizedByJvmDeclaration expect fun interface C1 { fun foo() }<!>
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>@ImplicitlyActualizedByJvmDeclaration expect fun interface C2 { fun foo() }<!>
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>@ImplicitlyActualizedByJvmDeclaration expect class D1 : I<!>
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>@ImplicitlyActualizedByJvmDeclaration expect class D2 : I<!>
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>@ImplicitlyActualizedByJvmDeclaration expect enum class E1 { ONE, TWO }<!>
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>@ImplicitlyActualizedByJvmDeclaration expect enum class E2 { ONE, TWO }<!>
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>@ImplicitlyActualizedByJvmDeclaration expect class Outer {
+<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>@ImplicitlyActualizedByJvmDeclaration expect class A<!>
+<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>@ImplicitlyActualizedByJvmDeclaration expect value class B(val x: Int)<!>
+@ImplicitlyActualizedByJvmDeclaration expect fun interface C1 { fun foo() }
+@ImplicitlyActualizedByJvmDeclaration expect fun interface C2 { fun foo() }
+@ImplicitlyActualizedByJvmDeclaration expect class D1 : I
+<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>@ImplicitlyActualizedByJvmDeclaration expect class D2 : I<!>
+@ImplicitlyActualizedByJvmDeclaration expect enum class E1 { ONE, TWO }
+<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>@ImplicitlyActualizedByJvmDeclaration expect enum class E2 { ONE, <!NO_ACTUAL_FOR_EXPECT{JVM}!>TWO<!> }<!>
+<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>@ImplicitlyActualizedByJvmDeclaration expect class Outer {
     class F1
     inner class F2
-    inner class F3
-    class F4
+    <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>inner class F3<!>
+    <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>class F4<!>
 }<!>
 
 // MODULE: m2-jvm()()(m1-common)

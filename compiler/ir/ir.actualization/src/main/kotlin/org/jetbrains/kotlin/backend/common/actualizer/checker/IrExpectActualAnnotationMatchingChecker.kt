@@ -31,15 +31,12 @@ internal object IrExpectActualAnnotationMatchingChecker : IrExpectActualChecker 
             val incompatibility = AbstractExpectActualAnnotationMatchChecker
                 .areAnnotationsCompatible(expectSymbol, actualSymbol, containingExpectClass = null, matchingContext) ?: continue
 
-            // If `actualSymbol` is obtained from a builtins provider, its file is null
-            // In this case; the `expectSymbol` is used to prevent from crashing
-            // Currently it's relevant only while compiling stdlib
-            val reportOn = (getTypealiasSymbolIfActualizedViaTypealias(expectSymbol.owner as IrDeclaration, classActualizationInfo)
-                ?: getContainingActualClassIfFakeOverride(actualSymbol)
-                ?: actualSymbol)
-                .takeIf {
-                    !languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation) || (it.owner as IrDeclaration).fileOrNull != null
-                }
+            // If `actualSymbol` is obtained from a builtins provider (relevant only for stdlib) or via @ImplicitlyActualizedByJvmDeclaration,
+            // its file is null. In this case, the `expectSymbol` is used to prevent from crashing
+            val reportOn = getTypealiasSymbolIfActualizedViaTypealias(expectSymbol.owner as IrDeclaration, classActualizationInfo)
+                .let { it ?: getContainingActualClassIfFakeOverride(actualSymbol) }
+                .let { it ?: actualSymbol }
+                .takeIf { (it.owner as IrDeclaration).fileOrNull != null }
                 ?: expectSymbol
             diagnosticsReporter.reportActualAnnotationsNotMatchExpect(
                 incompatibility.expectSymbol as IrSymbol,

@@ -5,11 +5,11 @@
 
 import kotlin.jvm.ImplicitlyActualizedByJvmDeclaration
 
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>@OptIn(ExperimentalMultiplatform::class)
+@OptIn(ExperimentalMultiplatform::class)
 @ImplicitlyActualizedByJvmDeclaration
 expect class Foo {
     fun foo(a: Int)
-}<!>
+}
 
 // MODULE: lib()()()
 // FILE: lib.kt
