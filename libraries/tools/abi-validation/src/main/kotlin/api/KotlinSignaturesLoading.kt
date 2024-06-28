@@ -5,6 +5,9 @@
 
 package kotlinx.validation.api
 
+import kotlinx.metadata.Flag
+import kotlinx.metadata.KmProperty
+import kotlinx.metadata.internal.metadata.jvm.deserialization.JvmFlags
 import kotlinx.metadata.jvm.*
 import kotlinx.validation.*
 import org.objectweb.asm.*
@@ -119,10 +122,26 @@ private fun FieldNode.buildFieldSignature(
          * as non-public API using some annotation, then we won't be able to filter out
          * the companion field.
          */
-        val companionName = ownerClass.companionName(ownerClass.kotlinMetadata)
+        val companionName = ownerClass.companionName(ownerClass.kotlinMetadata)!!
         companionClass = classes[companionName]
         foundAnnotations.addAll(companionClass?.visibleAnnotations.orEmpty())
         foundAnnotations.addAll(companionClass?.invisibleAnnotations.orEmpty())
+    } else if (isStatic(access) && isFinal(access)) {
+        companionClass = ownerClass.companionName(ownerClass.kotlinMetadata)?.let {
+            classes[it]
+        }
+
+        val property = companionClass?.kmProperty(name)
+
+        if (property != null && JvmFlag.Property.IS_MOVED_FROM_INTERFACE_COMPANION(property.flags)) {
+            /*
+             * The property was moved from the companion object. Take all the annotations from there
+             * to be able to filter out the non-public markers.
+             *
+             * See https://github.com/Kotlin/binary-compatibility-validator/issues/90
+             */
+            foundAnnotations.addAll(companionClass!!.methods.annotationsFor(property.syntheticMethodForAnnotations))
+        }
     }
 
     val fieldSignature = toFieldBinarySignature(foundAnnotations)
@@ -130,6 +149,18 @@ private fun FieldNode.buildFieldSignature(
         CompanionFieldBinarySignature(fieldSignature, companionClass)
     } else {
         BasicFieldBinarySignature(fieldSignature)
+    }
+}
+
+private fun ClassNode.kmProperty(name: String?): KmProperty? {
+    val metadata = kotlinMetadata ?: return null
+
+    if (metadata !is KotlinClassMetadata.Class) {
+        return null
+    }
+
+    return metadata.toKmClass().properties.firstOrNull {
+        it.name == name
     }
 }
 
@@ -236,8 +267,8 @@ public fun List<ClassBinarySignature>.extractAnnotatedPackages(targetAnnotations
         // package-info classes are private synthetic abstract interfaces since 2005 (JDK-6232928).
         it.access.isInterface && it.access.isSynthetic && it.access.isAbstract
     }.filter {
-        it.annotations.any {
-            ann -> targetAnnotations.any { ann.refersToName(it) }
+        it.annotations.any { ann ->
+            targetAnnotations.any { ann.refersToName(it) }
         }
     }.map {
         val res = it.name.substring(0, it.name.length - "/package-info".length)

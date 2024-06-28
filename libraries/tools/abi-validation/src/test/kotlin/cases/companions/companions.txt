@@ -1,4 +1,21 @@
+public final class cases/companions/FilteredCompanionFunctions {
+	public static final field Companion Lcases/companions/FilteredCompanionFunctions$Companion;
+}
+
+public final class cases/companions/FilteredCompanionFunctions$Companion {
+	public final fun f1 ()I
+}
+
 public final class cases/companions/FilteredCompanionObjectHolder {
+}
+
+public final class cases/companions/FilteredCompanionProperties {
+	public static final field Companion Lcases/companions/FilteredCompanionProperties$Companion;
+	public static final field F2 I
+}
+
+public final class cases/companions/FilteredCompanionProperties$Companion {
+	public final fun getF1 ()I
 }
 
 public final class cases/companions/FilteredNamedCompanionObjectHolder {
