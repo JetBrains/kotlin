@@ -39560,6 +39560,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         }
 
         @Test
+        @TestMetadata("implicitActualizationToBinaryKotlin.kt")
+        public void testImplicitActualizationToBinaryKotlin() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/implicitActualization/implicitActualizationToBinaryKotlin.kt");
+        }
+
+        @Test
         @TestMetadata("implicitActualizationToSourceJava.kt")
         public void testImplicitActualizationToSourceJava() {
           runTest("compiler/testData/codegen/box/multiplatform/k2/implicitActualization/implicitActualizationToSourceJava.kt");
