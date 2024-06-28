@@ -63,19 +63,25 @@ abstract class BasicCompilation<A : TestCompilationArtifact>(
             doCompile()
     }
 
-    protected open fun ArgsBuilder.applyCommonArgs() {
+    /**
+     * IR validation options passed to the compiler.
+     */
+    protected open val irValidationCompilerOptions = listOf(
+        // Enable basic IR validation before all lowerings (IrValidationBeforeLoweringPhase)
+        // and after all lowerings (IrValidationAfterLoweringPhase).
+        "-Xverify-ir=error",
+        // Additionally, validate IR after each compilation phase
+        "-Xphases-to-validate-after=all"
+    )
+
+    private fun ArgsBuilder.applyCommonArgs() {
         add("-kotlin-home", home.dir.absolutePath)
         add("-target", targets.testTarget.name)
         optimizationMode.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
         if (freeCompilerArgs.assertionsMode.assertionsEnabledWith(optimizationMode))
             add("-enable-assertions")
 
-        // Enable basic IR validation before all lowerings (IrValidationBeforeLoweringPhase)
-        // and after all lowerings (IrValidationAfterLoweringPhase).
-        add("-Xverify-ir=error")
-
-        // Additionally, validate IR after each compilation phase
-        add("-Xphases-to-validate-after=all")
+        add(irValidationCompilerOptions)
 
         // We use dev distribution for tests as it provides a full set of testing utilities,
         // which might not be available in user distribution.
@@ -763,25 +769,10 @@ internal class TestBundleCompilation(
 
     private val partialLinkageConfig: UsedPartialLinkageConfig = settings.get()
 
-    override fun ArgsBuilder.applyCommonArgs() {
-        add("-kotlin-home", home.dir.absolutePath)
-        add("-target", targets.testTarget.name)
-        optimizationMode.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
-        if (freeCompilerArgs.assertionsMode.assertionsEnabledWith(optimizationMode))
-            add("-enable-assertions")
-
-        // Enable basic IR validation before all lowerings (IrValidationBeforeLoweringPhase)
-        // and after all lowerings (IrValidationAfterLoweringPhase).
-        add("-Xverify-ir=warning")
-
-        // Additionally, validate IR after each compilation phase
-        add("-Xphases-to-validate-after=all")
-
-        // We use dev distribution for tests as it provides a full set of testing utilities,
-        // which might not be available in user distribution.
-        add("-Xllvm-variant=dev")
-        addFlattened(binaryOptions.entries) { (name, value) -> listOf("-Xbinary=$name=$value") }
-    }
+    override val irValidationCompilerOptions: List<String> = listOf(
+        "-Xverify-ir=warning",
+        "-Xphases-to-validate-after=all"
+    )
 
     override fun applySpecificArgs(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
         add(
