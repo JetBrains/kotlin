@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.fir.resolve.providers
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -74,6 +76,14 @@ fun FirSession.getRegularClassSymbolByClassIdFromDependencies(classId: ClassId):
 
 fun FirSession.getRegularClassSymbolByClassId(classId: ClassId): FirRegularClassSymbol? {
     return symbolProvider.getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol
+}
+
+fun FirSession.getImplicitActualClassSymbolByClassId(classId: ClassId): FirRegularClassSymbol? {
+    return getRegularClassSymbolByClassId(classId)
+        ?.takeIf { it.origin is FirDeclarationOrigin.Java.Source }
+        ?: moduleData.dependencies.firstNotNullOfOrNull {
+            it.session.getRegularClassSymbolByClassId(classId)
+        }
 }
 
 val FirSession.symbolProvider: FirSymbolProvider by FirSession.sessionComponentAccessor()
