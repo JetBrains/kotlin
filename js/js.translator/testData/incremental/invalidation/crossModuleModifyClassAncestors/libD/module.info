@@ -1,3 +1,14 @@
+TARGET: JS
+
+STEP 0:
+    dependencies: libA, libB, libC
+    added file: d.kt
+STEP 1..13:
+    dependencies: libA, libB, libC
+
+
+TARGET: Wasm
+
 STEP 0:
     dependencies: libA, libB, libC
     added file: d.kt

@@ -39,7 +39,7 @@ public class JsIrES6InvalidationPerModuleTestGenerated extends AbstractJsIrES6In
 
   @Test
   public void testAllFilesPresentInInvalidation() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/incremental/invalidation"), Pattern.compile("^([^_](.+))$"), Pattern.compile("crossModuleModifyClassAncestors"), TargetBackend.JS_IR_ES6, false);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/incremental/invalidation"), Pattern.compile("^([^_](.+))$"), null, TargetBackend.JS_IR_ES6, false);
   }
 
   @Test
@@ -106,6 +106,12 @@ public class JsIrES6InvalidationPerModuleTestGenerated extends AbstractJsIrES6In
   @TestMetadata("constVals")
   public void testConstVals() {
     runTest("js/js.translator/testData/incremental/invalidation/constVals/");
+  }
+
+  @Test
+  @TestMetadata("crossModuleModifyClassAncestors")
+  public void testCrossModuleModifyClassAncestors() {
+    runTest("js/js.translator/testData/incremental/invalidation/crossModuleModifyClassAncestors/");
   }
 
   @Test

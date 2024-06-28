@@ -1,3 +1,21 @@
+TARGET: JS
+
+STEP 0:
+    dependencies: libA, libB
+    added file: c.kt
+STEP 1..6:
+    dependencies: libA, libB
+STEP 7:
+    dependencies: libA, libB
+    modifications:
+        U: c.7.kt -> c.kt
+    modified ir: c.kt
+STEP 8..13:
+    dependencies: libA, libB
+
+
+TARGET: Wasm
+
 STEP 0:
     dependencies: libA, libB
     added file: c.kt
