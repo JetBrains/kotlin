@@ -1,3 +1,17 @@
+FILE fqName:<root> fileName:/Generated_Box_Main.kt
+  FUN name:main visibility:public modality:FINAL <> () returnType:kotlin.Unit [suspend]
+    BLOCK_BODY
+      VAR name:res type:kotlin.String [val]
+        CALL 'public final fun box (): kotlin.String declared in <root>' type=kotlin.String origin=null
+      WHEN type=kotlin.Unit origin=IF
+        BRANCH
+          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+              arg0: GET_VAR 'val res: kotlin.String declared in <root>.main' type=kotlin.String origin=null
+              arg1: CONST String type=kotlin.String value="OK"
+          then: THROW type=kotlin.Nothing
+            CONSTRUCTOR_CALL 'public constructor <init> (p0: @[FlexibleNullability] kotlin.Any?) declared in java.lang.AssertionError' type=java.lang.AssertionError origin=null
+              p0: GET_VAR 'val res: kotlin.String declared in <root>.main' type=kotlin.String origin=null
 FILE fqName:<root> fileName:/recordWithCompanion.kt
   CLASS CLASS name:Tag modality:FINAL visibility:public [data] superTypes:[java.lang.Record]
     annotations:
@@ -115,17 +129,3 @@ FILE fqName:<root> fileName:/recordWithCompanion.kt
         CALL 'public final fun <get-id> (): kotlin.String declared in <root>.Tag' type=kotlin.String origin=GET_PROPERTY
           $this: CONSTRUCTOR_CALL 'public constructor <init> (id: kotlin.String) declared in <root>.Tag' type=<root>.Tag origin=null
             id: CONST String type=kotlin.String value="OK"
-FILE fqName:<root> fileName:/Generated_Box_Main.kt
-  FUN name:main visibility:public modality:FINAL <> () returnType:kotlin.Unit [suspend]
-    BLOCK_BODY
-      VAR name:res type:kotlin.String [val]
-        CALL 'public final fun box (): kotlin.String declared in <root>' type=kotlin.String origin=null
-      WHEN type=kotlin.Unit origin=IF
-        BRANCH
-          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
-            $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-              arg0: GET_VAR 'val res: kotlin.String declared in <root>.main' type=kotlin.String origin=null
-              arg1: CONST String type=kotlin.String value="OK"
-          then: THROW type=kotlin.Nothing
-            CONSTRUCTOR_CALL 'public constructor <init> (p0: @[FlexibleNullability] kotlin.Any?) declared in java.lang.AssertionError' type=java.lang.AssertionError origin=null
-              p0: GET_VAR 'val res: kotlin.String declared in <root>.main' type=kotlin.String origin=null

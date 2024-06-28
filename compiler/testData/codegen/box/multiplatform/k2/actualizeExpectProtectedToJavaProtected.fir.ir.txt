@@ -1,20 +1,3 @@
-FILE fqName:pkg fileName:/jvm.kt
-  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
-    BLOCK_BODY
-      VAR name:result type:kotlin.String [val]
-        CALL 'public final fun bar (): kotlin.String declared in pkg.Bar' type=kotlin.String origin=null
-          $this: CONSTRUCTOR_CALL 'public constructor <init> () declared in pkg.Bar' type=pkg.Bar origin=null
-      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in pkg'
-        WHEN type=kotlin.String origin=IF
-          BRANCH
-            if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: GET_VAR 'val result: kotlin.String declared in pkg.box' type=kotlin.String origin=null
-              arg1: CONST String type=kotlin.String value="Hello from Java"
-            then: CONST String type=kotlin.String value="OK"
-          BRANCH
-            if: CONST Boolean type=kotlin.Boolean value=true
-            then: GET_VAR 'val result: kotlin.String declared in pkg.box' type=kotlin.String origin=null
-  TYPEALIAS name:Foo visibility:public expandedType:pkg.FooImpl[actual]
 FILE fqName:pkg fileName:/common.kt
   CLASS CLASS name:Bar modality:FINAL visibility:public superTypes:[pkg.FooImpl]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:pkg.Bar
@@ -45,3 +28,20 @@ FILE fqName:pkg fileName:/common.kt
         RETURN type=kotlin.Nothing from='public final fun bar (): kotlin.String declared in pkg.Bar'
           CALL 'protected/*protected and package*/ open fun foo (): @[FlexibleNullability] kotlin.String? declared in pkg.Bar' type=kotlin.String origin=null
             $this: GET_VAR '<this>: pkg.Bar declared in pkg.Bar.bar' type=pkg.Bar origin=null
+FILE fqName:pkg fileName:/jvm.kt
+  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      VAR name:result type:kotlin.String [val]
+        CALL 'public final fun bar (): kotlin.String declared in pkg.Bar' type=kotlin.String origin=null
+          $this: CONSTRUCTOR_CALL 'public constructor <init> () declared in pkg.Bar' type=pkg.Bar origin=null
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in pkg'
+        WHEN type=kotlin.String origin=IF
+          BRANCH
+            if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+              arg0: GET_VAR 'val result: kotlin.String declared in pkg.box' type=kotlin.String origin=null
+              arg1: CONST String type=kotlin.String value="Hello from Java"
+            then: CONST String type=kotlin.String value="OK"
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: GET_VAR 'val result: kotlin.String declared in pkg.box' type=kotlin.String origin=null
+  TYPEALIAS name:Foo visibility:public expandedType:pkg.FooImpl[actual]

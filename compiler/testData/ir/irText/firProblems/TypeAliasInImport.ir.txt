@@ -1,3 +1,16 @@
+FILE fqName:a fileName:/a.kt
+  FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY
+      CALL 'public final fun method (): kotlin.Unit declared in b.Obj' type=kotlin.Unit origin=null
+        $this: GET_OBJECT 'CLASS OBJECT name:Obj modality:FINAL visibility:public superTypes:[kotlin.Any]' type=b.Obj
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public final fun <get-prop> (): kotlin.Int declared in b.Obj' type=kotlin.Int origin=GET_PROPERTY
+          $this: GET_OBJECT 'CLASS OBJECT name:Obj modality:FINAL visibility:public superTypes:[kotlin.Any]' type=b.Obj
+      CALL 'public final fun method (): kotlin.Unit declared in b.Obj' type=kotlin.Unit origin=null
+        $this: GET_OBJECT 'CLASS OBJECT name:Obj modality:FINAL visibility:public superTypes:[kotlin.Any]' type=b.Obj
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public final fun <get-prop> (): kotlin.Int declared in b.Obj' type=kotlin.Int origin=GET_PROPERTY
+          $this: GET_OBJECT 'CLASS OBJECT name:Obj modality:FINAL visibility:public superTypes:[kotlin.Any]' type=b.Obj
 FILE fqName:b fileName:/b.kt
   CLASS OBJECT name:Obj modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:b.Obj
@@ -33,16 +46,3 @@ FILE fqName:b fileName:/b.kt
       $this: VALUE_PARAMETER name:<this> type:b.Obj
       BLOCK_BODY
   TYPEALIAS name:ObjTA visibility:public expandedType:b.Obj
-FILE fqName:a fileName:/a.kt
-  FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
-    BLOCK_BODY
-      CALL 'public final fun method (): kotlin.Unit declared in b.Obj' type=kotlin.Unit origin=null
-        $this: GET_OBJECT 'CLASS OBJECT name:Obj modality:FINAL visibility:public superTypes:[kotlin.Any]' type=b.Obj
-      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CALL 'public final fun <get-prop> (): kotlin.Int declared in b.Obj' type=kotlin.Int origin=GET_PROPERTY
-          $this: GET_OBJECT 'CLASS OBJECT name:Obj modality:FINAL visibility:public superTypes:[kotlin.Any]' type=b.Obj
-      CALL 'public final fun method (): kotlin.Unit declared in b.Obj' type=kotlin.Unit origin=null
-        $this: GET_OBJECT 'CLASS OBJECT name:Obj modality:FINAL visibility:public superTypes:[kotlin.Any]' type=b.Obj
-      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CALL 'public final fun <get-prop> (): kotlin.Int declared in b.Obj' type=kotlin.Int origin=GET_PROPERTY
-          $this: GET_OBJECT 'CLASS OBJECT name:Obj modality:FINAL visibility:public superTypes:[kotlin.Any]' type=b.Obj
