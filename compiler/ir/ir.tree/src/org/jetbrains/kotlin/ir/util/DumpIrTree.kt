@@ -64,6 +64,7 @@ data class DumpIrTreeOptions(
     val printFlagsInDeclarationReferences: Boolean = true,
     val renderOriginForExternalDeclarations: Boolean = true,
     val printSignatures: Boolean = false,
+    val printSealedSubclasses: Boolean = true,
     val printTypeAbbreviations: Boolean = true,
     val printModuleName: Boolean = true,
     val printFilePath: Boolean = true,
@@ -157,7 +158,8 @@ class DumpIrTreeVisitor(
         if (declaration.isHidden()) return
         declaration.dumpLabeledElementWith(data) {
             dumpAnnotations(declaration)
-            declaration.sealedSubclasses.dumpItems("sealedSubclasses") { it.dump() }
+            if (options.printSealedSubclasses)
+                declaration.sealedSubclasses.dumpItems("sealedSubclasses") { it.dump() }
             declaration.thisReceiver?.accept(this, "\$this")
             declaration.typeParameters.dumpElements()
             declaration.declarations.ordered().dumpElements()

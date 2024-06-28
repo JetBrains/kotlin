@@ -93,7 +93,7 @@ abstract class AbstractKlibIrTextTestCase : CodegenTestCase() {
         val (irModule, bindingContext) = generateIrModule(stdlib, ignoreErrors)
         irModule.cleanUpFromExpectDeclarations()
 
-        val expected = irModule.dump(DumpIrTreeOptions(stableOrder = true, verboseErrorTypes = false))
+        val expected = irModule.dump(DumpIrTreeOptions(stableOrder = true, verboseErrorTypes = false, printSealedSubclasses = false))
 
         val klibPath = serializeModule(irModule, bindingContext, stdlib, ignoreErrors)
         val libs = loadKlibFromPath(listOf(runtimeKlibPath, klibPath))

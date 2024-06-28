@@ -1,7 +1,5 @@
 FILE fqName:<root> fileName:/delegationInSealed.kt
   CLASS CLASS name:A modality:SEALED visibility:public superTypes:[kotlin.CharSequence]
-    sealedSubclasses:
-      CLASS CLASS name:B modality:FINAL visibility:public [data] superTypes:[<root>.A; kotlin.CharSequence]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
     CLASS CLASS name:B modality:FINAL visibility:public [data] superTypes:[<root>.A; kotlin.CharSequence]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A.B

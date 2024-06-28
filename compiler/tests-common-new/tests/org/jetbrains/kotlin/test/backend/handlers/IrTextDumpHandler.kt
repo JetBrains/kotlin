@@ -104,6 +104,7 @@ class IrTextDumpHandler(
             // which prevents us from running irText tests against deserialized IR,
             // since it uses the same golden data as when we run them against frontend-generated IR.
             renderOriginForExternalDeclarations = false,
+            printSealedSubclasses = false, // KT-54028: Sealed subclasses won't be deserialized, but IR dumps should be same before and after deserialization
             // KT-60248 Abbreviations should not be rendered to make K2 IR dumps closer to K1 IR dumps during irText tests.
             // PSI2IR assigns field `abbreviation` with type abbreviation. It serves only debugging purposes, and no compiler functionality relies on it.
             // FIR2IR does not initialize field `abbreviation` at all.
