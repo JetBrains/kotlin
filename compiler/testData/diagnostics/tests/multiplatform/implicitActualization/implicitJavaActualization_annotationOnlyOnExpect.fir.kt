@@ -7,7 +7,7 @@ import kotlin.jvm.ImplicitlyActualizedByJvmDeclaration
 
 annotation class Annot
 
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>@OptIn(ExperimentalMultiplatform::class)
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT{JVM}!>@OptIn(ExperimentalMultiplatform::class)
 @ImplicitlyActualizedByJvmDeclaration
 @Annot
 expect class Foo<!>
