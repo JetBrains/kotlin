@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.express
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionTypeProvider.AbstractDeclarationReturnTypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionTypeProvider.AbstractExpectedExpressionTypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionTypeProvider.AbstractHLExpressionTypeTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerPluginGeneratedDeclarationsProvider.AbstractTopLevelCompilerPluginGeneratedDeclarationsScopeTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerPluginGeneratedDeclarationsProvider.AbstractCompilerPluginGeneratedDeclarationsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.importOptimizer.AbstractAnalysisApiImportOptimizerTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.inheritorsProvider.AbstractDanglingFileSealedInheritorsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.inheritorsProvider.AbstractSealedInheritorsTest
@@ -183,8 +183,8 @@ internal fun AnalysisApiTestGroup.generateAnalysisApiTests() {
                 analysisSessionModeIs(AnalysisSessionMode.Normal) and
                 analysisApiModeIs(AnalysisApiMode.Ide)
     ) {
-        test<AbstractTopLevelCompilerPluginGeneratedDeclarationsScopeTest> {
-            model(it, "topLevelCompilerPluginGeneratedDeclarationsScope")
+        test<AbstractCompilerPluginGeneratedDeclarationsTest> {
+            model(it, "compilerPluginGeneratedDeclarations")
         }
     }
 
