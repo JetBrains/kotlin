@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.configureFirParser
-import org.jetbrains.kotlin.test.frontend.fir.Fir2IrJsResultsConverter
+import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.handlers.*
 import org.jetbrains.kotlin.test.model.DependencyKind
@@ -86,7 +86,7 @@ abstract class AbstractFirJsDiagnosticWithBackendTestBase(parser: FirParser) : A
     override fun configureTestBuilder(builder: TestConfigurationBuilder) = builder.apply {
         super.configureTestBuilder(builder)
 
-        facadeStep(::Fir2IrJsResultsConverter)
+        facadeStep(::Fir2IrResultsConverter)
         facadeStep(::FirJsKlibBackendFacade)
 
         // TODO: Currently do not run lowerings, because they don't report anything;
