@@ -41220,6 +41220,12 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
     }
 
     @Test
+    @TestMetadata("unsignedInStringInterpolation.kt")
+    public void testUnsignedInStringInterpolation() {
+      runTest("compiler/testData/codegen/box/unsignedTypes/unsignedInStringInterpolation.kt");
+    }
+
+    @Test
     @TestMetadata("unsignedIntCompare.kt")
     public void testUnsignedIntCompare() {
       runTest("compiler/testData/codegen/box/unsignedTypes/unsignedIntCompare.kt");
