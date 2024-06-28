@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-69473
 
 fun test(b: Boolean) {
