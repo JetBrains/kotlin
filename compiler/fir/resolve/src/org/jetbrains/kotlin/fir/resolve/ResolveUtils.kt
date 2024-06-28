@@ -625,6 +625,9 @@ fun FirResolvedTypeRef.initialTypeOfCandidate(candidate: Candidate): ConeKotlinT
     return resultingSubstitutor.safeSubstitute(system, candidate.substitutor.substituteOrSelf(type)) as ConeKotlinType
 }
 
+/**
+ * The containing symbol is resolved using the declaration-site session.
+ */
 fun FirCallableDeclaration.getContainingClass(): FirRegularClass? =
     this.containingClassLookupTag()?.let { lookupTag ->
         moduleData.session.symbolProvider.getSymbolByLookupTag(lookupTag)?.fir as? FirRegularClass
