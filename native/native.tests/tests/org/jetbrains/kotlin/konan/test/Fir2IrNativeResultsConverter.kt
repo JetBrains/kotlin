@@ -25,14 +25,14 @@ import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
-import org.jetbrains.kotlin.test.frontend.fir.AbstractFir2IrNonJvmResultsConverter
+import org.jetbrains.kotlin.test.frontend.fir.AbstractFir2IrResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.getAllNativeDependenciesPaths
 import org.jetbrains.kotlin.test.frontend.fir.resolveLibraries
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 
-class Fir2IrNativeResultsConverter(testServices: TestServices) : AbstractFir2IrNonJvmResultsConverter(testServices) {
+class Fir2IrNativeResultsConverter(testServices: TestServices) : AbstractFir2IrResultsConverter(testServices) {
 
     override fun createIrMangler(): KotlinMangler.IrMangler = KonanManglerIr
     override fun createFir2IrExtensions(compilerConfiguration: CompilerConfiguration): Fir2IrExtensions = Fir2IrExtensions.Default

@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.test.frontend.fir.handlers.firDiagnosticCollectorSer
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 
-abstract class Fir2IrJsWasmResultsConverter(testServices: TestServices) : AbstractFir2IrNonJvmResultsConverter(testServices) {
+abstract class Fir2IrJsWasmResultsConverter(testServices: TestServices) : AbstractFir2IrResultsConverter(testServices) {
     protected abstract val artifactFactory: (
         IrModuleFragment,
         IrPluginContext,

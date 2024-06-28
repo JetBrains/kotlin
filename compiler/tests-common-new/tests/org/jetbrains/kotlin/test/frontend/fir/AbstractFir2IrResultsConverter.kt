@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 
-abstract class AbstractFir2IrNonJvmResultsConverter(
+abstract class AbstractFir2IrResultsConverter(
     testServices: TestServices
 ) : Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>(
     testServices,
