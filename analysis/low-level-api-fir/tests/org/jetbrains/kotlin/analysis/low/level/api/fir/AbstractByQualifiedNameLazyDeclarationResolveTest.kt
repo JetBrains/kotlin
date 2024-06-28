@@ -48,8 +48,7 @@ abstract class AbstractByQualifiedNameLazyDeclarationResolveTest : AbstractFirLa
     open val outputRenderingMode: OutputRenderingMode = OutputRenderingMode.USE_SITE_AND_DESIGNATION_FILES
 
     private fun findRegularClass(classId: ClassId, module: KaModule, firSession: LLFirResolveSession): FirRegularClassSymbol {
-        val symbolProvider = firSession.getSessionFor(module).symbolProvider
-        return symbolProvider.getRegularClassSymbolByClassId(classId) ?: error("'$classId' is not found")
+        return firSession.getSessionFor(module).getRegularClassSymbolByClassId(classId) ?: error("'$classId' is not found")
     }
 
     private object Directives : SimpleDirectivesContainer() {

@@ -270,7 +270,7 @@ private val ARRAY_CLASSES: Set<Name> = setOf(
 fun FirRegularClassBuilder.addCloneForArrayIfNeeded(classId: ClassId, dispatchReceiver: ConeClassLikeType?, session: FirSession) {
     if (classId.packageFqName != StandardClassIds.BASE_KOTLIN_PACKAGE) return
     if (classId.shortClassName !in ARRAY_CLASSES) return
-    if (session.symbolProvider.getRegularClassSymbolByClassId(StandardClassIds.Cloneable) == null) return
+    if (session.getRegularClassSymbolByClassId(StandardClassIds.Cloneable) == null) return
     superTypeRefs += buildResolvedTypeRef {
         type = ConeClassLikeTypeImpl(
             StandardClassIds.Cloneable.toLookupTag(),

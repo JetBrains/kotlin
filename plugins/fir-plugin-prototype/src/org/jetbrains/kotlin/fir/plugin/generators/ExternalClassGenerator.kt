@@ -92,7 +92,7 @@ class ExternalClassGenerator(session: FirSession) : FirDeclarationGenerationExte
         val owner = context?.owner
         require(owner is FirRegularClassSymbol)
         val matchedClassId = owner.matchedClass ?: return emptyList()
-        val matchedClassSymbol = session.symbolProvider.getRegularClassSymbolByClassId(matchedClassId) ?: return emptyList()
+        val matchedClassSymbol = session.getRegularClassSymbolByClassId(matchedClassId) ?: return emptyList()
         val function = createMemberFunction(owner, Key, callableId.callableName, matchedClassSymbol.constructStarProjectedType())
         return listOf(function.symbol)
     }

@@ -301,7 +301,7 @@ open class FirJvmSerializerExtension(
         }
 
         val grandParent = containerSymbol.classId.outerClassId?.let {
-            session.symbolProvider.getRegularClassSymbolByClassId(it)?.fir
+            session.getRegularClassSymbolByClassId(it)?.fir
         }
         return grandParent != null &&
                 (grandParent.classKind == ClassKind.INTERFACE || grandParent.classKind == ClassKind.ANNOTATION_CLASS)

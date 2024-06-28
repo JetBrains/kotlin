@@ -341,7 +341,7 @@ class IrBuiltInsOverFir(
          * As a possible way to fix it we can move `init` section of builtins into the separate function for late initialization and call
          *   for it after Fir2IrComponentsStorage is fully initialized
          */
-        val firClassSymbol = session.symbolProvider.getRegularClassSymbolByClassId(StandardClassIds.Annotations.IntrinsicConstEvaluation)
+        val firClassSymbol = session.getRegularClassSymbolByClassId(StandardClassIds.Annotations.IntrinsicConstEvaluation)
 
         val classSymbol = if (firClassSymbol == null) {
             val irClass = createIntrinsicConstEvaluationClass()

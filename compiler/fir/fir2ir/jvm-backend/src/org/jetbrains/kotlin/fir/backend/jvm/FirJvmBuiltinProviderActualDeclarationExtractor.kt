@@ -61,7 +61,7 @@ class FirJvmBuiltinProviderActualDeclarationExtractor private constructor(
     override fun extract(expectIrClass: IrClass): IrClassSymbol? {
         if (!expectIrClass.hasActualizeByJvmBuiltinProviderFqNameAnnotation()) return null
 
-        val regularClassSymbol = provider.getRegularClassSymbolByClassId(expectIrClass.classIdOrFail) ?: return null
+        val regularClassSymbol = classifierStorage.session.getRegularClassSymbolByClassId(expectIrClass.classIdOrFail) ?: return null
         return classifierStorage.getIrClassSymbol(regularClassSymbol)
     }
 

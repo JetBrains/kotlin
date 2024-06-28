@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnmatchedTypeArgumentsEr
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedSymbolError
 import org.jetbrains.kotlin.fir.resolve.getContainingClass
-import org.jetbrains.kotlin.fir.resolve.getSymbolByLookupTag
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
@@ -180,7 +179,7 @@ internal class KaSymbolByFirBuilder(
         }
 
         fun buildTypeParameterSymbolByLookupTag(lookupTag: ConeTypeParameterLookupTag): KaTypeParameterSymbol? {
-            val firTypeParameterSymbol = firProvider.getSymbolByLookupTag(lookupTag) as? FirTypeParameterSymbol ?: return null
+            val firTypeParameterSymbol = lookupTag.toSymbol(analysisSession.firSession) as? FirTypeParameterSymbol ?: return null
             return buildTypeParameterSymbol(firTypeParameterSymbol)
         }
 
@@ -190,7 +189,7 @@ internal class KaSymbolByFirBuilder(
         }
 
         fun buildClassLikeSymbolByLookupTag(lookupTag: ConeClassLikeLookupTag): KaClassLikeSymbol? {
-            val firClassLikeSymbol = firProvider.getSymbolByLookupTag(lookupTag) ?: return null
+            val firClassLikeSymbol = lookupTag.toSymbol(analysisSession.firSession) ?: return null
             return buildClassLikeSymbol(firClassLikeSymbol)
         }
     }

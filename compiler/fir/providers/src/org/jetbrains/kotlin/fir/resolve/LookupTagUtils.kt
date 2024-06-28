@@ -87,14 +87,6 @@ fun ConeClassLikeLookupTagImpl.bindSymbolToLookupTag(session: FirSession, symbol
 @SymbolInternals
 fun ConeClassLikeLookupTag.toFirRegularClass(session: FirSession): FirRegularClass? = toFirRegularClassSymbol(session)?.fir
 
-fun FirSymbolProvider.getSymbolByLookupTag(lookupTag: ConeClassifierLookupTag): FirClassifierSymbol<*>? {
-    return lookupTag.toSymbol(session)
-}
-
-fun FirSymbolProvider.getSymbolByLookupTag(lookupTag: ConeClassLikeLookupTag): FirClassLikeSymbol<*>? {
-    return lookupTag.toSymbol(session)
-}
-
 fun ConeKotlinType.withParameterNameAnnotation(parameter: FirFunctionTypeParameter, session: FirSession): ConeKotlinType {
     val name = parameter.name
     if (name == null || name == SpecialNames.NO_NAME_PROVIDED || name == SpecialNames.UNDERSCORE_FOR_UNUSED_VAR) return this

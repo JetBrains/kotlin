@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.impl.FirFakeOverrideGenerator
@@ -378,7 +377,7 @@ private fun FirRegularClass.computeSamCandidateNames(session: FirSession): Set<N
         // Note: we search only for names in this function, so substitution is not needed      V
         lookupSuperTypes(this, lookupInterfaces = true, deep = true, useSiteSession = session, substituteTypes = false)
             .mapNotNullTo(mutableListOf(this)) {
-                (session.symbolProvider.getSymbolByLookupTag(it.lookupTag) as? FirRegularClassSymbol)?.fir
+                (it.lookupTag.toFirRegularClassSymbol(session))?.fir
             }
 
     val samCandidateNames = mutableSetOf<Name>()
