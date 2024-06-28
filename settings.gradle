@@ -222,7 +222,8 @@ include ":kotlin-noarg-compiler-plugin",
 include ":kotlin-power-assert-compiler-plugin",
         ":kotlin-power-assert-compiler-plugin.embeddable",
         ":kotlin-power-assert-compiler-plugin.backend",
-        ":kotlin-power-assert-compiler-plugin.cli"
+        ":kotlin-power-assert-compiler-plugin.cli",
+        ":kotlin-power-assert-runtime"
 
 include ":kotlin-sam-with-receiver-compiler-plugin",
         ":kotlin-sam-with-receiver-compiler-plugin.embeddable",
@@ -831,10 +832,11 @@ project(':kotlin-noarg-compiler-plugin.k2').projectDir = "$rootDir/plugins/noarg
 project(':kotlin-noarg-compiler-plugin.backend').projectDir = "$rootDir/plugins/noarg/noarg.backend" as File
 project(':kotlin-noarg-compiler-plugin.cli').projectDir = "$rootDir/plugins/noarg/noarg.cli" as File
 
-project(':kotlin-power-assert-compiler-plugin').projectDir = "$rootDir/plugins/power-assert" as File
-project(':kotlin-power-assert-compiler-plugin.embeddable').projectDir = "$rootDir/plugins/power-assert/power-assert.embeddable" as File
-project(':kotlin-power-assert-compiler-plugin.backend').projectDir = "$rootDir/plugins/power-assert/power-assert.backend" as File
-project(':kotlin-power-assert-compiler-plugin.cli').projectDir = "$rootDir/plugins/power-assert/power-assert.cli" as File
+project(':kotlin-power-assert-compiler-plugin').projectDir = "$rootDir/plugins/power-assert/power-assert-compiler" as File
+project(':kotlin-power-assert-compiler-plugin.embeddable').projectDir = "$rootDir/plugins/power-assert/power-assert-compiler/power-assert.embeddable" as File
+project(':kotlin-power-assert-compiler-plugin.backend').projectDir = "$rootDir/plugins/power-assert/power-assert-compiler/power-assert.backend" as File
+project(':kotlin-power-assert-compiler-plugin.cli').projectDir = "$rootDir/plugins/power-assert/power-assert-compiler/power-assert.cli" as File
+project(':kotlin-power-assert-runtime').projectDir = "$rootDir/plugins/power-assert/power-assert-runtime" as File
 
 project(':kotlin-sam-with-receiver-compiler-plugin').projectDir = "$rootDir/plugins/sam-with-receiver" as File
 project(':kotlin-sam-with-receiver-compiler-plugin.embeddable').projectDir = "$rootDir/plugins/sam-with-receiver/sam-with-receiver.embeddable" as File

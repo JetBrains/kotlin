@@ -50,6 +50,10 @@ class PowerAssertGradlePlugin : KotlinCompilerPluginSupportPlugin {
     override fun applyToCompilation(
         kotlinCompilation: KotlinCompilation<*>,
     ): Provider<List<SubpluginOption>> {
+        kotlinCompilation.dependencies {
+            implementation(kotlin("power-assert-runtime"))
+        }
+
         val project = kotlinCompilation.target.project
         val extension = project.extensions.getByType(PowerAssertGradleExtension::class.java)
         return extension.functions.map { functions ->

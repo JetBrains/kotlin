@@ -322,7 +322,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("plugins/power-assert/tests-gen", "plugins/power-assert/testData") {
+        testGroup("plugins/power-assert/power-assert-compiler/tests-gen", "plugins/power-assert/power-assert-compiler/testData") {
             testClass<AbstractIrBlackBoxCodegenTestForPowerAssert> {
                 model("codegen", excludedPattern = excludedFirTestdataPattern)
             }
