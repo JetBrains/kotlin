@@ -36,9 +36,10 @@ abstract class FirDefaultPropertyAccessor(
     propertySymbol: FirPropertySymbol,
     isGetter: Boolean,
     visibility: Visibility,
-    modality: Modality = Modality.FINAL,
-    effectiveVisibility: EffectiveVisibility? = null,
-    isInline: Boolean = false,
+    modality: Modality,
+    effectiveVisibility: EffectiveVisibility?,
+    isInline: Boolean,
+    isOverride: Boolean,
     symbol: FirPropertyAccessorSymbol,
     resolvePhase: FirResolvePhase,
 ) : FirPropertyAccessorImpl(
@@ -52,6 +53,7 @@ abstract class FirDefaultPropertyAccessor(
         else -> FirResolvedDeclarationStatusImpl(visibility, modality, effectiveVisibility)
     }.apply {
         this.isInline = isInline
+        this.isOverride = isOverride
     },
     propertyTypeRef,
     deprecationsProvider = UnresolvedDeprecationProvider,
@@ -109,6 +111,7 @@ class FirDefaultPropertyGetter(
     modality: Modality = Modality.FINAL,
     effectiveVisibility: EffectiveVisibility? = null,
     isInline: Boolean = false,
+    isOverride: Boolean = false,
     symbol: FirPropertyAccessorSymbol = FirPropertyAccessorSymbol(),
     resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR,
 ) : FirDefaultPropertyAccessor(
@@ -123,6 +126,7 @@ class FirDefaultPropertyGetter(
     modality = modality,
     effectiveVisibility = effectiveVisibility,
     isInline = isInline,
+    isOverride = isOverride,
     symbol = symbol,
     resolvePhase = resolvePhase,
 )
@@ -141,6 +145,7 @@ class FirDefaultPropertySetter(
     modality: Modality = Modality.FINAL,
     effectiveVisibility: EffectiveVisibility? = null,
     isInline: Boolean = false,
+    isOverride: Boolean = false,
     propertyAccessorSymbol: FirPropertyAccessorSymbol = FirPropertyAccessorSymbol(),
     parameterSource: KtSourceElement? = null,
     parameterAnnotations: List<FirAnnotation> = emptyList(),
@@ -168,6 +173,7 @@ class FirDefaultPropertySetter(
     modality = modality,
     effectiveVisibility = effectiveVisibility,
     isInline = isInline,
+    isOverride = isOverride,
     symbol = propertyAccessorSymbol,
     resolvePhase = resolvePhase,
 )

@@ -92,7 +92,7 @@ KaKotlinPropertySymbol:
     isExpect: false
     isExtension: false
     isInline: false
-    isOverride: false
+    isOverride: true
     location: PROPERTY
     modality: ABSTRACT
     origin: DELEGATED
@@ -435,7 +435,7 @@ KaKotlinPropertySymbol:
     isExpect: false
     isExtension: false
     isInline: false
-    isOverride: false
+    isOverride: true
     location: PROPERTY
     modality: ABSTRACT
     origin: DELEGATED
