@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.lower.inline.SyntheticAccessorGenerator
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithVisibility
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrBody
@@ -32,7 +31,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 class SyntheticAccessorLowering(
     context: CommonBackendContext,
 ) : BodyLoweringPass {
-    private val accessorGenerator = SyntheticAccessorGenerator(context)
+    private val accessorGenerator = SyntheticAccessorGenerator(context, addAccessorToParent = true)
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         val inlineFunction = container.parentDeclarationsWithSelf.firstOrNull { it is IrFunction && it.isInline } as? IrFunction
             ?: return
@@ -61,9 +60,6 @@ private class SyntheticAccessorTransformer(
             return super.visitFunctionAccess(expression)
         }
         val accessor = accessorGenerator.getSyntheticFunctionAccessor(expression, emptyList())
-
-        // FIXME: This can easily lead to the same accessor being added multiple times to the same declaration container.
-        (accessor.parent as IrDeclarationContainer).declarations.add(accessor)
 
         // TODO(KT-69527): Set the proper visibility for the accessor (the max visibility of all the inline functions that reference it)
         return super.visitFunctionAccess(accessorGenerator.modifyFunctionAccessExpression(expression, accessor.symbol))

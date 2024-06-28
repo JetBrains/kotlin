@@ -32,8 +32,13 @@ import org.jetbrains.kotlin.name.Name
  * Generates visible synthetic accessor functions for symbols that are otherwise inaccessible, for example,
  * when inlining a function that references a private method of a class outside of that class, or generating a class for a lambda
  * expression that uses a `super` qualifier in its body.
+ *
+ * @param addAccessorToParent Whether a newly generated accessor should be immediately added to its parent as a child.
  */
-open class SyntheticAccessorGenerator<Context : BackendContext>(protected val context: Context) {
+open class SyntheticAccessorGenerator<Context : BackendContext>(
+    protected val context: Context,
+    private val addAccessorToParent: Boolean = false,
+) {
     private data class AccessorKey(val parent: IrDeclarationParent, val superQualifierSymbol: IrClassSymbol?)
 
     companion object {
@@ -95,6 +100,7 @@ open class SyntheticAccessorGenerator<Context : BackendContext>(protected val co
         // which we put in the closest enclosing class which has access to the method in question.
         val function = symbol.owner
         val parent = function.accessorParent(dispatchReceiverType?.classOrNull?.owner ?: function.parent, scopes)
+        if (parent !is IrDeclarationContainer) compilationException("The accessor parent must be IrDeclarationContainer", parent)
 
         // The key in the cache/map needs to be BOTH the symbol of the function being accessed AND the parent
         // of the accessor. Going from the above example, if we have another class C similar to B:
@@ -114,6 +120,10 @@ open class SyntheticAccessorGenerator<Context : BackendContext>(protected val co
                     function.makeConstructorAccessor()
                 is IrSimpleFunction ->
                     function.makeSimpleFunctionAccessor(superQualifierSymbol, dispatchReceiverType, parent, scopes)
+            }.also {
+                if (addAccessorToParent) {
+                    parent.declarations.add(it)
+                }
             }
         }
     }
@@ -209,7 +219,11 @@ open class SyntheticAccessorGenerator<Context : BackendContext>(protected val co
         val getterMap =
             field.getterSyntheticAccessors ?: hashMapOf<AccessorKey, IrSimpleFunction>().also { field.getterSyntheticAccessors = it }
         return getterMap.getOrPut(AccessorKey(parent, expression.superQualifierSymbol)) {
-            makeGetterAccessor(field, parent, expression.superQualifierSymbol)
+            makeGetterAccessor(field, parent, expression.superQualifierSymbol).also {
+                if (addAccessorToParent) {
+                    parent.declarations.add(it)
+                }
+            }
         }
     }
 
@@ -266,7 +280,11 @@ open class SyntheticAccessorGenerator<Context : BackendContext>(protected val co
         val setterMap =
             field.setterSyntheticAccessors ?: hashMapOf<AccessorKey, IrSimpleFunction>().also { field.setterSyntheticAccessors = it }
         return setterMap.getOrPut(AccessorKey(parent, expression.superQualifierSymbol)) {
-            makeSetterAccessor(field, parent, expression.superQualifierSymbol)
+            makeSetterAccessor(field, parent, expression.superQualifierSymbol).also {
+                if (addAccessorToParent) {
+                    parent.declarations.add(it)
+                }
+            }
         }
     }
 
