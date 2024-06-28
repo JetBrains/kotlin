@@ -74,7 +74,7 @@ class JvmIrBackendFacade(
 
         return BinaryArtifacts.Jvm(
             state.factory,
-            inputArtifact.backendInput.irModuleFragment.files.flatMap {
+            inputArtifact.irModuleFragment.files.flatMap {
                 sourceFileInfos(it, allowNestedMultifileFacades = true)
             }
         )
