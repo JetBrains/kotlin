@@ -42,6 +42,7 @@ public interface ErrorsParcelize {
     DiagnosticFactory0<PsiElement> OVERRIDING_WRITE_TO_PARCEL_IS_NOT_ALLOWED = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> CREATOR_DEFINITION_IS_NOT_ALLOWED = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> PARCELABLE_TYPE_NOT_SUPPORTED = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory1<PsiElement, KotlinType> PARCELABLE_TYPE_CONTAINS_NOT_SUPPORTED = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<PsiElement> PARCELER_SHOULD_BE_OBJECT = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory2<PsiElement, KotlinType, KotlinType> PARCELER_TYPE_INCOMPATIBLE = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory0<PsiElement> DUPLICATING_TYPE_PARCELERS = DiagnosticFactory0.create(ERROR);

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.parcelize.diagnostic
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticFactoryToRendererMap
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers.RENDER_CLASS_OR_OBJECT
+import org.jetbrains.kotlin.diagnostics.rendering.Renderers.RENDER_TYPE
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers.RENDER_TYPE_WITH_ANNOTATIONS
 
 object DefaultErrorMessagesParcelize : DefaultErrorMessages.Extension {
@@ -95,6 +96,13 @@ object DefaultErrorMessagesParcelize : DefaultErrorMessages.Extension {
             ErrorsParcelize.PARCELABLE_TYPE_NOT_SUPPORTED,
             "Type is not directly supported by 'Parcelize'. " +
                     "Annotate the parameter type with '@RawValue' if you want it to be serialized using 'writeValue()'"
+        )
+
+        MAP.put(
+            ErrorsParcelize.PARCELABLE_TYPE_CONTAINS_NOT_SUPPORTED,
+            "Type is not directly supported by ''Parcelize'' because it contains an instance of {0}. " +
+                    "Add the ''@TypeParceler<{0}, ...>'' annotation to provide the missing serialization logic.",
+            RENDER_TYPE,
         )
 
         MAP.put(

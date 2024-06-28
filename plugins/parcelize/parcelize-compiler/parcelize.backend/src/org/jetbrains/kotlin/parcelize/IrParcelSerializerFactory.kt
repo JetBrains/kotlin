@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.parcelize
 
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
-import org.jetbrains.kotlin.backend.jvm.ir.psiElement
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.inlineClassRepresentation
@@ -47,7 +46,7 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols, private val
 
     /**
      * Resolve the given [irType] to a corresponding [IrParcelSerializer]. This depends on the TypeParcelers which
-     * are currently in [scope], as well as the type of the enclosing Parceleable class [parcelizeType], which is needed
+     * are currently in [scope], as well as the type of the enclosing Parcelable class [parcelizeType], which is needed
      * to get a class loader for reflection based serialization. Beyond this, we need to know whether to allow
      * using read/writeValue for serialization (if [strict] is false). Beyond this, we need to know whether we are
      * producing parcelers for properties of a Parcelable (if [toplevel] is true), or for a complete Parcelable.
@@ -336,6 +335,16 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols, private val
                     // Functions and Continuations are always serializable.
                     || irType.isFunctionTypeOrSubtype() || irType.isSuspendFunctionTypeOrSubtype() ->
                 return serializableSerializer
+
+            classifier.isData -> {
+                val typeMapping = classifier.typeParameterMapping(irType)
+                val members = classifier.properties.mapNotNullTo(mutableListOf()) { property ->
+                    val field = property.backingField ?: return@mapNotNullTo null
+                    if (!field.isFromPrimaryConstructor) return@mapNotNullTo null
+                    property.symbol to get(field.type.substitute(typeMapping), scope, parcelizeType, strict())
+                }
+                return IrDataClassParcelSerializer(irType, members)
+            }
 
             strict() ->
                 throw IllegalArgumentException("Illegal type, could not find a specific serializer for ${irType.render()}")

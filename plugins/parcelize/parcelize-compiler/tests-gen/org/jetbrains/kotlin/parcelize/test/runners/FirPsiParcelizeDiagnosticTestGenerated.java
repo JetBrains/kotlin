@@ -48,6 +48,12 @@ public class FirPsiParcelizeDiagnosticTestGenerated extends AbstractFirPsiParcel
   }
 
   @Test
+  @TestMetadata("dataClass.kt")
+  public void testDataClass() {
+    runTest("plugins/parcelize/parcelize-compiler/testData/diagnostics/dataClass.kt");
+  }
+
+  @Test
   @TestMetadata("delegate.kt")
   public void testDelegate() {
     runTest("plugins/parcelize/parcelize-compiler/testData/diagnostics/delegate.kt");

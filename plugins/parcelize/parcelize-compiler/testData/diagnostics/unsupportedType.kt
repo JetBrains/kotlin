@@ -14,7 +14,7 @@ class User(
         val a: String,
         val b: <!PARCELABLE_TYPE_NOT_SUPPORTED!>Any<!>,
         val c: <!PARCELABLE_TYPE_NOT_SUPPORTED!>Any?<!>,
-        val d: <!PARCELABLE_TYPE_NOT_SUPPORTED!>Map<Any, String><!>,
+        val d: <!PARCELABLE_TYPE_CONTAINS_NOT_SUPPORTED!>Map<Any, String><!>,
         val e: @RawValue Any?,
         val f: @RawValue Map<String, Any>,
         val g: Map<String, @RawValue Any>,
