@@ -65,7 +65,6 @@ fun main(args: Array<String>) {
 
         testGroup("js/js.tests/tests-gen", "js/js.translator/testData/incremental") {
             val wasmTargetedInvalidationTests = listOf(
-                "modifyClassAncestors",
                 "crossModuleModifyClassAncestors",
             ).joinToString("|")
             testClass<AbstractJsIrInvalidationPerFileTest> {

@@ -1,5 +1,27 @@
 MODULES: lib, main
 
+TARGET: JS
+
+STEP 0:
+    libs: lib, main
+    dirty js modules: lib, main
+    dirty js files:   lib/a, main/m.export, lib/d, main, lib/c, lib/b, main/m
+STEP 1..6:
+    libs: lib, main
+    dirty js modules: lib
+    dirty js files:   lib/b
+STEP 7:
+    libs: lib, main
+    dirty js modules: lib, main
+    dirty js files:   lib/a, lib/d, lib/c, lib/b, main/m
+STEP 8..13:
+    libs: lib, main
+    dirty js modules: lib
+    dirty js files:   lib/b
+
+
+TARGET: Wasm
+
 STEP 0:
     libs: lib, main
     dirty js modules: lib, main
