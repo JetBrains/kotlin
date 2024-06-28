@@ -3,7 +3,7 @@ plugins {
     id("maven-publish")
     //id("org.jetbrains.kotlin.plugin.allopen")
     //id("org.jetbrains.kotlin.plugin.noarg")
-    //id("io.github.goooler.shadow")
+    //id("com.gradleup.shadow")
     //id("application")
     //id("org.jetbrains.kotlin.kapt")
 }
