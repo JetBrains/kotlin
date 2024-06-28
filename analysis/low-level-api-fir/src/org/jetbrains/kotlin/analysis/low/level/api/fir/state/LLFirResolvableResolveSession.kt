@@ -76,7 +76,7 @@ internal class LLFirResolvableResolveSession(
         }
 
         val session = getSessionFor(module)
-        val searcher = FirDeclarationForCompiledElementSearcher(session.symbolProvider)
+        val searcher = FirDeclarationForCompiledElementSearcher(session)
         val firDeclaration = searcher.findNonLocalDeclaration(ktDeclaration)
         return firDeclaration.symbol
     }

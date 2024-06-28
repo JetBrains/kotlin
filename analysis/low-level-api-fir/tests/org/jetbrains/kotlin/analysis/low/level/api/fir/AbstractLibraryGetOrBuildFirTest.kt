@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirDeclarationForCom
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.CompiledLibraryProvider
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -41,8 +40,8 @@ abstract class AbstractLibraryGetOrBuildFirTest : AbstractAnalysisApiBasedTest()
 
         val ktModule = mainModule.ktModule
         val resolveSession = LLFirResolveSessionService.getInstance(mainFile.project).getFirResolveSessionForBinaryModule(ktModule)
-        val symbolProvider = resolveSession.getSessionFor(ktModule).symbolProvider
-        val fir = FirDeclarationForCompiledElementSearcher(symbolProvider).findNonLocalDeclaration(declaration)
+        val session = resolveSession.getSessionFor(ktModule)
+        val fir = FirDeclarationForCompiledElementSearcher(session).findNonLocalDeclaration(declaration)
 
         testServices.assertions.assertEqualsToTestDataFileSibling(renderActualFir(fir, declaration, true))
     }
