@@ -1530,7 +1530,7 @@ class Fir2IrVisitor(
             var endArgumentOffset = -1
             for (firArgument in stringConcatenationCall.arguments) {
                 val argument = convertToIrExpression(firArgument)
-                if (argument is IrConst<*>) {
+                if (argument is IrConst<*> && argument.kind == IrConstKind.String) {
                     if (sb.isEmpty()) {
                         startArgumentOffset = argument.startOffset
                     }
