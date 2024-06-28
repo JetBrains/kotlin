@@ -1,16 +1,16 @@
 // IGNORE_BACKEND: ANY
 
 // MODULE: lib
-// FILE: A.kt
-class A {
+// FILE: Outer.kt
+class Outer {
     private fun privateMethod() = "OK"
     class Nested{
-        internal inline fun internalInlineMethod() = A().privateMethod()
+        internal inline fun internalInlineMethod() = Outer().privateMethod()
     }
 }
 
 // MODULE: main()(lib)
 // FILE: main.kt
 fun box(): String {
-    return A.Nested().internalInlineMethod()
+    return Outer.Nested().internalInlineMethod()
 }

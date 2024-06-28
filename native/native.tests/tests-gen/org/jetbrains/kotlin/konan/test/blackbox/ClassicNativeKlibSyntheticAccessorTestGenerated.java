@@ -43,22 +43,205 @@ public class ClassicNativeKlibSyntheticAccessorTestGenerated extends AbstractNat
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/outerThis"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
     }
 
-    @Test
-    @TestMetadata("leakingOuterThisCrossFile.kt")
-    public void testLeakingOuterThisCrossFile() {
-      runTest("compiler/testData/klib/syntheticAccessors/outerThis/leakingOuterThisCrossFile.kt");
+    @Nested
+    @TestMetadata("compiler/testData/klib/syntheticAccessors/outerThis/crossFileLeak")
+    @TestDataPath("$PROJECT_ROOT")
+    @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
+    @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
+    @UseExtTestCaseGroupProvider()
+    public class CrossFileLeak {
+      @Test
+      public void testAllFilesPresentInCrossFileLeak() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/outerThis/crossFileLeak"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+      }
+
+      @Test
+      @TestMetadata("leakingCompanionPrivateMethodThroughInnerClass.kt")
+      public void testLeakingCompanionPrivateMethodThroughInnerClass() {
+        runTest("compiler/testData/klib/syntheticAccessors/outerThis/crossFileLeak/leakingCompanionPrivateMethodThroughInnerClass.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingCompanionPrivateVarThroughNestedClass.kt")
+      public void testLeakingCompanionPrivateVarThroughNestedClass() {
+        runTest("compiler/testData/klib/syntheticAccessors/outerThis/crossFileLeak/leakingCompanionPrivateVarThroughNestedClass.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingOuterPrivateMethodThroughInnerClass.kt")
+      public void testLeakingOuterPrivateMethodThroughInnerClass() {
+        runTest("compiler/testData/klib/syntheticAccessors/outerThis/crossFileLeak/leakingOuterPrivateMethodThroughInnerClass.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingOuterPrivateMethodThroughNestedClass.kt")
+      public void testLeakingOuterPrivateMethodThroughNestedClass() {
+        runTest("compiler/testData/klib/syntheticAccessors/outerThis/crossFileLeak/leakingOuterPrivateMethodThroughNestedClass.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingOuterPrivateVarThroughInnerClass.kt")
+      public void testLeakingOuterPrivateVarThroughInnerClass() {
+        runTest("compiler/testData/klib/syntheticAccessors/outerThis/crossFileLeak/leakingOuterPrivateVarThroughInnerClass.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingOuterPrivateVarThroughNestedClass.kt")
+      public void testLeakingOuterPrivateVarThroughNestedClass() {
+        runTest("compiler/testData/klib/syntheticAccessors/outerThis/crossFileLeak/leakingOuterPrivateVarThroughNestedClass.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingOuterThis.kt")
+      public void testLeakingOuterThis() {
+        runTest("compiler/testData/klib/syntheticAccessors/outerThis/crossFileLeak/leakingOuterThis.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingPrivateConstructorThroughPublicInlineFunInInnerClass.kt")
+      public void testLeakingPrivateConstructorThroughPublicInlineFunInInnerClass() {
+        runTest("compiler/testData/klib/syntheticAccessors/outerThis/crossFileLeak/leakingPrivateConstructorThroughPublicInlineFunInInnerClass.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingPrivateConstructorThroughPublicInlineFunInNestedClass.kt")
+      public void testLeakingPrivateConstructorThroughPublicInlineFunInNestedClass() {
+        runTest("compiler/testData/klib/syntheticAccessors/outerThis/crossFileLeak/leakingPrivateConstructorThroughPublicInlineFunInNestedClass.kt");
+      }
     }
 
-    @Test
-    @TestMetadata("leakingOuterThisCrossModule.kt")
-    public void testLeakingOuterThisCrossModule() {
-      runTest("compiler/testData/klib/syntheticAccessors/outerThis/leakingOuterThisCrossModule.kt");
+    @Nested
+    @TestMetadata("compiler/testData/klib/syntheticAccessors/outerThis/crossModuleLeak")
+    @TestDataPath("$PROJECT_ROOT")
+    @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
+    @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
+    @UseExtTestCaseGroupProvider()
+    public class CrossModuleLeak {
+      @Test
+      public void testAllFilesPresentInCrossModuleLeak() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/outerThis/crossModuleLeak"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+      }
+
+      @Test
+      @TestMetadata("leakingCompanionPrivateMethodThroughInnerClass.kt")
+      public void testLeakingCompanionPrivateMethodThroughInnerClass() {
+        runTest("compiler/testData/klib/syntheticAccessors/outerThis/crossModuleLeak/leakingCompanionPrivateMethodThroughInnerClass.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingCompanionPrivateVarThroughNestedClass.kt")
+      public void testLeakingCompanionPrivateVarThroughNestedClass() {
+        runTest("compiler/testData/klib/syntheticAccessors/outerThis/crossModuleLeak/leakingCompanionPrivateVarThroughNestedClass.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingOuterPrivateMethodThroughInnerClass.kt")
+      public void testLeakingOuterPrivateMethodThroughInnerClass() {
+        runTest("compiler/testData/klib/syntheticAccessors/outerThis/crossModuleLeak/leakingOuterPrivateMethodThroughInnerClass.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingOuterPrivateMethodThroughNestedClass.kt")
+      public void testLeakingOuterPrivateMethodThroughNestedClass() {
+        runTest("compiler/testData/klib/syntheticAccessors/outerThis/crossModuleLeak/leakingOuterPrivateMethodThroughNestedClass.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingOuterPrivateVarThroughInnerClass.kt")
+      public void testLeakingOuterPrivateVarThroughInnerClass() {
+        runTest("compiler/testData/klib/syntheticAccessors/outerThis/crossModuleLeak/leakingOuterPrivateVarThroughInnerClass.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingOuterPrivateVarThroughNestedClass.kt")
+      public void testLeakingOuterPrivateVarThroughNestedClass() {
+        runTest("compiler/testData/klib/syntheticAccessors/outerThis/crossModuleLeak/leakingOuterPrivateVarThroughNestedClass.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingOuterThis.kt")
+      public void testLeakingOuterThis() {
+        runTest("compiler/testData/klib/syntheticAccessors/outerThis/crossModuleLeak/leakingOuterThis.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingPrivateConstructorThroughPublicInlineFunInInnerClass.kt")
+      public void testLeakingPrivateConstructorThroughPublicInlineFunInInnerClass() {
+        runTest("compiler/testData/klib/syntheticAccessors/outerThis/crossModuleLeak/leakingPrivateConstructorThroughPublicInlineFunInInnerClass.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingPrivateConstructorThroughPublicInlineFunInNestedClass.kt")
+      public void testLeakingPrivateConstructorThroughPublicInlineFunInNestedClass() {
+        runTest("compiler/testData/klib/syntheticAccessors/outerThis/crossModuleLeak/leakingPrivateConstructorThroughPublicInlineFunInNestedClass.kt");
+      }
     }
 
-    @Test
-    @TestMetadata("outerThisUsageSingleFile.kt")
-    public void testOuterThisUsageSingleFile() {
-      runTest("compiler/testData/klib/syntheticAccessors/outerThis/outerThisUsageSingleFile.kt");
+    @Nested
+    @TestMetadata("compiler/testData/klib/syntheticAccessors/outerThis/singleFile")
+    @TestDataPath("$PROJECT_ROOT")
+    @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
+    @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
+    @UseExtTestCaseGroupProvider()
+    public class SingleFile {
+      @Test
+      public void testAllFilesPresentInSingleFile() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/outerThis/singleFile"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+      }
+
+      @Test
+      @TestMetadata("leakingCompanionPrivateMethodThroughInnerClass.kt")
+      public void testLeakingCompanionPrivateMethodThroughInnerClass() {
+        runTest("compiler/testData/klib/syntheticAccessors/outerThis/singleFile/leakingCompanionPrivateMethodThroughInnerClass.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingCompanionPrivateVarThroughNestedClass.kt")
+      public void testLeakingCompanionPrivateVarThroughNestedClass() {
+        runTest("compiler/testData/klib/syntheticAccessors/outerThis/singleFile/leakingCompanionPrivateVarThroughNestedClass.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingOuterPrivateMethodThroughInnerClass.kt")
+      public void testLeakingOuterPrivateMethodThroughInnerClass() {
+        runTest("compiler/testData/klib/syntheticAccessors/outerThis/singleFile/leakingOuterPrivateMethodThroughInnerClass.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingOuterPrivateMethodThroughNestedClass.kt")
+      public void testLeakingOuterPrivateMethodThroughNestedClass() {
+        runTest("compiler/testData/klib/syntheticAccessors/outerThis/singleFile/leakingOuterPrivateMethodThroughNestedClass.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingOuterPrivateVarThroughInnerClass.kt")
+      public void testLeakingOuterPrivateVarThroughInnerClass() {
+        runTest("compiler/testData/klib/syntheticAccessors/outerThis/singleFile/leakingOuterPrivateVarThroughInnerClass.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingOuterPrivateVarThroughNestedClass.kt")
+      public void testLeakingOuterPrivateVarThroughNestedClass() {
+        runTest("compiler/testData/klib/syntheticAccessors/outerThis/singleFile/leakingOuterPrivateVarThroughNestedClass.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingPrivateConstructorThroughPublicInlineFunInInnerClass.kt")
+      public void testLeakingPrivateConstructorThroughPublicInlineFunInInnerClass() {
+        runTest("compiler/testData/klib/syntheticAccessors/outerThis/singleFile/leakingPrivateConstructorThroughPublicInlineFunInInnerClass.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingPrivateConstructorThroughPublicInlineFunInNestedClass.kt")
+      public void testLeakingPrivateConstructorThroughPublicInlineFunInNestedClass() {
+        runTest("compiler/testData/klib/syntheticAccessors/outerThis/singleFile/leakingPrivateConstructorThroughPublicInlineFunInNestedClass.kt");
+      }
+
+      @Test
+      @TestMetadata("outerThisUsage.kt")
+      public void testOuterThisUsage() {
+        runTest("compiler/testData/klib/syntheticAccessors/outerThis/singleFile/outerThisUsage.kt");
+      }
     }
   }
 
@@ -93,12 +276,6 @@ public class ClassicNativeKlibSyntheticAccessorTestGenerated extends AbstractNat
       }
 
       @Test
-      @TestMetadata("leakingCompanionPrivateMethodThroughInnerClass.kt")
-      public void testLeakingCompanionPrivateMethodThroughInnerClass() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingCompanionPrivateMethodThroughInnerClass.kt");
-      }
-
-      @Test
       @TestMetadata("leakingCompanionPrivateMethodThroughTopLevelInlineFun.kt")
       public void testLeakingCompanionPrivateMethodThroughTopLevelInlineFun() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingCompanionPrivateMethodThroughTopLevelInlineFun.kt");
@@ -129,51 +306,9 @@ public class ClassicNativeKlibSyntheticAccessorTestGenerated extends AbstractNat
       }
 
       @Test
-      @TestMetadata("leakingCompanionPrivateVarThroughNestedClass.kt")
-      public void testLeakingCompanionPrivateVarThroughNestedClass() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingCompanionPrivateVarThroughNestedClass.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingOuterPrivateMethodThroughInnerClass.kt")
-      public void testLeakingOuterPrivateMethodThroughInnerClass() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingOuterPrivateMethodThroughInnerClass.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingOuterPrivateMethodThroughNestedClass.kt")
-      public void testLeakingOuterPrivateMethodThroughNestedClass() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingOuterPrivateMethodThroughNestedClass.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingOuterPrivateVarThroughInnerClass.kt")
-      public void testLeakingOuterPrivateVarThroughInnerClass() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingOuterPrivateVarThroughInnerClass.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingOuterPrivateVarThroughNestedClass.kt")
-      public void testLeakingOuterPrivateVarThroughNestedClass() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingOuterPrivateVarThroughNestedClass.kt");
-      }
-
-      @Test
       @TestMetadata("leakingPrivateConstructorThroughInternalInlineFun.kt")
       public void testLeakingPrivateConstructorThroughInternalInlineFun() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateConstructorThroughInternalInlineFun.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateConstructorThroughPublicInlineFunInInnerClass.kt")
-      public void testLeakingPrivateConstructorThroughPublicInlineFunInInnerClass() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateConstructorThroughPublicInlineFunInInnerClass.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateConstructorThroughPublicInlineFunInNestedClass.kt")
-      public void testLeakingPrivateConstructorThroughPublicInlineFunInNestedClass() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateConstructorThroughPublicInlineFunInNestedClass.kt");
       }
 
       @Test
@@ -328,12 +463,6 @@ public class ClassicNativeKlibSyntheticAccessorTestGenerated extends AbstractNat
       }
 
       @Test
-      @TestMetadata("leakingCompanionPrivateMethodThroughInnerClass.kt")
-      public void testLeakingCompanionPrivateMethodThroughInnerClass() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingCompanionPrivateMethodThroughInnerClass.kt");
-      }
-
-      @Test
       @TestMetadata("leakingCompanionPrivateMethodThroughTopLevelInlineFun.kt")
       public void testLeakingCompanionPrivateMethodThroughTopLevelInlineFun() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingCompanionPrivateMethodThroughTopLevelInlineFun.kt");
@@ -364,51 +493,9 @@ public class ClassicNativeKlibSyntheticAccessorTestGenerated extends AbstractNat
       }
 
       @Test
-      @TestMetadata("leakingCompanionPrivateVarThroughNestedClass.kt")
-      public void testLeakingCompanionPrivateVarThroughNestedClass() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingCompanionPrivateVarThroughNestedClass.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingOuterPrivateMethodThroughInnerClass.kt")
-      public void testLeakingOuterPrivateMethodThroughInnerClass() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingOuterPrivateMethodThroughInnerClass.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingOuterPrivateMethodThroughNestedClass.kt")
-      public void testLeakingOuterPrivateMethodThroughNestedClass() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingOuterPrivateMethodThroughNestedClass.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingOuterPrivateVarThroughInnerClass.kt")
-      public void testLeakingOuterPrivateVarThroughInnerClass() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingOuterPrivateVarThroughInnerClass.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingOuterPrivateVarThroughNestedClass.kt")
-      public void testLeakingOuterPrivateVarThroughNestedClass() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingOuterPrivateVarThroughNestedClass.kt");
-      }
-
-      @Test
       @TestMetadata("leakingPrivateConstructorThroughInternalInlineFun.kt")
       public void testLeakingPrivateConstructorThroughInternalInlineFun() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateConstructorThroughInternalInlineFun.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateConstructorThroughPublicInlineFunInInnerClass.kt")
-      public void testLeakingPrivateConstructorThroughPublicInlineFunInInnerClass() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateConstructorThroughPublicInlineFunInInnerClass.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateConstructorThroughPublicInlineFunInNestedClass.kt")
-      public void testLeakingPrivateConstructorThroughPublicInlineFunInNestedClass() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateConstructorThroughPublicInlineFunInNestedClass.kt");
       }
 
       @Test

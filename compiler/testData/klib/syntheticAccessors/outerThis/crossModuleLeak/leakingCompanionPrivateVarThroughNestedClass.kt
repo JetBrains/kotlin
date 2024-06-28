@@ -1,7 +1,8 @@
 // IGNORE_BACKEND: ANY
 
-// FILE: A.kt
-class A {
+// MODULE: lib
+// FILE: Outer.kt
+class Outer {
     companion object{
         private var privateVar = 20
     }
@@ -14,10 +15,11 @@ class A {
     }
 }
 
+// MODULE: main()(lib)
 // FILE: main.kt
 fun box(): String {
     var result = 0
-    val nested = A.Nested()
+    val nested = Outer.Nested()
 
     result += nested.customVarGetter()
     nested.customVarSetter(22)

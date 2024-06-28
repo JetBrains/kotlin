@@ -1,14 +1,14 @@
 // IGNORE_BACKEND: ANY
 
 // MODULE: lib
-// FILE: A.kt
-class A {
+// FILE: Outer.kt
+class Outer {
     companion object {
         private fun privateMethod() = "OK"
     }
 
     inner class Inner {
-        internal inline fun internalMethod() = this@A.privateMethod()
+        internal inline fun internalMethod() = privateMethod()
     }
 }
 

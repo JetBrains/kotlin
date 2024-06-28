@@ -1,8 +1,4 @@
-// IGNORE_BACKEND: ANY
-
-// MODULE: lib
-// FILE: A.kt
-class A {
+class Outer {
     private var privateVar = 20
 
     inner class Inner {
@@ -13,11 +9,9 @@ class A {
     }
 }
 
-// MODULE: main()(lib)
-// FILE: main.kt
 fun box(): String {
     var result = 0
-    val inner = A().Inner()
+    val inner = Outer().Inner()
 
     result += inner.customVarGetter()
     inner.customVarSetter(22)

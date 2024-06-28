@@ -1,10 +1,9 @@
-// IGNORE_BACKEND: ANY
+class Outer {
+    companion object{
+        private var privateVar = 20
+    }
 
-// FILE: A.kt
-class A {
-    private var privateVar = 20
-
-    inner class Inner {
+    class Nested {
         internal inline fun customVarGetter() = privateVar
         internal inline fun customVarSetter(value: Int) {
             privateVar = value
@@ -12,14 +11,13 @@ class A {
     }
 }
 
-// FILE: main.kt
 fun box(): String {
     var result = 0
-    val inner = A().Inner()
+    val nested = Outer.Nested()
 
-    result += inner.customVarGetter()
-    inner.customVarSetter(22)
-    result += inner.customVarGetter()
+    result += nested.customVarGetter()
+    nested.customVarSetter(22)
+    result += nested.customVarGetter()
     if (result != 42) return result.toString()
     return "OK"
 }
