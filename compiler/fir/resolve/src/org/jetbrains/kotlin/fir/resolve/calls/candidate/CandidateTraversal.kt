@@ -59,10 +59,6 @@ private fun Context.processCandidatesAndPostponedAtoms(atom: ConeCallAtom?) {
         is ConeAtomWithCandidate -> {
             val candidate = atom.candidate
             candidateProcessor(candidate)
-            //    processCandidatesAndPostponedAtoms(candidate.dispatchReceiver)
-            //    for (receiverAtom in candidate.givenExtensionReceiverOptions) {
-            //        processCandidatesAndPostponedAtoms(receiverAtom)
-            //    }
             for (argumentAtom in candidate.arguments) {
                 processCandidatesAndPostponedAtoms(argumentAtom)
             }

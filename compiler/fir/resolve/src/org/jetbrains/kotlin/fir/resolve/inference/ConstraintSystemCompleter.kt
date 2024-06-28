@@ -320,7 +320,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
         topLevelAtoms: List<ConeCallAtom>,
     ) {
         val typeVariable = variableWithConstraints.typeVariable
-        val resolvedAtom = findResolvedAtomBy(typeVariable, topLevelAtoms) ?: topLevelAtoms.firstOrNull()
+        val resolvedAtom = findStatementOfFirstAtomWithVariable(typeVariable, topLevelAtoms) ?: topLevelAtoms.firstOrNull()?.fir
 
         if (resolvedAtom != null) {
             addError(
@@ -444,12 +444,12 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
             return notAnalyzedArguments
         }
 
-        private fun findResolvedAtomBy(
+        private fun findStatementOfFirstAtomWithVariable(
             typeVariable: TypeVariableMarker,
             topLevelAtoms: List<ConeCallAtom>,
         ): FirStatement? {
 
-            fun ConeCallAtom.findFirstAtomContainingVariable(): FirStatement? {
+            fun ConeCallAtom.findFirstStatementContainingVariable(): FirStatement? {
 
                 var result: FirStatement? = null
 
@@ -459,7 +459,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
                     }
                 }
 
-                this@findFirstAtomContainingVariable.processCandidatesAndPostponedAtoms(
+                this@findFirstStatementContainingVariable.processCandidatesAndPostponedAtoms(
                     candidateProcessor = { candidate ->
                         if (typeVariable in candidate.freshVariables) {
                             suggestElement(candidate.callInfo.callSite)
@@ -477,7 +477,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
                 return result
             }
 
-            return topLevelAtoms.firstNotNullOfOrNull(ConeCallAtom::findFirstAtomContainingVariable)
+            return topLevelAtoms.firstNotNullOfOrNull(ConeCallAtom::findFirstStatementContainingVariable)
         }
 
         private fun createCannotInferErrorType(
