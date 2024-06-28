@@ -104,4 +104,30 @@ class NonPublicMarkersTest : BaseKotlinGradleTest() {
             Assertions.assertThat(rootProjectApiDump.readText()).isEqualToIgnoringNewLines(expected)
         }
     }
+
+    @Test
+    fun testIgnoredMarkersOnConstProperties() {
+        val runner = test {
+            buildGradleKts {
+                resolve("/examples/gradle/base/withPlugin.gradle.kts")
+                resolve("/examples/gradle/configuration/nonPublicMarkers/markers.gradle.kts")
+            }
+
+            kotlin("ConstProperty.kt") {
+                resolve("/examples/classes/ConstProperty.kt")
+            }
+
+            apiFile(projectName = rootProjectDir.name) {
+                resolve("/examples/classes/ConstProperty.dump")
+            }
+
+            runner {
+                arguments.add(":apiCheck")
+            }
+        }
+
+        runner.withDebug(true).build().apply {
+            assertTaskSuccess(":apiCheck")
+        }
+    }
 }

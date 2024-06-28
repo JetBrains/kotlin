@@ -157,3 +157,27 @@ class FilteredNamedCompanionObjectHolder private constructor() {
         val F: Int = 42
     }
 }
+
+class FilteredCompanionProperties private constructor() {
+    companion object {
+        public val F1: Int = 1
+        public const val F2: Int = 2
+        private val F3: Int = 3
+        private const val F4: Int = 4
+        @PrivateApi
+        val F5: Int = 5
+        @PrivateApi
+        const val F6: Int = 6
+        @PrivateApi
+        const val F7: Int = 7
+    }
+}
+
+class FilteredCompanionFunctions private constructor() {
+    companion object {
+        public fun f1(): Int = 1
+        private fun f2(): Int = 2
+        @PrivateApi
+        public fun f3(): Int = 3
+    }
+}
