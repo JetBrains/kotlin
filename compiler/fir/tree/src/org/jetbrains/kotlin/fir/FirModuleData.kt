@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir
 
+import com.intellij.util.containers.addIfNotNull
 import org.jetbrains.kotlin.container.topologicalSort
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -90,7 +91,7 @@ class FirModuleDataImpl(
         get() = boundSession
             ?: error("module data ${this::class.simpleName}:${name} not bound to session")
 
-    override var allDependsOnDependencies: List<FirModuleData> = topologicalSort(dependsOnDependencies) { it.dependsOnDependencies }
+    override var allDependsOnDependencies: List<FirModuleData> = topologicalSort(dependsOnDependencies.toMutableList().apply { addIfNotNull(sourceModuleData) }) { it.dependsOnDependencies }
         private set
 
     fun updateDependsOn(dependencies: List<FirModuleData>) {
