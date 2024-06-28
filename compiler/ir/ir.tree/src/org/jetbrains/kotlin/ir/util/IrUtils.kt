@@ -1631,3 +1631,13 @@ fun IrFunctionAccessExpression.receiverAndArgs(): List<IrExpression> {
 
 val IrFunction.propertyIfAccessor: IrDeclaration
     get() = (this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner ?: this
+
+/**
+ * Whether this declaration (or its corresponding property if it's a property accessor) has the [PublishedApi] annotation.
+ */
+fun IrDeclaration.isPublishedApi(): Boolean =
+    hasAnnotation(StandardClassIds.Annotations.PublishedApi) ||
+            (this as? IrSimpleFunction)
+                ?.correspondingPropertySymbol
+                ?.owner
+                ?.hasAnnotation(StandardClassIds.Annotations.PublishedApi) ?: false
