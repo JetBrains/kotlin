@@ -47,6 +47,8 @@ import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.createParameterDeclarations
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
@@ -1472,10 +1474,10 @@ internal inline fun <reified FD : FirDeclaration, reified IS : IrSymbol> Map<FD,
     }*/
 }
 
-private fun FirValueParameter.getTypeOrTypeParameterId() =
+private fun FirValueParameter.getTypeOrTypeParameterId(): Pair<String?, Pair<ClassId?, CallableId?>?> =
     when (val type = returnTypeRef.coneType) {
         is ConeTypeParameterType -> null to type.lookupTag.typeParameterSymbol.fir.getContaininingId()
-        else -> type to null
+        else -> (type.classId?.toString() ?: type.toString()) to null
     }
 
 private inline fun <reified FF : FirFunction, reified IS : IrSymbol> Map<FF, IS>.getCachedPairByCommonFunction(
