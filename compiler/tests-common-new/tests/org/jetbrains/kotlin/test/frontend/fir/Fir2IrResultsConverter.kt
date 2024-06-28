@@ -16,6 +16,10 @@ import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 
+@RequiresOptIn("Please use common converter `Fir2IrResultsConverter` instead")
+annotation class InternalFir2IrConverterAPI
+
+@OptIn(InternalFir2IrConverterAPI::class)
 class Fir2IrResultsConverter(
     testServices: TestServices
 ) : Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>(

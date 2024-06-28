@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.test.frontend.fir.handlers.firDiagnosticCollectorSer
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 
-abstract class Fir2IrJsWasmResultsConverter(testServices: TestServices) : AbstractFir2IrResultsConverter(testServices) {
+internal abstract class Fir2IrJsWasmResultsConverter(testServices: TestServices) : AbstractFir2IrResultsConverter(testServices) {
     protected abstract val artifactFactory: (
         IrModuleFragment,
         IrPluginContext,
@@ -76,7 +76,8 @@ abstract class Fir2IrJsWasmResultsConverter(testServices: TestServices) : Abstra
     }
 }
 
-class Fir2IrJsResultsConverter(testServices: TestServices) : Fir2IrJsWasmResultsConverter(testServices) {
+@InternalFir2IrConverterAPI
+internal class Fir2IrJsResultsConverter(testServices: TestServices) : Fir2IrJsWasmResultsConverter(testServices) {
     override val artifactFactory: (IrModuleFragment, IrPluginContext, List<KotlinFileSerializedData>, BaseDiagnosticsCollector, Boolean, KotlinMangler.DescriptorMangler?, KotlinMangler.IrMangler, KlibSingleFileMetadataSerializer<*>) -> IrBackendInput
         get() = IrBackendInput::JsIrAfterFrontendBackendInput
 
@@ -85,8 +86,8 @@ class Fir2IrJsResultsConverter(testServices: TestServices) : Fir2IrJsWasmResults
     }
 }
 
-
-class Fir2IrWasmResultsConverter(testServices: TestServices) : Fir2IrJsWasmResultsConverter(testServices) {
+@InternalFir2IrConverterAPI
+internal class Fir2IrWasmResultsConverter(testServices: TestServices) : Fir2IrJsWasmResultsConverter(testServices) {
     override val artifactFactory: (IrModuleFragment, IrPluginContext, List<KotlinFileSerializedData>, BaseDiagnosticsCollector, Boolean, KotlinMangler.DescriptorMangler?, KotlinMangler.IrMangler, KlibSingleFileMetadataSerializer<*>) -> IrBackendInput.WasmAfterFrontendBackendInput
         get() = IrBackendInput::WasmAfterFrontendBackendInput
 
