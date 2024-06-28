@@ -92,6 +92,9 @@ internal fun AbstractNativeSimpleTest.compileWithClang(
             add("-Wno-unused-command-line-argument")
             addAll(configurables.linkerKonanFlags)
         }
+        if (configurables.target.family.isAppleFamily && clangDistribution == ClangDistribution.Llvm) {
+            addAll(listOf("-Xlinker", "-lto_library", "-Xlinker", "KT-69382"))
+        }
         addAll(additionalClangFlags)
         add("-o")
         add(outputFile.absolutePath)
