@@ -125,7 +125,7 @@ class Npm : NpmApiExecution<NpmEnvironment> {
         val rootPackageJson = PackageJson(rootProjectName, rootProjectVersion)
         rootPackageJson.private = true
 
-        val npmProjectWorkspaces = npmProjects.map { it.npmProjectDir.getFile().relativeTo(nodeJsWorldDir).path }
+        val npmProjectWorkspaces = npmProjects.map { it.npmProjectDir.getFile().relativeTo(nodeJsWorldDir).invariantSeparatorsPath }
         val importedProjectWorkspaces =
             NpmImportedPackagesVersionResolver(npmProjects, nodeJsWorldDir).resolveAndUpdatePackages()
 
