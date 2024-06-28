@@ -156,7 +156,7 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
 
 - (id)nextObject {
   kotlin::CalledFromNativeGuard guard;
-  KRef iterator = iteratorHolder.ref<ErrorPolicy::kTerminate>();
+  KRef iterator = iteratorHolder.ref();
   if (Kotlin_Iterator_hasNext(iterator)) {
     ObjHolder holder;
     return refToObjCOrNSNull(Kotlin_Iterator_next(iterator, holder.slot()));
@@ -185,19 +185,19 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
 }
 
 -(KRef)toKotlin:(KRef*)OBJ_RESULT {
-  RETURN_OBJ(listHolder.ref<ErrorPolicy::kTerminate>());
+  RETURN_OBJ(listHolder.ref());
 }
 
 -(id)objectAtIndex:(NSUInteger)index {
   kotlin::CalledFromNativeGuard guard;
   ObjHolder kotlinValueHolder;
-  KRef kotlinValue = Kotlin_List_get(listHolder.ref<ErrorPolicy::kTerminate>(), index, kotlinValueHolder.slot());
+  KRef kotlinValue = Kotlin_List_get(listHolder.ref(), index, kotlinValueHolder.slot());
   return refToObjCOrNSNull(kotlinValue);
 }
 
 -(NSUInteger)count {
   kotlin::CalledFromNativeGuard guard;
-  return Kotlin_Collection_getSize(listHolder.ref<ErrorPolicy::kTerminate>());
+  return Kotlin_Collection_getSize(listHolder.ref());
 }
 
 @end
@@ -221,49 +221,49 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
 }
 
 -(KRef)toKotlin:(KRef*)OBJ_RESULT {
-  RETURN_OBJ(listHolder.ref<ErrorPolicy::kTerminate>());
+  RETURN_OBJ(listHolder.ref());
 }
 
 -(id)objectAtIndex:(NSUInteger)index {
   kotlin::CalledFromNativeGuard guard;
   ObjHolder kotlinValueHolder;
-  KRef kotlinValue = Kotlin_List_get(listHolder.ref<ErrorPolicy::kTerminate>(), index, kotlinValueHolder.slot());
+  KRef kotlinValue = Kotlin_List_get(listHolder.ref(), index, kotlinValueHolder.slot());
   return refToObjCOrNSNull(kotlinValue);
 }
 
 -(NSUInteger)count {
   kotlin::CalledFromNativeGuard guard;
-  return Kotlin_Collection_getSize(listHolder.ref<ErrorPolicy::kTerminate>());
+  return Kotlin_Collection_getSize(listHolder.ref());
 }
 
 - (void)insertObject:(id)anObject atIndex:(NSUInteger)index {
   kotlin::CalledFromNativeGuard guard;
   ObjHolder holder;
   KRef kotlinObject = refFromObjCOrNSNull(anObject, holder.slot());
-  Kotlin_MutableList_addObjectAtIndex(listHolder.ref<ErrorPolicy::kTerminate>(), objCIndexToKotlinOrThrow(index), kotlinObject);
+  Kotlin_MutableList_addObjectAtIndex(listHolder.ref(), objCIndexToKotlinOrThrow(index), kotlinObject);
 }
 
 - (void)removeObjectAtIndex:(NSUInteger)index {
   kotlin::CalledFromNativeGuard guard;
-  Kotlin_MutableList_removeObjectAtIndex(listHolder.ref<ErrorPolicy::kTerminate>(), objCIndexToKotlinOrThrow(index));
+  Kotlin_MutableList_removeObjectAtIndex(listHolder.ref(), objCIndexToKotlinOrThrow(index));
 }
 
 - (void)addObject:(id)anObject {
   kotlin::CalledFromNativeGuard guard;
   ObjHolder holder;
-  Kotlin_MutableCollection_addObject(listHolder.ref<ErrorPolicy::kTerminate>(), refFromObjCOrNSNull(anObject, holder.slot()));
+  Kotlin_MutableCollection_addObject(listHolder.ref(), refFromObjCOrNSNull(anObject, holder.slot()));
 }
 
 - (void)removeLastObject {
   kotlin::CalledFromNativeGuard guard;
-  Kotlin_MutableList_removeLastObject(listHolder.ref<ErrorPolicy::kTerminate>());
+  Kotlin_MutableList_removeLastObject(listHolder.ref());
 }
 
 - (void)replaceObjectAtIndex:(NSUInteger)index withObject:(id)anObject {
   kotlin::CalledFromNativeGuard guard;
   ObjHolder holder;
   KRef kotlinObject = refFromObjCOrNSNull(anObject, holder.slot());
-  Kotlin_MutableList_setObject(listHolder.ref<ErrorPolicy::kTerminate>(), objCIndexToKotlinOrThrow(index), kotlinObject);
+  Kotlin_MutableList_setObject(listHolder.ref(), objCIndexToKotlinOrThrow(index), kotlinObject);
 }
 
 @end
@@ -301,30 +301,30 @@ static inline id KSet_getElement(KRef set, id object) {
 }
 
 -(KRef)toKotlin:(KRef*)OBJ_RESULT {
-  RETURN_OBJ(setHolder.ref<ErrorPolicy::kTerminate>());
+  RETURN_OBJ(setHolder.ref());
 }
 
 -(NSUInteger) count {
   kotlin::CalledFromNativeGuard guard;
-  return Kotlin_Collection_getSize(setHolder.ref<ErrorPolicy::kTerminate>());
+  return Kotlin_Collection_getSize(setHolder.ref());
 }
 
 - (id)member:(id)object {
   kotlin::CalledFromNativeGuard guard;
-  return KSet_getElement(setHolder.ref<ErrorPolicy::kTerminate>(), object);
+  return KSet_getElement(setHolder.ref(), object);
 }
 
 // Not mandatory, just an optimization:
 - (BOOL)containsObject:(id)anObject {
   kotlin::CalledFromNativeGuard guard;
   ObjHolder holder;
-  return Kotlin_Set_contains(setHolder.ref<ErrorPolicy::kTerminate>(), refFromObjCOrNSNull(anObject, holder.slot()));
+  return Kotlin_Set_contains(setHolder.ref(), refFromObjCOrNSNull(anObject, holder.slot()));
 }
 
 - (NSEnumerator*)objectEnumerator {
   kotlin::CalledFromNativeGuard guard;
   ObjHolder holder;
-  return [KIteratorAsNSEnumerator createWithKIterator:Kotlin_Set_iterator(setHolder.ref<ErrorPolicy::kTerminate>(), holder.slot())];
+  return [KIteratorAsNSEnumerator createWithKIterator:Kotlin_Set_iterator(setHolder.ref(), holder.slot())];
 }
 @end
 
@@ -391,42 +391,42 @@ static inline id KSet_getElement(KRef set, id object) {
 }
 
 -(KRef)toKotlin:(KRef*)OBJ_RESULT {
-  RETURN_OBJ(setHolder.ref<ErrorPolicy::kTerminate>());
+  RETURN_OBJ(setHolder.ref());
 }
 
 -(NSUInteger) count {
   kotlin::CalledFromNativeGuard guard;
-  return Kotlin_Collection_getSize(setHolder.ref<ErrorPolicy::kTerminate>());
+  return Kotlin_Collection_getSize(setHolder.ref());
 }
 
 - (id)member:(id)object {
   kotlin::CalledFromNativeGuard guard;
-  return KSet_getElement(setHolder.ref<ErrorPolicy::kTerminate>(), object);
+  return KSet_getElement(setHolder.ref(), object);
 }
 
 // Not mandatory, just an optimization:
 - (BOOL)containsObject:(id)anObject {
   kotlin::CalledFromNativeGuard guard;
   ObjHolder holder;
-  return Kotlin_Set_contains(setHolder.ref<ErrorPolicy::kTerminate>(), refFromObjCOrNSNull(anObject, holder.slot()));
+  return Kotlin_Set_contains(setHolder.ref(), refFromObjCOrNSNull(anObject, holder.slot()));
 }
 
 - (NSEnumerator*)objectEnumerator {
   kotlin::CalledFromNativeGuard guard;
   ObjHolder holder;
-  return [KIteratorAsNSEnumerator createWithKIterator:Kotlin_Set_iterator(setHolder.ref<ErrorPolicy::kTerminate>(), holder.slot())];
+  return [KIteratorAsNSEnumerator createWithKIterator:Kotlin_Set_iterator(setHolder.ref(), holder.slot())];
 }
 
 - (void)addObject:(id)object {
   kotlin::CalledFromNativeGuard guard;
   ObjHolder holder;
-  Kotlin_MutableCollection_addObject(setHolder.ref<ErrorPolicy::kTerminate>(), refFromObjCOrNSNull(object, holder.slot()));
+  Kotlin_MutableCollection_addObject(setHolder.ref(), refFromObjCOrNSNull(object, holder.slot()));
 }
 
 - (void)removeObject:(id)object {
   kotlin::CalledFromNativeGuard guard;
   ObjHolder holder;
-  Kotlin_MutableCollection_removeObject(setHolder.ref<ErrorPolicy::kTerminate>(), refFromObjCOrNSNull(object, holder.slot()));
+  Kotlin_MutableCollection_removeObject(setHolder.ref(), refFromObjCOrNSNull(object, holder.slot()));
 }
 @end
 
@@ -463,7 +463,7 @@ static inline id KMap_get(KRef map, id aKey) {
 }
 
 -(KRef)toKotlin:(KRef*)OBJ_RESULT {
-  RETURN_OBJ(mapHolder.ref<ErrorPolicy::kTerminate>());
+  RETURN_OBJ(mapHolder.ref());
 }
 
 // According to documentation, initWithObjects:forKeys:count: is required to be overridden when subclassing.
@@ -471,18 +471,18 @@ static inline id KMap_get(KRef map, id aKey) {
 
 -(NSUInteger) count {
   kotlin::CalledFromNativeGuard guard;
-  return Kotlin_Map_getSize(mapHolder.ref<ErrorPolicy::kTerminate>());
+  return Kotlin_Map_getSize(mapHolder.ref());
 }
 
 - (id)objectForKey:(id)aKey {
   kotlin::CalledFromNativeGuard guard;
-  return KMap_get(mapHolder.ref<ErrorPolicy::kTerminate>(), aKey);
+  return KMap_get(mapHolder.ref(), aKey);
 }
 
 - (NSEnumerator *)keyEnumerator {
   kotlin::CalledFromNativeGuard guard;
   ObjHolder holder;
-  return [KIteratorAsNSEnumerator createWithKIterator:Kotlin_Map_keyIterator(mapHolder.ref<ErrorPolicy::kTerminate>(), holder.slot())];
+  return [KIteratorAsNSEnumerator createWithKIterator:Kotlin_Map_keyIterator(mapHolder.ref(), holder.slot())];
 }
 
 @end
@@ -539,23 +539,23 @@ static inline id KMap_get(KRef map, id aKey) {
 }
 
 -(KRef)toKotlin:(KRef*)OBJ_RESULT {
-  RETURN_OBJ(mapHolder.ref<ErrorPolicy::kTerminate>());
+  RETURN_OBJ(mapHolder.ref());
 }
 
 -(NSUInteger) count {
   kotlin::CalledFromNativeGuard guard;
-  return Kotlin_Map_getSize(mapHolder.ref<ErrorPolicy::kTerminate>());
+  return Kotlin_Map_getSize(mapHolder.ref());
 }
 
 - (id)objectForKey:(id)aKey {
   kotlin::CalledFromNativeGuard guard;
-  return KMap_get(mapHolder.ref<ErrorPolicy::kTerminate>(), aKey);
+  return KMap_get(mapHolder.ref(), aKey);
 }
 
 - (NSEnumerator *)keyEnumerator {
   kotlin::CalledFromNativeGuard guard;
   ObjHolder holder;
-  return [KIteratorAsNSEnumerator createWithKIterator:Kotlin_Map_keyIterator(mapHolder.ref<ErrorPolicy::kTerminate>(), holder.slot())];
+  return [KIteratorAsNSEnumerator createWithKIterator:Kotlin_Map_keyIterator(mapHolder.ref(), holder.slot())];
 }
 
 - (void)setObject:(id)anObject forKey:(id<NSCopying>)aKey {
@@ -568,7 +568,7 @@ static inline id KMap_get(KRef map, id aKey) {
 
     KRef kotlinValue = refFromObjCOrNSNull(anObject, valueHolder.slot());
 
-    Kotlin_MutableMap_set(mapHolder.ref<ErrorPolicy::kTerminate>(), kotlinKey, kotlinValue);
+    Kotlin_MutableMap_set(mapHolder.ref(), kotlinKey, kotlinValue);
   }
   objc_release(keyCopy);
 }
@@ -578,7 +578,7 @@ static inline id KMap_get(KRef map, id aKey) {
   ObjHolder holder;
   KRef kotlinKey = refFromObjCOrNSNull(aKey, holder.slot());
 
-  Kotlin_MutableMap_remove(mapHolder.ref<ErrorPolicy::kTerminate>(), kotlinKey);
+  Kotlin_MutableMap_remove(mapHolder.ref(), kotlinKey);
 }
 
 @end

@@ -12,22 +12,12 @@
 #include "Memory.h"
 #include "concurrent/Mutex.hpp"
 
-// TODO: Generalize for uses outside this file.
-enum class ErrorPolicy {
-  kIgnore,  // Ignore any errors. (i.e. unsafe mode)
-  kDefaultValue,  // Return the default value from the function when an error happens.
-  kThrow,  // Throw a Kotlin exception when an error happens. The exact exception is chosen by the callee.
-  kTerminate,  // Terminate immediately when an error happens.
-};
-
 class KRefSharedHolder {
  public:
   void initLocal(ObjHeader* obj);
 
   void init(ObjHeader* obj);
 
-  // Error if called from the wrong worker with non-frozen obj_.
-  template <ErrorPolicy errorPolicy>
   ObjHeader* ref() const;
 
   void dispose();
@@ -36,10 +26,7 @@ class KRefSharedHolder {
 
  private:
   ObjHeader* obj_;
-  union {
-    ForeignRefContext context_; // Legacy MM.
-    kotlin::mm::RawSpecialRef* ref_; // New MM.
-  };
+  kotlin::mm::RawSpecialRef* ref_;
 };
 
 static_assert(std::is_trivially_destructible_v<KRefSharedHolder>, "KRefSharedHolder destructor is not guaranteed to be called.");
@@ -53,24 +40,14 @@ class BackRefFromAssociatedObject {
   // Returns true if initialized as permanent.
   bool initWithExternalRCRef(void* ref) noexcept;
 
-  // Error if refCount is zero and it's called from the wrong worker with non-frozen obj_.
-  template <ErrorPolicy errorPolicy>
   void addRef();
 
-  // Error if called from the wrong worker with non-frozen obj_.
-  template <ErrorPolicy errorPolicy>
   bool tryAddRef();
 
   void releaseRef();
 
-  // This does nothing with the new MM.
-  void detach();
-
-  // This does nothing with legacy MM.
   void dealloc();
 
-  // Error if called from the wrong worker with non-frozen obj_.
-  template <ErrorPolicy errorPolicy>
   ObjHeader* ref() const;
 
   ObjHeader* refPermanent() const;
@@ -80,15 +57,10 @@ class BackRefFromAssociatedObject {
  private:
   union {
     struct {
-      ObjHeader* obj_; // May be null before [initAndAddRef] or after [detach].
-      ForeignRefContext context_;
-      volatile int refCount;
-    }; // Legacy MM
-    struct {
       kotlin::mm::RawSpecialRef* ref_;
       kotlin::ManuallyScoped<kotlin::RWSpinLock<kotlin::MutexThreadStateHandling::kIgnore>> deallocMutex_;
-    }; // New MM. Regular object.
-    ObjHeader* permanentObj_; // New MM. Permanent object.
+    }; // Regular object.
+    ObjHeader* permanentObj_; // Permanent object.
   };
 };
 

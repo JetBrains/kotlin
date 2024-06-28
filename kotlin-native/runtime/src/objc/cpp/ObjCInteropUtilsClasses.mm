@@ -31,7 +31,7 @@
 }
 
 -(KRef)ref {
-  return refHolder.ref<ErrorPolicy::kTerminate>();
+  return refHolder.ref();
 }
 
 -(void)dealloc {

@@ -8,7 +8,6 @@
 #include "Cleaner.h"
 #include "Memory.h"
 #include "Types.h"
-#include "WorkerBoundReference.h"
 
 using namespace kotlin;
 

@@ -25,16 +25,11 @@ void KRefSharedHolder::init(ObjHeader* obj) {
     obj_ = obj;
 }
 
-template <ErrorPolicy errorPolicy>
 ObjHeader* KRefSharedHolder::ref() const {
     AssertThreadState(ThreadState::kRunnable);
     // ref_ may be null if created with initLocal.
     return obj_;
 }
-
-template ObjHeader* KRefSharedHolder::ref<ErrorPolicy::kDefaultValue>() const;
-template ObjHeader* KRefSharedHolder::ref<ErrorPolicy::kThrow>() const;
-template ObjHeader* KRefSharedHolder::ref<ErrorPolicy::kTerminate>() const;
 
 void KRefSharedHolder::dispose() {
     // Handles the case when it is not initialized. See [KotlinMutableSet/Dictionary dealloc].
@@ -68,15 +63,10 @@ bool BackRefFromAssociatedObject::initWithExternalRCRef(void* ref) noexcept {
     return false;
 }
 
-template <ErrorPolicy errorPolicy>
 void BackRefFromAssociatedObject::addRef() {
     mm::ObjCBackRef::reinterpret(ref_).retain();
 }
 
-template void BackRefFromAssociatedObject::addRef<ErrorPolicy::kThrow>();
-template void BackRefFromAssociatedObject::addRef<ErrorPolicy::kTerminate>();
-
-template <ErrorPolicy errorPolicy>
 bool BackRefFromAssociatedObject::tryAddRef() {
     // Only this method can be called in parallel with dealloc.
     std::shared_lock guard(*deallocMutex_, std::try_to_lock);
@@ -89,15 +79,8 @@ bool BackRefFromAssociatedObject::tryAddRef() {
     return mm::ObjCBackRef::reinterpret(ref_).tryRetain();
 }
 
-template bool BackRefFromAssociatedObject::tryAddRef<ErrorPolicy::kThrow>();
-template bool BackRefFromAssociatedObject::tryAddRef<ErrorPolicy::kTerminate>();
-
 void BackRefFromAssociatedObject::releaseRef() {
     mm::ObjCBackRef::reinterpret(ref_).release();
-}
-
-void BackRefFromAssociatedObject::detach() {
-    RuntimeFail("Legacy MM only");
 }
 
 void BackRefFromAssociatedObject::dealloc() {
@@ -106,14 +89,9 @@ void BackRefFromAssociatedObject::dealloc() {
     std::move(mm::ObjCBackRef::reinterpret(ref_)).dispose();
 }
 
-template <ErrorPolicy errorPolicy>
 ObjHeader* BackRefFromAssociatedObject::ref() const {
     return *mm::ObjCBackRef::reinterpret(ref_);
 }
-
-template ObjHeader* BackRefFromAssociatedObject::ref<ErrorPolicy::kDefaultValue>() const;
-template ObjHeader* BackRefFromAssociatedObject::ref<ErrorPolicy::kThrow>() const;
-template ObjHeader* BackRefFromAssociatedObject::ref<ErrorPolicy::kTerminate>() const;
 
 ObjHeader* BackRefFromAssociatedObject::refPermanent() const {
     return permanentObj_;

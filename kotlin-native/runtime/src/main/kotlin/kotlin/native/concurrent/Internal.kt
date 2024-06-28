@@ -84,11 +84,6 @@ internal fun ThrowWrongWorkerOrAlreadyTerminated(): Unit =
 
 @ExportForCppRuntime
 @ObsoleteWorkersApi
-internal fun ThrowCannotTransferOwnership(): Unit =
-        throw IllegalStateException("Unable to transfer object: it is still owned elsewhere")
-
-@ExportForCppRuntime
-@ObsoleteWorkersApi
 internal fun ThrowFutureInvalidState(): Unit =
         throw IllegalStateException("Future is in an invalid state")
 
