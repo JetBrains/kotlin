@@ -13,9 +13,9 @@ fun KtObjCExportSession.objCBaseDeclarations(): List<ObjCTopLevel> {
     return objCBaseDeclarations(
         topLevelNamePrefix = configuration.frameworkName.orEmpty(),
         objCNameOfAny = getDefaultSuperClassOrProtocolName(),
-        objCNameOfNumber = "Number".getObjCKotlinStdlibClassOrProtocolName(),
-        objCNameOfMutableMap = "MutableDictionary".getObjCKotlinStdlibClassOrProtocolName(),
-        objCNameOfMutableSet = "MutableSet".getObjCKotlinStdlibClassOrProtocolName(),
-        objCNameForNumberBox = { classId -> classId.shortClassName.asString().getObjCKotlinStdlibClassOrProtocolName() }
+        objCNameOfNumber = getObjCKotlinStdlibClassOrProtocolName("Number"),
+        objCNameOfMutableMap = getObjCKotlinStdlibClassOrProtocolName("MutableDictionary"),
+        objCNameOfMutableSet = getObjCKotlinStdlibClassOrProtocolName("MutableSet"),
+        objCNameForNumberBox = { classId -> getObjCKotlinStdlibClassOrProtocolName(classId.shortClassName.asString()) }
     )
 }

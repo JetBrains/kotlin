@@ -11,9 +11,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.backend.konan.descriptors.arrayTypes
 
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-internal val KaCallableSymbol.isArrayConstructor: Boolean
-    get() = this is KaConstructorSymbol && containingDeclaration
-        ?.let { containingSymbol -> containingSymbol as? KaClassSymbol }
-        ?.let { classSymbol -> classSymbol.classId?.asFqNameString() in arrayTypes } ?: false
+internal fun KaSession.isArrayConstructor(symbol: KaCallableSymbol): Boolean = symbol is KaConstructorSymbol && symbol.containingDeclaration
+    ?.let { containingSymbol -> containingSymbol as? KaClassSymbol }
+    ?.let { classSymbol -> classSymbol.classId?.asFqNameString() in arrayTypes } ?: false

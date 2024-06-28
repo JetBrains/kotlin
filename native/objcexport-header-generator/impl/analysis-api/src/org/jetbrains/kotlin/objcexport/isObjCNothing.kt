@@ -7,7 +7,4 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
  * Unlike AA, descriptors do verify nullability [org.jetbrains.kotlin.builtins.KotlinBuiltIns.isNothing]
  * See K1 usage [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportMapper.bridgeReturnType]
  */
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-val KaType.isObjCNothing: Boolean
-    get() = isNothingType && !canBeNull
+fun KaSession.isObjCNothing(type: KaType): Boolean = type.isNothingType && !type.canBeNull

@@ -20,7 +20,7 @@ class GetObjCDocumentedAnnotationsTest(
     fun `test - no annotation present`() {
         val file = inlineSourceCodeAnalysis.createKtFile("class Foo")
         analyze(file) {
-            val foo = file.getClassOrFail("Foo")
+            val foo = getClassOrFail(file, "Foo")
             val objCDocumentedAnnotations = foo.getObjCDocumentedAnnotations()
             if (objCDocumentedAnnotations.isNotEmpty())
                 fail("Expected no 'ObjC Documented Annotation present, Found. $objCDocumentedAnnotations")
@@ -41,7 +41,7 @@ class GetObjCDocumentedAnnotationsTest(
         )
 
         analyze(file) {
-            val foo = file.getClassOrFail("Foo")
+            val foo = getClassOrFail(file, "Foo")
             val objCDocumentedAnnotations = foo.getObjCDocumentedAnnotations()
             if (objCDocumentedAnnotations.size != 1)
                 fail("Expected single documented annotation. Found: $objCDocumentedAnnotations")
@@ -67,7 +67,7 @@ class GetObjCDocumentedAnnotationsTest(
         )
 
         analyze(file) {
-            val foo = file.getClassOrFail("Foo")
+            val foo = getClassOrFail(file, "Foo")
             val objCDocumentedAnnotations = foo.getObjCDocumentedAnnotations()
             if (objCDocumentedAnnotations.size != 1)
                 fail("Expected single documented annotation. Found: $objCDocumentedAnnotations")

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
@@ -17,26 +16,23 @@ import org.jetbrains.kotlin.name.Name
  * to construct the functions manually. Potentially, there is a way to get those functions from
  * the Analysis API by requesting the combined member scope and looking for [KtSymbolOrigin.SOURCE_MEMBER_GENERATED].
  */
-context(KaSession, KtObjCExportSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-internal fun KaClassSymbol.translateEnumMembers(): List<ObjCExportStub> {
-    if (classKind != KaClassKind.ENUM_CLASS) return emptyList()
-    return getEnumEntries() + listOf(getEnumValuesMethod(), getEnumEntriesProperty())
+internal fun ObjCExportContext.translateEnumMembers(symbol: KaClassSymbol): List<ObjCExportStub> {
+    if (symbol.classKind != KaClassKind.ENUM_CLASS) return emptyList()
+    return getEnumEntries(symbol) + listOf(getEnumValuesMethod(symbol), getEnumEntriesProperty(symbol))
 }
 
-context(KaSession, KtObjCExportSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-private fun KaClassSymbol.getEnumEntries(): List<ObjCProperty> {
-    val staticMembers = this.staticDeclaredMemberScope.callables.toList()
+private fun ObjCExportContext.getEnumEntries(symbol: KaClassSymbol): List<ObjCProperty> {
+
+    val staticMembers = with(kaSession) { symbol.staticDeclaredMemberScope }.callables.toList()
     return staticMembers.filterIsInstance<KaEnumEntrySymbol>().map { entry ->
 
-        val entryName = entry.getEnumEntryName(false)
-        val swiftName = entry.getEnumEntryName(true)
+        val entryName = getEnumEntryName(entry, false)
+        val swiftName = getEnumEntryName(entry, true)
         ObjCProperty(
             name = entryName,
             comment = null,
             origin = null,
-            type = entry.returnType.mapToReferenceTypeIgnoringNullability(),
+            type = mapToReferenceTypeIgnoringNullability(entry.returnType),
             propertyAttributes = listOf("class", "readonly"),
             declarationAttributes = listOf(swiftNameAttribute(swiftName))
         )
@@ -46,14 +42,13 @@ private fun KaClassSymbol.getEnumEntries(): List<ObjCProperty> {
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.buildEnumValuesMethod]
  */
-context(KaSession, KtObjCExportSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-private fun KaClassSymbol.getEnumValuesMethod(): ObjCMethod {
-    val valuesFunctionSymbol = staticMemberScope.callables(Name.identifier("values")).firstOrNull()
+private fun ObjCExportContext.getEnumValuesMethod(symbol: KaClassSymbol): ObjCMethod {
+    val valuesFunctionSymbol = with(kaSession) { symbol.staticMemberScope }.callables(Name.identifier("values")).firstOrNull()
+    val returnType = valuesFunctionSymbol?.returnType
     return ObjCMethod(
         comment = null,
         isInstanceMethod = false,
-        returnType = valuesFunctionSymbol?.returnType?.translateToObjCReferenceType() ?: ObjCIdType,
+        returnType = if (returnType == null) ObjCIdType else translateToObjCReferenceType(returnType),
         selectors = listOf("values"),
         parameters = emptyList(),
         attributes = listOf(swiftNameAttribute("values()")),
@@ -64,15 +59,14 @@ private fun KaClassSymbol.getEnumValuesMethod(): ObjCMethod {
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.buildEnumEntriesProperty]
  */
-context(KaSession, KtObjCExportSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-private fun KaClassSymbol.getEnumEntriesProperty(): ObjCProperty {
-    val entriesSymbol = staticMemberScope.callables(Name.identifier("entries")).firstOrNull()
+private fun ObjCExportContext.getEnumEntriesProperty(symbol: KaClassSymbol): ObjCProperty {
+    val entriesSymbol = with(kaSession) { symbol.staticMemberScope }.callables(Name.identifier("entries")).firstOrNull()
 
+    val returnType = entriesSymbol?.returnType
     return ObjCProperty(
         name = "entries",
         comment = null,
-        type = entriesSymbol?.returnType?.translateToObjCReferenceType() ?: ObjCIdType,
+        type = if (returnType == null) ObjCIdType else translateToObjCReferenceType(returnType),
         propertyAttributes = listOf("class", "readonly"),
         declarationAttributes = listOf(swiftNameAttribute("entries")),
         origin = null,
@@ -81,11 +75,9 @@ private fun KaClassSymbol.getEnumEntriesProperty(): ObjCProperty {
     )
 }
 
-context(KaSession, KtObjCExportSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-private fun KaEnumEntrySymbol.getEnumEntryName(forSwift: Boolean): String {
+private fun ObjCExportContext.getEnumEntryName(symbol: KaEnumEntrySymbol, forSwift: Boolean): String {
 
-    val propertyName: String = getObjCPropertyName().run {
+    val propertyName: String = getObjCPropertyName(symbol).run {
         when {
             forSwift -> this.swiftName
             else -> this.objCName

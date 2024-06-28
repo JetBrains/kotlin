@@ -33,7 +33,7 @@ class ObjCReceiverTypeTest(
 
         analyze(file) {
 
-            val outerClass = file.getClassOrFail("Outer")
+            val outerClass = getClassOrFail(file, "Outer")
             val innerClass = outerClass.memberScope.getClassOrFail("Inner")
             val innerClassConstructor = innerClass.memberScope.constructors.first()
 
@@ -58,7 +58,7 @@ class ObjCReceiverTypeTest(
 
         analyze(file) {
 
-            val outerClass = file.getClassOrFail("Outer")
+            val outerClass = getClassOrFail(file, "Outer")
             val innerClass = outerClass.memberScope.getClassOrFail("Inner")
             val foo = innerClass.memberScope.getFunctionOrFail("foo")
 
@@ -84,7 +84,7 @@ class ObjCReceiverTypeTest(
 
         analyze(file) {
 
-            val outerClass = file.getClassOrFail("Outer")
+            val outerClass = getClassOrFail(file, "Outer")
             val innerClass = outerClass.memberScope.getClassOrFail("Inner")
             val getter = innerClass.memberScope.getPropertyOrFail("prop").getter
 
@@ -111,7 +111,7 @@ class ObjCReceiverTypeTest(
 
         analyze(file) {
 
-            val outerClass = file.getClassOrFail("Outer")
+            val outerClass = getClassOrFail(file, "Outer")
             val innerClass = outerClass.memberScope.getClassOrFail("Inner")
             val setter = innerClass.memberScope.getPropertyOrFail("prop").setter
 
@@ -139,7 +139,7 @@ class ObjCReceiverTypeTest(
 
         analyze(file) {
 
-            val fooClass = file.getClassOrFail("Foo")
+            val fooClass = getClassOrFail(file, "Foo")
             val foo = fooClass.memberScope.getFunctionOrFail("foo")
             val setter = fooClass.memberScope.getPropertyOrFail("prop").setter
             val getter = fooClass.memberScope.getPropertyOrFail("prop").getter

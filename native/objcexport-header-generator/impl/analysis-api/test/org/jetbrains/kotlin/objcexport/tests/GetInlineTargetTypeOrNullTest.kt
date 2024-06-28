@@ -24,7 +24,7 @@ class GetInlineTargetTypeOrNullTest(
     fun `test - no inlined class`() {
         val file = inlineSourceCodeAnalysis.createKtFile("class Foo")
         analyze(file) {
-            val foo = file.getClassOrFail("Foo")
+            val foo = getClassOrFail(file, "Foo")
             assertNull(foo.getInlineTargetTypeOrNull())
         }
     }
@@ -38,7 +38,7 @@ class GetInlineTargetTypeOrNullTest(
         )
 
         analyze(file) {
-            val foo = file.getClassOrFail("Foo")
+            val foo = getClassOrFail(file, "Foo")
             val inlineTargetType = assertNotNull(foo.getInlineTargetTypeOrNull())
             assertEquals(DefaultTypeClassIds.INT, inlineTargetType.classIdOrFail())
         }
@@ -56,7 +56,7 @@ class GetInlineTargetTypeOrNullTest(
         )
 
         analyze(file) {
-            val foo = file.getPropertyOrFail("foo")
+            val foo = getPropertyOrFail(file, "foo")
             assertEquals(DefaultTypeClassIds.INT, foo.returnType.getInlineTargetTypeOrNull().classIdOrFail())
         }
     }
@@ -73,7 +73,7 @@ class GetInlineTargetTypeOrNullTest(
         )
 
         analyze(file) {
-            val foo = file.getPropertyOrFail("foo")
+            val foo = getPropertyOrFail(file, "foo")
             assertEquals(DefaultTypeClassIds.INT, foo.returnType.getInlineTargetTypeOrNull().classIdOrFail())
             assertTrue(foo.returnType.getInlineTargetTypeOrNull()?.isMarkedNullable ?: false)
         }

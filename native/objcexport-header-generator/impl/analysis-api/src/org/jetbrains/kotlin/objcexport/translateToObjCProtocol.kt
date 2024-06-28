@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCComment
@@ -16,38 +15,34 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.getDeclaredSuperInterfac
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isObjCBaseCallable
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
 
-context(KaSession, KtObjCExportSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-fun KaClassSymbol.translateToObjCProtocol(): ObjCProtocol? {
+fun ObjCExportContext.translateToObjCProtocol(symbol: KaClassSymbol): ObjCProtocol? {
     // TODO: check if this symbol shall be exposed in the first place
-    require(classKind == KaClassKind.INTERFACE)
-    if (!isVisibleInObjC()) return null
+    require(symbol.classKind == KaClassKind.INTERFACE)
+    if (!kaSession.isVisibleInObjC(symbol)) return null
 
     // TODO: Check error type!
-    val name = getObjCClassOrProtocolName()
+    val name = getObjCClassOrProtocolName(symbol)
 
-    val members = getCallableSymbolsForObjCMemberTranslation()
-        .filter { it.isObjCBaseCallable() }
+    val members = kaSession.getCallableSymbolsForObjCMemberTranslation(symbol)
+        .filter { kaSession.isObjCBaseCallable(it) }
         .sortedWith(StableCallableOrder)
-        .flatMap { it.translateToObjCExportStub() }
+        .flatMap { translateToObjCExportStub(it) }
 
-    val comment: ObjCComment? = annotations.translateToObjCComment()
+    val comment: ObjCComment? = kaSession.translateToObjCComment(symbol.annotations)
 
     return ObjCProtocolImpl(
         name = name.objCName,
         comment = comment,
-        origin = getObjCExportStubOrigin(),
+        origin = kaSession.getObjCExportStubOrigin(symbol),
         attributes = name.toNameAttributes(),
-        superProtocols = superProtocols(),
+        superProtocols = superProtocols(symbol),
         members = members
     )
 }
 
-context(KaSession, KtObjCExportSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-internal fun KaClassSymbol.superProtocols(): List<String> {
-    return getDeclaredSuperInterfaceSymbols()
+internal fun ObjCExportContext.superProtocols(symbol: KaClassSymbol): List<String> {
+    return kaSession.getDeclaredSuperInterfaceSymbols(symbol)
         .filter { it.isVisibleInObjC() }
-        .map { superInterface -> superInterface.getObjCClassOrProtocolName().objCName }
+        .map { superInterface -> getObjCClassOrProtocolName(superInterface).objCName }
         .toList()
 }

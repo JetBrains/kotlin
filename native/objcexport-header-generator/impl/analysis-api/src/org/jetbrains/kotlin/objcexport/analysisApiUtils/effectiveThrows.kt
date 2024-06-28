@@ -39,5 +39,5 @@ context(KaSession)
 internal val KaFunctionSymbol.effectiveThrows: List<ClassId>
     get() {
         allOverriddenSymbols.firstOrNull()?.let { return (it as KaFunctionSymbol).effectiveThrows }
-        return definedThrows
+        return getDefinedThrows()
     }

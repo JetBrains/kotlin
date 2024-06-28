@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.name.ClassId
@@ -15,15 +14,15 @@ import org.jetbrains.kotlin.objcexport.extras.requiresForwardDeclaration
 import org.jetbrains.kotlin.objcexport.extras.throwsAnnotationClassIds
 
 
-context(KaSession, KtObjCExportSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-fun translateToObjCHeader(
+fun ObjCExportContext.translateToObjCHeader(
     files: List<KtObjCExportFile>,
     withObjCBaseDeclarations: Boolean = true,
 ): ObjCHeader {
     val generator = KtObjCExportHeaderGenerator(withObjCBaseDeclarations)
-    generator.translateAll(files.sortedWith(StableFileOrder))
-    return generator.buildObjCHeader()
+    return with(generator) {
+        translateAll(files.sortedWith(StableFileOrder))
+        buildObjCHeader()
+    }
 }
 
 /**
@@ -70,9 +69,8 @@ private class KtObjCExportHeaderGenerator(
      */
     private val objCClassForwardDeclarations = mutableSetOf<String>()
 
-    context(KaSession, KtObjCExportSession)
-    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-    fun translateAll(files: List<KtObjCExportFile>) {
+
+    fun ObjCExportContext.translateAll(files: List<KtObjCExportFile>) {
         /**
          * Step 1: Translate classifiers (class, interface, object, ...)
          */
@@ -97,42 +95,36 @@ private class KtObjCExportHeaderGenerator(
         }
     }
 
-    context(KaSession, KtObjCExportSession)
-    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-    private fun translateClass(classId: ClassId) {
-        val classOrObjectSymbol = findClass(classId) ?: return
+
+    private fun ObjCExportContext.translateClass(classId: ClassId) {
+        val classOrObjectSymbol = kaSession.findClass(classId) ?: return
         translateClassOrObjectSymbol(classOrObjectSymbol)
     }
 
-    context(KaSession, KtObjCExportSession)
-    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-    private fun translateFileClassifiers(file: KtObjCExportFile) {
-        val resolvedFile = file.resolve()
+    private fun ObjCExportContext.translateFileClassifiers(file: KtObjCExportFile) {
+        val resolvedFile = with(file) { kaSession.resolve() }
         resolvedFile.classifierSymbols.sortedWith(StableClassifierOrder).forEach { classOrObjectSymbol ->
             translateClassOrObjectSymbol(classOrObjectSymbol)
         }
     }
 
-    context(KaSession, KtObjCExportSession)
-    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-    private fun translateFileFacades(file: KtObjCExportFile) {
-        val resolvedFile = file.resolve()
+    private fun ObjCExportContext.translateFileFacades(file: KtObjCExportFile) {
+        val resolvedFile = with(file) { kaSession.resolve() }
 
-        resolvedFile.translateToObjCExtensionFacades().forEach { facade ->
+        translateToObjCExtensionFacades(resolvedFile).forEach { facade ->
             objCStubs += facade
             enqueueDependencyClasses(facade)
             objCClassForwardDeclarations += facade.name
         }
 
-        resolvedFile.translateToObjCTopLevelFacade()?.let { topLevelFacade ->
+        translateToObjCTopLevelFacade(resolvedFile)?.let { topLevelFacade ->
             objCStubs += topLevelFacade
             enqueueDependencyClasses(topLevelFacade)
         }
     }
 
-    context(KaSession, KtObjCExportSession)
-    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-    private fun translateClassOrObjectSymbol(symbol: KaClassSymbol): ObjCClass? {
+
+    private fun ObjCExportContext.translateClassOrObjectSymbol(symbol: KaClassSymbol): ObjCClass? {
         /* No classId, no stubs ¯\_(ツ)_/¯ */
         val classId = symbol.classId ?: return null
 
@@ -143,7 +135,7 @@ private class KtObjCExportHeaderGenerator(
          * Translate: Note: Even if the result was 'null', the classId will still be marked as 'handled' by adding it
          * to the [objCStubsByClassId] index.
          */
-        val objCClass = symbol.translateToObjCExportStub()
+        val objCClass = translateToObjCExportStub(symbol)
         objCStubsByClassId[classId] = objCClass
         objCClass ?: return null
 
@@ -153,13 +145,13 @@ private class KtObjCExportHeaderGenerator(
         2) Super interface / superclass symbol export stubs (result of translation) have to be present in the stubs list before the
         original stub
          */
-        symbol.getDeclaredSuperInterfaceSymbols().filter { it.isVisibleInObjC() }.forEach { superInterfaceSymbol ->
+        kaSession.getDeclaredSuperInterfaceSymbols(symbol).filter { it.isVisibleInObjC() }.forEach { superInterfaceSymbol ->
             translateClassOrObjectSymbol(superInterfaceSymbol)?.let {
                 objCProtocolForwardDeclarations += it.name
             }
         }
 
-        symbol.getSuperClassSymbolNotAny()?.takeIf { it.isVisibleInObjC() }?.let { superClassSymbol ->
+        kaSession.getSuperClassSymbolNotAny(symbol)?.takeIf { it.isVisibleInObjC() }?.let { superClassSymbol ->
             translateClassOrObjectSymbol(superClassSymbol)?.let {
                 objCClassForwardDeclarations += it.name
             }
@@ -229,9 +221,7 @@ private class KtObjCExportHeaderGenerator(
         return ObjCClassForwardDeclaration(className)
     }
 
-    context(KaSession, KtObjCExportSession)
-    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-    fun buildObjCHeader(): ObjCHeader {
+    fun ObjCExportContext.buildObjCHeader(): ObjCHeader {
         val hasErrorTypes = objCStubs.hasErrorTypes()
 
         val protocolForwardDeclarations = objCProtocolForwardDeclarations.toSet()
@@ -240,8 +230,8 @@ private class KtObjCExportHeaderGenerator(
             .map { className -> resolveObjCClassForwardDeclaration(className) }
             .toSet()
 
-        val stubs = (if (withObjCBaseDeclarations) objCBaseDeclarations() else emptyList()).plus(objCStubs)
-            .plus(listOfNotNull(errorInterface.takeIf { hasErrorTypes }))
+        val stubs = (if (withObjCBaseDeclarations) exportSession.objCBaseDeclarations() else emptyList()).plus(objCStubs)
+            .plus(listOfNotNull(exportSession.errorInterface.takeIf { hasErrorTypes }))
 
         return ObjCHeader(
             stubs = stubs,

@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.objcexport.tests
 
 import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.objcexport.needsCompanionProperty
+import org.jetbrains.kotlin.objcexport.getNeedsCompanionProperty
 import org.jetbrains.kotlin.objcexport.testUtils.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.objcexport.testUtils.getClassOrFail
 import org.junit.jupiter.api.Test
@@ -22,7 +22,7 @@ class NeedsCompanionPropertyTest(
         """.trimIndent()
         )
         analyze(file) {
-            assertFalse(file.getClassOrFail("NoCompanion").needsCompanionProperty)
+            assertFalse(getClassOrFail(file, "NoCompanion").getNeedsCompanionProperty())
         }
     }
 
@@ -36,7 +36,7 @@ class NeedsCompanionPropertyTest(
         """.trimIndent()
         )
         analyze(file) {
-            assertTrue(file.getClassOrFail("EmptyCompanion").needsCompanionProperty)
+            assertTrue(getClassOrFail(file, "EmptyCompanion").getNeedsCompanionProperty())
         }
     }
 
@@ -52,7 +52,7 @@ class NeedsCompanionPropertyTest(
         """.trimIndent()
         )
         analyze(file) {
-            assertTrue(file.getClassOrFail("SimpleCompanion").needsCompanionProperty)
+            assertTrue(getClassOrFail(file, "SimpleCompanion").getNeedsCompanionProperty())
         }
     }
 }

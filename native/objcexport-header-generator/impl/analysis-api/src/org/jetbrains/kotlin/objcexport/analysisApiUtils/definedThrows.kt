@@ -18,24 +18,21 @@ import org.jetbrains.kotlin.name.ClassId
  * See [effectiveThrows]
  * See K1: org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.getDefinedThrows
  */
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-internal val KaFunctionSymbol.definedThrows: List<ClassId>
-    get() {
-        if (isSuspend) return listOf(ClassId.topLevel(KonanFqNames.cancellationException))
-        if (!hasThrowsAnnotation) return emptyList()
+internal fun KaSession.getDefinedThrows(symbol: KaFunctionSymbol): List<ClassId> {
+    if (symbol.isSuspend) return listOf(ClassId.topLevel(KonanFqNames.cancellationException))
+    if (!symbol.hasThrowsAnnotation) return emptyList()
 
-        val throwsAnnotations = annotations
-            .filter { annotation -> annotation.classId?.asSingleFqName() == KonanFqNames.throws }
-            .asSequence()
+    val throwsAnnotations = symbol.annotations
+        .filter { annotation -> annotation.classId?.asSingleFqName() == KonanFqNames.throws }
+        .asSequence()
 
-        return throwsAnnotations
-            .flatMap { annotation -> annotation.arguments }
-            .map { argument -> argument.expression }
-            .filterIsInstance<KaAnnotationValue.ArrayValue>()
-            .flatMap { arrayAnnotationValue -> arrayAnnotationValue.values }
-            .filterIsInstance<KaAnnotationValue.ClassLiteralValue>()
-            .mapNotNull { it.type as? KaClassType }
-            .mapNotNull { it.classId }
-            .toList()
-    }
+    return throwsAnnotations
+        .flatMap { annotation -> annotation.arguments }
+        .map { argument -> argument.expression }
+        .filterIsInstance<KaAnnotationValue.ArrayValue>()
+        .flatMap { arrayAnnotationValue -> arrayAnnotationValue.values }
+        .filterIsInstance<KaAnnotationValue.ClassLiteralValue>()
+        .mapNotNull { it.type as? KaClassType }
+        .mapNotNull { it.classId }
+        .toList()
+}

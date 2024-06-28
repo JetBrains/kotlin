@@ -21,28 +21,26 @@ import org.jetbrains.kotlin.objcexport.*
  *
  * See K1 implementation [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportMapperKt.bridgeMethodImpl]
  */
-context(KaSession, KtObjCExportSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-internal fun KaFunctionSymbol.getFunctionMethodBridge(): MethodBridge {
+internal fun ObjCExportContext.getFunctionMethodBridge(symbol: KaFunctionSymbol): MethodBridge {
 
     val valueParameters = mutableListOf<MethodBridgeValueParameter>()
-    val isInner = (containingDeclaration as? KaNamedClassSymbol)?.isInner ?: false
+    val isInner = (with(kaSession) { symbol.containingDeclaration } as? KaNamedClassSymbol)?.isInner ?: false
 
-    this.receiverParameter?.apply {
-        valueParameters += this.type.bridgeParameter()
+    symbol.receiverParameter?.apply {
+        valueParameters += bridgeParameter(this.type)
     }
 
-    this.valueParameters.forEach {
-        valueParameters += it.returnType.bridgeParameter()
+    symbol.valueParameters.forEach {
+        valueParameters += bridgeParameter(it.returnType)
     }
 
     if (isInner) {
-        valueParameters += this.returnType.bridgeParameter()
+        valueParameters += bridgeParameter(symbol.returnType)
     }
 
-    if (isSuspend) {
+    if (symbol.isSuspend) {
         valueParameters += MethodBridgeValueParameter.SuspendCompletion(true)
-    } else if (hasThrowsAnnotation) {
+    } else if (symbol.hasThrowsAnnotation) {
         // Add error out parameter before tail block parameters. The convention allows this.
         // Placing it after would trigger https://bugs.swift.org/browse/SR-12201
         // (see also https://github.com/JetBrains/kotlin-native/issues/3825).
@@ -51,40 +49,33 @@ internal fun KaFunctionSymbol.getFunctionMethodBridge(): MethodBridge {
     }
 
     return MethodBridge(
-        bridgeReturnType(),
-        bridgeReceiverType,
+        bridgeReturnType(symbol),
+        kaSession.getBridgeReceiverType(symbol),
         valueParameters
     )
 }
 
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-internal val KaCallableSymbol.bridgeReceiverType: MethodBridgeReceiver
-    get() {
-        return if (isArrayConstructor) {
-            MethodBridgeReceiver.Factory
-        } else if (!isConstructor && isTopLevel && !isExtension) {
-            MethodBridgeReceiver.Static
-        } else {
-            MethodBridgeReceiver.Instance
-        }
+internal fun KaSession.getBridgeReceiverType(symbol: KaCallableSymbol): MethodBridgeReceiver {
+    return if (isArrayConstructor(symbol)) {
+        MethodBridgeReceiver.Factory
+    } else if (!symbol.isConstructor && symbol.isTopLevel && !symbol.isExtension) {
+        MethodBridgeReceiver.Static
+    } else {
+        MethodBridgeReceiver.Instance
     }
+}
 
 /**
  * [ObjCExportMapper.bridgeParameter]
  */
-context(KaSession, KtObjCExportSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-fun KaType.bridgeParameter(): MethodBridgeValueParameter {
-    return MethodBridgeValueParameter.Mapped(bridgeType(this))
+fun ObjCExportContext.bridgeParameter(type: KaType): MethodBridgeValueParameter {
+    return MethodBridgeValueParameter.Mapped(kaSession.bridgeType(type))
 }
 
 /**
  * [ObjCExportMapper.bridgeType]
  */
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-private fun bridgeType(
+private fun KaSession.bridgeType(
     type: KaType,
 ): TypeBridge {
     val primitiveObjCValueType = when {
@@ -147,41 +138,39 @@ private fun bridgeFunctionType(type: KaType): TypeBridge {
 /**
  * [ObjCExportMapper.bridgeReturnType]
  */
-context(KaSession, KtObjCExportSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-private fun KaCallableSymbol.bridgeReturnType(): MethodBridge.ReturnValue {
-    val sessionReturnType = exportSessionReturnType()
+private fun ObjCExportContext.bridgeReturnType(symbol: KaCallableSymbol): MethodBridge.ReturnValue {
+    val sessionReturnType = exportSession.exportSessionReturnType(symbol)
 
-    if (isArrayConstructor) {
+    if (kaSession.isArrayConstructor(symbol)) {
         return MethodBridge.ReturnValue.Instance.FactoryResult
-    } else if (isConstructor) {
+    } else if (symbol.isConstructor) {
         val result = MethodBridge.ReturnValue.Instance.InitResult
-        if (hasThrowsAnnotation) {
+        if (symbol.hasThrowsAnnotation) {
             MethodBridge.ReturnValue.WithError.ZeroForError(result, successMayBeZero = false)
         } else {
             return result
         }
-    } else if (sessionReturnType.isSuspendFunctionType) {
+    } else if (with(kaSession) { sessionReturnType.isSuspendFunctionType }) {
         return MethodBridge.ReturnValue.Suspend
     }
 
-    if (isHashCode) {
+    if (kaSession.isHashCode(symbol)) {
         return MethodBridge.ReturnValue.HashCode
     }
 
-    if (sessionReturnType.isUnitType) {
-        return successOrVoidReturnValue
+    if (with(kaSession) { sessionReturnType.isUnitType }) {
+        return symbol.successOrVoidReturnValue
     }
 
-    if (sessionReturnType.isObjCNothing && this !is KaPropertyAccessorSymbol) {
-        return successOrVoidReturnValue
+    if (kaSession.isObjCNothing(sessionReturnType) && symbol !is KaPropertyAccessorSymbol) {
+        return symbol.successOrVoidReturnValue
     }
 
-    val returnTypeBridge = bridgeType(sessionReturnType)
+    val returnTypeBridge = kaSession.bridgeType(sessionReturnType)
     val successReturnValueBridge = MethodBridge.ReturnValue.Mapped(returnTypeBridge)
 
-    return if (hasThrowsAnnotation) {
-        val canReturnZero = !returnTypeBridge.isReferenceOrPointer() || sessionReturnType.canBeNull
+    return if (symbol.hasThrowsAnnotation) {
+        val canReturnZero = !returnTypeBridge.isReferenceOrPointer() || with(kaSession) { sessionReturnType.canBeNull }
         MethodBridge.ReturnValue.WithError.ZeroForError(
             successReturnValueBridge,
             successMayBeZero = canReturnZero

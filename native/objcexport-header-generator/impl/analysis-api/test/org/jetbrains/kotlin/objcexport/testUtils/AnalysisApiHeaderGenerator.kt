@@ -39,6 +39,7 @@ object AnalysisApiHeaderGenerator : HeaderGenerator {
 
         val (module, files) = session.modulesWithFiles.entries.single()
         return analyze(module) {
+            val kaSession = this
             val exportedLibraries = module.withClosure<KaModule> { currentModule -> currentModule.allDirectDependencies().toList() }
                 .filterIsInstance<KaLibraryModule>()
                 .filter { libraryModule -> libraryModule.binaryRoots.first() in configuration.exportedDependencies }
@@ -55,10 +56,13 @@ object AnalysisApiHeaderGenerator : HeaderGenerator {
                     module == useSiteModule || module is KaLibraryModule && module in exportedLibraries
                 }
             ) {
-                translateToObjCHeader(
-                    files.map { it as KtFile }.map(::KtObjCExportFile) + exportedLibraryFiles,
-                    withObjCBaseDeclarations = configuration.withObjCBaseDeclarationStubs
-                )
+                with(ObjCExportContext(kaSession = kaSession, exportSession = this)) {
+                    translateToObjCHeader(
+                        files.map { it as KtFile }.map(::KtObjCExportFile) + exportedLibraryFiles,
+                        withObjCBaseDeclarations = configuration.withObjCBaseDeclarationStubs
+                    )
+                }
+
             }
         }
     }

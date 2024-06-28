@@ -13,41 +13,40 @@ import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isThrowable
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
 
-context(KaSession, KtObjCExportSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-fun KaClassSymbol.translateToObjCClass(): ObjCClass? {
-    require(classKind == KaClassKind.CLASS || classKind == KaClassKind.ENUM_CLASS)
-    if (!isVisibleInObjC()) return null
 
-    val enumKind = this.classKind == KaClassKind.ENUM_CLASS
-    val final = this.modality == KaSymbolModality.FINAL
+fun ObjCExportContext.translateToObjCClass(symbol: KaClassSymbol): ObjCClass? {
+    require(symbol.classKind == KaClassKind.CLASS || symbol.classKind == KaClassKind.ENUM_CLASS)
+    if (!kaSession.isVisibleInObjC(symbol)) return null
 
-    val name = getObjCClassOrProtocolName()
+    val enumKind = symbol.classKind == KaClassKind.ENUM_CLASS
+    val final = symbol.modality == KaSymbolModality.FINAL
+
+    val name = getObjCClassOrProtocolName(symbol)
     val attributes = (if (enumKind || final) listOf(OBJC_SUBCLASSING_RESTRICTED) else emptyList()) + name.toNameAttributes()
 
-    val comment: ObjCComment? = annotations.translateToObjCComment()
-    val origin = getObjCExportStubOrigin()
+    val comment: ObjCComment? = kaSession.translateToObjCComment(symbol.annotations)
+    val origin = kaSession.getObjCExportStubOrigin(symbol)
 
-    val superClass = translateSuperClass()
-    val superProtocols: List<String> = superProtocols()
+    val superClass = translateSuperClass(symbol)
+    val superProtocols: List<String> = superProtocols(symbol)
 
     val members = buildList<ObjCExportStub> {
         /* The order of members tries to replicate the K1 implementation explicitly */
-        this += translateToObjCConstructors()
+        this += translateToObjCConstructors(symbol)
 
-        if (needsCompanionProperty) {
-            this += buildCompanionProperty()
+        if (kaSession.getNeedsCompanionProperty(symbol)) {
+            this += buildCompanionProperty(symbol)
         }
 
-        this += getCallableSymbolsForObjCMemberTranslation()
+        this += kaSession.getCallableSymbolsForObjCMemberTranslation(symbol)
             .sortedWith(StableCallableOrder)
-            .flatMap { it.translateToObjCExportStub() }
+            .flatMap { translateToObjCExportStub(it) }
 
-        if (classKind == KaClassKind.ENUM_CLASS) {
-            this += translateEnumMembers()
+        if (symbol.classKind == KaClassKind.ENUM_CLASS) {
+            this += translateEnumMembers(symbol)
         }
 
-        if (isThrowable) {
+        if (kaSession.isThrowable(symbol)) {
             this += buildThrowableAsErrorMethod()
         }
     }
@@ -55,7 +54,7 @@ fun KaClassSymbol.translateToObjCClass(): ObjCClass? {
     val categoryName: String? = null
 
     @OptIn(KaExperimentalApi::class)
-    val generics: List<ObjCGenericTypeDeclaration> = typeParameters.map { typeParameter ->
+    val generics: List<ObjCGenericTypeDeclaration> = symbol.typeParameters.map { typeParameter ->
         ObjCGenericTypeParameterDeclaration(
             typeParameter.nameOrAnonymous.asString().toValidObjCSwiftIdentifier(),
             ObjCVariance.fromKotlinVariance(typeParameter.variance)
@@ -104,24 +103,20 @@ fun KaClassSymbol.translateToObjCClass(): ObjCClass? {
  * Note: Some methods like `hashCode`, `toString`, ... have predefined selectors and ObjC names.
  * @see [Predefined]
  */
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-internal fun KaClassSymbol.getCallableSymbolsForObjCMemberTranslation(): Set<KaCallableSymbol> {
-    val generatedCallableSymbols = memberScope
+internal fun KaSession.getCallableSymbolsForObjCMemberTranslation(symbol: KaClassSymbol): Set<KaCallableSymbol> {
+    val generatedCallableSymbols = symbol.memberScope
         .callables
         .filter { it.origin == KaSymbolOrigin.SOURCE_MEMBER_GENERATED }
         .toSet()
 
-    val declaredCallableSymbols = declaredMemberScope
+    val declaredCallableSymbols = symbol.declaredMemberScope
         .callables
         .toSet()
 
     return generatedCallableSymbols + declaredCallableSymbols
 }
 
-context(KaSession, KtObjCExportSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-internal fun KaClassType.getSuperClassName(): ObjCExportClassOrProtocolName? {
-    val symbol = expandedSymbol ?: return null
-    return symbol.getObjCClassOrProtocolName()
+internal fun ObjCExportContext.getSuperClassName(type: KaClassType): ObjCExportClassOrProtocolName? {
+    val symbol = with(kaSession) { type.expandedSymbol } ?: return null
+    return getObjCClassOrProtocolName(symbol)
 }

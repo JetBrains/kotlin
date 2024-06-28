@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySetterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
@@ -13,9 +12,7 @@ import org.jetbrains.kotlin.backend.konan.cKeywords
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.name.StandardClassIds
 
-context(KaSession, KtObjCExportSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-internal fun KaFunctionSymbol.translateToObjCParameters(baseMethodBridge: MethodBridge): List<ObjCParameter> {
+internal fun ObjCExportContext.translateToObjCParameters(symbol: KaFunctionSymbol, baseMethodBridge: MethodBridge): List<ObjCParameter> {
     fun unifyName(initialName: String, usedNames: Set<String>): String {
         var unique = initialName.toValidObjCSwiftIdentifier()
         while (unique in usedNames || unique in cKeywords) {
@@ -24,7 +21,7 @@ internal fun KaFunctionSymbol.translateToObjCParameters(baseMethodBridge: Method
         return unique
     }
 
-    val valueParametersAssociated = baseMethodBridge.valueParametersAssociated(this)
+    val valueParametersAssociated = valueParametersAssociated(baseMethodBridge, symbol)
 
     val parameters = mutableListOf<ObjCParameter>()
 
@@ -35,7 +32,7 @@ internal fun KaFunctionSymbol.translateToObjCParameters(baseMethodBridge: Method
             is MethodBridgeValueParameter.Mapped -> {
                 if (parameter == null) return@forEach
                 when {
-                    this is KaPropertySetterSymbol -> {
+                    symbol is KaPropertySetterSymbol -> {
                         if (parameter.isReceiver) "receiver"
                         else "value"
                     }
@@ -57,9 +54,10 @@ internal fun KaFunctionSymbol.translateToObjCParameters(baseMethodBridge: Method
                 val returnType = parameter!!.type
                 if (parameter.isVararg) {
                     //vararg is a special case, [parameter.returnType] is T, we need Array<T>
-                    buildClassType(StandardClassIds.Array) { argument(parameter.type) }.translateToObjCType(bridge.bridge)
+                    val classType = kaSession.buildClassType(StandardClassIds.Array) { argument(parameter.type) }
+                    translateToObjCType(classType, bridge.bridge)
                 } else {
-                    returnType.translateToObjCType(bridge.bridge)
+                    translateToObjCType(returnType, bridge.bridge)
                 }
             }
             MethodBridgeValueParameter.ErrorOutParameter ->
@@ -69,7 +67,7 @@ internal fun KaFunctionSymbol.translateToObjCParameters(baseMethodBridge: Method
                 val resultType = if (bridge.useUnitCompletion) {
                     null
                 } else {
-                    when (val type = this.returnType.translateToObjCReferenceType()) {
+                    when (val type = translateToObjCReferenceType(symbol.returnType)) {
                         is ObjCNonNullReferenceType -> ObjCNullableReferenceType(type, isNullableResult = false)
                         is ObjCNullableReferenceType -> ObjCNullableReferenceType(type.nonNullType, isNullableResult = true)
                     }

@@ -5,38 +5,38 @@
 
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCClass
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportStub
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-context(KaSession, KtObjCExportSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-internal fun KaCallableSymbol.translateToObjCExportStub(): List<ObjCExportStub> {
+internal fun ObjCExportContext.translateToObjCExportStub(symbol: KaCallableSymbol): List<ObjCExportStub> {
     val result = mutableListOf<ObjCExportStub>()
-    when (this) {
+    when (symbol) {
         is KaPropertySymbol -> {
-            if (isObjCProperty) {
-                result.addIfNotNull(translateToObjCProperty())
+            if (kaSession.isObjCProperty(symbol)) {
+                result.addIfNotNull(translateToObjCProperty(symbol))
             } else {
-                result.addIfNotNull(this.getter?.translateToObjCMethod())
-                result.addIfNotNull(this.setter?.translateToObjCMethod())
+                symbol.getter?.let { getter ->
+                    result.addIfNotNull(translateToObjCMethod(getter))
+                }
+
+                symbol.setter?.let { setter ->
+                    result.addIfNotNull(translateToObjCMethod(setter))
+                }
             }
         }
-        is KaNamedFunctionSymbol -> result.addIfNotNull(translateToObjCMethod())
+        is KaNamedFunctionSymbol -> result.addIfNotNull(translateToObjCMethod(symbol))
         else -> Unit
     }
     return result
 }
 
-context(KaSession, KtObjCExportSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-internal fun KaClassSymbol.translateToObjCExportStub(): ObjCClass? = when (classKind) {
-    KaClassKind.INTERFACE -> translateToObjCProtocol()
-    KaClassKind.CLASS -> translateToObjCClass()
-    KaClassKind.OBJECT -> translateToObjCObject()
-    KaClassKind.ENUM_CLASS -> translateToObjCClass()
-    KaClassKind.COMPANION_OBJECT -> translateToObjCObject()
+internal fun ObjCExportContext.translateToObjCExportStub(symbol: KaClassSymbol): ObjCClass? = when (symbol.classKind) {
+    KaClassKind.INTERFACE -> translateToObjCProtocol(symbol)
+    KaClassKind.CLASS -> translateToObjCClass(symbol)
+    KaClassKind.OBJECT -> translateToObjCObject(symbol)
+    KaClassKind.ENUM_CLASS -> translateToObjCClass(symbol)
+    KaClassKind.COMPANION_OBJECT -> translateToObjCObject(symbol)
     else -> null
 }

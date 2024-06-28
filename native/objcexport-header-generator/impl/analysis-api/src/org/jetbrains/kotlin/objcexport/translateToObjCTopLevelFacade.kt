@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInterface
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInterfaceImpl
@@ -45,16 +44,14 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.getDefaultSuperClassOrPr
  *
  * See related [translateToObjCExtensionFacades]
  */
-context(KaSession, KtObjCExportSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-fun KtResolvedObjCExportFile.translateToObjCTopLevelFacade(): ObjCInterface? {
-    val extensions = callableSymbols
+fun ObjCExportContext.translateToObjCTopLevelFacade(file: KtResolvedObjCExportFile): ObjCInterface? {
+    val extensions = file.callableSymbols
         .filter { it.getClassIfCategory() == null }
         .toList()
         .sortedWith(StableCallableOrder)
         .ifEmpty { return null }
 
-    val fileName = getObjCFileClassOrProtocolName()
+    val fileName = getObjCFileClassOrProtocolName(file)
 
     return ObjCInterfaceImpl(
         name = fileName.objCName,
@@ -62,15 +59,15 @@ fun KtResolvedObjCExportFile.translateToObjCTopLevelFacade(): ObjCInterface? {
         origin = null,
         attributes = listOf(OBJC_SUBCLASSING_RESTRICTED) + fileName.toNameAttributes(),
         superProtocols = emptyList(),
-        members = extensions.flatMap { it.translateToObjCExportStub() },
+        members = extensions.flatMap { translateToObjCExportStub(it) },
         categoryName = null,
         generics = emptyList(),
-        superClass = getDefaultSuperClassOrProtocolName().objCName,
+        superClass = exportSession.getDefaultSuperClassOrProtocolName().objCName,
         superClassGenerics = emptyList()
     )
 }
 
-context(KaSession, KtObjCExportSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-internal val KaCallableSymbol.isExtensionOfMappedObjCType: Boolean
-    get() = isExtension && receiverParameter?.type?.isMappedObjCType == true
+internal fun ObjCExportContext.isExtensionOfMappedObjCType(symbol: KaCallableSymbol): Boolean {
+    val receiverType = symbol.receiverParameter?.type
+    return symbol.isExtension && receiverType != null && kaSession.isMappedObjCType(receiverType)
+}

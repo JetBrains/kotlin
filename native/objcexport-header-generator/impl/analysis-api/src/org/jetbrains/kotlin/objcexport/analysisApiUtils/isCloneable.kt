@@ -15,21 +15,21 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-internal val KaDeclarationSymbol?.implementsCloneable: Boolean
-    get() {
-        return (this as? KaClassSymbol)?.implementsCloneable ?: false
-    }
+internal fun KaSession.getImplementsCloneable(symbol: KaDeclarationSymbol?): Boolean {
 
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-internal val KaClassSymbol.implementsCloneable: Boolean
-    get() {
-        return superTypes.any {
-            it.expandedSymbol?.isCloneable ?: false
-        }
+    val classSymbol = symbol as? KaClassSymbol
+    return if (classSymbol != null) {
+        getImplementsCloneable(classSymbol)
+    } else {
+        false
     }
+}
+
+internal fun KaSession.getImplementsCloneable(symbol: KaClassSymbol): Boolean {
+    return symbol.superTypes.any {
+        it.expandedSymbol?.isCloneable ?: false
+    }
+}
 
 internal val KaClassSymbol.isCloneable: Boolean
     get() {
@@ -41,12 +41,9 @@ internal val ClassId.isCloneable: Boolean
         return asSingleFqName() == StandardNames.FqNames.cloneable.toSafe()
     }
 
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-internal val KaNamedFunctionSymbol.isClone: Boolean
-    get() {
-        val cloneCallableId = CallableId(StandardClassIds.Cloneable, Name.identifier("clone"))
-        if (this.callableId == cloneCallableId) return true
+internal fun KaSession.isClone(symbol: KaNamedFunctionSymbol): Boolean {
+    val cloneCallableId = CallableId(StandardClassIds.Cloneable, Name.identifier("clone"))
+    if (symbol.callableId == cloneCallableId) return true
 
-        return this.allOverriddenSymbols.any { it.callableId == cloneCallableId }
-    }
+    return symbol.allOverriddenSymbols.any { it.callableId == cloneCallableId }
+}

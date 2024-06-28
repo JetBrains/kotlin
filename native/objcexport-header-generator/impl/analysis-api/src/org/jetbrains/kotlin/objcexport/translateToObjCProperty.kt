@@ -5,61 +5,57 @@
 
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCIdType
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProperty
 import org.jetbrains.kotlin.backend.konan.objcexport.isInstance
 import org.jetbrains.kotlin.backend.konan.objcexport.swiftNameAttribute
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.bridgeReceiverType
+import org.jetbrains.kotlin.objcexport.analysisApiUtils.getBridgeReceiverType
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getFunctionMethodBridge
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-context(KaSession, KtObjCExportSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-fun KaPropertySymbol.translateToObjCProperty(): ObjCProperty? {
-    if (!isVisibleInObjC()) return null
-    return buildProperty()
+fun ObjCExportContext.translateToObjCProperty(symbol: KaPropertySymbol): ObjCProperty? {
+    if (!kaSession.isVisibleInObjC(symbol)) return null
+    return buildProperty(symbol)
 }
 
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.buildProperty]
  */
-context(KaSession, KtObjCExportSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-fun KaPropertySymbol.buildProperty(): ObjCProperty {
-    val propertyName = getObjCPropertyName()
+fun ObjCExportContext.buildProperty(symbol: KaPropertySymbol): ObjCProperty {
+    val propertyName = getObjCPropertyName(symbol)
     val name = propertyName.objCName
-    val getterBridge = getter?.getFunctionMethodBridge() ?: error("KtPropertySymbol.getter is undefined")
-    val type = getter?.mapReturnType(getterBridge.returnBridge)
+    val symbolGetter = symbol.getter
+    val getterBridge = if (symbolGetter == null) error("KtPropertySymbol.getter is undefined") else getFunctionMethodBridge(symbolGetter)
+    val type = mapReturnType(symbolGetter, getterBridge.returnBridge)
     val attributes = mutableListOf<String>()
     val setterName: String?
 
-    if (!bridgeReceiverType.isInstance) attributes += "class"
+    if (!kaSession.getBridgeReceiverType(symbol).isInstance) attributes += "class"
 
-    val propertySetter = setter
+    val propertySetter = symbol.setter
     // Note: the condition below is similar to "toObjCMethods" logic in [ObjCExportedInterface.createCodeSpec].
     val shouldBeSetterExposed = true //TODO: mapper.shouldBeExposed
 
     if (propertySetter != null && shouldBeSetterExposed) {
-        val setterSelector = propertySetter.getSelector(propertySetter.getFunctionMethodBridge())
+        val setterSelector = getSelector(propertySetter, getFunctionMethodBridge(propertySetter))
         setterName = if (setterSelector == name.asSetterSelector) null else setterSelector
     } else {
         attributes += "readonly"
         setterName = null
     }
 
-    val getterSelector = getter?.getSelector(getterBridge)
-    val getterName: String? = if (getterSelector != name && getterSelector?.isNotBlank() == true) getterSelector else null
-    val declarationAttributes = mutableListOf(getSwiftPrivateAttribute() ?: swiftNameAttribute(propertyName.swiftName))
+    val getterSelector = getSelector(symbolGetter, getterBridge)
+    val getterName: String? = if (getterSelector != name && getterSelector.isNotBlank() == true) getterSelector else null
+    val declarationAttributes = mutableListOf(symbol.getSwiftPrivateAttribute() ?: swiftNameAttribute(propertyName.swiftName))
 
-    declarationAttributes.addIfNotNull(getObjCDeprecationStatus())
+    declarationAttributes.addIfNotNull(kaSession.getObjCDeprecationStatus(symbol))
 
     return ObjCProperty(
         name = name,
-        comment = annotations.translateToObjCComment(),
-        origin = getObjCExportStubOrigin(),
+        comment = kaSession.translateToObjCComment(symbol.annotations),
+        origin = kaSession.getObjCExportStubOrigin(symbol),
         type = type ?: ObjCIdType, //[ObjCIdType] temp fix, should be translated properly, see KT-65709
         propertyAttributes = attributes,
         setterName = if (setterName.isNullOrBlank()) null else setterName,

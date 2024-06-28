@@ -15,16 +15,13 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import kotlin.test.fail
 
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-fun KtFile.getClassOrFail(name: String): KaNamedClassSymbol {
-    return symbol.fileScope.getClassOrFail(name)
+
+fun KaSession.getClassOrFail(file: KtFile, name: String): KaNamedClassSymbol {
+    return getClassOrFail(file.symbol.fileScope, name)
 }
 
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-fun KaScope.getClassOrFail(name: String): KaNamedClassSymbol {
-    val allSymbols = classifiers(Name.identifier(name)).toList()
+fun KaSession.getClassOrFail(scope: KaScope, name: String): KaNamedClassSymbol {
+    val allSymbols = scope.classifiers(Name.identifier(name)).toList()
     if (allSymbols.isEmpty()) fail("Missing class '$name'")
     if (allSymbols.size > 1) fail("Found multiple classes with name '$name'")
     val classifier = allSymbols.single()
@@ -32,22 +29,16 @@ fun KaScope.getClassOrFail(name: String): KaNamedClassSymbol {
     return classifier
 }
 
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-fun KtFile.getFunctionOrFail(name: String): KaNamedFunctionSymbol {
-    return symbol.fileScope.getFunctionOrFail(name)
+fun KaSession.getFunctionOrFail(file: KtFile, name: String): KaNamedFunctionSymbol {
+    return getFunctionOrFail(file.symbol.fileScope, name)
 }
 
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-fun KtFile.getPropertyOrFail(name: String): KaPropertySymbol {
-    return symbol.fileScope.getPropertyOrFail(name)
+fun KaSession.getPropertyOrFail(file: KtFile, name: String): KaPropertySymbol {
+    return getPropertyOrFail(file.symbol.fileScope, name)
 }
 
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-fun KaScope.getFunctionOrFail(name: String): KaNamedFunctionSymbol {
-    val allSymbols = callables(Name.identifier(name)).toList()
+fun KaSession.getFunctionOrFail(scope: KaScope, name: String): KaNamedFunctionSymbol {
+    val allSymbols = scope.callables(Name.identifier(name)).toList()
     if (allSymbols.isEmpty()) fail("Missing function '$name'")
     if (allSymbols.size > 1) fail("Found multiple functions with name '$name'")
     val symbol = allSymbols.single()
@@ -55,10 +46,8 @@ fun KaScope.getFunctionOrFail(name: String): KaNamedFunctionSymbol {
     return symbol
 }
 
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-fun KaScope.getPropertyOrFail(name: String): KaPropertySymbol {
-    val allSymbols = callables(Name.identifier(name)).toList()
+fun KaSession.getPropertyOrFail(scope: KaScope, name: String): KaPropertySymbol {
+    val allSymbols = scope.callables(Name.identifier(name)).toList()
     if (allSymbols.isEmpty()) fail("Missing property '$name'")
     if (allSymbols.size > 1) fail("Found multiple callables with name '$name'")
     val symbol = allSymbols.single()
@@ -66,10 +55,8 @@ fun KaScope.getPropertyOrFail(name: String): KaPropertySymbol {
     return symbol
 }
 
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-fun KaClassSymbol.getFunctionOrFail(name: String): KaNamedFunctionSymbol {
-    return this.memberScope.getFunctionOrFail(name)
+fun KaSession.getFunctionOrFail(symbol: KaClassSymbol, name: String): KaNamedFunctionSymbol {
+    return getFunctionOrFail(symbol.memberScope, name)
 }
 
 context(KaSession)

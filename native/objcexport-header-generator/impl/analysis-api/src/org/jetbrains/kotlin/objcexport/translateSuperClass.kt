@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportClassOrProtocolName
@@ -18,13 +17,16 @@ internal data class KtObjCSuperClassTranslation(
     val superClassGenerics: List<ObjCNonNullReferenceType>,
 )
 
-context(KaSession, KtObjCExportSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-internal fun KaClassSymbol.translateSuperClass(): KtObjCSuperClassTranslation {
-    val superClassType = getSuperClassTypeNotAny()
-    val superClassName = superClassType?.getSuperClassName() ?: getDefaultSuperClassOrProtocolName()
+internal fun ObjCExportContext.translateSuperClass(symbol: KaClassSymbol): KtObjCSuperClassTranslation {
+    val superClassType = kaSession.getSuperClassTypeNotAny(symbol)
+    val defaultName = exportSession.getDefaultSuperClassOrProtocolName()
+    val superClassName = if (superClassType == null) {
+        defaultName
+    } else {
+        getSuperClassName(superClassType) ?: defaultName
+    }
 
-    val superClassGenerics: List<ObjCNonNullReferenceType> = superTypes
+    val superClassGenerics: List<ObjCNonNullReferenceType> = symbol.superTypes
         .filterIsInstance<KaClassType>()
         .find { type ->
             val classSymbol = type.symbol as? KaClassSymbol ?: return@find false
@@ -32,7 +34,14 @@ internal fun KaClassSymbol.translateSuperClass(): KtObjCSuperClassTranslation {
         }
         ?.typeArguments
         .orEmpty()
-        .mapNotNull { typeProjection -> typeProjection.type?.mapToReferenceTypeIgnoringNullability() }
+        .mapNotNull { typeProjection ->
+            val type = typeProjection.type
+            if (type == null) {
+                null
+            } else {
+                mapToReferenceTypeIgnoringNullability(type)
+            }
+        }
 
     return KtObjCSuperClassTranslation(superClassName, superClassGenerics)
 }

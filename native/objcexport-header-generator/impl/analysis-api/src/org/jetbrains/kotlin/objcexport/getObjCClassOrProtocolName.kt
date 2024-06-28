@@ -60,7 +60,8 @@ private fun ObjCExportContext.getObjCName(
     resolvedObjCNameAnnotation: KtResolvedObjCNameAnnotation? = symbol.resolveObjCNameAnnotation(),
     bareName: Boolean = false,
 ): String {
-    val objCName = (resolvedObjCNameAnnotation?.objCName ?: exportSessionSymbolNameOrAnonymous()).toValidObjCSwiftIdentifier()
+    val objCName =
+        (resolvedObjCNameAnnotation?.objCName ?: exportSession.exportSessionSymbolNameOrAnonymous(symbol)).toValidObjCSwiftIdentifier()
 
     if (bareName || resolvedObjCNameAnnotation != null && resolvedObjCNameAnnotation.isExact) {
         return objCName
@@ -85,7 +86,10 @@ private fun ObjCExportContext.getSwiftName(
     resolvedObjCNameAnnotation: KtResolvedObjCNameAnnotation? = classSymbol.resolveObjCNameAnnotation(),
     bareName: Boolean = false,
 ): String {
-    val swiftName = (resolvedObjCNameAnnotation?.swiftName ?: exportSessionSymbolNameOrAnonymous()).toValidObjCSwiftIdentifier()
+
+
+    val swiftName = (resolvedObjCNameAnnotation?.swiftName
+        ?: exportSession.exportSessionSymbolNameOrAnonymous(classSymbol)).toValidObjCSwiftIdentifier()
     if (bareName || resolvedObjCNameAnnotation != null && resolvedObjCNameAnnotation.isExact) {
         return swiftName
     }

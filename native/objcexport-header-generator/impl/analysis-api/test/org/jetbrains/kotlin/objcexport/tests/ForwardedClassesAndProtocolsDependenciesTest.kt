@@ -3,11 +3,8 @@ package org.jetbrains.kotlin.objcexport.tests
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCHeader
-import org.jetbrains.kotlin.objcexport.KtObjCExportConfiguration
-import org.jetbrains.kotlin.objcexport.KtObjCExportFile
-import org.jetbrains.kotlin.objcexport.withKtObjCExportSession
+import org.jetbrains.kotlin.objcexport.*
 import org.jetbrains.kotlin.objcexport.testUtils.InlineSourceCodeAnalysis
-import org.jetbrains.kotlin.objcexport.translateToObjCHeader
 import org.jetbrains.kotlin.psi.KtFile
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -82,8 +79,11 @@ class ForwardedClassesAndProtocolsDependenciesTest(
 
     private fun translateClassesAndProtocols(file: KtFile): ObjCHeader {
         return analyze(file) {
+            val kaSession = this
             withKtObjCExportSession(KtObjCExportConfiguration()) {
-                translateToObjCHeader(listOf(KtObjCExportFile(file)))
+                with(ObjCExportContext(kaSession = kaSession, exportSession = this)) {
+                    translateToObjCHeader(listOf(KtObjCExportFile(file)))
+                }
             }
         }
     }

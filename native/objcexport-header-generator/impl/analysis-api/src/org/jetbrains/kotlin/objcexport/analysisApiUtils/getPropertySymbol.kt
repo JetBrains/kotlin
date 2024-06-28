@@ -12,10 +12,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.tooling.core.linearClosure
 
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 @OptIn(KaExperimentalApi::class)
-internal fun KaPropertyAccessorSymbol.getPropertySymbol(): KaPropertySymbol {
-    return this.linearClosure<KaSymbol> { it.containingDeclaration }.filterIsInstance<KaPropertySymbol>().firstOrNull()
-        ?: error("Missing '${KaPropertySymbol::class} on ${this.render()}")
+internal fun KaSession.getPropertySymbol(symbol: KaPropertyAccessorSymbol): KaPropertySymbol {
+    return symbol.linearClosure<KaSymbol> { it.containingDeclaration }.filterIsInstance<KaPropertySymbol>().firstOrNull()
+        ?: error("Missing '${KaPropertySymbol::class} on ${symbol.render()}")
 }

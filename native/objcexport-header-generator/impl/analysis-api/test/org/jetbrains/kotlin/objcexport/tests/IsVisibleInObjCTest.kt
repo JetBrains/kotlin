@@ -21,7 +21,7 @@ class IsVisibleInObjCTest(
     fun `test - simple public function`() {
         val file = inlineSourceCodeAnalysis.createKtFile("fun foo() = Unit")
         analyze(file) {
-            val fooSymbol = file.getFunctionOrFail("foo")
+            val fooSymbol = getFunctionOrFail(file, "foo")
             assertTrue(fooSymbol.isVisibleInObjC())
         }
     }
@@ -30,7 +30,7 @@ class IsVisibleInObjCTest(
     fun `test - internal function`() {
         val file = inlineSourceCodeAnalysis.createKtFile("internal fun foo() = Unit")
         analyze(file) {
-            val fooSymbol = file.getFunctionOrFail("foo")
+            val fooSymbol = getFunctionOrFail(file, "foo")
             assertFalse(fooSymbol.isVisibleInObjC())
         }
     }
@@ -45,7 +45,7 @@ class IsVisibleInObjCTest(
         )
 
         analyze(file) {
-            val fooSymbol = file.getFunctionOrFail("foo")
+            val fooSymbol = getFunctionOrFail(file, "foo")
             assertFalse(fooSymbol.isVisibleInObjC())
         }
     }
@@ -63,7 +63,7 @@ class IsVisibleInObjCTest(
         )
 
         analyze(file) {
-            val fooSymbol = file.getFunctionOrFail("foo")
+            val fooSymbol = getFunctionOrFail(file, "foo")
             assertFalse(fooSymbol.isVisibleInObjC())
         }
     }
@@ -78,7 +78,7 @@ class IsVisibleInObjCTest(
         )
 
         analyze(file) {
-            val fooSymbol = file.getFunctionOrFail("foo")
+            val fooSymbol = getFunctionOrFail(file, "foo")
             assertTrue(fooSymbol.isVisibleInObjC())
         }
     }
@@ -93,7 +93,7 @@ class IsVisibleInObjCTest(
         )
 
         analyze(file) {
-            val fooSymbol = file.getFunctionOrFail("foo")
+            val fooSymbol = getFunctionOrFail(file, "foo")
             assertFalse(fooSymbol.isVisibleInObjC())
         }
     }
@@ -102,7 +102,7 @@ class IsVisibleInObjCTest(
     fun `test - public class`() {
         val file = inlineSourceCodeAnalysis.createKtFile("class Foo")
         analyze(file) {
-            val fooSymbol = file.getClassOrFail("Foo")
+            val fooSymbol = getClassOrFail(file, "Foo")
             assertTrue(fooSymbol.isVisibleInObjC())
         }
     }
@@ -111,7 +111,7 @@ class IsVisibleInObjCTest(
     fun `test - internal class`() {
         val file = inlineSourceCodeAnalysis.createKtFile("internal class Foo")
         analyze(file) {
-            val fooSymbol = file.getClassOrFail("Foo")
+            val fooSymbol = getClassOrFail(file, "Foo")
             assertFalse(fooSymbol.isVisibleInObjC())
         }
     }
@@ -126,7 +126,7 @@ class IsVisibleInObjCTest(
         )
 
         analyze(file) {
-            val fooSymbol = file.getClassOrFail("Foo")
+            val fooSymbol = getClassOrFail(file, "Foo")
             assertTrue(fooSymbol.isVisibleInObjC())
         }
     }
@@ -135,7 +135,7 @@ class IsVisibleInObjCTest(
     fun `test - inline class`() {
         val file = inlineSourceCodeAnalysis.createKtFile("inline class Foo(val x: Int)")
         analyze(file) {
-            val fooSymbol = file.getClassOrFail("Foo")
+            val fooSymbol = getClassOrFail(file, "Foo")
             assertFalse(fooSymbol.isVisibleInObjC())
         }
     }
@@ -144,7 +144,7 @@ class IsVisibleInObjCTest(
     fun `test - expect class`() {
         val file = inlineSourceCodeAnalysis.createKtFile("expect class Foo")
         analyze(file) {
-            val fooSymbol = file.getClassOrFail("Foo")
+            val fooSymbol = getClassOrFail(file, "Foo")
             assertFalse(fooSymbol.isVisibleInObjC())
         }
     }
@@ -159,7 +159,7 @@ class IsVisibleInObjCTest(
         )
 
         analyze(file) {
-            val fooSymbol = file.getClassOrFail("Foo")
+            val fooSymbol = getClassOrFail(file, "Foo")
             assertFalse(fooSymbol.isVisibleInObjC())
         }
     }
@@ -177,7 +177,7 @@ class IsVisibleInObjCTest(
         )
 
         analyze(file) {
-            val fooSymbol = file.getClassOrFail("Foo")
+            val fooSymbol = getClassOrFail(file, "Foo")
             assertFalse(fooSymbol.isVisibleInObjC())
         }
     }
@@ -193,7 +193,7 @@ class IsVisibleInObjCTest(
         )
 
         analyze(file) {
-            assertTrue(file.getClassOrFail("PublicClass").getFunctionOrFail("foo").isVisibleInObjC())
+            assertTrue(getClassOrFail(file, "PublicClass").getFunctionOrFail("foo").isVisibleInObjC())
         }
     }
 
@@ -208,7 +208,7 @@ class IsVisibleInObjCTest(
         )
 
         analyze(file) {
-            assertFalse(file.getClassOrFail("PrivateClass").getFunctionOrFail("foo").isVisibleInObjC())
+            assertFalse(getClassOrFail(file, "PrivateClass").getFunctionOrFail("foo").isVisibleInObjC())
         }
     }
 
@@ -284,7 +284,7 @@ class IsVisibleInObjCTest(
         )
 
         analyze(file) {
-            val publicA = file.getClassOrFail("PublicA")
+            val publicA = getClassOrFail(file, "PublicA")
             val hiddenB = publicA.memberScope.getClassOrFail("HiddenB")
             val hiddenC = hiddenB.memberScope.getClassOrFail("HiddenC")
 
