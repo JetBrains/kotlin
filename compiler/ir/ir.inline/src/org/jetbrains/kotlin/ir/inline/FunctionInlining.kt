@@ -154,9 +154,10 @@ open class FunctionInlining(
 
         val copyIrElement = run {
             val typeParameters =
-                if (callee is IrConstructor)
-                    callee.parentAsClass.typeParameters
-                else callee.typeParameters
+                when (callee) {
+                    is IrConstructor -> callee.parentAsClass.typeParameters
+                    is IrSimpleFunction -> callee.typeParameters
+                }
             val typeArguments =
                 (0 until callSite.typeArgumentsCount).associate {
                     typeParameters[it].symbol to callSite.getTypeArgument(it)
@@ -364,7 +365,6 @@ open class FunctionInlining(
                             inlinedFunction.valueParameters.size,
                             INLINED_FUNCTION_REFERENCE
                         )
-                    else -> error("Unknown function kind : ${inlinedFunction.render()}")
                 }.apply {
                     for (parameter in functionParameters) {
                         val argument =

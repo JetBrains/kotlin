@@ -375,7 +375,7 @@ object IrTree : AbstractTreeBuilder() {
         +descriptor("FunctionDescriptor")
         +declaredSymbol(returnTargetSymbol)
     }
-    val function: Element by element(Declaration) {
+    val function: Element by sealedElement(Declaration) {
         parent(declarationBase)
         parent(possiblyExternalDeclaration)
         parent(declarationWithVisibility)

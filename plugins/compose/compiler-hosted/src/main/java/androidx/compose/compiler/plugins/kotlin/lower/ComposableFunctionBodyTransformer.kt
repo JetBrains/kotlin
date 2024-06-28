@@ -1933,11 +1933,13 @@ class ComposableFunctionBodyTransformer(
     }
 
     private fun functionSourceKey(): Int {
-        val fn = currentFunctionScope.function
-        if (fn is IrSimpleFunction) {
-            return fn.sourceKey()
-        } else {
-            error("expected simple function: ${fn::class}")
+        when (val fn = currentFunctionScope.function) {
+            is IrSimpleFunction -> {
+                return fn.sourceKey()
+            }
+            is IrConstructor -> {
+                error("expected simple function, got constructor")
+            }
         }
     }
 

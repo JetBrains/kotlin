@@ -278,7 +278,6 @@ class SubstituteDecoyCallsTransformer(
                     when (declaration) {
                         is IrSimpleFunction -> decoysTransformer.visitSimpleFunction(declaration)
                         is IrConstructor -> decoysTransformer.visitConstructor(declaration)
-                        else -> decoysTransformer.visitFunction(declaration)
                     }.also {
                         decoysTransformer.updateParents()
                         owner.parent.transformChildrenVoid(addComposerParameterInplace)

@@ -146,7 +146,7 @@ internal class Wrapper(val value: Any, override val irClass: IrClass, environmen
                         else -> irFunction.name.asString()
                     }
                 }
-                else -> irFunction.name.asString()
+                is IrConstructor -> irFunction.name.asString()
             }
             return MethodHandles.lookup().findVirtual(receiverClass, methodName, methodType)
         }
@@ -190,15 +190,16 @@ internal class Wrapper(val value: Any, override val irClass: IrClass, environmen
 
         private fun IrFunction.getMethodType(): MethodType {
             val argsClasses = this.valueParameters.map { it.type.getClass(this.isValueParameterPrimitiveAsObject(it.index)) }
-            return if (this is IrSimpleFunction) {
-                // for regular methods and functions
-                val returnClass = this.returnType.getClass(this.isReturnTypePrimitiveAsObject())
-                val extensionClass = this.extensionReceiverParameter?.type?.getClass(this.isExtensionReceiverPrimitive())
+            return when (this) {
+                is IrSimpleFunction -> {
+                    val returnClass = this.returnType.getClass(this.isReturnTypePrimitiveAsObject())
+                    val extensionClass = this.extensionReceiverParameter?.type?.getClass(this.isExtensionReceiverPrimitive())
 
-                MethodType.methodType(returnClass, listOfNotNull(extensionClass) + argsClasses)
-            } else {
-                // for constructors
-                MethodType.methodType(Void::class.javaPrimitiveType, argsClasses)
+                    MethodType.methodType(returnClass, listOfNotNull(extensionClass) + argsClasses)
+                }
+                is IrConstructor -> {
+                    MethodType.methodType(Void::class.javaPrimitiveType, argsClasses)
+                }
             }
         }
 

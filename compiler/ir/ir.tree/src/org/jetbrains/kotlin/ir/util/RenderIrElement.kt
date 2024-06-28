@@ -124,7 +124,6 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
                 when (declaration) {
                     is IrSimpleFunction -> append("fun ")
                     is IrConstructor -> append("constructor ")
-                    else -> append("{${declaration.javaClass.simpleName}}")
                 }
 
                 append(declaration.name.asString())

@@ -106,9 +106,6 @@ internal class DirectInvokeLowering(private val context: JvmBackendContext) : Fi
                 ).apply {
                     copyReceiverAndValueArgumentsForDirectInvoke(receiver, expression)
                 }
-
-            else ->
-                throw AssertionError("Simple function or constructor expected: ${irFun.render()}")
         }
 
     private fun IrFunctionAccessExpression.copyReceiverAndValueArgumentsForDirectInvoke(

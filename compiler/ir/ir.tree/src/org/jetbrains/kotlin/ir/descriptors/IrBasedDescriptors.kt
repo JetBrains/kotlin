@@ -533,7 +533,6 @@ fun IrFunction.toIrBasedDescriptor(): FunctionDescriptor =
     when (this) {
         is IrSimpleFunction -> toIrBasedDescriptor()
         is IrConstructor -> toIrBasedDescriptor()
-        else -> error("Unknown function kind")
     }
 
 open class IrBasedClassDescriptor(owner: IrClass) : ClassDescriptor, IrBasedDeclarationDescriptor<IrClass>(owner) {

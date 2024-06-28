@@ -53,7 +53,7 @@ fun IrFunction.hasStableJsName(context: JsIrBackendContext): Boolean {
                 owner.getter?.getJsName() != null
             }
         }
-        else -> true
+        is IrConstructor -> true
     }
 
     return (isEffectivelyExternal() || getJsName() != null || isExported(context)) && namedOrMissingGetter

@@ -651,10 +651,10 @@ val IrDeclaration.parentDeclarationsWithSelf: Sequence<IrDeclaration>
     get() = generateSequence(this) { it.parent as? IrDeclaration }
 
 val IrFunction.allTypeParameters: List<IrTypeParameter>
-    get() = if (this is IrConstructor)
-        parentAsClass.typeParameters + typeParameters
-    else
-        typeParameters
+    get() = when (this) {
+        is IrConstructor -> parentAsClass.typeParameters + typeParameters
+        is IrSimpleFunction -> typeParameters
+    }
 
 
 fun IrMemberAccessExpression<*>.getTypeSubstitutionMap(irFunction: IrFunction): Map<IrTypeParameterSymbol, IrType> {
@@ -675,14 +675,17 @@ fun IrMemberAccessExpression<*>.getTypeSubstitutionMap(irFunction: IrFunction): 
     val result = mutableMapOf<IrTypeParameterSymbol, IrType>()
     if (dispatchReceiverTypeArguments.isNotEmpty()) {
         val parentTypeParameters =
-            if (irFunction is IrConstructor) {
-                val constructedClass = irFunction.parentAsClass
-                if (!constructedClass.isInner && dispatchReceiver != null) {
-                    throw AssertionError("Non-inner class constructor reference with dispatch receiver:\n${this.dump()}")
+            when (irFunction) {
+                is IrConstructor -> {
+                    val constructedClass = irFunction.parentAsClass
+                    if (!constructedClass.isInner && dispatchReceiver != null) {
+                        throw AssertionError("Non-inner class constructor reference with dispatch receiver:\n${this.dump()}")
+                    }
+                    extractTypeParameters(constructedClass.parent as IrClass)
                 }
-                extractTypeParameters(constructedClass.parent as IrClass)
-            } else {
-                extractTypeParameters(irFunction.parentClassOrNull!!)
+                is IrSimpleFunction -> {
+                    extractTypeParameters(irFunction.parentClassOrNull!!)
+                }
             }
         for ((index, typeParam) in parentTypeParameters.withIndex()) {
             dispatchReceiverTypeArguments[index].typeOrNull?.let {
@@ -1258,20 +1261,26 @@ fun IrFunction.createDispatchReceiverParameter(origin: IrDeclarationOrigin? = nu
 }
 
 val IrFunction.allParameters: List<IrValueParameter>
-    get() = if (this is IrConstructor) {
-        ArrayList<IrValueParameter>(allParametersCount).also {
-            it.add(
-                this.constructedClass.thisReceiver
-                    ?: error(this.render())
-            )
-            addExplicitParametersTo(it)
+    get() = when (this) {
+        is IrConstructor -> {
+            ArrayList<IrValueParameter>(allParametersCount).also {
+                it.add(
+                    this.constructedClass.thisReceiver
+                        ?: error(this.render())
+                )
+                addExplicitParametersTo(it)
+            }
         }
-    } else {
-        explicitParameters
+        is IrSimpleFunction -> {
+            explicitParameters
+        }
     }
 
 val IrFunction.allParametersCount: Int
-    get() = if (this is IrConstructor) explicitParametersCount + 1 else explicitParametersCount
+    get() = when (this) {
+        is IrConstructor -> explicitParametersCount + 1
+        is IrSimpleFunction -> explicitParametersCount
+    }
 
 private object LoweringsFakeOverrideBuilderStrategy : FakeOverrideBuilderStrategy.BindToPrivateSymbols(
     friendModules = emptyMap(), // TODO: this is probably not correct. Should be fixed by KT-61384. But it's not important for current usages

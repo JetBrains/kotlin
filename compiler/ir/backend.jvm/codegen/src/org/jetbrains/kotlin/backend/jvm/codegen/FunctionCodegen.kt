@@ -161,7 +161,10 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
         if (origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) {
             return getVisibilityForDefaultArgumentStub() or Opcodes.ACC_SYNTHETIC or
                     (if (isDeprecatedFunction(context)) Opcodes.ACC_DEPRECATED else 0) or
-                    (if (this is IrConstructor) 0 else Opcodes.ACC_STATIC)
+                    (when (this) {
+                        is IrConstructor -> 0
+                        is IrSimpleFunction -> Opcodes.ACC_STATIC
+                    })
         }
 
         val isVararg = valueParameters.lastOrNull()?.varargElementType != null && !isBridge()
@@ -246,7 +249,10 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
 
     private fun IrFunction.createFrameMapWithReceivers(): IrFrameMap {
         val frameMap = IrFrameMap()
-        val receiver = if (this is IrConstructor) parentAsClass.thisReceiver else dispatchReceiverParameter
+        val receiver = when (this) {
+            is IrConstructor -> parentAsClass.thisReceiver
+            is IrSimpleFunction -> dispatchReceiverParameter
+        }
         receiver?.let {
             frameMap.enter(it, classCodegen.typeMapper.mapTypeAsDeclaration(it.type))
         }

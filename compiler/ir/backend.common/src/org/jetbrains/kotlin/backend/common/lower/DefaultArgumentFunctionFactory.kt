@@ -205,8 +205,6 @@ abstract class DefaultArgumentFunctionFactory(val context: CommonBackendContext)
                     isTailrec = false
                     visibility = newVisibility
                 }
-
-            else -> throw IllegalStateException("Unknown function type")
         }
 
         return newFunction.apply {

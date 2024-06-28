@@ -336,10 +336,6 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         val name = when (val function = expression.symbol.owner) {
             is IrConstructor -> function.getConstructorRef(data.staticContext)
             is IrSimpleFunction -> data.getNameForStaticFunction(function).makeRef()
-            else -> compilationException(
-                "Unexpected function kind",
-                expression
-            )
         }
         return name.withSource(expression, data)
     }

@@ -87,7 +87,6 @@ internal class KFunctionState(
                 val call = when (irFunction) {
                     is IrSimpleFunction -> irFunction.createCall()
                     is IrConstructor -> irFunction.createConstructorCall()
-                    else -> TODO("Unsupported symbol $symbol for invoke")
                 }.apply {
                     val dispatchParameter = irFunction.dispatchReceiverParameter
                     val extensionParameter = irFunction.extensionReceiverParameter

@@ -25,7 +25,6 @@ val IrFunction.target: IrFunction
     get() = when (this) {
         is IrSimpleFunction -> this.target
         is IrConstructor -> this
-        else -> error(this)
     }
 
 fun <T : IrOverridableDeclaration<*>> T.collectRealOverrides(

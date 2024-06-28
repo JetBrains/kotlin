@@ -1597,7 +1597,10 @@ class ExpressionCodegen(
         }
 
         val callee = element.symbol.owner
-        val typeArgumentContainer = if (callee is IrConstructor) callee.parentAsClass else callee
+        val typeArgumentContainer = when (callee) {
+            is IrConstructor -> callee.parentAsClass
+            is IrSimpleFunction -> callee
+        }
         val typeArguments =
             if (element.typeArgumentsCount == 0) {
                 //avoid ambiguity with type constructor type parameters

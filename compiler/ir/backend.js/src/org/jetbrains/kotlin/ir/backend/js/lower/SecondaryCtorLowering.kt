@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.getOrPut
 import org.jetbrains.kotlin.backend.common.ir.ValueRemapper
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -286,12 +287,16 @@ private class CallsiteRedirectionTransformer(private val context: JsIrBackendCon
             val newCall = replaceSecondaryConstructorWithFactoryFunction(expression, delegate.symbol)
 
             val readThis = expression.run {
-                if (data is IrConstructor) {
-                    val thisReceiver = data.constructedClass.thisReceiver!!
-                    IrGetValueImpl(startOffset, endOffset, thisReceiver.type, thisReceiver.symbol)
-                } else {
-                    val lastValueParameter = data!!.valueParameters.last()
-                    IrGetValueImpl(startOffset, endOffset, lastValueParameter.type, lastValueParameter.symbol)
+                when (data) {
+                    is IrConstructor -> {
+                        val thisReceiver = data.constructedClass.thisReceiver!!
+                        IrGetValueImpl(startOffset, endOffset, thisReceiver.type, thisReceiver.symbol)
+                    }
+                    is IrSimpleFunction -> {
+                        val lastValueParameter = data.valueParameters.last()
+                        IrGetValueImpl(startOffset, endOffset, lastValueParameter.type, lastValueParameter.symbol)
+                    }
+                    null -> compilationException("Parent function can't be null", expression)
                 }
             }
 

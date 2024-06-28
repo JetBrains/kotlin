@@ -293,8 +293,6 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
                     toIrBasedDescriptor()
                 else
                     IrBasedSimpleFunctionDescriptorWithOriginalOverrides(this, context)
-            else ->
-                throw AssertionError("Unexpected function kind: $this")
         }
 
     private class IrBasedSimpleFunctionDescriptorWithOriginalOverrides(
@@ -518,8 +516,6 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
                 irFun
             is IrSimpleFunction ->
                 findSuperDeclaration(irFun, false, context.config.jvmDefaultMode)
-            else ->
-                throw AssertionError("Simple function or constructor expected: ${irFun.render()}")
         }
 
         val irParentClass = irNonFakeFun.parent as? IrClass

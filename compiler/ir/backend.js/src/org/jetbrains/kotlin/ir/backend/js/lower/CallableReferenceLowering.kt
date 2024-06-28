@@ -334,8 +334,6 @@ class CallableReferenceLowering(private val context: JsCommonBackendContext) : B
                             callee.valueParameters.size,
                             JsStatementOrigins.CALLABLE_REFERENCE_INVOKE
                         )
-                    else ->
-                        compilationException("unknown function kind", callee)
                 }
             }
 

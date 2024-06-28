@@ -123,7 +123,6 @@ open class DefaultArgumentStubGenerator<TContext : CommonBackendContext>(
                         params.forEachIndexed { i, variable -> putValueArgument(i, irGet(variable)) }
                     }
                     is IrSimpleFunction -> +irReturn(dispatchToImplementation(originalDeclaration, newIrFunction, params))
-                    else -> error("Unknown function declaration")
                 }
             }.statements
         }

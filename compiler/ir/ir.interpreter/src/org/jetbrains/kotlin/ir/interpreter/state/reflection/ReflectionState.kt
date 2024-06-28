@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.interpreter.state.reflection
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.interpreter.stack.Fields
 import org.jetbrains.kotlin.ir.interpreter.state.State
@@ -48,7 +49,10 @@ internal abstract class ReflectionState : State {
     protected fun renderFunction(irFunction: IrFunction): String {
         val dispatchReceiver = irFunction.parentClassOrNull?.defaultType // = instanceReceiverParameter
         val extensionReceiver = irFunction.extensionReceiverParameter?.type
-        val receivers = if (irFunction is IrConstructor) "" else renderReceivers(dispatchReceiver, extensionReceiver)
+        val receivers = when (irFunction) {
+            is IrConstructor -> ""
+            is IrSimpleFunction -> renderReceivers(dispatchReceiver, extensionReceiver)
+        }
         val arguments = irFunction.valueParameters.joinToString(prefix = "(", postfix = ")") { it.type.renderType() }
         val returnType = irFunction.returnType.renderType()
         return "fun $receivers${irFunction.name}$arguments: $returnType"
