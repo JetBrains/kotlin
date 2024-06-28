@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
-import org.jetbrains.kotlin.test.frontend.fir.Fir2IrWasmResultsConverter
+import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
@@ -49,7 +49,7 @@ abstract class AbstractFirWasmTest(
         get() = ::FirFrontendFacade
 
     override val frontendToBackendConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
-        get() = ::Fir2IrWasmResultsConverter
+        get() = ::Fir2IrResultsConverter
 
     override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
         get() = ::FirWasmKlibBackendFacade

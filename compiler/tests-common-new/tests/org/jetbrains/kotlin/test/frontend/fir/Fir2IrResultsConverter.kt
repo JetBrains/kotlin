@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.test.frontend.fir
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.isJs
+import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.model.BackendKinds
@@ -25,6 +25,7 @@ class Fir2IrResultsConverter(
 ) {
     private val jvmResultsConverter = Fir2IrJvmResultsConverter(testServices)
     private val jsResultsConverter = Fir2IrJsResultsConverter(testServices)
+    private val wasmResultsConverter = Fir2IrWasmResultsConverter(testServices)
 
     override fun transform(module: TestModule, inputArtifact: FirOutputArtifact): IrBackendInput? = when {
         module.targetPlatform.isJvm() || module.targetPlatform.isCommon() -> {
@@ -32,6 +33,9 @@ class Fir2IrResultsConverter(
         }
         module.targetPlatform.isJs() -> {
             jsResultsConverter.transform(module, inputArtifact)
+        }
+        module.targetPlatform.isWasm() -> {
+            wasmResultsConverter.transform(module, inputArtifact)
         }
         else -> error("Unsupported platform: ${module.targetPlatform}")
     }
