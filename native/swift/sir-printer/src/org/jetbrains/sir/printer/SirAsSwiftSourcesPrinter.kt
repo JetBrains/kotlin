@@ -178,7 +178,16 @@ public class SirAsSwiftSourcesPrinter(
         documentation?.lines()?.forEach { println(it.trimIndent()) }
     }
 
-    private fun SirImport.print() = println("${if (isExported) "@_exported " else ""}import $moduleName")
+    private fun SirImport.print() {
+        print(
+            when (mode) {
+                SirImport.Mode.Exported -> "@_exported "
+                SirImport.Mode.ImplementationOnly -> "@_implementationOnly "
+                null -> ""
+            }
+        )
+        println("import $moduleName")
+    }
 
     private fun SirDeclarationContainer.printContainerKeyword() = print(
         when (this@printContainerKeyword) {

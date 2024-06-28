@@ -1,5 +1,5 @@
 @_exported import ExportedKotlinPackages
-import KotlinBridges_main_one
+@_implementationOnly import KotlinBridges_main_one
 
 public extension ExportedKotlinPackages.org.main.first {
     public static func main_first() -> Swift.Int32 {
