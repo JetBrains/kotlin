@@ -45862,6 +45862,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
     @TestDataPath("$PROJECT_ROOT")
     public class Multiplatform {
       @Test
+      @TestMetadata("actualExternalInJs.kt")
+      public void testActualExternalInJs() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/multiplatform/actualExternalInJs.kt");
+      }
+
+      @Test
       public void testAllFilesPresentInMultiplatform() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/multiplatform"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
       }
