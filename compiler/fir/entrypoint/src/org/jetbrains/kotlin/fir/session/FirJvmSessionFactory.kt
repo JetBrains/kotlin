@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
 object FirJvmSessionFactory : FirAbstractSessionFactory() {
     fun createLibrarySession(
@@ -70,9 +69,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
                         projectEnvironment.getKotlinClassFinder(scope),
                         projectEnvironment.getFirJavaFacade(session, moduleDataProvider.allModuleData.last(), scope)
                     ),
-                    runUnless(languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)) {
-                        FirBuiltinSymbolProvider(session, builtinsModuleData, kotlinScopeProvider)
-                    },
+                    FirBuiltinSymbolProvider.initializeIfNotStdlib(session, builtinsModuleData, kotlinScopeProvider),
                     FirBuiltinSyntheticFunctionInterfaceProvider.initialize(session, builtinsModuleData, kotlinScopeProvider),
                     syntheticFunctionInterfaceProvider,
                     FirCloneableSymbolProvider(session, builtinsModuleData, kotlinScopeProvider),
