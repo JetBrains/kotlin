@@ -7,7 +7,7 @@ repositories {
     mavenCentral()
 }
 
-with(org.jetbrains.kotlin.gradle.targets.js.d8.D8RootPlugin.apply(rootProject)) {
+with(org.jetbrains.kotlin.gradle.targets.js.d8.D8Plugin.apply(rootProject)) {
     // Test that we can set the version and it is a String.
     // But use the default version since update this place every time anyway.
     version = (version as String)

@@ -9,23 +9,23 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.BasePlugin
 import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
-import org.jetbrains.kotlin.gradle.targets.js.d8.D8RootExtension.Companion.EXTENSION_NAME
+import org.jetbrains.kotlin.gradle.targets.js.d8.D8Extension.Companion.EXTENSION_NAME
 import org.jetbrains.kotlin.gradle.tasks.CleanDataTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAware
 
 
-open class D8RootPlugin : Plugin<Project> {
+open class D8Plugin : Plugin<Project> {
     override fun apply(project: Project) {
         MultiplePluginDeclarationDetector.detect(project)
-
-        project.plugins.apply(BasePlugin::class.java)
 
         check(project == project.rootProject) {
             "D8RootPlugin can be applied only to root project"
         }
 
-        val settings = project.extensions.create(EXTENSION_NAME, D8RootExtension::class.java, project)
+        project.plugins.apply(BasePlugin::class.java)
+
+        val settings = project.extensions.create(EXTENSION_NAME, D8Extension::class.java, project)
 
         project.registerTask<D8SetupTask>(D8SetupTask.NAME) {
             it.group = TASKS_GROUP_NAME
@@ -46,13 +46,13 @@ open class D8RootPlugin : Plugin<Project> {
     companion object {
         const val TASKS_GROUP_NAME: String = "d8"
 
-        fun apply(rootProject: Project): D8RootExtension {
+        fun apply(rootProject: Project): D8Extension {
             check(rootProject == rootProject.rootProject)
-            rootProject.plugins.apply(D8RootPlugin::class.java)
-            return rootProject.extensions.getByName(EXTENSION_NAME) as D8RootExtension
+            rootProject.plugins.apply(D8Plugin::class.java)
+            return rootProject.extensions.getByName(EXTENSION_NAME) as D8Extension
         }
 
-        val Project.kotlinD8Extension: D8RootExtension
+        val Project.kotlinD8Extension: D8Extension
             get() = extensions.getByName(EXTENSION_NAME).castIsolatedKotlinPluginClassLoaderAware()
     }
 }

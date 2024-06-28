@@ -11,7 +11,7 @@ import org.gradle.process.ProcessForkOptions
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
-import org.jetbrains.kotlin.gradle.targets.js.d8.D8RootPlugin
+import org.jetbrains.kotlin.gradle.targets.js.d8.D8Plugin
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
@@ -26,7 +26,7 @@ internal class KotlinWasmD8(kotlinJsTest: KotlinJsTest) : KotlinJsTestFramework 
     @Transient
     override val compilation: KotlinJsIrCompilation = kotlinJsTest.compilation
 
-    private val d8 = D8RootPlugin.apply(kotlinJsTest.project.rootProject)
+    private val d8 = D8Plugin.apply(kotlinJsTest.project)
     private val d8Executable by kotlinJsTest.project.provider { d8.requireConfigured().executable }
 
     override val workingDir: Provider<Directory> = compilation.npmProject.dir

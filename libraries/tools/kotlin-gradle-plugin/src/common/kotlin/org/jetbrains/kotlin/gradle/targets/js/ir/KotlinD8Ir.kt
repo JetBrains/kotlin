@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.jetbrains.kotlin.gradle.targets.js.d8.D8Exec
-import org.jetbrains.kotlin.gradle.targets.js.d8.D8RootPlugin
+import org.jetbrains.kotlin.gradle.targets.js.d8.D8Plugin
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmD8Dsl
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinWasmD8
@@ -19,7 +19,7 @@ abstract class KotlinD8Ir @Inject constructor(target: KotlinJsIrTarget) :
     KotlinJsIrSubTargetBase(target, "d8"),
     KotlinWasmD8Dsl {
 
-    private val d8 = D8RootPlugin.apply(project.rootProject)
+    private val d8 = D8Plugin.apply(project)
 
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside d8 using the builtin test framework"

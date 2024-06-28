@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.targets.js.AbstractSettings
 import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 
-open class D8RootExtension(@Transient val rootProject: Project) : AbstractSettings<D8Env>() {
+open class D8Extension(@Transient val rootProject: Project) : AbstractSettings<D8Env>() {
     init {
         check(rootProject.rootProject == rootProject)
     }

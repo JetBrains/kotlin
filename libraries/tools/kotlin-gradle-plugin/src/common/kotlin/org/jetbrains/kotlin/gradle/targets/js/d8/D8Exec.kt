@@ -57,7 +57,7 @@ open class D8Exec : AbstractExecTask<D8Exec>(D8Exec::class.java) {
         ): TaskProvider<D8Exec> {
             val target = compilation.target
             val project = target.project
-            val d8 = D8RootPlugin.apply(project.rootProject)
+            val d8 = D8Plugin.apply(project)
             return project.registerTask(
                 name
             ) {

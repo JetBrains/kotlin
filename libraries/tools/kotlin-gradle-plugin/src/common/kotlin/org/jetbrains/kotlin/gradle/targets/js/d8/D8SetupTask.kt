@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.gradle.targets.js.d8
 import org.gradle.api.tasks.Internal
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.targets.js.AbstractSetupTask
-import org.jetbrains.kotlin.gradle.targets.js.d8.D8RootPlugin.Companion.kotlinD8Extension
+import org.jetbrains.kotlin.gradle.targets.js.d8.D8Plugin.Companion.kotlinD8Extension
 import java.io.File
 
 @DisableCachingByDefault
-abstract class D8SetupTask : AbstractSetupTask<D8Env, D8RootExtension>() {
+abstract class D8SetupTask : AbstractSetupTask<D8Env, D8Extension>() {
     @Transient
     @Internal
     override val settings = project.kotlinD8Extension
