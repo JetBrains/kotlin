@@ -3,17 +3,18 @@ package org.jetbrains.kotlin.gradle.targets.js.nodejs
 import org.gradle.api.tasks.Internal
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.targets.js.AbstractSetupTask
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsExtension
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
 @DisableCachingByDefault
-abstract class NodeJsSetupTask : AbstractSetupTask<NodeJsEnv, NodeJsRootExtension>() {
+abstract class NodeJsSetupTask : AbstractSetupTask<NodeJsEnv, NodeJsExtension>() {
     @Transient
     @get:Internal
-    override val settings = project.rootProject.kotlinNodeJsExtension
+    override val settings = project.kotlinNodeJsExtension
 
     @get:Internal
     override val artifactPattern: String

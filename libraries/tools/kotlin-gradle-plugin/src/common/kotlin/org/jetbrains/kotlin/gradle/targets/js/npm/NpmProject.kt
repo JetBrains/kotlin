@@ -16,7 +16,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.plugin.mpp.fileExtension
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsExtension
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
@@ -46,11 +47,16 @@ open class NpmProject(@Transient val compilation: KotlinJsIrCompilation) : Seria
     }
 
     @delegate:Transient
-    val nodeJs by lazy {
-        project.rootProject.kotlinNodeJsExtension
+    val nodeJsRoot by lazy {
+        project.rootProject.kotlinNodeJsRootExtension
     }
 
-    val dir: Provider<Directory> = nodeJs.projectPackagesDirectory.map { it.dir(name) }
+    @delegate:Transient
+    val nodeJs by lazy {
+        project.kotlinNodeJsExtension
+    }
+
+    val dir: Provider<Directory> = nodeJsRoot.projectPackagesDirectory.map { it.dir(name) }
 
     val target: KotlinJsTargetDsl
         get() = compilation.target as KotlinJsTargetDsl

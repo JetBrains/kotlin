@@ -12,7 +12,8 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalMainFunctionArgume
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsExtension
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinWasmNode
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
@@ -24,8 +25,9 @@ abstract class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
     KotlinJsIrSubTargetBase(target, "node"),
     KotlinJsNodeDsl {
 
-    private val nodeJs = project.rootProject.kotlinNodeJsExtension
-    private val nodeJsTaskProviders = project.rootProject.kotlinNodeJsExtension
+    private val nodeJsRoot = project.rootProject.kotlinNodeJsRootExtension
+    private val nodeJs = project.kotlinNodeJsExtension
+    private val nodeJsTaskProviders = project.rootProject.kotlinNodeJsRootExtension
 
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside nodejs using the builtin test framework"
@@ -66,12 +68,12 @@ abstract class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
     }
 
     override fun configureTestDependencies(test: KotlinJsTest) {
-        test.dependsOn(nodeJsTaskProviders.nodeJsSetupTaskProvider)
+        test.dependsOn(nodeJs.nodeJsSetupTaskProvider)
         if (target.wasmTargetType != KotlinWasmTargetType.WASI) {
             test.dependsOn(
                 nodeJsTaskProviders.npmInstallTaskProvider,
             )
-            test.dependsOn(nodeJs.packageManagerExtension.map { it.postInstallTasks })
+            test.dependsOn(nodeJsRoot.packageManagerExtension.map { it.postInstallTasks })
         }
     }
 
@@ -81,7 +83,7 @@ abstract class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
                 test.useMocha { }
             }
             if (test.enabled) {
-                nodeJs.taskRequirements.addTaskRequirements(test)
+                nodeJsRoot.taskRequirements.addTaskRequirements(test)
             }
         } else {
             test.testFramework = KotlinWasmNode(test)

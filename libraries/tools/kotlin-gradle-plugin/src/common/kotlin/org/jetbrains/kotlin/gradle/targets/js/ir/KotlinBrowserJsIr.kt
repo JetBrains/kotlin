@@ -21,8 +21,9 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDceDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
@@ -37,14 +38,14 @@ import org.jetbrains.kotlin.gradle.utils.doNotTrackStateCompat
 import org.jetbrains.kotlin.gradle.utils.domainObjectSet
 import org.jetbrains.kotlin.gradle.utils.relativeOrAbsolute
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import javax.inject.Inject
 
 abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
     KotlinJsIrSubTarget(target, "browser"),
     KotlinJsBrowserDsl {
 
-    private val nodeJs = project.rootProject.kotlinNodeJsExtension
+    private val nodeJsRoot = project.rootProject.kotlinNodeJsRootExtension
+    private val nodeJs = project.kotlinNodeJsExtension
 
     private val webpackTaskConfigurations = project.objects.domainObjectSet<Action<KotlinWebpack>>()
     private val runTaskConfigurations = project.objects.domainObjectSet<Action<KotlinWebpack>>()
@@ -54,10 +55,10 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
     override fun configureTestDependencies(test: KotlinJsTest) {
         test.dependsOn(
-            nodeJs.npmInstallTaskProvider,
+            nodeJsRoot.npmInstallTaskProvider,
             nodeJs.nodeJsSetupTaskProvider
         )
-        test.dependsOn(nodeJs.packageManagerExtension.map { it.postInstallTasks })
+        test.dependsOn(nodeJsRoot.packageManagerExtension.map { it.postInstallTasks })
     }
 
     override fun configureDefaultTestFramework(test: KotlinJsTest) {
@@ -68,7 +69,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
         }
 
         if (test.enabled) {
-            nodeJs.taskRequirements.addTaskRequirements(test)
+            nodeJsRoot.taskRequirements.addTaskRequirements(test)
         }
     }
 
@@ -164,7 +165,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                         ),
                         entryModuleName = binary.linkTask.flatMap { it.compilerOptions.moduleName },
                         configurationActions = runTaskConfigurations,
-                        nodeJs = nodeJs,
+                        nodeJs = nodeJsRoot,
                         defaultArchivesName = archivesName,
                     )
                 }
@@ -219,7 +220,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                         ),
                         entryModuleName = binary.linkTask.flatMap { it.compilerOptions.moduleName },
                         configurationActions = webpackTaskConfigurations,
-                        nodeJs = nodeJs,
+                        nodeJs = nodeJsRoot,
                         defaultArchivesName = archivesName,
                     )
                 }

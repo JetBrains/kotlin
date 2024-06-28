@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.gradle.targets.js.npm.tasks
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.Directory
-import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsExtension
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.UsesKotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.asNodeJsEnvironment
@@ -32,28 +32,31 @@ abstract class RootPackageJsonTask :
     // Only in configuration phase
     // Not part of configuration caching
 
+    private val nodeJsRoot
+        get() = project.rootProject.kotlinNodeJsRootExtension
+
     private val nodeJs
         get() = project.rootProject.kotlinNodeJsExtension
 
     private val rootResolver: KotlinRootNpmResolver
-        get() = nodeJs.resolver
+        get() = nodeJsRoot.resolver
 
     private val packagesDir: Provider<Directory>
-        get() = nodeJs.projectPackagesDirectory
+        get() = nodeJsRoot.projectPackagesDirectory
 
     // -----
 
     private val nodeJsEnvironment by lazy {
-        nodeJs.requireConfigured().asNodeJsEnvironment
+        asNodeJsEnvironment(nodeJsRoot, nodeJs.requireConfigured())
     }
 
     private val packageManagerEnv by lazy {
-        nodeJs.packageManagerExtension.get().environment
+        nodeJsRoot.packageManagerExtension.get().environment
     }
 
     @get:OutputFile
     val rootPackageJsonFile: Provider<RegularFile> =
-        nodeJs.rootPackageDirectory.map { it.file(NpmProject.PACKAGE_JSON) }
+        nodeJsRoot.rootPackageDirectory.map { it.file(NpmProject.PACKAGE_JSON) }
 
 
     @Deprecated(

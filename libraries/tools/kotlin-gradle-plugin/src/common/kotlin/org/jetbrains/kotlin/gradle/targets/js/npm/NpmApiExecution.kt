@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
+import org.gradle.api.file.Directory
 import org.gradle.api.logging.Logger
+import org.gradle.api.provider.Provider
 import org.gradle.internal.service.ServiceRegistry
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnv
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.PackageManagerEnvironment
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.PreparedKotlinCompilationNpmResolution
 import java.io.File
@@ -32,7 +35,7 @@ interface NpmApiExecution<out T : PackageManagerEnvironment> : Serializable {
         logger: Logger,
         nodeJs: NodeJsEnvironment,
         packageManagerEnvironment: @UnsafeVariance T,
-        cliArgs: List<String>
+        cliArgs: List<String>,
     )
 
     companion object {
@@ -42,14 +45,13 @@ interface NpmApiExecution<out T : PackageManagerEnvironment> : Serializable {
 }
 
 data class NodeJsEnvironment(
-    val rootPackageDir: File,
+    val rootPackageDir: Provider<Directory>,
     val nodeExecutable: String,
-    val packageManager: NpmApiExecution<PackageManagerEnvironment>
+    val packageManager: NpmApiExecution<PackageManagerEnvironment>,
 ) : Serializable
 
-internal val NodeJsEnv.asNodeJsEnvironment
-    get() = NodeJsEnvironment(
-        rootPackageDir,
-        executable,
-        packageManager
-    )
+internal fun asNodeJsEnvironment(nodeJsRoot: NodeJsRootExtension, nodeJsEnv: NodeJsEnv) = NodeJsEnvironment(
+    nodeJsRoot.rootPackageDirectory,
+    nodeJsEnv.executable,
+    nodeJsRoot.packageManagerExtension.get().packageManager
+)

@@ -8,8 +8,9 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
 import org.jetbrains.kotlin.gradle.tasks.CleanDataTask
@@ -24,20 +25,26 @@ open class YarnPlugin : Plugin<Project> {
             "YarnPlugin can be applied only to root project"
         }
 
-        val yarnRootExtension = this.extensions.create(YarnRootExtension.YARN, YarnRootExtension::class.java, this)
         NodeJsRootPlugin.apply(project)
+        val nodeJsRoot = this.kotlinNodeJsRootExtension
         val nodeJs = this.kotlinNodeJsExtension
-        val nodeJsTaskProviders = this.kotlinNodeJsExtension
+
+        val yarnRootExtension = this.extensions.create(
+            YarnRootExtension.YARN,
+            YarnRootExtension::class.java,
+            this,
+            nodeJsRoot
+        )
 
         yarnRootExtension.platform.value(nodeJs.platform)
             .disallowChanges()
 
-        nodeJs.packageManagerExtension.set(
+        nodeJsRoot.packageManagerExtension.set(
             yarnRootExtension
         )
 
         val setupTask = registerTask<YarnSetupTask>(YarnSetupTask.NAME) {
-            it.dependsOn(nodeJsTaskProviders.nodeJsSetupTaskProvider)
+            it.dependsOn(nodeJs.nodeJsSetupTaskProvider)
 
             it.group = NodeJsRootPlugin.TASKS_GROUP_NAME
             it.description = "Download and install a local yarn version"
@@ -67,7 +74,7 @@ open class YarnPlugin : Plugin<Project> {
 
         tasks.register(STORE_YARN_LOCK_NAME, YarnLockStoreTask::class.java) { task ->
             task.dependsOn(kotlinNpmInstall)
-            task.inputFile.set(nodeJs.rootPackageDirectory.map { it.file(LockCopyTask.YARN_LOCK) })
+            task.inputFile.set(nodeJsRoot.rootPackageDirectory.map { it.file(LockCopyTask.YARN_LOCK) })
             task.outputDirectory.set(yarnRootExtension.lockFileDirectory)
             task.fileName.set(yarnRootExtension.lockFileName)
 
@@ -84,7 +91,7 @@ open class YarnPlugin : Plugin<Project> {
 
         tasks.register(UPGRADE_YARN_LOCK, YarnLockCopyTask::class.java) { task ->
             task.dependsOn(kotlinNpmInstall)
-            task.inputFile.set(nodeJs.rootPackageDirectory.map { it.file(LockCopyTask.YARN_LOCK) })
+            task.inputFile.set(nodeJsRoot.rootPackageDirectory.map { it.file(LockCopyTask.YARN_LOCK) })
             task.outputDirectory.set(yarnRootExtension.lockFileDirectory)
             task.fileName.set(yarnRootExtension.lockFileName)
         }
@@ -92,7 +99,7 @@ open class YarnPlugin : Plugin<Project> {
         tasks.register(RESTORE_YARN_LOCK_NAME, YarnLockCopyTask::class.java) {
             val lockFile = yarnRootExtension.lockFileDirectory.resolve(yarnRootExtension.lockFileName)
             it.inputFile.set(yarnRootExtension.lockFileDirectory.resolve(yarnRootExtension.lockFileName))
-            it.outputDirectory.set(nodeJs.rootPackageDirectory)
+            it.outputDirectory.set(nodeJsRoot.rootPackageDirectory)
             it.fileName.set(LockCopyTask.YARN_LOCK)
             it.onlyIf {
                 lockFile.exists()
