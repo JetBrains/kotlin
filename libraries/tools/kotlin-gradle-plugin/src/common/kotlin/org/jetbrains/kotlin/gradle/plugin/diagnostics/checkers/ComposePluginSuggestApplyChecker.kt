@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers
 
 import org.gradle.api.Project
 import org.gradle.api.plugins.PluginContainer
+import org.jetbrains.kotlin.gradle.plugin.AndroidGradlePluginVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
@@ -20,13 +21,15 @@ internal object ComposePluginSuggestApplyChecker : KotlinGradleProjectChecker {
 
         if (project.plugins.hasKotlinAndroidPlugin() &&
             project.isAgpComposeEnabled &&
-            !project.plugins.hasKotlinComposePlugin()
+            !project.plugins.hasKotlinComposePlugin() &&
+            !isAgp850AndAbove
         ) {
             collector.reportSuggestion(project)
         } else if (project.plugins.hasKotlinMultiplatformPlugin() &&
             !project.plugins.hasJetBrainsComposePlugin() &&
             project.isAgpComposeEnabled &&
-            !project.plugins.hasKotlinComposePlugin()
+            !project.plugins.hasKotlinComposePlugin() &&
+            !isAgp850AndAbove
         ) {
             collector.reportSuggestion(project)
         }
@@ -55,4 +58,6 @@ internal object ComposePluginSuggestApplyChecker : KotlinGradleProjectChecker {
     private val Project.agpComposeConfiguration get() = configurations.findByName("kotlin-extension")
 
     private val Project.isAgpComposeEnabled get() = agpComposeConfiguration != null
+
+    private val isAgp850AndAbove get() = AndroidGradlePluginVersion.current >= AndroidGradlePluginVersion(8, 5, 0)
 }

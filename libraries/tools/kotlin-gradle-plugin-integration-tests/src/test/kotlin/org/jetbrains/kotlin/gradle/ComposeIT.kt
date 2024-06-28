@@ -66,6 +66,71 @@ class ComposeIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("Should conditionally suggest to migrate to new compose plugin")
+    @AndroidTestVersions(
+        maxVersion = TestVersions.AGP.AGP_86,
+        additionalVersions = [TestVersions.AGP.AGP_85]
+    )
+    @AndroidGradlePluginTests
+    @GradleAndroidTest
+    @TestMetadata("AndroidSimpleApp")
+    fun testAndroidComposeSuggestion(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        providedJdk: JdkVersions.ProvidedJdk
+    ) {
+        project(
+            projectName = "AndroidSimpleApp",
+            gradleVersion = gradleVersion,
+            buildJdk = providedJdk.location,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion)
+        ) {
+            buildGradle.modify { originalBuildScript ->
+                """
+                |$originalBuildScript
+                |
+                |dependencies {
+                |    implementation "androidx.compose.runtime:runtime:1.6.4"
+                |}
+                |
+                |android.buildFeatures.compose = true
+                |
+                """.trimMargin()
+            }
+
+            gradleProperties.appendText(
+                """
+                android.useAndroidX=true
+                """.trimIndent()
+            )
+
+            buildAndFail("assembleDebug") {
+                when (agpVersion) {
+                    TestVersions.AgpCompatibilityMatrix.AGP_71.version,
+                    TestVersions.AgpCompatibilityMatrix.AGP_72.version,
+                    TestVersions.AgpCompatibilityMatrix.AGP_73.version,
+                    TestVersions.AgpCompatibilityMatrix.AGP_74.version,
+                    TestVersions.AgpCompatibilityMatrix.AGP_80.version,
+                    TestVersions.AgpCompatibilityMatrix.AGP_81.version,
+                    TestVersions.AgpCompatibilityMatrix.AGP_82.version,
+                    TestVersions.AgpCompatibilityMatrix.AGP_83.version,
+                    TestVersions.AgpCompatibilityMatrix.AGP_84.version,
+                        -> {
+                        assertOutputContains(APPLY_COMPOSE_SUGGESTION)
+                    }
+                    else -> {
+                        // This error should come from AGP side
+                        assertOutputContains(
+                            "Starting in Kotlin 2.0, the Compose Compiler Gradle plugin is required\n" +
+                                    "  when compose is enabled. See the following link for more information:\n" +
+                                    "  https://d.android.com/r/studio-ui/compose-compiler\n"
+                        )
+                    }
+                }
+            }
+        }
+    }
+
     @DisplayName("Should work correctly when compose in Android is enabled")
     @AndroidGradlePluginTests
     @GradleAndroidTest
