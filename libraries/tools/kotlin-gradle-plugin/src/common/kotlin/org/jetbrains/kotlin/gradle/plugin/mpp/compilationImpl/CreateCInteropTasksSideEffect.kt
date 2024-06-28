@@ -52,8 +52,8 @@ internal val KotlinCreateNativeCInteropTasksSideEffect = KotlinCompilationSideEf
             it.kotlinNativeProvider.set(project.provider {
                 KotlinNativeProvider(project, it.konanTarget, it.kotlinNativeBundleBuildService)
             })
-            it.produceUnpackedKlib.set(project.kotlinPropertiesProvider.produceUnpackedKlibs)
-            if (project.kotlinPropertiesProvider.produceUnpackedKlibs) {
+            it.produceUnpackedKlib.set(project.kotlinPropertiesProvider.enableUnpackedKlibs)
+            if (project.kotlinPropertiesProvider.enableUnpackedKlibs) {
                 it.outputs.dir(it.outputFileProvider)
             } else {
                 it.outputs.file(it.outputFileProvider)
@@ -68,7 +68,7 @@ internal val KotlinCreateNativeCInteropTasksSideEffect = KotlinCompilationSideEf
         }
 
         val interopOutput =
-            if (!project.kotlinPropertiesProvider.produceUnpackedKlibs || project.kotlinPropertiesProvider.consumeUnpackedKlibs) {
+            if (!project.kotlinPropertiesProvider.enableUnpackedKlibs) {
                 project.files(interopTask.map { it.outputFileProvider })
             } else {
                 project.files(maybeCreateKlibPackingTask(compilation, interop.classifier, interopTask).map { it.archiveFile })

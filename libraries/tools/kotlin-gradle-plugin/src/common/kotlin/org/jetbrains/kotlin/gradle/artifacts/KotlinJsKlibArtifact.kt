@@ -34,7 +34,7 @@ internal val KotlinJsKlibArtifact = KotlinTargetArtifact { target, apiElements, 
 
     target.createPublishArtifact(jsKlibTask, KLIB_TYPE, apiElements, runtimeElements)
 
-    if (target.project.kotlinPropertiesProvider.produceUnpackedKlibs) {
+    if (target.project.kotlinPropertiesProvider.enableUnpackedKlibs) {
         apiElements.outgoing.variants.getByName(UNPACKED_KLIB_VARIANT_NAME)
             .artifact(target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).compileTaskProvider.flatMap { it.destinationDirectory }) {
                 // ...

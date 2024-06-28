@@ -107,7 +107,7 @@ private fun Configuration.configureAttributesFor(project: Project, target: Konan
     attributes.setAttribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
     attributes.setAttribute(KotlinNativeTarget.konanTargetAttribute, target.name)
     attributes.setAttribute(Usage.USAGE_ATTRIBUTE, project.objects.named(KotlinUsages.KOTLIN_API))
-    if (kotlinPropertiesProvider.consumeUnpackedKlibs) {
+    if (kotlinPropertiesProvider.enableUnpackedKlibs) {
         attributes.setAttribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, unpackedKlibLibraryElements())
     } else {
         attributes.setAttribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, packedKlibLibraryElements())

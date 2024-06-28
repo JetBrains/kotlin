@@ -173,7 +173,7 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
                 attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))
             }
             if (target.producesPlatformKlib) {
-                if (target.project.kotlinPropertiesProvider.consumeUnpackedKlibs) {
+                if (target.project.kotlinPropertiesProvider.enableUnpackedKlibs) {
                     attributes.setAttribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, target.project.unpackedKlibLibraryElements())
                 } else {
                     attributes.setAttribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, target.project.packedKlibLibraryElements())

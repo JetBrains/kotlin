@@ -99,7 +99,7 @@ private fun Project.getAllCInteropOutputFiles(compilation: KotlinNativeCompilati
     val cinteropTasks = compilation.cinterops.map { interop -> interop.interopProcessingTaskName }
         .mapNotNull { taskName -> tasks.findByName(taskName) as? CInteropProcess }
 
-    if (project.kotlinPropertiesProvider.produceUnpackedKlibs) {
+    if (project.kotlinPropertiesProvider.enableUnpackedKlibs) {
         // this part of import isn't ready for working with unpacked klibs
         return project.filesProvider {
             cinteropTasks.map { interopTask ->

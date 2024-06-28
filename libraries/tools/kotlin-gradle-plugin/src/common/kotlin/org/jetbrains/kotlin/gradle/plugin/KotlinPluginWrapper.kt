@@ -273,7 +273,7 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
             attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE).apply {
                 compatibilityRules.add(KotlinUnpackedKlibCompatibilityRule::class.java)
                 disambiguationRules.add(KotlinUnpackedKlibDisambiguationRule::class.java) {
-                    it.params(project.kotlinPropertiesProvider.consumeUnpackedKlibs)
+                    it.params(project.kotlinPropertiesProvider.enableUnpackedKlibs)
                 }
             }
         }

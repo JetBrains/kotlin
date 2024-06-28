@@ -58,7 +58,7 @@ internal val CreateTargetConfigurationsSideEffect = KotlinTargetSideEffect { tar
                 addArtifactsToVariantCreatedByJavaLibraryPlugin = true
             )
         }
-        if (target.producesPlatformKlib && target.project.kotlinPropertiesProvider.produceUnpackedKlibs) {
+        if (target.producesPlatformKlib && target.project.kotlinPropertiesProvider.enableUnpackedKlibs) {
             addUnpackedKlibSecondaryOutgoingVariant(project)
         }
     }

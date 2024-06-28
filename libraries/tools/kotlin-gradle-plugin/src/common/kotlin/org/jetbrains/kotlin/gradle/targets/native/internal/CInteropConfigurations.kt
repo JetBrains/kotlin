@@ -36,7 +36,7 @@ internal fun createCInteropApiElementsKlibArtifact(
     val project = compilation.project
     val configurationName = cInteropApiElementsConfigurationName(compilation.target)
     val configuration = project.configurations.getByName(configurationName)
-    val (packTask, packedArtifactFile) = if (project.kotlinPropertiesProvider.produceUnpackedKlibs) {
+    val (packTask, packedArtifactFile) = if (project.kotlinPropertiesProvider.enableUnpackedKlibs) {
         val packTask = maybeCreateKlibPackingTask(compilation, settings.classifier, interopTask)
         packTask to packTask.map { it.archiveFile.get().asFile }
     } else {
@@ -48,7 +48,7 @@ internal fun createCInteropApiElementsKlibArtifact(
         artifact.classifier = settings.classifier
         artifact.builtBy(packTask)
     }
-    if (compilation.project.kotlinPropertiesProvider.produceUnpackedKlibs) {
+    if (compilation.project.kotlinPropertiesProvider.enableUnpackedKlibs) {
         configuration.outgoing.variants.getByName(UNPACKED_KLIB_VARIANT_NAME)
             .artifact(interopTask.flatMap { it.klibFile }) {
                 it.builtBy(interopTask)
@@ -73,7 +73,7 @@ internal fun Project.locateOrCreateCInteropDependencyConfiguration(
             usesPlatformOf(compilation.target)
             compilation.copyAttributesTo(project, dest = attributes)
             attributes.setAttribute(
-                LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, if (project.kotlinPropertiesProvider.consumeUnpackedKlibs) {
+                LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, if (project.kotlinPropertiesProvider.enableUnpackedKlibs) {
                     unpackedCinteropKlibLibraryElements()
                 } else {
                     cinteropKlibLibraryElements()
@@ -110,7 +110,7 @@ internal fun Project.locateOrCreateCInteropApiElementsConfiguration(target: Kotl
     configurations.findConsumable(configurationName)?.let { return it }
 
     return configurations.createConsumable(configurationName).apply {
-        if (target.project.kotlinPropertiesProvider.produceUnpackedKlibs) {
+        if (target.project.kotlinPropertiesProvider.enableUnpackedKlibs) {
             addUnpackedKlibSecondaryOutgoingVariant(
                 project,
                 project.cinteropKlibLibraryElements(),

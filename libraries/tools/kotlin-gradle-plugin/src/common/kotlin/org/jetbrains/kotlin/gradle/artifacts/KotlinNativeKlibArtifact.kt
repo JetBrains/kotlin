@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
-import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.UNPACKED_KLIB_VARIANT_NAME
 import org.jetbrains.kotlin.gradle.utils.libsDirectory
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -92,7 +91,7 @@ internal fun createKlibArtifact(
     klibProducingTask: TaskProvider<out ProducesKlib>,
 ) {
     val apiElementsName = compilation.target.apiElementsConfigurationName
-    val (packTask, packedArtifactFile) = if (compilation.target.project.kotlinPropertiesProvider.produceUnpackedKlibs) {
+    val (packTask, packedArtifactFile) = if (compilation.target.project.kotlinPropertiesProvider.enableUnpackedKlibs) {
         val packTask = maybeCreateKlibPackingTask(compilation, classifier, klibProducingTask)
         packTask to packTask.map { it.archiveFile.get().asFile }
     } else {
@@ -110,7 +109,7 @@ internal fun createKlibArtifact(
         artifacts.add(klibArtifact)
         attributes.setAttribute(compilation.project.artifactTypeAttribute, NativeArtifactFormat.KLIB)
 
-        if (compilation.target.project.kotlinPropertiesProvider.produceUnpackedKlibs) {
+        if (compilation.target.project.kotlinPropertiesProvider.enableUnpackedKlibs) {
             outgoing.variants.getByName(UNPACKED_KLIB_VARIANT_NAME)
                 .artifact(klibProducingTask.flatMap { it.klibFile }) {
                     it.builtBy(klibProducingTask)
