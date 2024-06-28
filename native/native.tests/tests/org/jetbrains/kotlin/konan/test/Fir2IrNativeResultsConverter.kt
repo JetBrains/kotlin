@@ -52,6 +52,7 @@ class Fir2IrNativeResultsConverter(testServices: TestServices) : AbstractFir2IrN
     override val klibFactories: KlibMetadataFactories = KlibMetadataFactories(::KonanBuiltIns, DynamicTypeDeserializer)
 
     override fun createBackendInput(
+        module: TestModule,
         compilerConfiguration: CompilerConfiguration,
         diagnosticReporter: BaseDiagnosticsCollector,
         inputArtifact: FirOutputArtifact,

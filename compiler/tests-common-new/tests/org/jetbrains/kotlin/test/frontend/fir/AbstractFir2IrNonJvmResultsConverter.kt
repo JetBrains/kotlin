@@ -104,6 +104,7 @@ abstract class AbstractFir2IrNonJvmResultsConverter(
         }
 
         return createBackendInput(
+            module,
             compilerConfiguration,
             diagnosticReporter,
             inputArtifact,
@@ -119,6 +120,7 @@ abstract class AbstractFir2IrNonJvmResultsConverter(
     }
 
     protected abstract fun createBackendInput(
+        module: TestModule,
         compilerConfiguration: CompilerConfiguration,
         diagnosticReporter: BaseDiagnosticsCollector,
         inputArtifact: FirOutputArtifact,

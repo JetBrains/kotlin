@@ -56,6 +56,7 @@ abstract class Fir2IrJsWasmResultsConverter(testServices: TestServices) : Abstra
         get() = JsFactories
 
     override fun createBackendInput(
+        module: TestModule,
         compilerConfiguration: CompilerConfiguration,
         diagnosticReporter: BaseDiagnosticsCollector,
         inputArtifact: FirOutputArtifact,

@@ -59,6 +59,9 @@ class Fir2IrJvmResultsConverter(testServices: TestServices) : AbstractFir2IrNonJ
     }
 
     override fun resolveLibraries(module: TestModule, compilerConfiguration: CompilerConfiguration): List<KotlinResolvedLibrary> {
+        val compilerConfigurationProvider = testServices.compilerConfigurationProvider
+        // Create and initialize the module and its dependencies
+        compilerConfigurationProvider.getProject(module)
         return emptyList()
     }
 
@@ -68,7 +71,7 @@ class Fir2IrJvmResultsConverter(testServices: TestServices) : AbstractFir2IrNonJ
     override fun transformInternal(
         module: TestModule,
         inputArtifact: FirOutputArtifact
-    ): IrBackendInput.JvmIrBackendInput {
+    ): IrBackendInput {
         val compilerConfigurationProvider = testServices.compilerConfigurationProvider
         val configuration = compilerConfigurationProvider.getCompilerConfiguration(module)
 
@@ -76,18 +79,15 @@ class Fir2IrJvmResultsConverter(testServices: TestServices) : AbstractFir2IrNonJ
         val fir2IrExtensions = createFir2IrExtensions(configuration)
 
         // Create and initialize the module and its dependencies
-        val project = compilerConfigurationProvider.getProject(module)
-        // TODO: handle fir from light tree
-        val sourceFiles = inputArtifact.mainFirFiles.mapNotNull { it.value.sourceFile }
-
-        val phaseConfig = configuration.get(CLIConfigurationKeys.PHASE_CONFIG)
+        resolveLibraries(module, configuration)
 
         val diagnosticReporter = DiagnosticReporterFactory.createReporter()
 
         val compilerConfiguration = compilerConfigurationProvider.getCompilerConfiguration(module)
         val fir2IrConfiguration = Fir2IrConfiguration.forJvmCompilation(compilerConfiguration, diagnosticReporter)
 
-        val fir2irResult = inputArtifact.toFirResult().convertToIrAndActualize(
+        val firResult = inputArtifact.toFirResult()
+        val fir2irResult = firResult.convertToIrAndActualize(
             fir2IrExtensions,
             fir2IrConfiguration,
             module.irGenerationExtensions(testServices),
@@ -99,28 +99,57 @@ class Fir2IrJvmResultsConverter(testServices: TestServices) : AbstractFir2IrNonJ
             createExtraActualDeclarationExtractorInitializer(),
         )
 
-        val backendInput = JvmIrCodegenFactory.JvmIrBackendInput(
-            fir2irResult.irModuleFragment,
-            fir2irResult.symbolTable,
-            phaseConfig,
-            fir2irResult.components.irProviders,
-            fir2IrExtensions,
-            FirJvmBackendExtension(
-                fir2irResult.components,
-                fir2irResult.irActualizedResult?.actualizedExpectDeclarations?.extractFirDeclarations(),
+        return createBackendInput(
+            module,
+            compilerConfiguration,
+            diagnosticReporter,
+            inputArtifact,
+            fir2irResult,
+            Fir2KlibMetadataSerializer(
+                compilerConfiguration,
+                firResult.outputs,
+                fir2irResult,
+                exportKDoc = false,
+                produceHeaderKlib = false,
             ),
-            fir2irResult.pluginContext,
+        )
+    }
+
+    override fun createBackendInput(
+        module: TestModule,
+        compilerConfiguration: CompilerConfiguration,
+        diagnosticReporter: BaseDiagnosticsCollector,
+        inputArtifact: FirOutputArtifact,
+        fir2IrResult: Fir2IrActualizedResult,
+        fir2KlibMetadataSerializer: Fir2KlibMetadataSerializer,
+    ): IrBackendInput {
+        val phaseConfig = compilerConfiguration.get(CLIConfigurationKeys.PHASE_CONFIG)
+        // TODO: handle fir from light tree
+        val sourceFiles = inputArtifact.mainFirFiles.mapNotNull { it.value.sourceFile }
+
+        val backendInput = JvmIrCodegenFactory.JvmIrBackendInput(
+            fir2IrResult.irModuleFragment,
+            fir2IrResult.symbolTable,
+            phaseConfig,
+            fir2IrResult.components.irProviders,
+            createFir2IrExtensions(compilerConfiguration),
+            FirJvmBackendExtension(
+                fir2IrResult.components,
+                fir2IrResult.irActualizedResult?.actualizedExpectDeclarations?.extractFirDeclarations(),
+            ),
+            fir2IrResult.pluginContext,
             notifyCodegenStart = {},
         )
 
-        val codegenFactory = JvmIrCodegenFactory(configuration, phaseConfig)
+        val project = testServices.compilerConfigurationProvider.getProject(module)
+        val codegenFactory = JvmIrCodegenFactory(compilerConfiguration, phaseConfig)
         val generationState = GenerationState.Builder(
             project, ClassBuilderFactories.TEST,
-            fir2irResult.irModuleFragment.descriptor, NoScopeRecordCliBindingTrace(project).bindingContext, configuration
+            fir2IrResult.irModuleFragment.descriptor, NoScopeRecordCliBindingTrace(project).bindingContext, compilerConfiguration
         ).isIrBackend(
             true
         ).jvmBackendClassResolver(
-            FirJvmBackendClassResolver(fir2irResult.components)
+            FirJvmBackendClassResolver(fir2IrResult.components)
         ).diagnosticReporter(
             diagnosticReporter
         ).build()
@@ -131,17 +160,7 @@ class Fir2IrJvmResultsConverter(testServices: TestServices) : AbstractFir2IrNonJ
             backendInput,
             sourceFiles,
             descriptorMangler = null,
-            irMangler = fir2irResult.components.irMangler,
+            irMangler = fir2IrResult.components.irMangler,
         )
-    }
-
-    override fun createBackendInput(
-        compilerConfiguration: CompilerConfiguration,
-        diagnosticReporter: BaseDiagnosticsCollector,
-        inputArtifact: FirOutputArtifact,
-        fir2IrResult: Fir2IrActualizedResult,
-        fir2KlibMetadataSerializer: Fir2KlibMetadataSerializer,
-    ): IrBackendInput {
-        TODO()
     }
 }
