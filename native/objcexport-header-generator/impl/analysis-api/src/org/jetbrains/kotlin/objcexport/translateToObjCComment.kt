@@ -17,12 +17,12 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCParameter
 import org.jetbrains.kotlin.backend.konan.objcexport.plus
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.effectiveThrows
+import org.jetbrains.kotlin.objcexport.analysisApiUtils.getEffectiveThrows
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getObjCDocumentedAnnotations
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isSuspend
 
 internal fun KaSession.translateToObjCComment(list: KaAnnotationList): ObjCComment? {
-    val annotations = list.getObjCDocumentedAnnotations()
+    val annotations = getObjCDocumentedAnnotations(list)
         .mapNotNull { annotation -> renderAnnotation(annotation) }
 
     if (annotations.isEmpty()) return null
@@ -38,7 +38,7 @@ internal fun KaSession.translateToObjCComment(
     parameters: List<ObjCParameter>,
 ): ObjCComment? {
     val throwsComments = if (function.isSuspend || bridge.returnsError) {
-        val effectiveThrows = function.effectiveThrows.toSet()
+        val effectiveThrows = getEffectiveThrows(function).toSet()
         when {
             effectiveThrows.contains(StandardClassIds.Throwable) -> {
                 listOf("@note This method converts all Kotlin exceptions to errors.")
@@ -76,7 +76,7 @@ internal fun KaSession.translateToObjCComment(
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.mustBeDocumentedParamAttributeList]
  */
 private fun KaSession.renderedObjCDocumentedParamAnnotations(parameter: ObjCParameter, parameterSymbol: KaValueParameterSymbol): String? {
-    val renderedAnnotationsString = parameterSymbol.getObjCDocumentedAnnotations()
+    val renderedAnnotationsString = getObjCDocumentedAnnotations(parameterSymbol)
         .mapNotNull { annotation -> renderAnnotation(annotation) }
         .ifEmpty { return null }
         .joinToString(" ")

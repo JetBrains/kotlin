@@ -20,7 +20,28 @@ fun KaSession.getClassOrFail(file: KtFile, name: String): KaNamedClassSymbol {
     return getClassOrFail(file.symbol.fileScope, name)
 }
 
-fun KaSession.getClassOrFail(scope: KaScope, name: String): KaNamedClassSymbol {
+fun KtFile.getClassOrFail(name: String, kaSession: KaSession): KaNamedClassSymbol {
+    val file = this
+    return getClassOrFail(with(kaSession) { file.symbol.fileScope }, name)
+}
+
+fun KtFile.getFunctionOrFail(name: String, kaSession: KaSession): KaNamedFunctionSymbol {
+    val file = this
+    return getFunctionOrFail(with(kaSession) { file.symbol.fileScope }, name)
+}
+
+
+fun KtFile.getPropertyOrFail(name: String, kaSession: KaSession): KaPropertySymbol {
+    val file = this
+    return getPropertyOrFail(with(kaSession) { file.symbol.fileScope }, name)
+}
+
+
+fun KaScope.getClassOrFail(name: String): KaNamedClassSymbol {
+    return getClassOrFail(this, name)
+}
+
+fun getClassOrFail(scope: KaScope, name: String): KaNamedClassSymbol {
     val allSymbols = scope.classifiers(Name.identifier(name)).toList()
     if (allSymbols.isEmpty()) fail("Missing class '$name'")
     if (allSymbols.size > 1) fail("Found multiple classes with name '$name'")
@@ -33,11 +54,25 @@ fun KaSession.getFunctionOrFail(file: KtFile, name: String): KaNamedFunctionSymb
     return getFunctionOrFail(file.symbol.fileScope, name)
 }
 
+
 fun KaSession.getPropertyOrFail(file: KtFile, name: String): KaPropertySymbol {
     return getPropertyOrFail(file.symbol.fileScope, name)
 }
 
-fun KaSession.getFunctionOrFail(scope: KaScope, name: String): KaNamedFunctionSymbol {
+fun KaClassSymbol.getFunctionOrFail(name: String, kaSession: KaSession): KaNamedFunctionSymbol {
+    val symbol = this
+    return getFunctionOrFail(with(kaSession) { symbol.memberScope }, name)
+}
+
+fun KaScope.getFunctionOrFail(name: String): KaNamedFunctionSymbol {
+    return getFunctionOrFail(this, name)
+}
+
+fun KaScope.getPropertyOrFail(name: String): KaPropertySymbol {
+    return getPropertyOrFail(this, name)
+}
+
+fun getFunctionOrFail(scope: KaScope, name: String): KaNamedFunctionSymbol {
     val allSymbols = scope.callables(Name.identifier(name)).toList()
     if (allSymbols.isEmpty()) fail("Missing function '$name'")
     if (allSymbols.size > 1) fail("Found multiple functions with name '$name'")
@@ -46,7 +81,7 @@ fun KaSession.getFunctionOrFail(scope: KaScope, name: String): KaNamedFunctionSy
     return symbol
 }
 
-fun KaSession.getPropertyOrFail(scope: KaScope, name: String): KaPropertySymbol {
+fun getPropertyOrFail(scope: KaScope, name: String): KaPropertySymbol {
     val allSymbols = scope.callables(Name.identifier(name)).toList()
     if (allSymbols.isEmpty()) fail("Missing property '$name'")
     if (allSymbols.size > 1) fail("Found multiple callables with name '$name'")

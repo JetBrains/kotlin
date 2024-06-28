@@ -6,13 +6,15 @@
 package org.jetbrains.kotlin.objcexport.tests
 
 import org.intellij.lang.annotations.Language
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
-import org.jetbrains.kotlin.backend.konan.objcexport.*
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportClassOrProtocolName
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportFunctionName
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportPropertyName
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCPrimitiveType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.objcexport.*
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.bridgeParameter
@@ -31,7 +33,7 @@ class KtObjCExportNamerTest(
         getSymbol<KaNamedClassSymbol>("class Foo", "Foo", KaScope::classifiers) { symbol ->
             assertEquals(
                 ObjCExportClassOrProtocolName("Foo", "Foo"),
-                symbol.getObjCClassOrProtocolName()
+                getObjCClassOrProtocolName(symbol)
             )
         }
     }
@@ -39,10 +41,10 @@ class KtObjCExportNamerTest(
     @Test
     fun `test - class name override`() {
         getSymbol<KaNamedClassSymbol>("class Foo", "Foo", KaScope::classifiers) { symbol ->
-            symbol.withOverriddenName("Bar") {
+            exportSession.withOverriddenName(symbol, "Bar") {
                 assertEquals(
                     ObjCExportClassOrProtocolName("Bar", "Bar"),
-                    symbol.getObjCClassOrProtocolName()
+                    getObjCClassOrProtocolName(symbol)
                 )
             }
         }
@@ -51,10 +53,10 @@ class KtObjCExportNamerTest(
     @Test
     fun `test - function name override`() {
         getSymbol<KaNamedFunctionSymbol>("fun foo() {}", "foo", KaScope::callables) { symbol ->
-            symbol.withOverriddenName("bar") {
+            exportSession.withOverriddenName(symbol, "bar") {
                 assertEquals(
                     ObjCExportFunctionName("bar", "bar"),
-                    symbol.getObjCFunctionName()
+                    getObjCFunctionName(symbol)
                 )
             }
         }
@@ -63,18 +65,18 @@ class KtObjCExportNamerTest(
     @Test
     fun `test - property name override`() {
         getSymbol<KaPropertySymbol>("var foo: Int", "foo", KaScope::callables) { symbol ->
-            symbol.withOverriddenName("bar") {
+            exportSession.withOverriddenName(symbol, "bar") {
                 assertEquals(
                     ObjCExportPropertyName("bar", "bar"),
-                    symbol.getObjCPropertyName()
+                    getObjCPropertyName(symbol)
                 )
                 assertEquals(
                     ObjCExportFunctionName("bar", "bar"),
-                    symbol.getter?.getObjCFunctionName()
+                    getObjCFunctionName(symbol.getter!!)
                 )
                 assertEquals(
                     ObjCExportFunctionName("setBar", "setBar"),
-                    symbol.setter?.getObjCFunctionName()
+                    getObjCFunctionName(symbol.setter!!)
                 )
             }
         }
@@ -84,17 +86,19 @@ class KtObjCExportNamerTest(
     fun `test - function signature override`() {
         getSymbol<KaFunctionSymbol>("fun foo(param1: Boolean, param2: String) {}", "foo", KaScope::callables) { symbol ->
             val ktPsiFactory = KtPsiFactory(symbol.psi!!.project)
-            val type1 = ktPsiFactory.createTypeCodeFragment("Int", symbol.psi).getContentElement()!!.type
-            val type2 = ktPsiFactory.createTypeCodeFragment("Double", symbol.psi).getContentElement()!!.type
-            val returnType = ktPsiFactory.createTypeCodeFragment("Float", symbol.psi).getContentElement()!!.type
+
+            val type1 = with(kaSession) { ktPsiFactory.createTypeCodeFragment("Int", symbol.psi).getContentElement()!!.type }
+            val type2 = with(kaSession) { ktPsiFactory.createTypeCodeFragment("Double", symbol.psi).getContentElement()!!.type }
+            val returnType = with(kaSession) { ktPsiFactory.createTypeCodeFragment("Float", symbol.psi).getContentElement()!!.type }
 
             val valueParams = listOf(
-                type1.bridgeParameter() to KtObjCParameterData(Name.identifier("intParam"), false, type1, false),
-                type2.bridgeParameter() to KtObjCParameterData(Name.identifier("doubleParam"), false, type2, false)
+                bridgeParameter(type1) to KtObjCParameterData(Name.identifier("intParam"), false, type1, false),
+                bridgeParameter(type2) to KtObjCParameterData(Name.identifier("doubleParam"), false, type2, false)
             )
 
-            symbol.withOverriddenSignature("bar", returnType, valueParams) {
-                val objCMethod = symbol.translateToObjCMethod()!!
+            exportSession.withOverriddenSignature(symbol, "bar", returnType, valueParams) {
+
+                val objCMethod = translateToObjCMethod(symbol)!!
 
                 assertEquals("barIntParam:doubleParam:", objCMethod.name)
                 assertEquals(ObjCPrimitiveType.float, objCMethod.returnType)
@@ -109,17 +113,16 @@ class KtObjCExportNamerTest(
         }
     }
 
-    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     private inline fun <reified T> getSymbol(
         @Language("kotlin") sourceCode: String,
         name: String,
         symbolsGetter: KaScope.(name: Name) -> Sequence<*>,
-        action: context(KaSession, KtObjCExportSession) (T) -> Unit,
+        action: ObjCExportContext.(T) -> Unit,
     ) {
         val file = inlineSourceCodeAnalysis.createKtFile(sourceCode)
         analyzeWithObjCExport(file) {
-            val symbol = file.symbol.fileScope.symbolsGetter(Name.identifier(name)).single() as T
-            action(useSiteSession, useSiteExportSession, symbol)
+            val symbol = with(kaSession) { file.symbol.fileScope.symbolsGetter(Name.identifier(name)).single() as T }
+            action(this, symbol)
         }
     }
 }

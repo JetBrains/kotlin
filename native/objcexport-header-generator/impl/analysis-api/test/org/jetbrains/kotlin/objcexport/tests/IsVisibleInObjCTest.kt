@@ -193,7 +193,7 @@ class IsVisibleInObjCTest(
         )
 
         analyze(file) {
-            assertTrue(getClassOrFail(file, "PublicClass").getFunctionOrFail("foo").isVisibleInObjC())
+            assertTrue(getClassOrFail(file, "PublicClass").getFunctionOrFail("foo", this).isVisibleInObjC())
         }
     }
 
@@ -208,7 +208,7 @@ class IsVisibleInObjCTest(
         )
 
         analyze(file) {
-            assertFalse(getClassOrFail(file, "PrivateClass").getFunctionOrFail("foo").isVisibleInObjC())
+            assertFalse(getClassOrFail(file, "PrivateClass").getFunctionOrFail("foo", this).isVisibleInObjC())
         }
     }
 
@@ -228,10 +228,10 @@ class IsVisibleInObjCTest(
 
         analyze(file) {
             val foo = file
-                .getClassOrFail("PublicA").memberScope
+                .getClassOrFail("PublicA", this).memberScope
                 .getClassOrFail("PublicB").memberScope
                 .getClassOrFail("PublicC")
-                .getFunctionOrFail("foo")
+                .getFunctionOrFail("foo", this)
             assertTrue(foo.isVisibleInObjC())
         }
     }
@@ -252,10 +252,10 @@ class IsVisibleInObjCTest(
 
         analyze(file) {
             val foo = file
-                .getClassOrFail("PublicA").memberScope
+                .getClassOrFail("PublicA", this).memberScope
                 .getClassOrFail("PrivateB").memberScope
                 .getClassOrFail("PublicC")
-                .getFunctionOrFail("foo")
+                .getFunctionOrFail("foo", this)
             assertFalse(foo.isVisibleInObjC())
         }
     }
@@ -291,9 +291,9 @@ class IsVisibleInObjCTest(
             assertFalse(hiddenB.isVisibleInObjC())
             assertFalse(hiddenC.isVisibleInObjC())
 
-            assertTrue(publicA.getFunctionOrFail("publicA").isVisibleInObjC())
-            assertTrue(hiddenB.getFunctionOrFail("publicB").isVisibleInObjC())
-            assertTrue(hiddenC.getFunctionOrFail("publicC").isVisibleInObjC())
+            assertTrue(publicA.getFunctionOrFail("publicA", this).isVisibleInObjC())
+            assertTrue(hiddenB.getFunctionOrFail("publicB", this).isVisibleInObjC())
+            assertTrue(hiddenC.getFunctionOrFail("publicC", this).isVisibleInObjC())
         }
     }
 }

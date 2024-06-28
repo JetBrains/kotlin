@@ -28,7 +28,7 @@ class GetKdocStringTest(
         )
 
         analyze(ktFile) {
-            val foo = ktFile.getClassOrFail("Foo")
+            val foo = ktFile.getClassOrFail("Foo", this)
             assertEquals(
                 """
                     /**
@@ -52,7 +52,7 @@ class GetKdocStringTest(
         )
 
         analyze(ktFile) {
-            val foo = ktFile.getFunctionOrFail("foo")
+            val foo = ktFile.getFunctionOrFail("foo", this)
             assertEquals(
                 """
                     /**

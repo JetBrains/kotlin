@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.objcexport.objCReceiverType
+import org.jetbrains.kotlin.objcexport.getObjCReceiverType
 import org.jetbrains.kotlin.objcexport.testUtils.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.objcexport.testUtils.getClassOrFail
 import org.jetbrains.kotlin.objcexport.testUtils.getFunctionOrFail
@@ -38,7 +38,7 @@ class ObjCReceiverTypeTest(
             val innerClassConstructor = innerClass.memberScope.constructors.first()
 
             assertEquals(
-                innerClassConstructor.objCReceiverType?.expandedSymbol?.classId,
+                innerClassConstructor.getObjCReceiverType()?.expandedSymbol?.classId,
                 outerClass.classId
             )
         }
@@ -64,7 +64,7 @@ class ObjCReceiverTypeTest(
 
             assertEquals(
                 ClassId.topLevel(StandardNames.FqNames.string.toSafe()),
-                foo.objCReceiverType?.expandedSymbol?.classId
+                foo.getObjCReceiverType()?.expandedSymbol?.classId
             )
         }
     }
@@ -90,7 +90,7 @@ class ObjCReceiverTypeTest(
 
             assertEquals(
                 ClassId.topLevel(StandardNames.FqNames._boolean.toSafe()),
-                getter?.objCReceiverType?.expandedSymbol?.classId
+                getter?.getObjCReceiverType()?.expandedSymbol?.classId
             )
         }
     }
@@ -117,7 +117,7 @@ class ObjCReceiverTypeTest(
 
             assertEquals(
                 ClassId.topLevel(StandardNames.FqNames.string.toSafe()),
-                setter?.objCReceiverType?.expandedSymbol?.classId
+                setter?.getObjCReceiverType()?.expandedSymbol?.classId
             )
         }
     }
@@ -144,9 +144,9 @@ class ObjCReceiverTypeTest(
             val setter = fooClass.memberScope.getPropertyOrFail("prop").setter
             val getter = fooClass.memberScope.getPropertyOrFail("prop").getter
 
-            assertEquals(buildClassType(StandardClassIds.Boolean), foo.objCReceiverType)
-            assertEquals(buildClassType(StandardClassIds.String), setter?.objCReceiverType)
-            assertEquals(buildClassType(StandardClassIds.String), getter?.objCReceiverType)
+            assertEquals(buildClassType(StandardClassIds.Boolean), foo.getObjCReceiverType())
+            assertEquals(buildClassType(StandardClassIds.String), setter?.getObjCReceiverType())
+            assertEquals(buildClassType(StandardClassIds.String), getter?.getObjCReceiverType())
         }
     }
 }

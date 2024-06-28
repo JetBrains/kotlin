@@ -15,8 +15,6 @@ internal fun KaSession.isThrowable(symbol: KaClassSymbol?): Boolean {
     return isThrowable(classId)
 }
 
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KaSession.isThrowable(clazzId: ClassId): Boolean {
     return StandardNames.FqNames.throwable == clazzId.asSingleFqName()
 }

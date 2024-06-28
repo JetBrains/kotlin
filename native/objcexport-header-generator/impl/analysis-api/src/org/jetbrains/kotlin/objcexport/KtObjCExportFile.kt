@@ -91,7 +91,7 @@ private class KtPsiObjCExportFile(
         return KtResolvedObjCExportFile(
             fileName = fileName,
             packageFqName = packageFqName,
-            classifierSymbols = symbol.getAllClassOrObjectSymbols(),
+            classifierSymbols = getAllClassOrObjectSymbols(symbol),
             callableSymbols = symbol.fileScope.callables.toList()
         )
     }

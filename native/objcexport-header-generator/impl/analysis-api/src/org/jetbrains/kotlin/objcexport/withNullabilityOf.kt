@@ -26,7 +26,7 @@ internal fun KaSession.isBinaryRepresentationNullable(type: KaType): Boolean {
 
     if (type.fullyExpandedType.canBeNull) return true
 
-    type.getInlineTargetTypeOrNull()?.let { inlineTargetType ->
+    getInlineTargetTypeOrNull(type)?.let { inlineTargetType ->
         if (inlineTargetType.canBeNull) return true
     }
 

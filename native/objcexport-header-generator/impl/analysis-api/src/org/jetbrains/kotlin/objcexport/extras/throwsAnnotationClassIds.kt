@@ -17,8 +17,8 @@ internal val ObjCExportStub.throwsAnnotationClassIds: List<ClassId>?
         return null
     }
 
-context(ObjCExportStubExtrasBuilderContext)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
+//context(ObjCExportStubExtrasBuilderContext)
+//@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal var MutableExtras.throwsAnnotationClassIds: List<ClassId>?
     get() = this[throwsAnnotationClassIdsKey]
     set(value) {

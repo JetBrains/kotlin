@@ -2,8 +2,8 @@ package org.jetbrains.kotlin.objcexport.tests
 
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.effectiveThrows
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getDefinedThrows
+import org.jetbrains.kotlin.objcexport.analysisApiUtils.getEffectiveThrows
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.hasThrowsAnnotation
 import org.jetbrains.kotlin.objcexport.testUtils.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.objcexport.testUtils.getClassOrFail
@@ -44,8 +44,11 @@ class ThrowsAnnotationTest(private val inlineSourceCodeAnalysis: InlineSourceCod
         )
 
         analyze(file) {
-            assertTrue(getClassOrFail(file, "A").getFunctionOrFail("foo").hasThrowsAnnotation)
-            assertFalse(getClassOrFail(file, "B").getFunctionOrFail("foo").hasThrowsAnnotation)
+            val classA = getClassOrFail(file, "A")
+            val classB = getClassOrFail(file, "B")
+
+            assertTrue(getFunctionOrFail(classA, "foo").hasThrowsAnnotation)
+            assertFalse(getFunctionOrFail(classB, "foo").hasThrowsAnnotation)
         }
     }
 
@@ -60,7 +63,7 @@ class ThrowsAnnotationTest(private val inlineSourceCodeAnalysis: InlineSourceCod
 
         analyze(file) {
             val foo = getFunctionOrFail(file, "foo")
-            assertEquals(listOf("IllegalStateException", "RuntimeException"), foo.getDefinedThrows().mapName())
+            assertEquals(listOf("IllegalStateException", "RuntimeException"), getDefinedThrows(foo).mapName())
         }
     }
 
@@ -86,17 +89,20 @@ class ThrowsAnnotationTest(private val inlineSourceCodeAnalysis: InlineSourceCod
 
         analyze(file) {
 
-            val fooA = getClassOrFail(file, "A").memberScope.getFunctionOrFail("foo")
-            assertEquals(listOf("IllegalStateException"), fooA.effectiveThrows.mapName())
-            assertEquals(listOf("IllegalStateException"), fooA.getDefinedThrows().mapName())
+            val classA = getClassOrFail(file, "A")
+            val fooA = getFunctionOrFail(classA.memberScope, "foo")
+            assertEquals(listOf("IllegalStateException"), fooA.getEffectiveThrows().mapName())
+            assertEquals(listOf("IllegalStateException"), getDefinedThrows(fooA).mapName())
 
-            val fooB = getClassOrFail(file, "B").memberScope.getFunctionOrFail("foo")
-            assertEquals(listOf("IllegalStateException"), fooB.effectiveThrows.mapName())
-            assertEquals(listOf("RuntimeException"), fooB.getDefinedThrows().mapName())
+            val classB = getClassOrFail(file, "B")
+            val fooB = getFunctionOrFail(classB.memberScope, "foo")
+            assertEquals(listOf("IllegalStateException"), fooB.getEffectiveThrows().mapName())
+            assertEquals(listOf("RuntimeException"), getDefinedThrows(fooB).mapName())
 
-            val fooC = getClassOrFail(file, "C").memberScope.getFunctionOrFail("foo")
-            assertEquals(listOf("IllegalStateException"), fooC.effectiveThrows.mapName())
-            assertEquals(listOf("IndexOutOfBoundsException"), fooC.getDefinedThrows().mapName())
+            val classC = getClassOrFail(file, "C")
+            val fooC = getFunctionOrFail(classC.memberScope, "foo")
+            assertEquals(listOf("IllegalStateException"), fooC.getEffectiveThrows().mapName())
+            assertEquals(listOf("IndexOutOfBoundsException"), getDefinedThrows(fooC).mapName())
         }
     }
 
@@ -110,8 +116,8 @@ class ThrowsAnnotationTest(private val inlineSourceCodeAnalysis: InlineSourceCod
 
         analyze(file) {
             val foo = getClassOrFail(file, "Foo").memberScope.constructors.first()
-            assertEquals(listOf("IllegalStateException"), foo.effectiveThrows.mapName())
-            assertEquals(listOf("IllegalStateException"), foo.getDefinedThrows().mapName())
+            assertEquals(listOf("IllegalStateException"), foo.getEffectiveThrows().mapName())
+            assertEquals(listOf("IllegalStateException"), getDefinedThrows(foo).mapName())
         }
     }
 
@@ -129,7 +135,7 @@ class ThrowsAnnotationTest(private val inlineSourceCodeAnalysis: InlineSourceCod
 
         analyze(file) {
             val foo = getFunctionOrFail(file, "foo")
-            assertEquals(listOf("RuntimeException"), foo.getDefinedThrows().mapName())
+            assertEquals(listOf("RuntimeException"), getDefinedThrows(foo).mapName())
         }
     }
 }

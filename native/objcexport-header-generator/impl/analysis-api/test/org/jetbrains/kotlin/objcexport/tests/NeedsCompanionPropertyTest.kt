@@ -22,7 +22,7 @@ class NeedsCompanionPropertyTest(
         """.trimIndent()
         )
         analyze(file) {
-            assertFalse(getClassOrFail(file, "NoCompanion").getNeedsCompanionProperty())
+            assertFalse(getNeedsCompanionProperty(getClassOrFail(file, "NoCompanion")))
         }
     }
 
@@ -36,7 +36,7 @@ class NeedsCompanionPropertyTest(
         """.trimIndent()
         )
         analyze(file) {
-            assertTrue(getClassOrFail(file, "EmptyCompanion").getNeedsCompanionProperty())
+            assertTrue(getNeedsCompanionProperty(getClassOrFail(file, "EmptyCompanion")))
         }
     }
 
@@ -52,7 +52,7 @@ class NeedsCompanionPropertyTest(
         """.trimIndent()
         )
         analyze(file) {
-            assertTrue(getClassOrFail(file, "SimpleCompanion").getNeedsCompanionProperty())
+            assertTrue(getNeedsCompanionProperty(getClassOrFail(file, "SimpleCompanion")))
         }
     }
 }

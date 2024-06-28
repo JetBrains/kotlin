@@ -24,7 +24,7 @@ class IsArrayConstructorTest(
         val file = inlineSourceCodeAnalysis.createKtFile("fun foo() = Unit")
         analyze(file) {
             val foo = getFunctionOrFail(file, "foo")
-            assertFalse(foo.isArrayConstructor())
+            assertFalse(isArrayConstructor(foo))
         }
     }
 
@@ -34,7 +34,7 @@ class IsArrayConstructorTest(
         analyze(file) {
             val foo = getClassOrFail(file, "Foo")
             val constructor = foo.memberScope.constructors.singleOrNull() ?: fail("No single constructor found")
-            assertFalse(constructor.isArrayConstructor())
+            assertFalse(isArrayConstructor(constructor))
         }
     }
 
@@ -60,7 +60,7 @@ class IsArrayConstructorTest(
                 .ifEmpty { fail("No constructors found on $classId") }
                 .forEach { constructor ->
                     assertTrue(
-                        constructor.isArrayConstructor(),
+                        isArrayConstructor(constructor),
                         "Expected $classId constructor to be detected as array constructor"
                     )
                 }

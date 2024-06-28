@@ -102,7 +102,7 @@ private fun KaSession.bridgeType(
     }
 
     /* If type is inlined, then build the bridge for the inlined target type */
-    type.getInlineTargetTypeOrNull()?.let { inlinedTargetType ->
+    getInlineTargetTypeOrNull(type)?.let { inlinedTargetType ->
         return bridgeType(inlinedTargetType)
     }
 
@@ -116,9 +116,7 @@ private fun KaSession.bridgeType(
 /**
  * [ObjCExportMapper.bridgeFunctionType]
  */
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-private fun bridgeFunctionType(type: KaType): TypeBridge {
+private fun KaSession.bridgeFunctionType(type: KaType): TypeBridge {
 
     val numberOfParameters: Int
     val returnType: KaType

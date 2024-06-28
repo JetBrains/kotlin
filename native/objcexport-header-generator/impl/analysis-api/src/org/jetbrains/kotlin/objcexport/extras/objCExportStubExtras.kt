@@ -5,12 +5,11 @@ import org.jetbrains.kotlin.tooling.core.Extras
 import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 
-internal object ObjCExportStubExtrasBuilderContext
+internal data class ObjCExportStubExtrasBuilderContext(val extras: MutableExtras)
 
 /**
  * Convenience function for building extras for [ObjCExportStub]
  */
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-internal fun objCExportStubExtras(builder: context(ObjCExportStubExtrasBuilderContext) MutableExtras.() -> Unit): Extras {
-    return mutableExtrasOf().also { extras -> builder(ObjCExportStubExtrasBuilderContext, extras) }
+internal fun objCExportStubExtras(builder: MutableExtras.() -> Unit): Extras {
+    return mutableExtrasOf().also { extras -> builder(extras) }
 }

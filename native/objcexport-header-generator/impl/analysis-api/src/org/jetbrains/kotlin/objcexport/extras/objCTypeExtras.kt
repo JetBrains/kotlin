@@ -16,12 +16,12 @@ import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
  * - See [MutableExtras.originClassId] as example for declaring a discoverable API for types
  * - See [MutableExtras.requiresForwardDeclaration] "="
  */
-internal object ObjCTypeExtrasBuilderContext
+data class ObjCTypeExtrasBuilderContext(val extras: MutableExtras)
 
 /**
  * Convenience function for building extras for [ObjCType]
  */
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-internal fun objCTypeExtras(builder: context(ObjCTypeExtrasBuilderContext) MutableExtras.() -> Unit): Extras {
-    return mutableExtrasOf().also { extras -> builder(ObjCTypeExtrasBuilderContext, extras) }
+//@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
+internal fun objCTypeExtras(builder: ObjCTypeExtrasBuilderContext.() -> Unit): Extras {
+    return mutableExtrasOf().also { extras -> builder(ObjCTypeExtrasBuilderContext(extras)) }
 }

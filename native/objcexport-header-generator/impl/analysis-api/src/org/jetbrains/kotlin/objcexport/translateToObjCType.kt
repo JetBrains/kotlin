@@ -103,7 +103,7 @@ internal fun ObjCExportContext.mapToReferenceTypeIgnoringNullability(type: KaTyp
         }
 
         /* 'Irregular' inline class: Not marked as inline, but special K/N type that still gets inlined  */
-        fullyExpandedType.getInlineTargetTypeOrNull()?.let { inlineTargetType ->
+        getInlineTargetTypeOrNull(fullyExpandedType)?.let { inlineTargetType ->
             return mapToReferenceTypeIgnoringNullability(inlineTargetType)
         }
 

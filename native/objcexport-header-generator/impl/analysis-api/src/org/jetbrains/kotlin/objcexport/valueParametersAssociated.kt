@@ -63,7 +63,7 @@ private fun KaSession.addReceiver(
     function: KaFunctionSymbol,
 ) {
 
-    val receiverType = function.objCReceiverType
+    val receiverType = getObjCReceiverType(function)
     val receiverTypeName = receiverType?.expandedSymbol?.name
 
     if (receiverType != null && receiverTypeName != null) {
@@ -113,35 +113,31 @@ data class KtObjCParameterData(
  *
  * Also see [isObjCProperty]
  */
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-internal val KaFunctionSymbol.objCReceiverType: KaType?
-    get() {
-        return if (isConstructor) {
-            /**
-             * Edge case for supporting inner classes parameter.
-             * See details at KT-66339
-             */
-            @Suppress("DEPRECATION")
-            dispatchReceiverType
-        } else if (isExtension) {
-            val receiverParameterType = receiverParameter?.type
-            if (isMappedObjCType(receiverParameterType)) receiverParameterType
-            else if ((containingDeclaration as? KaNamedClassSymbol)?.isInner == true) receiverParameterType
-            else if (receiverParameterType != null && isObjCNothing(receiverParameterType)) return receiverParameterType
-            else null
-        } else if (this is KaPropertyGetterSymbol || this is KaPropertySetterSymbol) {
-            val property = containingDeclaration as KaPropertySymbol
-            val isExtension = property.isExtension
-            val receiverType = property.receiverType
-            if (isExtension) {
-                if (receiverType?.getClassIfCategory() == null) {
-                    receiverType
-                } else {
-                    if (isMappedObjCType(receiverType)) receiverType else null
-                    null
-                }
-            } else null
-
+internal fun KaSession.getObjCReceiverType(symbol: KaFunctionSymbol): KaType? {
+    return if (symbol.isConstructor) {
+        /**
+         * Edge case for supporting inner classes parameter.
+         * See details at KT-66339
+         */
+        @Suppress("DEPRECATION")
+        symbol.dispatchReceiverType
+    } else if (symbol.isExtension) {
+        val receiverParameterType = symbol.receiverParameter?.type
+        if (isMappedObjCType(receiverParameterType)) receiverParameterType
+        else if ((symbol.containingDeclaration as? KaNamedClassSymbol)?.isInner == true) receiverParameterType
+        else if (receiverParameterType != null && isObjCNothing(receiverParameterType)) return receiverParameterType
+        else null
+    } else if (this is KaPropertyGetterSymbol || this is KaPropertySetterSymbol) {
+        val property = symbol.containingDeclaration as KaPropertySymbol
+        val isExtension = property.isExtension
+        val receiverType = property.receiverType
+        if (isExtension) {
+            if (receiverType?.getClassIfCategory() == null) {
+                receiverType
+            } else {
+                if (isMappedObjCType(receiverType)) receiverType else null
+            }
         } else null
-    }
+
+    } else null
+}

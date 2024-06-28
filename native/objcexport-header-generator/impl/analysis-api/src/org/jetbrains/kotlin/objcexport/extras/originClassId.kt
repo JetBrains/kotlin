@@ -33,8 +33,8 @@ internal val ObjCType.originClassId: ClassId?
 /**
  * See [ObjCType.originClassId]
  */
-context(ObjCTypeExtrasBuilderContext)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
+//context(ObjCTypeExtrasBuilderContext)
+//@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal var MutableExtras.originClassId: ClassId?
     get() = this[originClassIdKey]
     set(value) {

@@ -22,7 +22,7 @@ class IsObjCBaseCallableTest(
         val file = inlineSourceCodeAnalysis.createKtFile("fun foo() = Unit")
         analyze(file) {
             val fooSymbol = getFunctionOrFail(file, "foo")
-            assertTrue(fooSymbol.isObjCBaseCallable())
+            assertTrue(isObjCBaseCallable(fooSymbol))
         }
     }
 
@@ -44,7 +44,7 @@ class IsObjCBaseCallableTest(
         analyze(file) {
             val fooSymbol = getClassOrFail(file, "Foo")
             val xSymbol = fooSymbol.memberScope.getFunctionOrFail("x")
-            assertFalse(xSymbol.isObjCBaseCallable())
+            assertFalse(isObjCBaseCallable(xSymbol))
         }
     }
 
@@ -64,7 +64,7 @@ class IsObjCBaseCallableTest(
         analyze(file) {
             val fooSymbol = getClassOrFail(file, "Foo")
             val xSymbol = fooSymbol.memberScope.getFunctionOrFail("x")
-            assertTrue(xSymbol.isObjCBaseCallable())
+            assertTrue(isObjCBaseCallable(xSymbol))
         }
     }
 }
